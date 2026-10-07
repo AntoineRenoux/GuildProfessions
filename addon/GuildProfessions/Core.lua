@@ -142,6 +142,27 @@ function GP.GetRecipeName(spellId)
 	return name
 end
 
+-- Éligibilité du personnage ----------------------------------------------------
+-- Un personnage hors guilde (ou d'une autre guilde que celle du serveur de
+-- données) ne doit ni être scanné, ni exporté, ni passer de commandes : les
+-- rerolls ne sont pas listés sans le consentement du joueur.
+
+function GP.GetPlayerGuildName()
+	return (GetGuildInfo("player"))
+end
+
+function GP.IsEligibleCharacter()
+	local guild = GP.GetPlayerGuildName()
+	if not guild then
+		return false, "hors guilde"
+	end
+	local expected = GP.GetServerData().guildName
+	if expected and expected ~= "" and guild:lower() ~= expected:lower() then
+		return false, ("d'une autre guilde (%s)"):format(guild)
+	end
+	return true
+end
+
 -- Commandes de craft ----------------------------------------------------------
 
 function GP.CreateOrder(crafter, item, qty, note)

@@ -17,6 +17,10 @@ public static class DataLuaWriter
 		builder.AppendLine("GuildProfessions_ServerData = {");
 		builder.AppendLine($"\tversion = {export.Version},");
 		builder.AppendLine($"\tgeneratedUtc = \"{export.GeneratedUtc:yyyy-MM-dd HH:mm} UTC\",");
+		if (export.GuildName is not null)
+		{
+			builder.AppendLine($"\tguildName = {Quote(export.GuildName)},");
+		}
 
 		builder.AppendLine("\trecipeNames = {");
 		foreach (var (spellId, name) in export.RecipeNames.OrderBy(entry => entry.Key))

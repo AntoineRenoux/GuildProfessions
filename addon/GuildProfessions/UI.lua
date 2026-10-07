@@ -173,7 +173,7 @@ local function RefreshList()
 
 		row.orderButton.crafter = entry.char.name
 		row.orderButton.prefillItem = entry.matched or ""
-		row.orderButton:SetShown(entry.char.name ~= UnitName("player"))
+		row.orderButton:SetShown(entry.char.name ~= UnitName("player") and GP.IsEligibleCharacter())
 		row:Show()
 	end
 	content:SetHeight(math.max(#entries * ROW_HEIGHT, 1))
@@ -239,6 +239,10 @@ local function UpdateBanner()
 	end
 	if server.mock then
 		text = text .. " |cffffcc00(données de démonstration)|r"
+	end
+	local eligible, reason = GP.IsEligibleCharacter()
+	if not eligible then
+		text = ("|cffff5555Personnage %s : scan et commandes désactivés.|r  "):format(reason) .. text
 	end
 	mainFrame.banner:SetText(text)
 end

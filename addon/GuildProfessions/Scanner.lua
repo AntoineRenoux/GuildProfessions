@@ -16,6 +16,21 @@ local function ScanIdentity()
 	char.raceId = raceId
 	char.gender = UnitSex("player")
 	char.level = UnitLevel("player")
+	char.guild = GP.GetPlayerGuildName()
+end
+
+-- Personnage non éligible (hors guilde / autre guilde) : aucun scan, et on
+-- efface ce qui aurait été enregistré avant (reroll scanné par erreur).
+local function GateEligibility()
+	if GP.IsEligibleCharacter() then
+		return true
+	end
+	local name = UnitName("player")
+	if GuildProfessionsDB.characters and GuildProfessionsDB.characters[name] then
+		GuildProfessionsDB.characters[name] = nil
+		GP.RefreshUI()
+	end
+	return false
 end
 
 local function ScanProfessions()
@@ -97,19 +112,38 @@ local function ScanRecipes()
 	GP.RefreshUI()
 end
 
+local function FullScan()
+	if not GateEligibility() then
+		return
+	end
+	pcall(ScanIdentity)
+	pcall(ScanProfessions)
+end
+
 local frame = CreateFrame("Frame")
 frame:RegisterEvent("PLAYER_LOGIN")
+frame:RegisterEvent("PLAYER_GUILD_UPDATE")
 frame:RegisterEvent("SKILL_LINES_CHANGED")
 frame:RegisterEvent("TRADE_SKILL_LIST_UPDATE")
 frame:SetScript("OnEvent", function(_, event)
 	-- Forever vient de sortir : on isole chaque scan pour qu'un changement
 	-- d'API ne casse pas tout l'addon, juste le scan concerné.
 	if event == "PLAYER_LOGIN" then
-		pcall(ScanIdentity)
-		pcall(ScanProfessions)
+		-- GetGuildInfo peut rendre nil juste au login : on re-vérifie un peu
+		-- après, et PLAYER_GUILD_UPDATE couvre le reste.
+		FullScan()
+		if C_Timer and C_Timer.After then
+			C_Timer.After(5, FullScan)
+		end
+	elseif event == "PLAYER_GUILD_UPDATE" then
+		FullScan()
 	elseif event == "SKILL_LINES_CHANGED" then
-		pcall(ScanProfessions)
+		if GateEligibility() then
+			pcall(ScanProfessions)
+		end
 	elseif event == "TRADE_SKILL_LIST_UPDATE" then
-		pcall(ScanRecipes)
+		if GateEligibility() then
+			pcall(ScanRecipes)
+		end
 	end
 end)

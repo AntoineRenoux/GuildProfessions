@@ -9,7 +9,7 @@ namespace GuildProfessions.Server.Discord;
 /// Canal manuel, sans app compagnon : le bot fournit la chaîne à coller en
 /// jeu (/gp → Importer) et ingère celle produite en jeu (/gp → Exporter).
 /// </summary>
-public sealed class ImportExportModule(ExportBuilder exportBuilder, RosterService roster, CraftOrderService craftOrders)
+public sealed class ImportExportModule(ExportBuilder exportBuilder, RosterService roster, CraftOrderService craftOrders, IConfiguration config)
 	: InteractionModuleBase<SocketInteractionContext>
 {
 	[SlashCommand("export-addon", "Obtenir la chaîne d'import pour l'addon (à coller en jeu : /gp → Importer)")]
@@ -51,17 +51,18 @@ public sealed class ImportExportModule(ExportBuilder exportBuilder, RosterServic
 			return;
 		}
 
+		var (filtered, guildWarnings) = GuildFilter.Apply(payload, config["Guild:Name"]);
 		var member = await roster.GetOrCreateMemberAsync(Context.User.Id.ToString(), Context.User.Username);
-		var result = await roster.ApplyUploadAsync(member, payload);
-		var orderWarnings = await craftOrders.ApplyUploadAsync(member, payload);
+		var result = await roster.ApplyUploadAsync(member, filtered);
+		var orderWarnings = await craftOrders.ApplyUploadAsync(member, filtered);
 
-		var summary = new StringBuilder($"Import appliqué : {payload.Characters.Count} personnage(s)");
-		if (payload.Orders is { Count: > 0 })
+		var summary = new StringBuilder($"Import appliqué : {filtered.Characters.Count} personnage(s)");
+		if (filtered.Orders is { Count: > 0 })
 		{
-			summary.Append($", {payload.Orders.Count} commande(s)");
+			summary.Append($", {filtered.Orders.Count} commande(s)");
 		}
 		summary.Append('.');
-		foreach (var warning in result.Warnings.Concat(orderWarnings))
+		foreach (var warning in guildWarnings.Concat(result.Warnings).Concat(orderWarnings))
 		{
 			summary.Append("\n⚠ ").Append(warning);
 		}

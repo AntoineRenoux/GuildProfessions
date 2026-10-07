@@ -3,6 +3,7 @@ using GuildProfessions.Server.Data;
 using GuildProfessions.Server.Services;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Xunit;
 
 namespace GuildProfessions.Server.Tests;
@@ -137,7 +138,7 @@ public sealed class RosterServiceTests : IDisposable
 		]));
 		await _roster.SetProfessionFromDiscordAsync("42", "anto", "Nayra", "Couture", 240, 300, null);
 
-		var export = await new ExportBuilder(_db, _roster).BuildAsync();
+		var export = await new ExportBuilder(_db, _roster, new ConfigurationBuilder().Build()).BuildAsync();
 
 		Assert.Equal(2, export.Characters.Count);
 		Assert.Equal("Flacon des Titans", export.RecipeNames[17635]);

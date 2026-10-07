@@ -76,7 +76,8 @@ public static class SavedVariablesReader
 				characterTable.GetInt("raceId"),
 				characterTable.GetInt("gender"),
 				characterTable.GetInt("level"),
-				professions));
+				professions,
+				characterTable.GetString("guild")));
 		}
 
 		return characters.Count == 0 && orders is null && orderActions is null

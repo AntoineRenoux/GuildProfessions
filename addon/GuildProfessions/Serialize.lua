@@ -104,6 +104,7 @@ function GP.BuildExportPayload()
 			raceId = char.raceId,
 			gender = char.gender,
 			level = char.level,
+			guild = char.guild,
 			professions = professions,
 		}
 	end

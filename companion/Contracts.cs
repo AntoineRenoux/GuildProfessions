@@ -9,7 +9,8 @@ public sealed record ExportDto(
 	DateTime GeneratedUtc,
 	Dictionary<int, string> RecipeNames,
 	List<ExportCharacterDto> Characters,
-	List<ExportOrderDto>? Orders);
+	List<ExportOrderDto>? Orders,
+	string? GuildName = null);
 
 public sealed record ExportOrderDto(
 	int Id,
@@ -66,7 +67,8 @@ public sealed record UploadCharacter(
 	int? RaceId,
 	int? Gender,
 	int? Level,
-	List<UploadProfession> Professions);
+	List<UploadProfession> Professions,
+	string? Guild = null);
 
 public sealed record UploadProfession(
 	string Name,

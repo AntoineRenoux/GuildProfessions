@@ -6,5 +6,8 @@
 	},
 	"Api": {
 		"GuildToken": "un-token-partage-pour-les-compagnons"
+	},
+	"Guild": {
+		"Name": "Nom exact de la guilde en jeu (vide = pas de filtrage)"
 	}
 }
