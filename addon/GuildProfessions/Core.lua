@@ -41,8 +41,16 @@ function GP.GetLocalCharacter()
 	return GuildProfessionsDB.characters[name]
 end
 
+-- Deux sources possibles pour les données serveur : Data.lua (écrit par le
+-- compagnon) et une chaîne importée à la main (persistée en SavedVariables).
+-- La plus récente gagne, à version égale l'import manuel l'emporte.
 function GP.GetServerData()
-	return GuildProfessions_ServerData or { characters = {} }
+	local fromFile = GuildProfessions_ServerData
+	local imported = GuildProfessionsDB and GuildProfessionsDB.importedServerData
+	if imported and (not fromFile or (imported.version or 0) >= (fromFile.version or 0) or fromFile.mock) then
+		return imported
+	end
+	return fromFile or { characters = {} }
 end
 
 -- Fusion serveur + scan local ------------------------------------------------
@@ -168,7 +176,8 @@ function GP.GetOrders()
 			requester = order.requester,
 			crafter = order.crafter,
 			item = order.item,
-			qty = order.qty or 1,
+			-- qty vient de Data.lua (compagnon), quantity d'une chaîne importée
+			qty = order.qty or order.quantity or 1,
 			note = order.note,
 			status = action and action.status or order.status,
 			pendingSync = action ~= nil,

@@ -10,9 +10,9 @@ Objectif : une fenêtre « Guilde+ » en jeu (WoW: Forever) à **deux onglets** 
 
 Les données transitent par un bot Discord + base sur le VPS, synchronisées **dans les deux sens** avec l'addon.
 
-Contrainte fondatrice : un addon WoW ne peut ni faire de requêtes réseau ni lire/écrire des fichiers arbitraires. Les ponts retenus (modèle GatherMate2 / WeakAuras Companion) :
-- **Entrée (serveur → jeu)** : l'app compagnon écrit `Data.lua` dans le dossier de l'addon ; chargé au login / `/reload`.
-- **Sortie (jeu → serveur)** : l'addon écrit ses `SavedVariables` (flushées au logout / `/reload`) ; le compagnon les surveille et uploade.
+Contrainte fondatrice : un addon WoW ne peut ni faire de requêtes réseau ni lire/écrire des fichiers arbitraires. **Deux canaux coexistent** (décision du 2026-10-07), le joueur choisit :
+- **Canal automatique — app compagnon** (modèle GatherMate2 / WeakAuras Companion) : écrit `Data.lua` (serveur → jeu, chargé au login//reload) et uploade les `SavedVariables` (jeu → serveur, flushées au logout//reload).
+- **Canal manuel — chaînes d'import/export** (modèle WeakAuras, pour les joueurs ne voulant pas d'un logiciel tiers) : format commun `GP1!<base64(zlib(json))>` — `C_EncodingUtil` côté addon (`Serialize.lua`), `StringCodec.cs` côté serveur. Discord → jeu : `/export-addon` (pièce jointe .txt) → `/gp` → Importer (persisté en SavedVariables, la source la plus récente gagne). Jeu → Discord : `/gp` → Exporter → `/import` (modale, 4000 caractères max).
 - **Temps réel entre joueurs connectés** : addon messages (`C_ChatInfo.SendAddonMessage`, canal `GUILD`) — notification instantanée d'une commande de craft aux artisans en ligne.
 
 Choix actés : app compagnon, stack .NET (Discord.Net + ASP.NET), sync bidirectionnelle.

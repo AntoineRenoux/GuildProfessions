@@ -1,0 +1,36 @@
+flowchart LR
+    subgraph DISCORD["Discord"]
+        U["Membres de la guilde<br/>/metier · /craft · /link · /token"]
+    end
+
+    subgraph VPS["VPS — server/ (.NET 10, Docker)"]
+        BOT["Bot Discord.Net"]
+        API["API HTTP<br/>GET /export · POST /upload"]
+        DB[("SQLite<br/>membres · personnages · métiers<br/>recettes · commandes de craft")]
+        BOT <--> DB
+        API <--> DB
+    end
+
+    subgraph PC["PC du joueur — companion/ (.NET 10)"]
+        COMP["App compagnon<br/>poll + FileSystemWatcher"]
+    end
+
+    subgraph WOW["WoW: Forever — addon/ (Lua, TOC 16001)"]
+        DATA["Data.lua<br/>(généré, lu au /reload)"]
+        SV["SavedVariables<br/>(écrites au logout//reload)"]
+        UI2["/gp — 3 onglets :<br/>Métiers · Membres (étape 5) · Commandes"]
+        SCAN["Scanners : métiers, recettes,<br/>équipement, identité"]
+        DATA --> UI2
+        SCAN --> SV
+        UI2 --> SV
+    end
+
+    AUTRE["Autres joueurs connectés<br/>(addon)"]
+
+    U <--> BOT
+    BOT -. "DM : nouvelle commande,<br/>statut changé" .-> U
+    COMP -- "GET /export (token guilde)" --> API
+    COMP -- "POST /upload (token perso)" --> API
+    COMP -- "écrit si version change" --> DATA
+    SV -- "détecté à chaque écriture" --> COMP
+    UI2 <-. "toast temps réel<br/>addon msg GPROF (guilde)" .-> AUTRE

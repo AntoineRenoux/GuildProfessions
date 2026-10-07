@@ -341,6 +341,113 @@ function GP.OpenOrderDialog(crafter, prefillItem)
 	orderDialog.itemBox:SetFocus()
 end
 
+-- Fenêtres Importer / Exporter -----------------------------------------------------
+
+local textDialog
+
+local function CreateTextDialog()
+	local dialog = CreateFrame("Frame", "GuildProfessionsTextDialog", UIParent, "BackdropTemplate")
+	dialog:SetSize(520, 320)
+	dialog:SetPoint("CENTER")
+	dialog:SetFrameStrata("DIALOG")
+	dialog:EnableMouse(true)
+	dialog:SetMovable(true)
+	dialog:RegisterForDrag("LeftButton")
+	dialog:SetScript("OnDragStart", dialog.StartMoving)
+	dialog:SetScript("OnDragStop", dialog.StopMovingOrSizing)
+	dialog:SetBackdrop({
+		bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+		edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+		edgeSize = 24,
+		insets = { left = 6, right = 6, top = 6, bottom = 6 },
+	})
+	tinsert(UISpecialFrames, "GuildProfessionsTextDialog")
+
+	dialog.title = dialog:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	dialog.title:SetPoint("TOP", 0, -16)
+
+	dialog.hint = dialog:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+	dialog.hint:SetPoint("TOP", 0, -34)
+	dialog.hint:SetTextColor(0.7, 0.7, 0.7)
+
+	local scroll = CreateFrame("ScrollFrame", nil, dialog, "UIPanelScrollFrameTemplate")
+	scroll:SetPoint("TOPLEFT", 20, -52)
+	scroll:SetPoint("BOTTOMRIGHT", -40, 52)
+
+	local editBox = CreateFrame("EditBox", nil, scroll)
+	editBox:SetMultiLine(true)
+	editBox:SetFontObject(ChatFontNormal)
+	editBox:SetWidth(440)
+	editBox:SetAutoFocus(false)
+	editBox:SetScript("OnEscapePressed", function() dialog:Hide() end)
+	scroll:SetScrollChild(editBox)
+	dialog.editBox = editBox
+
+	dialog.status = dialog:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+	dialog.status:SetPoint("BOTTOMLEFT", 24, 56)
+
+	dialog.actionButton = CreateFrame("Button", nil, dialog, "UIPanelButtonTemplate")
+	dialog.actionButton:SetSize(140, 24)
+	dialog.actionButton:SetPoint("BOTTOMLEFT", 24, 18)
+
+	local close = CreateFrame("Button", nil, dialog, "UIPanelButtonTemplate")
+	close:SetSize(100, 24)
+	close:SetPoint("BOTTOMRIGHT", -24, 18)
+	close:SetText("Fermer")
+	close:SetScript("OnClick", function() dialog:Hide() end)
+
+	return dialog
+end
+
+local function OpenImportDialog()
+	textDialog = textDialog or CreateTextDialog()
+	local dialog = textDialog
+	dialog.title:SetText("Importer les données de la guilde")
+	dialog.hint:SetText("Colle la chaîne du bot Discord (commande /export-addon), puis Importer.")
+	dialog.editBox:SetScript("OnTextChanged", nil)
+	dialog.editBox:SetText("")
+	dialog.status:SetText("")
+	dialog.actionButton:SetText("Importer")
+	dialog.actionButton:Show()
+	dialog.actionButton:SetScript("OnClick", function()
+		local ok, err = GP.ImportString(dialog.editBox:GetText())
+		if ok then
+			dialog.status:SetText("|cff33ff66Import réussi — données à jour.|r")
+			dialog.editBox:SetText("")
+		else
+			dialog.status:SetText("|cffff5555" .. (err or "échec") .. "|r")
+		end
+	end)
+	dialog:Show()
+	dialog.editBox:SetFocus()
+end
+
+local function OpenExportDialog()
+	textDialog = textDialog or CreateTextDialog()
+	local dialog = textDialog
+	dialog.title:SetText("Exporter mes données")
+	dialog.hint:SetText("Ctrl+C pour copier, puis /import sur Discord (ou donne la chaîne à un officier).")
+	dialog.actionButton:Hide()
+	local text, err = GP.BuildExportString()
+	if text then
+		dialog.status:SetText(("|cff999999%d caractères|r"):format(#text))
+		dialog.editBox:SetText(text)
+		dialog.editBox:HighlightText()
+		dialog.editBox:SetFocus()
+		-- Toute frappe restaure la chaîne : la zone reste un presse-papiers.
+		dialog.editBox:SetScript("OnTextChanged", function(self, userInput)
+			if userInput then
+				self:SetText(text)
+				self:HighlightText()
+			end
+		end)
+	else
+		dialog.editBox:SetText("")
+		dialog.status:SetText("|cffff5555" .. (err or "échec de l'export") .. "|r")
+	end
+	dialog:Show()
+end
+
 -- Onglet Commandes ----------------------------------------------------------------
 
 local orderRowPool = {}
@@ -487,9 +594,21 @@ local function CreateMainFrame()
 	tab3:SetScript("OnClick", function() SelectTab(3) end)
 	frame.tabButton3 = tab3
 
-	-- Bandeau bas
+	-- Barre du bas : import/export manuel + bandeau d'état
+	local importButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+	importButton:SetSize(90, 22)
+	importButton:SetPoint("BOTTOMLEFT", 14, 10)
+	importButton:SetText("Importer")
+	importButton:SetScript("OnClick", OpenImportDialog)
+
+	local exportButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+	exportButton:SetSize(90, 22)
+	exportButton:SetPoint("LEFT", importButton, "RIGHT", 6, 0)
+	exportButton:SetText("Exporter")
+	exportButton:SetScript("OnClick", OpenExportDialog)
+
 	local banner = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-	banner:SetPoint("BOTTOM", 0, 14)
+	banner:SetPoint("BOTTOM", 40, 14)
 	banner:SetTextColor(0.7, 0.7, 0.7)
 	frame.banner = banner
 
