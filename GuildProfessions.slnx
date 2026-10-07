@@ -1,4 +1,10 @@
 <Solution>
+  <Folder Name="/companion.Tests/">
+    <Project Path="companion.Tests/GuildProfessions.Companion.Tests.csproj" />
+  </Folder>
+  <Folder Name="/companion/">
+    <Project Path="companion/GuildProfessions.Companion.csproj" />
+  </Folder>
   <Folder Name="/server.Tests/">
     <Project Path="server.Tests/GuildProfessions.Server.Tests.csproj" />
   </Folder>

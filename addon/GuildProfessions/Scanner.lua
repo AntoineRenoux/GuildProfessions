@@ -84,6 +84,10 @@ local function ScanRecipes()
 		end
 	end
 	table.sort(learned)
+	-- Résolution eager des noms : alimente le cache persistant pour l'upload.
+	for _, id in ipairs(learned) do
+		GP.GetRecipeName(id)
+	end
 	local char = GP.GetLocalCharacter()
 	char.professions = char.professions or {}
 	local prof = char.professions[profName] or {}

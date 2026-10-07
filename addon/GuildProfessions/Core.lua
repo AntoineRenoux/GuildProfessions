@@ -98,6 +98,12 @@ function GP.GetRecipeName(spellId)
 	end
 	if name then
 		recipeNameCache[spellId] = name
+		-- Persisté dans les SavedVariables : le compagnon s'en sert pour
+		-- envoyer les noms au serveur (recherche de recette via Discord).
+		if GuildProfessionsDB then
+			GuildProfessionsDB.recipeNames = GuildProfessionsDB.recipeNames or {}
+			GuildProfessionsDB.recipeNames[spellId] = name
+		end
 	end
 	return name
 end

@@ -1,0 +1,49 @@
+namespace GuildProfessions.Companion;
+
+// Miroir des contrats du serveur (server/Contracts/Dtos.cs). Le compagnon
+// reste autonome (publication single-file) : toute évolution se fait des
+// deux côtés.
+
+public sealed record ExportDto(
+	long Version,
+	DateTime GeneratedUtc,
+	Dictionary<int, string> RecipeNames,
+	List<ExportCharacterDto> Characters);
+
+public sealed record ExportCharacterDto(
+	string Name,
+	string? ClassFile,
+	string? RaceFile,
+	int? RaceId,
+	int? Gender,
+	int? Level,
+	List<ExportProfessionDto> Professions);
+
+public sealed record ExportProfessionDto(
+	string Name,
+	int Level,
+	int Max,
+	string? Note,
+	string Source,
+	string? ScannedAt,
+	List<int> Recipes);
+
+public sealed record UploadPayload(List<UploadCharacter> Characters);
+
+public sealed record UploadCharacter(
+	string Name,
+	string? ClassFile,
+	string? RaceFile,
+	int? RaceId,
+	int? Gender,
+	int? Level,
+	List<UploadProfession> Professions);
+
+public sealed record UploadProfession(
+	string Name,
+	int Level,
+	int Max,
+	string? ScannedAt,
+	List<UploadRecipe>? Recipes);
+
+public sealed record UploadRecipe(int Id, string? Name);
