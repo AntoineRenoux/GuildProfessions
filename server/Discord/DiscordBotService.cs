@@ -41,12 +41,22 @@ public sealed class DiscordBotService(
 
 	private async Task OnReadyAsync()
 	{
-		var guildId = config.GetValue<ulong?>("Discord:GuildId");
-		if (guildId is > 0)
+		// Discord:GuildIds = IDs de serveurs séparés par des virgules (test,
+		// prod...). L'enregistrement par serveur est immédiat ; passer en prod
+		// = ajouter l'ID du serveur de guilde à la liste, sans rien retirer.
+		var guildIds = (config["Discord:GuildIds"] ?? config["Discord:GuildId"] ?? "")
+			.Split([',', ';', ' '], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+			.Select(raw => ulong.TryParse(raw, out var id) ? id : 0)
+			.Where(id => id > 0)
+			.ToList();
+
+		if (guildIds.Count > 0)
 		{
-			// Enregistrement sur une guilde précise : effectif immédiatement.
-			await interactions.RegisterCommandsToGuildAsync(guildId.Value);
-			logger.LogInformation("Commandes slash enregistrées sur la guilde {GuildId}.", guildId);
+			foreach (var guildId in guildIds)
+			{
+				await interactions.RegisterCommandsToGuildAsync(guildId);
+				logger.LogInformation("Commandes slash enregistrées sur le serveur {GuildId}.", guildId);
+			}
 		}
 		else
 		{

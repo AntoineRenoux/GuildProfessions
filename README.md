@@ -31,6 +31,22 @@ dotnet dotnet-ef migrations add <Nom> --project server/GuildProfessions.Server.c
 
 L'API répond sur `GET /healthz`, `GET /api/v1/export` (header `X-Guild-Token`) et `POST /api/v1/upload` (header `X-Upload-Token`, délivré par la commande Discord `/token`).
 
+## Configurer le bot : test puis prod
+
+Le bot enregistre ses commandes sur les serveurs listés dans `Discord:GuildIds`
+(IDs séparés par des virgules). Le passage test → prod consiste à **ajouter**
+l'ID du serveur de guilde, sans rien changer d'autre :
+
+| Environnement | Où configurer | Exemple |
+|---|---|---|
+| Test local (`dotnet run`) | `server/appsettings.Local.json` (gitignoré, modèle : `appsettings.Local.json.example`) | `"GuildIds": "111111111111111111"` |
+| VPS (docker compose) | `.env` | `DISCORD_GUILD_IDS=111111111111111111,222222222222222222` |
+
+Création du bot (une fois) : [discord.com/developers/applications](https://discord.com/developers/applications)
+→ New Application → onglet **Bot** → Reset Token (= `Discord:Token`). Invitation sur un serveur :
+`https://discord.com/oauth2/authorize?client_id=<APPLICATION_ID>&scope=bot+applications.commands&permissions=51200`
+(51200 = envoyer des messages, intégrer des liens, joindre des fichiers).
+
 ## Publier le compagnon pour les guildeux
 
 ```bash

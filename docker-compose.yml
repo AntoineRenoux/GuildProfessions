@@ -7,7 +7,7 @@ services:
     environment:
       # Valeurs fournies par un fichier .env à côté de ce compose (jamais commité).
       Discord__Token: ${DISCORD_TOKEN:?DISCORD_TOKEN manquant dans .env}
-      Discord__GuildId: ${DISCORD_GUILD_ID:-0}
+      Discord__GuildIds: ${DISCORD_GUILD_IDS:-}
       Api__GuildToken: ${API_GUILD_TOKEN:?API_GUILD_TOKEN manquant dans .env}
     volumes:
       - ./data:/data

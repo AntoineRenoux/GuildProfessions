@@ -1,0 +1,10 @@
+{
+	"//": "Copier en appsettings.Local.json (gitignoré) pour les tests locaux. Sur le VPS, utiliser le .env de docker-compose.",
+	"Discord": {
+		"Token": "LE_TOKEN_DU_BOT",
+		"GuildIds": "ID_SERVEUR_TEST"
+	},
+	"Api": {
+		"GuildToken": "un-token-partage-pour-les-compagnons"
+	}
+}
