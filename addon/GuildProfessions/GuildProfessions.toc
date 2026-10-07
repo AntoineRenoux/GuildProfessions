@@ -1,0 +1,11 @@
+## Interface: 16001
+## Title: GuildProfessions
+## Notes: Annuaire des métiers de la guilde — synchronisé via Discord et l'app compagnon.
+## Author: Antoine
+## Version: 0.1.0
+## SavedVariables: GuildProfessionsDB
+
+Data.lua
+Core.lua
+Scanner.lua
+UI.lua

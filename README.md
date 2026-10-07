@@ -22,7 +22,7 @@ Un addon WoW n'a accès ni au réseau ni au disque : le compagnon fait le pont, 
 ## État d'avancement
 
 - [x] Étape 0 — dépôt, structure, plan fondateur
-- [ ] Étape 1 — addon, onglet Métiers sur données mock
+- [x] Étape 1 — addon, onglet Métiers sur données mock *(code livré — à valider en jeu sur le client Forever)*
 - [ ] Étape 2 — serveur (bot + API + SQLite)
 - [ ] Étape 3 — compagnon (down-sync puis up-sync)
 - [ ] Étape 4 — commandes de craft

@@ -1,0 +1,111 @@
+local _, GP = ...
+
+-- Scanne le personnage local vers GuildProfessionsDB. Les SavedVariables ne
+-- sont écrites sur disque qu'au logout//reload : c'est là que le compagnon
+-- les lit et les uploade.
+
+local function Now()
+	return date("%Y-%m-%d %H:%M")
+end
+
+local function ScanIdentity()
+	local char = GP.GetLocalCharacter()
+	char.classFile = select(2, UnitClass("player"))
+	local _, raceFile, raceId = UnitRace("player")
+	char.raceFile = raceFile
+	char.raceId = raceId
+	char.gender = UnitSex("player")
+	char.level = UnitLevel("player")
+end
+
+local function ScanProfessions()
+	if not (GetProfessions and GetProfessionInfo) then
+		return
+	end
+	local char = GP.GetLocalCharacter()
+	char.professions = char.professions or {}
+	-- GetProfessions peut rendre des trous (nil) : pairs sur le constructeur les saute.
+	local prof1, prof2, arch, fishing, cooking, firstAid = GetProfessions()
+	local seen = {}
+	for _, index in pairs({ prof1, prof2, arch, fishing, cooking, firstAid }) do
+		local name, _, level, max = GetProfessionInfo(index)
+		if name then
+			seen[name] = true
+			local prof = char.professions[name] or {}
+			prof.level = level
+			prof.max = max
+			prof.scannedAt = Now()
+			char.professions[name] = prof
+		end
+	end
+	-- Métier désappris : on retire l'entrée locale.
+	for name in pairs(char.professions) do
+		if not seen[name] then
+			char.professions[name] = nil
+		end
+	end
+	GP.RefreshUI()
+end
+
+local function CurrentTradeSkillName()
+	if not C_TradeSkillUI then
+		return nil
+	end
+	if C_TradeSkillUI.GetBaseProfessionInfo then
+		local info = C_TradeSkillUI.GetBaseProfessionInfo()
+		if info then
+			return info.professionName or info.parentProfessionName or info.name
+		end
+	end
+	if C_TradeSkillUI.GetTradeSkillLine then
+		local _, name = C_TradeSkillUI.GetTradeSkillLine()
+		return name
+	end
+	return nil
+end
+
+local function ScanRecipes()
+	if not (C_TradeSkillUI and C_TradeSkillUI.GetAllRecipeIDs and C_TradeSkillUI.GetRecipeInfo) then
+		return
+	end
+	local profName = CurrentTradeSkillName()
+	if not profName or profName == "" then
+		return
+	end
+	local ids = C_TradeSkillUI.GetAllRecipeIDs()
+	if not ids or #ids == 0 then
+		return
+	end
+	local learned = {}
+	for _, id in ipairs(ids) do
+		local info = C_TradeSkillUI.GetRecipeInfo(id)
+		if info and info.learned then
+			learned[#learned + 1] = id
+		end
+	end
+	table.sort(learned)
+	local char = GP.GetLocalCharacter()
+	char.professions = char.professions or {}
+	local prof = char.professions[profName] or {}
+	prof.recipes = learned
+	prof.scannedAt = Now()
+	char.professions[profName] = prof
+	GP.RefreshUI()
+end
+
+local frame = CreateFrame("Frame")
+frame:RegisterEvent("PLAYER_LOGIN")
+frame:RegisterEvent("SKILL_LINES_CHANGED")
+frame:RegisterEvent("TRADE_SKILL_LIST_UPDATE")
+frame:SetScript("OnEvent", function(_, event)
+	-- Forever vient de sortir : on isole chaque scan pour qu'un changement
+	-- d'API ne casse pas tout l'addon, juste le scan concerné.
+	if event == "PLAYER_LOGIN" then
+		pcall(ScanIdentity)
+		pcall(ScanProfessions)
+	elseif event == "SKILL_LINES_CHANGED" then
+		pcall(ScanProfessions)
+	elseif event == "TRADE_SKILL_LIST_UPDATE" then
+		pcall(ScanRecipes)
+	end
+end)
