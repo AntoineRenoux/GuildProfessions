@@ -4,22 +4,27 @@ namespace GuildProfessions.Companion;
 
 public sealed class CompanionConfig
 {
-	public string ApiBaseUrl { get; set; } = "http://localhost:5000";
+	public string ApiBaseUrl { get; set; } = "https://gp.warpvault.com";
 	public string GuildToken { get; set; } = "";
+	/// <summary>Optionnel : sans token personnel, l'upload passe par le token de guilde.</summary>
 	public string UploadToken { get; set; } = "";
 	public string WowPath { get; set; } = "";
 	public int PollMinutes { get; set; } = 10;
 
 	private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web) { WriteIndented = true };
 
-	public static CompanionConfig? LoadOrCreate(string path)
+	// Zéro configuration côté joueur : sans config.json on continue avec les
+	// valeurs par défaut (le zip distribué par l'officier en contient un
+	// pré-rempli avec le token de guilde).
+	public static CompanionConfig LoadOrCreate(string path)
 	{
 		if (!File.Exists(path))
 		{
-			File.WriteAllText(path, JsonSerializer.Serialize(new CompanionConfig(), JsonOptions));
-			return null;
+			var defaults = new CompanionConfig();
+			File.WriteAllText(path, JsonSerializer.Serialize(defaults, JsonOptions));
+			return defaults;
 		}
-		return JsonSerializer.Deserialize<CompanionConfig>(File.ReadAllText(path), JsonOptions);
+		return JsonSerializer.Deserialize<CompanionConfig>(File.ReadAllText(path), JsonOptions) ?? new CompanionConfig();
 	}
 
 	/// <summary>

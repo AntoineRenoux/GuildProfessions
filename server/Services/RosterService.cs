@@ -137,7 +137,12 @@ public sealed class RosterService(AppDbContext db)
 
 	// ---- Upload compagnon -----------------------------------------------------
 
-	public async Task<UploadResult> ApplyUploadAsync(Member member, UploadPayload payload, CancellationToken ct = default)
+	/// <summary>
+	/// member null = upload « partagé » (compagnon zéro-config authentifié par
+	/// le token de guilde) : pas de revendication de personnage ni de contrôle
+	/// de propriété — le scan vient du jeu et reste la vérité.
+	/// </summary>
+	public async Task<UploadResult> ApplyUploadAsync(Member? member, UploadPayload payload, CancellationToken ct = default)
 	{
 		var warnings = new List<string>();
 		foreach (var uploaded in payload.Characters)
@@ -148,15 +153,15 @@ public sealed class RosterService(AppDbContext db)
 
 			if (character is null)
 			{
-				character = new Character { Name = uploaded.Name, MemberId = member.Id, Source = DataSource.Addon };
+				character = new Character { Name = uploaded.Name, MemberId = member?.Id, Source = DataSource.Addon };
 				db.Characters.Add(character);
 			}
-			else if (character.MemberId is not null && character.MemberId != member.Id)
+			else if (member is not null && character.MemberId is not null && character.MemberId != member.Id)
 			{
 				warnings.Add($"{uploaded.Name} est lié à un autre membre : upload ignoré pour ce personnage.");
 				continue;
 			}
-			else
+			else if (member is not null)
 			{
 				character.MemberId ??= member.Id;
 			}

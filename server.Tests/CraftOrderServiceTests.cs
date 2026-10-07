@@ -115,6 +115,30 @@ public sealed class CraftOrderServiceTests : IDisposable
 		Assert.Equal("10", Assert.Single(_notifier.StatusRecipients));
 	}
 
+	[Fact]
+	public async Task ApplyUpload_SharedMode_Should_UsePayloadCharactersAsIdentity()
+	{
+		await _roster.LinkCharacterAsync("10", "demandeur", "Nayra");
+		await _roster.LinkCharacterAsync("20", "artisan", "Thorgal");
+		await _orders.CreateFromDiscordAsync("10", "demandeur", "Thorgal", "Heaume Cœur de lion", 1, null);
+		var orderId = (await _db.CraftOrders.SingleAsync()).Id;
+
+		// Upload partagé contenant le scan de Thorgal : l'action de l'artisan passe.
+		var crafterPayload = new UploadPayload(
+			[new UploadCharacter("Thorgal", "WARRIOR", null, null, null, 60, [])],
+			OrderActions: [new UploadOrderAction(orderId, null, "accepted")]);
+		await _orders.ApplyUploadAsync(null, crafterPayload);
+		Assert.Equal(CraftOrderStatus.Accepted, (await _db.CraftOrders.SingleAsync()).Status);
+
+		// Upload partagé d'un AUTRE compte (sans Thorgal) : action refusée.
+		var strangerPayload = new UploadPayload(
+			[new UploadCharacter("Inconnu", null, null, null, null, null, [])],
+			OrderActions: [new UploadOrderAction(orderId, null, "done")]);
+		var warnings = await _orders.ApplyUploadAsync(null, strangerPayload);
+		Assert.Single(warnings);
+		Assert.Equal(CraftOrderStatus.Accepted, (await _db.CraftOrders.SingleAsync()).Status);
+	}
+
 	#region Helper Methods
 
 	private sealed class RecordingNotifier : ICraftOrderNotifier

@@ -95,14 +95,21 @@ public sealed class CraftOrderService(AppDbContext db, RosterService roster, ICr
 		return new OperationResult(true, $"Commande **#{order.Id}** ({order.Item}) → {Label(newStatus)}.");
 	}
 
-	/// <summary>Commandes créées ou statuées en jeu, remontées par le compagnon.</summary>
-	public async Task<List<string>> ApplyUploadAsync(Member member, UploadPayload payload, CancellationToken ct = default)
+	/// <summary>
+	/// Commandes créées ou statuées en jeu, remontées par le compagnon.
+	/// member null = upload partagé : l'identité est alors « les personnages
+	/// scannés dans ce payload » — on ne peut agir que pour les persos de son
+	/// propre compte WoW, puisque ce sont eux qu'on uploade.
+	/// </summary>
+	public async Task<List<string>> ApplyUploadAsync(Member? member, UploadPayload payload, CancellationToken ct = default)
 	{
 		var warnings = new List<string>();
-		var memberCharacters = await db.Characters
-			.Where(c => c.MemberId == member.Id)
-			.Select(c => c.Name)
-			.ToHashSetAsync(ct);
+		var memberCharacters = member is not null
+			? await db.Characters
+				.Where(c => c.MemberId == member.Id)
+				.Select(c => c.Name)
+				.ToHashSetAsync(ct)
+			: payload.Characters.Select(c => c.Name).ToHashSet();
 		var changed = false;
 
 		foreach (var uploaded in payload.Orders ?? [])

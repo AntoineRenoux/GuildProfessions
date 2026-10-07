@@ -47,17 +47,22 @@ Création du bot (une fois) : [discord.com/developers/applications](https://disc
 `https://discord.com/oauth2/authorize?client_id=<APPLICATION_ID>&scope=bot+applications.commands&permissions=51200`
 (51200 = envoyer des messages, intégrer des liens, joindre des fichiers).
 
-## Publier le compagnon pour les guildeux
+## Distribuer le compagnon (zéro config pour les joueurs)
 
 ```bash
-# Windows (exécutable autonome unique, aucun prérequis)
-dotnet publish companion -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -o publish/win-x64
-
-# Linux (Lutris/Proton)
-dotnet publish companion -c Release -r linux-x64 --self-contained -p:PublishSingleFile=true -o publish/linux-x64
+scripts/package-companion.sh
 ```
 
-Au premier lancement, le compagnon crée un `config.json` à remplir : `apiBaseUrl` = **`https://gp.warpvault.com`** (production — servie en HTTPS par le Caddy du VPS, bloc dans `/opt/entracte/deploy/Caddyfile`), `guildToken` (fourni par l'officier — valeur dans `/opt/guildprofessions/.env` sur le VPS), `uploadToken` (`/token` sur Discord), `wowPath` (auto-détecté si vide, installations Windows et Steam/Proton). Il tourne ensuite en tâche de fond : il écrit `Data.lua` quand le serveur change (puis `/reload` en jeu) et uploade les SavedVariables à chaque déconnexion//reload.
+Le script publie les exécutables autonomes win-x64 et linux-x64 et glisse à côté un
+`config.json` **pré-rempli** (URL de prod `https://gp.warpvault.com` + token de guilde lu
+sur le VPS). Résultat : deux zips dans `publish/companion-dist/`. Côté joueur : **dézipper,
+lancer `GuildProfessionsCompanion`, c'est tout** — chemin WoW auto-détecté (Windows et
+Steam/Proton), aucun compte, aucun token à saisir. L'upload passe par le token de guilde
+partagé ; un `uploadToken` personnel (`/token` sur Discord) reste possible mais optionnel.
+
+Le compagnon tourne en tâche de fond : il écrit `Data.lua` quand les données serveur
+changent (puis `/reload` en jeu) et uploade les SavedVariables à chaque déconnexion//reload.
+L'API de prod est servie en HTTPS par le Caddy du VPS (bloc dans `/opt/entracte/deploy/Caddyfile`).
 
 ## État d'avancement
 

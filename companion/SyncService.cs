@@ -85,9 +85,9 @@ public sealed class SyncService : IDisposable
 
 	public async Task UpSyncAsync(string reason, CancellationToken ct)
 	{
-		if (string.IsNullOrEmpty(_config.UploadToken))
+		if (string.IsNullOrEmpty(_config.UploadToken) && string.IsNullOrEmpty(_config.GuildToken))
 		{
-			Log("Up-sync ignoré : uploadToken absent (commande Discord /token pour l'obtenir).");
+			Log("Up-sync ignoré : aucun token (guildToken ou uploadToken) dans config.json.");
 			return;
 		}
 		foreach (var file in SavedVariablesFiles())
@@ -109,7 +109,14 @@ public sealed class SyncService : IDisposable
 				}
 
 				using var request = new HttpRequestMessage(HttpMethod.Post, "api/v1/upload");
-				request.Headers.Add("X-Upload-Token", _config.UploadToken);
+				if (!string.IsNullOrEmpty(_config.UploadToken))
+				{
+					request.Headers.Add("X-Upload-Token", _config.UploadToken);
+				}
+				else
+				{
+					request.Headers.Add("X-Guild-Token", _config.GuildToken);
+				}
 				request.Content = new StringContent(json, Encoding.UTF8, "application/json");
 				using var response = await _http.SendAsync(request, ct);
 				response.EnsureSuccessStatusCode();

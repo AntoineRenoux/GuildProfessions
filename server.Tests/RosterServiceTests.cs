@@ -93,6 +93,23 @@ public sealed class RosterServiceTests : IDisposable
 	}
 
 	[Fact]
+	public async Task ApplyUpload_Should_UpdateLinkedCharacterWithoutClaiming_WhenSharedMode()
+	{
+		await _roster.LinkCharacterAsync("1", "proprietaire", "Thorgal");
+		var linkedMemberId = (await _db.Characters.SingleAsync()).MemberId;
+
+		// member null = upload partagé (token de guilde) : pas de contrôle de
+		// propriété, pas de revendication.
+		var result = await _roster.ApplyUploadAsync(null, Payload("Thorgal", ("Forge", 290)));
+
+		Assert.True(result.Applied);
+		Assert.Empty(result.Warnings);
+		var character = await _db.Characters.Include(c => c.Professions).SingleAsync();
+		Assert.Equal(linkedMemberId, character.MemberId); // le lien existant est conservé
+		Assert.Equal(290, character.Professions.Single().SkillLevel);
+	}
+
+	[Fact]
 	public async Task ApplyUpload_Should_SkipCharacter_WhenLinkedToAnotherMember()
 	{
 		await _roster.LinkCharacterAsync("1", "proprietaire", "Thorgal");

@@ -1,36 +1,44 @@
 flowchart LR
     subgraph DISCORD["Discord"]
-        U["Membres de la guilde<br/>/metier · /craft · /link · /token"]
+        U["Membres de la guilde<br/>/metier · /craft · /link · /token<br/>/export-addon · /import"]
     end
 
-    subgraph VPS["VPS — server/ (.NET 10, Docker)"]
-        BOT["Bot Discord.Net"]
-        API["API HTTP<br/>GET /export · POST /upload"]
-        DB[("SQLite<br/>membres · personnages · métiers<br/>recettes · commandes de craft")]
+    subgraph VPS["VPS Hostinger — conteneur Docker /opt/guildprofessions"]
+        direction TB
+        PROC["GuildProfessions.Server (.NET 10)<br/>UN SEUL process"]
+        BOT["Bot Discord.Net<br/>(connexion sortante, aucun port)"]
+        API["API HTTP :8080<br/>GET /export · POST /upload<br/>(interne — pare-feu fermé pour l'instant)"]
+        DB[("SQLite /data<br/>membres · personnages · métiers<br/>recettes · commandes · version")]
+        PROC --- BOT
+        PROC --- API
         BOT <--> DB
         API <--> DB
     end
 
-    subgraph PC["PC du joueur — companion/ (.NET 10)"]
-        COMP["App compagnon<br/>poll + FileSystemWatcher"]
+    subgraph PC["PC du joueur"]
+        COMP["App compagnon (optionnelle)<br/>poll + FileSystemWatcher"]
+        subgraph WOW["WoW: Forever — addon Lua (TOC 16001)"]
+            DATA["Data.lua<br/>(écrit par le compagnon)"]
+            SV["SavedVariables<br/>(écrites au logout//reload)"]
+            UI2["/gp — Métiers · Membres · Commandes<br/>+ boutons Importer/Exporter (GP1!)"]
+            SCAN["Scanners (guilde vérifiée) :<br/>identité, métiers, recettes"]
+            DATA --> UI2
+            SCAN --> SV
+            UI2 --> SV
+        end
     end
 
-    subgraph WOW["WoW: Forever — addon/ (Lua, TOC 16001)"]
-        DATA["Data.lua<br/>(généré, lu au /reload)"]
-        SV["SavedVariables<br/>(écrites au logout//reload)"]
-        UI2["/gp — 3 onglets :<br/>Métiers · Membres (étape 5) · Commandes"]
-        SCAN["Scanners : métiers, recettes,<br/>équipement, identité"]
-        DATA --> UI2
-        SCAN --> SV
-        UI2 --> SV
-    end
-
-    AUTRE["Autres joueurs connectés<br/>(addon)"]
+    AUTRE["Autres joueurs connectés"]
 
     U <--> BOT
-    BOT -. "DM : nouvelle commande,<br/>statut changé" .-> U
-    COMP -- "GET /export (token guilde)" --> API
-    COMP -- "POST /upload (token perso)" --> API
+    BOT -. "DM : commande créée,<br/>statut changé" .-> U
+
+    COMP -- "GET /export" --> API
+    COMP -- "POST /upload" --> API
     COMP -- "écrit si version change" --> DATA
-    SV -- "détecté à chaque écriture" --> COMP
+    SV -- "watcher" --> COMP
+
+    U -- "chaîne GP1! (fichier .txt)<br/>copier/coller" --> UI2
+    UI2 -- "chaîne GP1!<br/>copier/coller → /import" --> U
+
     UI2 <-. "toast temps réel<br/>addon msg GPROF (guilde)" .-> AUTRE

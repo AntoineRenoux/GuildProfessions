@@ -6,11 +6,10 @@ var configPath = Path.Combine(baseDirectory, "config.json");
 SyncService.Log("GuildProfessions Companion — pont entre le serveur de guilde et l'addon.");
 
 var config = CompanionConfig.LoadOrCreate(configPath);
-if (config is null)
+if (string.IsNullOrEmpty(config.GuildToken) && string.IsNullOrEmpty(config.UploadToken))
 {
-	SyncService.Log($"Premier lancement : {configPath} créé.");
-	SyncService.Log("Renseigne apiBaseUrl, guildToken (fourni par l'officier), uploadToken (/token sur Discord), puis relance.");
-	return 1;
+	SyncService.Log("Aucun token dans config.json : la synchronisation sera inactive.");
+	SyncService.Log("Utilise le zip fourni par l'officier (config.json pré-rempli) ou renseigne guildToken.");
 }
 
 if (string.IsNullOrEmpty(config.WowPath))

@@ -24,15 +24,26 @@ public static class Endpoints
 
 		app.MapPost("/api/v1/upload", async (HttpRequest request, UploadPayload payload, AppDbContext db, RosterService roster, CraftOrderService craftOrders, IConfiguration config, CancellationToken ct) =>
 		{
-			var token = request.Headers["X-Upload-Token"].ToString();
-			if (string.IsNullOrEmpty(token))
+			// Deux modes : token personnel (identifie un membre Discord) ou
+			// token de guilde partagé (compagnon zéro-config, member = null).
+			Member? member = null;
+			var uploadToken = request.Headers["X-Upload-Token"].ToString();
+			if (!string.IsNullOrEmpty(uploadToken))
 			{
-				return Results.Unauthorized();
+				member = await db.Members.SingleOrDefaultAsync(m => m.UploadToken == uploadToken, ct);
+				if (member is null)
+				{
+					return Results.Unauthorized();
+				}
 			}
-			var member = await db.Members.SingleOrDefaultAsync(m => m.UploadToken == token, ct);
-			if (member is null)
+			else
 			{
-				return Results.Unauthorized();
+				var expected = config["Api:GuildToken"];
+				if (string.IsNullOrEmpty(expected) ||
+					request.Headers["X-Guild-Token"].ToString() != expected)
+				{
+					return Results.Unauthorized();
+				}
 			}
 			var (filtered, guildWarnings) = GuildFilter.Apply(payload, config["Guild:Name"]);
 			var result = await roster.ApplyUploadAsync(member, filtered, ct);
