@@ -10,6 +10,7 @@ publish/
 # Secrets & config locale
 .env
 .env.*
+!.env.example
 appsettings.*.local.json
 config.json
 *.db
