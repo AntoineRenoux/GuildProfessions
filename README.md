@@ -57,7 +57,7 @@ dotnet publish companion -c Release -r win-x64 --self-contained -p:PublishSingle
 dotnet publish companion -c Release -r linux-x64 --self-contained -p:PublishSingleFile=true -o publish/linux-x64
 ```
 
-Au premier lancement, le compagnon crée un `config.json` à remplir : `apiBaseUrl` (l'URL du VPS), `guildToken` (fourni par l'officier), `uploadToken` (`/token` sur Discord), `wowPath` (auto-détecté si vide, installations Windows et Steam/Proton). Il tourne ensuite en tâche de fond : il écrit `Data.lua` quand le serveur change (puis `/reload` en jeu) et uploade les SavedVariables à chaque déconnexion//reload.
+Au premier lancement, le compagnon crée un `config.json` à remplir : `apiBaseUrl` = **`https://gp.warpvault.com`** (production — servie en HTTPS par le Caddy du VPS, bloc dans `/opt/entracte/deploy/Caddyfile`), `guildToken` (fourni par l'officier — valeur dans `/opt/guildprofessions/.env` sur le VPS), `uploadToken` (`/token` sur Discord), `wowPath` (auto-détecté si vide, installations Windows et Steam/Proton). Il tourne ensuite en tâche de fond : il écrit `Data.lua` quand le serveur change (puis `/reload` en jeu) et uploade les SavedVariables à chaque déconnexion//reload.
 
 ## État d'avancement
 
