@@ -4,7 +4,8 @@
 		<TargetFramework>net10.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<InvariantGlobalization>true</InvariantGlobalization>
+		<!-- Pas d'InvariantGlobalization : Discord.Net charge la culture du
+		     serveur Discord (preferred_locale) et planterait en mode invariant. -->
 	</PropertyGroup>
 
 	<ItemGroup>
