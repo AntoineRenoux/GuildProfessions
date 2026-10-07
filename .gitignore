@@ -1,0 +1,21 @@
+# .NET
+bin/
+obj/
+*.user
+.vs/
+.idea/
+artifacts/
+publish/
+
+# Secrets & config locale
+.env
+.env.*
+appsettings.*.local.json
+config.json
+*.db
+*.db-shm
+*.db-wal
+
+# OS
+.DS_Store
+Thumbs.db
