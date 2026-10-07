@@ -16,6 +16,9 @@ config.json
 *.db-shm
 *.db-wal
 
+# Données du serveur (volume Docker local)
+/data/
+
 # OS
 .DS_Store
 Thumbs.db

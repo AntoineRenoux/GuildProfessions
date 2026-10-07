@@ -1,0 +1,13 @@
+services:
+  server:
+    build: ./server
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      # Valeurs fournies par un fichier .env à côté de ce compose (jamais commité).
+      Discord__Token: ${DISCORD_TOKEN:?DISCORD_TOKEN manquant dans .env}
+      Discord__GuildId: ${DISCORD_GUILD_ID:-0}
+      Api__GuildToken: ${API_GUILD_TOKEN:?API_GUILD_TOKEN manquant dans .env}
+    volumes:
+      - ./data:/data
