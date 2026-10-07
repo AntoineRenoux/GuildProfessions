@@ -12,9 +12,13 @@ public static class SavedVariablesReader
 	{
 		var db = LuaParser.ParseSavedVariable(luaContent, "GuildProfessionsDB");
 		var charactersTable = db.GetTable("characters");
+		var orders = ReadOrders(db.GetTable("orders"));
+		var orderActions = ReadOrderActions(db.GetTable("orderActions"));
 		if (charactersTable is null || charactersTable.Map.Count == 0)
 		{
-			return null;
+			return orders is null && orderActions is null
+				? null
+				: new UploadPayload([], orders, orderActions);
 		}
 
 		var recipeNames = new Dictionary<int, string>();
@@ -75,6 +79,55 @@ public static class SavedVariablesReader
 				professions));
 		}
 
-		return characters.Count == 0 ? null : new UploadPayload(characters);
+		return characters.Count == 0 && orders is null && orderActions is null
+			? null
+			: new UploadPayload(characters, orders, orderActions);
+	}
+
+	// GuildProfessionsDB.orders : [localId] = { requester, crafter, item, qty, note, createdAt }
+	private static List<UploadOrder>? ReadOrders(LuaTable? ordersTable)
+	{
+		if (ordersTable is null || ordersTable.Map.Count == 0)
+		{
+			return null;
+		}
+		var orders = new List<UploadOrder>();
+		foreach (var (clientId, value) in ordersTable.Map)
+		{
+			if (value.AsTable() is not { } order ||
+				order.GetString("requester") is not { } requester ||
+				order.GetString("crafter") is not { } crafter ||
+				order.GetString("item") is not { } item)
+			{
+				continue;
+			}
+			orders.Add(new UploadOrder(
+				clientId, requester, crafter, item,
+				order.GetInt("qty") ?? 1,
+				order.GetString("note"),
+				order.GetString("createdAt")));
+		}
+		return orders.Count == 0 ? null : orders;
+	}
+
+	// GuildProfessionsDB.orderActions : [cléServeurOuLocale] = { status = "accepted"|"done"|"cancelled" }
+	private static List<UploadOrderAction>? ReadOrderActions(LuaTable? actionsTable)
+	{
+		if (actionsTable is null || actionsTable.Map.Count == 0)
+		{
+			return null;
+		}
+		var actions = new List<UploadOrderAction>();
+		foreach (var (key, value) in actionsTable.Map)
+		{
+			if (value.AsTable()?.GetString("status") is not { } status)
+			{
+				continue;
+			}
+			actions.Add(int.TryParse(key, out var serverId)
+				? new UploadOrderAction(serverId, null, status)
+				: new UploadOrderAction(null, key, status));
+		}
+		return actions.Count == 0 ? null : actions;
 	}
 }

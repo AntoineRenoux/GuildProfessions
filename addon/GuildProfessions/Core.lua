@@ -7,6 +7,32 @@ GP.VERSION = "0.1.0"
 local function InitDB()
 	GuildProfessionsDB = GuildProfessionsDB or {}
 	GuildProfessionsDB.characters = GuildProfessionsDB.characters or {}
+	GuildProfessionsDB.orders = GuildProfessionsDB.orders or {}
+	GuildProfessionsDB.orderActions = GuildProfessionsDB.orderActions or {}
+end
+
+-- Purge les données locales déjà synchronisées : commandes locales reprises
+-- par le serveur (clientId présent dans l'export) et actions déjà appliquées.
+local function PruneSyncedOrders()
+	local serverOrders = GP.GetServerData().orders or {}
+	local byClientId, byId = {}, {}
+	for _, order in ipairs(serverOrders) do
+		if order.clientId then
+			byClientId[order.clientId] = order
+		end
+		byId[tostring(order.id)] = order
+	end
+	for localId in pairs(GuildProfessionsDB.orders) do
+		if byClientId[localId] then
+			GuildProfessionsDB.orders[localId] = nil
+		end
+	end
+	for key, action in pairs(GuildProfessionsDB.orderActions) do
+		local serverOrder = byId[key] or byClientId[key]
+		if serverOrder and serverOrder.status == action.status then
+			GuildProfessionsDB.orderActions[key] = nil
+		end
+	end
 end
 
 function GP.GetLocalCharacter()
@@ -108,6 +134,73 @@ function GP.GetRecipeName(spellId)
 	return name
 end
 
+-- Commandes de craft ----------------------------------------------------------
+
+function GP.CreateOrder(crafter, item, qty, note)
+	local requester = UnitName("player")
+	local localId = requester .. "-" .. time() .. "-" .. math.random(1000, 9999)
+	local order = {
+		requester = requester,
+		crafter = crafter,
+		item = item,
+		qty = qty or 1,
+		note = note ~= "" and note or nil,
+		createdAt = date("%Y-%m-%d %H:%M"),
+	}
+	GuildProfessionsDB.orders[localId] = order
+	GP.Comm.SendNewOrder(order)
+	GP.RefreshUI()
+	return localId
+end
+
+-- Liste fusionnée pour l'affichage : commandes du serveur (Data.lua) +
+-- commandes locales pas encore synchronisées, avec les changements de statut
+-- décidés en jeu par-dessus.
+function GP.GetOrders()
+	local merged = {}
+	local actions = GuildProfessionsDB.orderActions
+	for _, order in ipairs(GP.GetServerData().orders or {}) do
+		local key = tostring(order.id)
+		local action = actions[key] or (order.clientId and actions[order.clientId])
+		merged[#merged + 1] = {
+			key = key,
+			id = order.id,
+			requester = order.requester,
+			crafter = order.crafter,
+			item = order.item,
+			qty = order.qty or 1,
+			note = order.note,
+			status = action and action.status or order.status,
+			pendingSync = action ~= nil,
+			createdAt = order.createdUtc,
+		}
+	end
+	for localId, order in pairs(GuildProfessionsDB.orders) do
+		local action = actions[localId]
+		merged[#merged + 1] = {
+			key = localId,
+			requester = order.requester,
+			crafter = order.crafter,
+			item = order.item,
+			qty = order.qty or 1,
+			note = order.note,
+			status = action and action.status or "open",
+			pendingSync = true,
+			createdAt = order.createdAt,
+		}
+	end
+	table.sort(merged, function(a, b)
+		return (a.createdAt or "") > (b.createdAt or "")
+	end)
+	return merged
+end
+
+function GP.SetOrderStatus(order, status)
+	GuildProfessionsDB.orderActions[order.key] = { status = status, at = date("%Y-%m-%d %H:%M") }
+	GP.Comm.SendStatus(order, status)
+	GP.RefreshUI()
+end
+
 -- Point d'extension UI : redéfini par UI.lua, no-op tant qu'elle n'est pas chargée.
 function GP.RefreshUI() end
 
@@ -118,6 +211,7 @@ frame:RegisterEvent("ADDON_LOADED")
 frame:SetScript("OnEvent", function(self, event, arg1)
 	if event == "ADDON_LOADED" and arg1 == ADDON_NAME then
 		InitDB()
+		PruneSyncedOrders()
 		self:UnregisterEvent("ADDON_LOADED")
 		local server = GP.GetServerData()
 		print(("|cff33ff99GuildProfessions|r v%s chargé — /gp pour ouvrir%s"):format(

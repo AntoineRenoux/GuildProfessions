@@ -22,7 +22,7 @@ public static class Endpoints
 			return Results.Ok(await exportBuilder.BuildAsync(ct));
 		});
 
-		app.MapPost("/api/v1/upload", async (HttpRequest request, UploadPayload payload, AppDbContext db, RosterService roster, CancellationToken ct) =>
+		app.MapPost("/api/v1/upload", async (HttpRequest request, UploadPayload payload, AppDbContext db, RosterService roster, CraftOrderService craftOrders, CancellationToken ct) =>
 		{
 			var token = request.Headers["X-Upload-Token"].ToString();
 			if (string.IsNullOrEmpty(token))
@@ -35,7 +35,8 @@ public static class Endpoints
 				return Results.Unauthorized();
 			}
 			var result = await roster.ApplyUploadAsync(member, payload, ct);
-			return Results.Ok(result);
+			var orderWarnings = await craftOrders.ApplyUploadAsync(member, payload, ct);
+			return Results.Ok(result with { Warnings = [.. result.Warnings, .. orderWarnings] });
 		});
 	}
 }

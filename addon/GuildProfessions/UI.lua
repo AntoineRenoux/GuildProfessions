@@ -103,9 +103,17 @@ local function AcquireRow(i, parent)
 		row.bar.text = row.bar:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 		row.bar.text:SetPoint("CENTER")
 
+		row.orderButton = CreateFrame("Button", nil, row, "UIPanelButtonTemplate")
+		row.orderButton:SetSize(86, 20)
+		row.orderButton:SetPoint("RIGHT", row, "RIGHT", -4, 0)
+		row.orderButton:SetText("Commander")
+		row.orderButton:SetScript("OnClick", function(self)
+			GP.OpenOrderDialog(self.crafter, self.prefillItem)
+		end)
+
 		row.info = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 		row.info:SetPoint("LEFT", row.bar, "RIGHT", 10, 0)
-		row.info:SetPoint("RIGHT", row, "RIGHT", -4, 0)
+		row.info:SetPoint("RIGHT", row.orderButton, "LEFT", -6, 0)
 		row.info:SetJustifyH("LEFT")
 		row.info:SetWordWrap(false)
 
@@ -162,6 +170,10 @@ local function RefreshList()
 			source = "|cff999999Discord|r"
 		end
 		row.info:SetText(info .. "   " .. source)
+
+		row.orderButton.crafter = entry.char.name
+		row.orderButton.prefillItem = entry.matched or ""
+		row.orderButton:SetShown(entry.char.name ~= UnitName("player"))
 		row:Show()
 	end
 	content:SetHeight(math.max(#entries * ROW_HEIGHT, 1))
@@ -237,9 +249,194 @@ local function SelectTab(tabIndex)
 	state.tab = tabIndex
 	mainFrame.tabProfessions:SetShown(tabIndex == 1)
 	mainFrame.tabMembers:SetShown(tabIndex == 2)
+	mainFrame.tabOrders:SetShown(tabIndex == 3)
 	mainFrame.tabButton1:SetEnabled(tabIndex ~= 1)
 	mainFrame.tabButton2:SetEnabled(tabIndex ~= 2)
+	mainFrame.tabButton3:SetEnabled(tabIndex ~= 3)
 	GP.RefreshUI()
+end
+
+-- Dialogue « Commander » --------------------------------------------------------
+
+local orderDialog
+
+local function CreateOrderDialog()
+	local dialog = CreateFrame("Frame", "GuildProfessionsOrderDialog", UIParent, "BackdropTemplate")
+	dialog:SetSize(340, 210)
+	dialog:SetPoint("CENTER")
+	dialog:SetFrameStrata("DIALOG")
+	dialog:EnableMouse(true)
+	dialog:SetMovable(true)
+	dialog:RegisterForDrag("LeftButton")
+	dialog:SetScript("OnDragStart", dialog.StartMoving)
+	dialog:SetScript("OnDragStop", dialog.StopMovingOrSizing)
+	dialog:SetBackdrop({
+		bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+		edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+		edgeSize = 24,
+		insets = { left = 6, right = 6, top = 6, bottom = 6 },
+	})
+	tinsert(UISpecialFrames, "GuildProfessionsOrderDialog")
+
+	dialog.title = dialog:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	dialog.title:SetPoint("TOP", 0, -16)
+
+	local itemLabel = dialog:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+	itemLabel:SetPoint("TOPLEFT", 20, -44)
+	itemLabel:SetText("Objet / recette")
+	dialog.itemBox = CreateFrame("EditBox", nil, dialog, "InputBoxTemplate")
+	dialog.itemBox:SetSize(290, 20)
+	dialog.itemBox:SetPoint("TOPLEFT", itemLabel, "BOTTOMLEFT", 6, -4)
+	dialog.itemBox:SetAutoFocus(false)
+
+	local qtyLabel = dialog:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+	qtyLabel:SetPoint("TOPLEFT", 20, -96)
+	qtyLabel:SetText("Quantité")
+	dialog.qtyBox = CreateFrame("EditBox", nil, dialog, "InputBoxTemplate")
+	dialog.qtyBox:SetSize(50, 20)
+	dialog.qtyBox:SetPoint("TOPLEFT", qtyLabel, "BOTTOMLEFT", 6, -4)
+	dialog.qtyBox:SetAutoFocus(false)
+	dialog.qtyBox:SetNumeric(true)
+	dialog.qtyBox:SetMaxLetters(3)
+
+	local noteLabel = dialog:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+	noteLabel:SetPoint("TOPLEFT", 110, -96)
+	noteLabel:SetText("Note (optionnelle)")
+	dialog.noteBox = CreateFrame("EditBox", nil, dialog, "InputBoxTemplate")
+	dialog.noteBox:SetSize(196, 20)
+	dialog.noteBox:SetPoint("TOPLEFT", noteLabel, "BOTTOMLEFT", 6, -4)
+	dialog.noteBox:SetAutoFocus(false)
+
+	local accept = CreateFrame("Button", nil, dialog, "UIPanelButtonTemplate")
+	accept:SetSize(120, 24)
+	accept:SetPoint("BOTTOMLEFT", 24, 18)
+	accept:SetText("Commander")
+	accept:SetScript("OnClick", function()
+		local item = dialog.itemBox:GetText()
+		if item == "" then
+			return
+		end
+		GP.CreateOrder(dialog.crafter, item, tonumber(dialog.qtyBox:GetText()) or 1, dialog.noteBox:GetText())
+		dialog:Hide()
+		print(("|cff33ff99GuildProfessions|r — commande envoyée à %s. Synchronisée au prochain /reload ou déco."):format(dialog.crafter))
+	end)
+
+	local cancel = CreateFrame("Button", nil, dialog, "UIPanelButtonTemplate")
+	cancel:SetSize(120, 24)
+	cancel:SetPoint("BOTTOMRIGHT", -24, 18)
+	cancel:SetText("Annuler")
+	cancel:SetScript("OnClick", function() dialog:Hide() end)
+
+	return dialog
+end
+
+function GP.OpenOrderDialog(crafter, prefillItem)
+	orderDialog = orderDialog or CreateOrderDialog()
+	orderDialog.crafter = crafter
+	orderDialog.title:SetText("Commande à " .. crafter)
+	orderDialog.itemBox:SetText(prefillItem or "")
+	orderDialog.qtyBox:SetText("1")
+	orderDialog.noteBox:SetText("")
+	orderDialog:Show()
+	orderDialog.itemBox:SetFocus()
+end
+
+-- Onglet Commandes ----------------------------------------------------------------
+
+local orderRowPool = {}
+local STATUS_DISPLAY = {
+	open = { label = "ouverte", color = "|cffffd100" },
+	accepted = { label = "acceptée", color = "|cff6699ff" },
+	done = { label = "terminée", color = "|cff33ff66" },
+	cancelled = { label = "annulée", color = "|cff999999" },
+}
+local ORDER_ROW_HEIGHT = 44
+
+local function AcquireOrderRow(i, parent)
+	local row = orderRowPool[i]
+	if not row then
+		row = CreateFrame("Frame", nil, parent)
+		row:SetHeight(ORDER_ROW_HEIGHT)
+
+		row.line1 = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+		row.line1:SetPoint("TOPLEFT", 4, -4)
+		row.line1:SetJustifyH("LEFT")
+		row.line1:SetWidth(430)
+
+		row.line2 = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+		row.line2:SetPoint("TOPLEFT", 4, -24)
+		row.line2:SetJustifyH("LEFT")
+		row.line2:SetWidth(430)
+		row.line2:SetWordWrap(false)
+
+		row.button2 = CreateFrame("Button", nil, row, "UIPanelButtonTemplate")
+		row.button2:SetSize(80, 22)
+		row.button2:SetPoint("RIGHT", row, "RIGHT", -4, 0)
+		row.button1 = CreateFrame("Button", nil, row, "UIPanelButtonTemplate")
+		row.button1:SetSize(80, 22)
+		row.button1:SetPoint("RIGHT", row.button2, "LEFT", -4, 0)
+
+		local stripe = row:CreateTexture(nil, "BACKGROUND")
+		stripe:SetAllPoints()
+		stripe:SetColorTexture(1, 1, 1, 0.03)
+		row.stripe = stripe
+
+		orderRowPool[i] = row
+	end
+	row:SetParent(parent)
+	return row
+end
+
+local function ConfigureOrderButton(button, label, handler)
+	if label then
+		button:SetText(label)
+		button:SetScript("OnClick", handler)
+		button:Show()
+	else
+		button:Hide()
+	end
+end
+
+local function RefreshOrders()
+	local orders = GP.GetOrders()
+	local me = UnitName("player")
+	local content = mainFrame.ordersContent
+	for _, row in ipairs(orderRowPool) do
+		row:Hide()
+	end
+	for i, order in ipairs(orders) do
+		local row = AcquireOrderRow(i, content)
+		row:ClearAllPoints()
+		row:SetPoint("TOPLEFT", content, "TOPLEFT", 0, -(i - 1) * ORDER_ROW_HEIGHT)
+		row:SetPoint("RIGHT", content, "RIGHT", 0, 0)
+		row.stripe:SetShown(i % 2 == 0)
+
+		local display = STATUS_DISPLAY[order.status] or { label = order.status, color = "|cffffffff" }
+		local reference = order.id and ("#" .. order.id) or "local"
+		local pending = order.pendingSync and " |cff999999(sync au prochain /reload)|r" or ""
+		row.line1:SetText(("%s — %d× %s   %s%s|r%s"):format(reference, order.qty, order.item, display.color, display.label, pending))
+		row.line2:SetText(("%s → %s%s"):format(order.requester, order.crafter, order.note and ("  —  " .. order.note) or ""))
+
+		local isCrafter = order.crafter == me
+		local isRequester = order.requester == me
+		local active = order.status == "open" or order.status == "accepted"
+
+		local label1, handler1
+		if isCrafter and order.status == "open" then
+			label1, handler1 = "Accepter", function() GP.SetOrderStatus(order, "accepted") end
+		elseif isCrafter and order.status == "accepted" then
+			label1, handler1 = "Terminé", function() GP.SetOrderStatus(order, "done") end
+		end
+		local label2, handler2
+		if (isCrafter or isRequester) and active then
+			label2, handler2 = "Annuler", function() GP.SetOrderStatus(order, "cancelled") end
+		end
+		ConfigureOrderButton(row.button1, label1, handler1)
+		ConfigureOrderButton(row.button2, label2, handler2)
+		row:Show()
+	end
+	content:SetHeight(math.max(#orders * ORDER_ROW_HEIGHT, 1))
+	mainFrame.ordersEmptyText:SetShown(#orders == 0)
 end
 
 local function CreateMainFrame()
@@ -282,6 +479,13 @@ local function CreateMainFrame()
 	tab2:SetText("Membres")
 	tab2:SetScript("OnClick", function() SelectTab(2) end)
 	frame.tabButton2 = tab2
+
+	local tab3 = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+	tab3:SetSize(110, 24)
+	tab3:SetPoint("LEFT", tab2, "RIGHT", 6, 0)
+	tab3:SetText("Commandes")
+	tab3:SetScript("OnClick", function() SelectTab(3) end)
+	frame.tabButton3 = tab3
 
 	-- Bandeau bas
 	local banner = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
@@ -382,6 +586,34 @@ local function CreateMainFrame()
 	membersPlaceholder:SetPoint("CENTER")
 	membersPlaceholder:SetText("Onglet Membres — prévu à l'étape 5\n(liste du roster + rendu 3D de l'équipement)")
 
+	-- === Onglet 3 : Commandes ===
+	local tabOrders = CreateFrame("Frame", nil, frame)
+	tabOrders:SetPoint("TOPLEFT", 10, -70)
+	tabOrders:SetPoint("BOTTOMRIGHT", -10, 34)
+	tabOrders:Hide()
+	frame.tabOrders = tabOrders
+
+	local ordersHeader = tabOrders:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+	ordersHeader:SetPoint("TOPLEFT", 4, -2)
+	ordersHeader:SetText("|cffffd100Commandes de craft — reçues et passées|r")
+
+	local ordersScroll = CreateFrame("ScrollFrame", nil, tabOrders, "UIPanelScrollFrameTemplate")
+	ordersScroll:SetPoint("TOPLEFT", 0, -20)
+	ordersScroll:SetPoint("BOTTOMRIGHT", -26, 0)
+	local ordersContent = CreateFrame("Frame", nil, ordersScroll)
+	ordersContent:SetSize(1, 1)
+	ordersScroll:SetScrollChild(ordersContent)
+	ordersScroll:SetScript("OnSizeChanged", function(_, width)
+		ordersContent:SetWidth(width)
+	end)
+	frame.ordersContent = ordersContent
+
+	local ordersEmptyText = tabOrders:CreateFontString(nil, "OVERLAY", "GameFontDisable")
+	ordersEmptyText:SetPoint("CENTER", ordersScroll, "CENTER")
+	ordersEmptyText:SetText("Aucune commande. Onglet Métiers → bouton « Commander » sur un artisan.")
+	ordersEmptyText:Hide()
+	frame.ordersEmptyText = ordersEmptyText
+
 	mainFrame = frame
 	SelectTab(1)
 end
@@ -407,6 +639,8 @@ function GP.RefreshUI()
 	if state.tab == 1 then
 		RefreshProfessionButtons()
 		RefreshList()
+	elseif state.tab == 3 then
+		RefreshOrders()
 	end
 	UpdateBanner()
 end

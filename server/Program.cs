@@ -13,6 +13,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<RosterService>();
 builder.Services.AddScoped<ExportBuilder>();
+builder.Services.AddScoped<CraftOrderService>();
+builder.Services.AddSingleton<ICraftOrderNotifier, DiscordCraftOrderNotifier>();
 
 builder.Services.AddSingleton(new DiscordSocketClient(new DiscordSocketConfig
 {

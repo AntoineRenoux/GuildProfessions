@@ -8,6 +8,7 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
 	public DbSet<Character> Characters => Set<Character>();
 	public DbSet<Profession> Professions => Set<Profession>();
 	public DbSet<Recipe> Recipes => Set<Recipe>();
+	public DbSet<CraftOrder> CraftOrders => Set<CraftOrder>();
 	public DbSet<Meta> Metas => Set<Meta>();
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -38,6 +39,10 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
 
 		modelBuilder.Entity<Recipe>()
 			.HasIndex(r => new { r.ProfessionId, r.SpellId })
+			.IsUnique();
+
+		modelBuilder.Entity<CraftOrder>()
+			.HasIndex(o => o.ClientId)
 			.IsUnique();
 
 		modelBuilder.Entity<Meta>()

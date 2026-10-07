@@ -85,4 +85,9 @@ GuildProfessions_ServerData = {
 			},
 		},
 	},
+
+	orders = {
+		{ id = 1, requester = "Nayra", crafter = "Thorgal", item = "Heaume Cœur de lion", qty = 1, status = "open", createdUtc = "2026-10-07 09:00", note = "Mats fournis" },
+		{ id = 2, requester = "Dorn", crafter = "Mirana", item = "Jambières en peau du Chaos", qty = 1, status = "accepted", createdUtc = "2026-10-06 20:15" },
+	},
 }

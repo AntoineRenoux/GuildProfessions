@@ -40,7 +40,19 @@ public sealed class ExportBuilder(AppDbContext db, RosterService roster)
 				character.RaceId, character.Gender, character.Level, professions));
 		}
 
+		// Commandes actives, plus l'historique récent pour l'affichage en jeu.
+		var historyThreshold = DateTime.UtcNow.AddDays(-7);
+		var orders = await db.CraftOrders
+			.AsNoTracking()
+			.Where(o => o.Status == CraftOrderStatus.Open || o.Status == CraftOrderStatus.Accepted ||
+				o.UpdatedUtc >= historyThreshold)
+			.OrderBy(o => o.Id)
+			.Select(o => new ExportOrderDto(
+				o.Id, o.ClientId, o.RequesterCharacter, o.CrafterCharacter, o.Item,
+				o.Quantity, o.Note, o.Status.ToString().ToLower(), o.CreatedUtc.ToString("yyyy-MM-dd HH:mm")))
+			.ToListAsync(ct);
+
 		var version = await roster.GetDataVersionAsync(ct);
-		return new ExportDto(version, DateTime.UtcNow, recipeNames, exportCharacters);
+		return new ExportDto(version, DateTime.UtcNow, recipeNames, exportCharacters, orders);
 	}
 }

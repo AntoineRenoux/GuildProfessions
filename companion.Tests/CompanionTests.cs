@@ -35,6 +35,24 @@ public sealed class LuaParserTests
 				[14046] = "Sac en étoffe runique",
 				[18560] = "Étoffe \"lunaire\"",
 			},
+			["orders"] = {
+				["Elaria-173-xk"] = {
+					["requester"] = "Elaria",
+					["crafter"] = "Thorgal",
+					["item"] = "Heaume Cœur de lion",
+					["qty"] = 1,
+					["note"] = "mats fournis",
+					["createdAt"] = "2026-10-07 21:30",
+				},
+			},
+			["orderActions"] = {
+				["17"] = {
+					["status"] = "accepted",
+				},
+				["Elaria-170-zz"] = {
+					["status"] = "cancelled",
+				},
+			},
 		}
 		""";
 
@@ -69,6 +87,24 @@ public sealed class LuaParserTests
 	}
 
 	[Fact]
+	public void BuildPayload_Should_ReadOrdersAndActions()
+	{
+		var payload = SavedVariablesReader.BuildPayload(SampleSavedVariables)!;
+
+		var order = Assert.Single(payload.Orders!);
+		Assert.Equal("Elaria-173-xk", order.ClientId);
+		Assert.Equal("Thorgal", order.Crafter);
+		Assert.Equal("mats fournis", order.Note);
+
+		Assert.Equal(2, payload.OrderActions!.Count);
+		var byServerId = payload.OrderActions.Single(action => action.ServerId is not null);
+		Assert.Equal(17, byServerId.ServerId);
+		Assert.Equal("accepted", byServerId.Status);
+		var byClientId = payload.OrderActions.Single(action => action.ClientId is not null);
+		Assert.Equal("Elaria-170-zz", byClientId.ClientId);
+	}
+
+	[Fact]
 	public void BuildPayload_Should_ReturnNull_WhenNoCharacters()
 	{
 		Assert.Null(SavedVariablesReader.BuildPayload("GuildProfessionsDB = { [\"characters\"] = {} }"));
@@ -89,6 +125,9 @@ public sealed class DataLuaWriterTests
 				[
 					new ExportProfessionDto("Alchimie", 295, 300, "Transmute dispo", "addon", "2026-10-07 12:00", [17635]),
 				]),
+			],
+			[
+				new ExportOrderDto(7, null, "Nayra", "Grimbart", "Flacon des Titans", 2, "urgent", "open", "2026-10-07 10:00"),
 			]);
 
 		var lua = DataLuaWriter.Build(export);
@@ -111,6 +150,9 @@ public sealed class DataLuaWriterTests
 							{ name = "Alchimie", level = 295, max = 300, source = "addon", note = "Transmute dispo", scannedAt = "2026-10-07 12:00", recipes = { 17635 } },
 						},
 					},
+				},
+				orders = {
+					{ id = 7, requester = "Nayra", crafter = "Grimbart", item = "Flacon des Titans", qty = 2, status = "open", createdUtc = "2026-10-07 10:00", note = "urgent" },
 				},
 			}
 

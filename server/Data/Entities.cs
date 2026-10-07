@@ -65,6 +65,34 @@ public sealed class Recipe
 	public string? Name { get; set; }
 }
 
+public enum CraftOrderStatus
+{
+	Open = 0,
+	Accepted = 1,
+	Done = 2,
+	Cancelled = 3,
+}
+
+public sealed class CraftOrder
+{
+	public int Id { get; set; }
+
+	/// <summary>Id généré par l'addon pour une commande créée en jeu — clé de déduplication des uploads.</summary>
+	public string? ClientId { get; set; }
+
+	/// <summary>Noms en clair (pas de FK) : une commande peut viser un personnage pas encore connu du roster.</summary>
+	public required string RequesterCharacter { get; set; }
+	public required string CrafterCharacter { get; set; }
+
+	public required string Item { get; set; }
+	public int Quantity { get; set; } = 1;
+	public string? Note { get; set; }
+	public CraftOrderStatus Status { get; set; }
+	public DateTime CreatedUtc { get; set; }
+	public DateTime UpdatedUtc { get; set; }
+	public DataSource Source { get; set; }
+}
+
 /// <summary>Petit magasin clé/valeur : porte le compteur de version de l'export.</summary>
 public sealed class Meta
 {

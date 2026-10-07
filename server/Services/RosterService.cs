@@ -216,6 +216,8 @@ public sealed class RosterService(AppDbContext db)
 		return meta is null ? 0 : long.Parse(meta.Value);
 	}
 
+	public async Task<long> BumpVersionAndSaveAsync(CancellationToken ct = default) => await SaveWithVersionBumpAsync(ct);
+
 	private async Task<long> SaveWithVersionBumpAsync(CancellationToken ct)
 	{
 		var meta = await db.Metas.FindAsync([DataVersionKey], ct);

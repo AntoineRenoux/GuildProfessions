@@ -49,5 +49,5 @@ Au premier lancement, le compagnon crée un `config.json` à remplir : `apiBaseU
 - [x] Étape 1 — addon, onglet Métiers sur données mock *(code livré — à valider en jeu sur le client Forever)*
 - [x] Étape 2 — serveur (bot + API + SQLite) *(7 tests verts + smoke test curl — à connecter à un vrai bot Discord)*
 - [x] Étape 3 — compagnon (down-sync + up-sync) *(boucle E2E validée en local : SavedVariables → upload → export → Data.lua)*
-- [ ] Étape 4 — commandes de craft
+- [x] Étape 4 — commandes de craft *(E2E validé : commande en jeu → serveur → Data.lua ; toasts addon message à valider à deux comptes)*
 - [ ] Étape 5 — onglet Membres / armurerie

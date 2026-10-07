@@ -58,6 +58,25 @@ public static class DataLuaWriter
 			builder.AppendLine("\t\t},");
 		}
 		builder.AppendLine("\t},");
+
+		builder.AppendLine("\torders = {");
+		foreach (var order in export.Orders ?? [])
+		{
+			builder.Append("\t\t{ ");
+			builder.Append($"id = {order.Id}, requester = {Quote(order.Requester)}, crafter = {Quote(order.Crafter)}, ");
+			builder.Append($"item = {Quote(order.Item)}, qty = {order.Quantity}, status = {Quote(order.Status)}, createdUtc = {Quote(order.CreatedUtc)}");
+			if (order.ClientId is not null)
+			{
+				builder.Append($", clientId = {Quote(order.ClientId)}");
+			}
+			if (order.Note is not null)
+			{
+				builder.Append($", note = {Quote(order.Note)}");
+			}
+			builder.AppendLine(" },");
+		}
+		builder.AppendLine("\t},");
+
 		builder.AppendLine("}");
 		return builder.ToString();
 	}
