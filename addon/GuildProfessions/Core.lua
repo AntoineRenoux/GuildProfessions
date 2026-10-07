@@ -35,10 +35,33 @@ local function PruneSyncedOrders()
 	end
 end
 
+-- Sur WoW: Forever, les personnages ont prénom + nom : UnitName ne rend que
+-- le prénom (non unique !), UnitFullName rend le nom de famille dans le slot
+-- « royaume ». La clé d'identité est TOUJOURS le nom complet « Prénom Nom ».
+function GP.GetPlayerFullName()
+	local name, surname = UnitFullName("player")
+	name = name or UnitName("player")
+	if surname and surname ~= "" then
+		return name .. " " .. surname
+	end
+	return name
+end
+
 function GP.GetLocalCharacter()
-	local name = UnitName("player")
+	local name = GP.GetPlayerFullName()
 	GuildProfessionsDB.characters[name] = GuildProfessionsDB.characters[name] or {}
 	return GuildProfessionsDB.characters[name]
+end
+
+-- Migration : les versions précédentes de l'addon indexaient par prénom seul.
+function GP.MigrateLegacyCharacterKey()
+	local firstName = UnitName("player")
+	local fullName = GP.GetPlayerFullName()
+	local characters = GuildProfessionsDB.characters
+	if firstName and fullName and firstName ~= fullName and characters[firstName] then
+		characters[fullName] = characters[fullName] or characters[firstName]
+		characters[firstName] = nil
+	end
 end
 
 -- Deux sources possibles pour les données serveur : Data.lua (écrit par le
@@ -166,7 +189,7 @@ end
 -- Commandes de craft ----------------------------------------------------------
 
 function GP.CreateOrder(crafter, item, qty, note)
-	local requester = UnitName("player")
+	local requester = GP.GetPlayerFullName()
 	local localId = requester .. "-" .. time() .. "-" .. math.random(1000, 9999)
 	local order = {
 		requester = requester,

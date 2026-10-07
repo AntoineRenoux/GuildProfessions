@@ -173,7 +173,7 @@ local function RefreshList()
 
 		row.orderButton.crafter = entry.char.name
 		row.orderButton.prefillItem = entry.matched or ""
-		row.orderButton:SetShown(entry.char.name ~= UnitName("player") and GP.IsEligibleCharacter())
+		row.orderButton:SetShown(entry.char.name ~= GP.GetPlayerFullName() and GP.IsEligibleCharacter())
 		row:Show()
 	end
 	content:SetHeight(math.max(#entries * ROW_HEIGHT, 1))
@@ -510,7 +510,7 @@ end
 
 local function RefreshOrders()
 	local orders = GP.GetOrders()
-	local me = UnitName("player")
+	local me = GP.GetPlayerFullName()
 	local content = mainFrame.ordersContent
 	for _, row in ipairs(orderRowPool) do
 		row:Hide()

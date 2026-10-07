@@ -9,7 +9,7 @@ local PREFIX = "GPROF"
 GP.Comm = {}
 
 local function PlayerName()
-	return UnitName("player")
+	return GP.GetPlayerFullName()
 end
 
 local function Send(message)
@@ -67,9 +67,11 @@ frame:SetScript("OnEvent", function(_, event, prefix, message, _, sender)
 			pcall(C_ChatInfo.RegisterAddonMessagePrefix, PREFIX)
 		end
 	elseif event == "CHAT_MSG_ADDON" and prefix == PREFIX then
-		local shortSender = strsplit("-", sender or "")
-		if shortSender ~= PlayerName() then
-			pcall(OnMessage, message, shortSender)
+		-- Sur Forever, l'expéditeur arrive en « Prénom-Nom » (le nom de
+		-- famille occupe le slot royaume) : on le renormalise en nom complet.
+		local senderFull = (sender or ""):gsub("%-", " ", 1)
+		if senderFull ~= PlayerName() then
+			pcall(OnMessage, message, senderFull)
 		end
 	end
 end)

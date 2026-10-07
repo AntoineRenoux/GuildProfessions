@@ -25,7 +25,7 @@ local function GateEligibility()
 	if GP.IsEligibleCharacter() then
 		return true
 	end
-	local name = UnitName("player")
+	local name = GP.GetPlayerFullName()
 	if GuildProfessionsDB.characters and GuildProfessionsDB.characters[name] then
 		GuildProfessionsDB.characters[name] = nil
 		GP.RefreshUI()
@@ -113,6 +113,7 @@ local function ScanRecipes()
 end
 
 local function FullScan()
+	pcall(GP.MigrateLegacyCharacterKey)
 	if not GateEligibility() then
 		return
 	end
