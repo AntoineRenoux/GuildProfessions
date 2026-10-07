@@ -104,6 +104,10 @@ function GP.GetRoster()
 		end
 		existing.classFile = entry.classFile or existing.classFile
 		existing.level = entry.level or existing.level
+		existing.raceFile = entry.raceFile or existing.raceFile
+		existing.raceId = entry.raceId or existing.raceId
+		existing.gender = entry.gender or existing.gender
+		existing.equipment = entry.equipment or existing.equipment
 		for _, prof in ipairs(entry.professions or {}) do
 			local replaced = false
 			for i, known in ipairs(existing.professions) do
@@ -125,6 +129,8 @@ function GP.GetRoster()
 	for name, char in pairs(GuildProfessionsDB.characters) do
 		upsert({
 			name = name, classFile = char.classFile, level = char.level,
+			raceFile = char.raceFile, raceId = char.raceId, gender = char.gender,
+			equipment = char.equipment,
 			professions = LocalProfessionsToList(char.professions),
 		})
 	end

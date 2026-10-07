@@ -14,6 +14,9 @@ public sealed class LuaParserTests
 					["classFile"] = "MAGE",
 					["level"] = 60,
 					["gender"] = 3,
+					["equipment"] = {
+						["5"] = "|cffa335ee|Hitem:14152|h[Robe de l'Archimage]|h|r",
+					},
 					["professions"] = {
 						["Couture"] = {
 							["level"] = 300,
@@ -84,6 +87,7 @@ public sealed class LuaParserTests
 		Assert.Equal("Sac en étoffe runique", couture.Recipes!.Single(recipe => recipe.Id == 14046).Name);
 		var enchantement = character.Professions.Single(profession => profession.Name == "Enchantement");
 		Assert.Null(enchantement.Recipes);
+		Assert.Equal("|cffa335ee|Hitem:14152|h[Robe de l'Archimage]|h|r", character.Equipment![5]);
 	}
 
 	[Fact]

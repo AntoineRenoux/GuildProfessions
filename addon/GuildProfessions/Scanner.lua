@@ -112,6 +112,20 @@ local function ScanRecipes()
 	GP.RefreshUI()
 end
 
+local function ScanEquipment()
+	local char = GP.GetLocalCharacter()
+	local equipment = {}
+	for slot = 1, 19 do
+		local link = GetInventoryItemLink("player", slot)
+		if link then
+			-- Clés en chaîne : sérialisation JSON stable (pas de table mixte).
+			equipment[tostring(slot)] = link
+		end
+	end
+	char.equipment = equipment
+	GP.RefreshUI()
+end
+
 local function FullScan()
 	pcall(GP.MigrateLegacyCharacterKey)
 	if not GateEligibility() then
@@ -119,6 +133,7 @@ local function FullScan()
 	end
 	pcall(ScanIdentity)
 	pcall(ScanProfessions)
+	pcall(ScanEquipment)
 end
 
 local frame = CreateFrame("Frame")
@@ -126,6 +141,7 @@ frame:RegisterEvent("PLAYER_LOGIN")
 frame:RegisterEvent("PLAYER_GUILD_UPDATE")
 frame:RegisterEvent("SKILL_LINES_CHANGED")
 frame:RegisterEvent("TRADE_SKILL_LIST_UPDATE")
+frame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 frame:SetScript("OnEvent", function(_, event)
 	-- Forever vient de sortir : on isole chaque scan pour qu'un changement
 	-- d'API ne casse pas tout l'addon, juste le scan concerné.
@@ -145,6 +161,10 @@ frame:SetScript("OnEvent", function(_, event)
 	elseif event == "TRADE_SKILL_LIST_UPDATE" then
 		if GateEligibility() then
 			pcall(ScanRecipes)
+		end
+	elseif event == "PLAYER_EQUIPMENT_CHANGED" then
+		if GateEligibility() then
+			pcall(ScanEquipment)
 		end
 	end
 end)

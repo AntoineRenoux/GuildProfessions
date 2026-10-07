@@ -173,6 +173,10 @@ public sealed class RosterService(AppDbContext db)
 			character.Level = uploaded.Level ?? character.Level;
 			character.LastSeenUtc = DateTime.UtcNow;
 			character.Source = DataSource.Addon;
+			if (uploaded.Equipment is { Count: > 0 })
+			{
+				character.EquipmentJson = System.Text.Json.JsonSerializer.Serialize(uploaded.Equipment);
+			}
 
 			// Le scan est la vérité pour ce personnage : les métiers absents du
 			// payload sont retirés, les notes Discord existantes sont conservées.

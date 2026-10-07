@@ -165,6 +165,23 @@ public sealed class RosterServiceTests : IDisposable
 		Assert.Equal("discord", nayra.Professions.Single().Source);
 	}
 
+	[Fact]
+	public async Task ApplyUpload_Should_RoundTripEquipmentToExport()
+	{
+		var member = await _roster.GetOrCreateMemberAsync("42", "anto");
+		var payload = new UploadPayload([
+			new UploadCharacter("Thorgal", "WARRIOR", null, null, null, 60, [],
+				Equipment: new Dictionary<int, string> { [1] = "|Hitem:16963|h[Casque]|h", [16] = "|Hitem:19019|h[Épée]|h" }),
+		]);
+
+		await _roster.ApplyUploadAsync(member, payload);
+		var export = await new ExportBuilder(_db, _roster, new ConfigurationBuilder().Build()).BuildAsync();
+
+		var equipment = export.Characters.Single().Equipment!;
+		Assert.Equal(2, equipment.Count);
+		Assert.Equal("|Hitem:16963|h[Casque]|h", equipment[1]);
+	}
+
 	#region Helper Methods
 
 	private static UploadPayload Payload(string characterName, params (string Name, int Level)[] professions)

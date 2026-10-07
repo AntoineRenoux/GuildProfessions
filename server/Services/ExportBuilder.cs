@@ -35,9 +35,22 @@ public sealed class ExportBuilder(AppDbContext db, RosterService roster, IConfig
 				})
 				.ToList();
 
+			Dictionary<int, string>? equipment = null;
+			if (character.EquipmentJson is not null)
+			{
+				try
+				{
+					equipment = System.Text.Json.JsonSerializer.Deserialize<Dictionary<int, string>>(character.EquipmentJson);
+				}
+				catch (System.Text.Json.JsonException)
+				{
+					// Colonne corrompue : on exporte sans équipement plutôt que d'échouer.
+				}
+			}
+
 			exportCharacters.Add(new ExportCharacterDto(
 				character.Name, character.ClassFile, character.RaceFile,
-				character.RaceId, character.Gender, character.Level, professions));
+				character.RaceId, character.Gender, character.Level, professions, equipment));
 		}
 
 		// Commandes actives, plus l'historique récent pour l'affichage en jeu.

@@ -39,6 +39,14 @@ public static class DataLuaWriter
 			AppendIfNotNull(builder, "raceId", character.RaceId);
 			AppendIfNotNull(builder, "gender", character.Gender);
 			AppendIfNotNull(builder, "level", character.Level);
+			if (character.Equipment is { Count: > 0 })
+			{
+				builder.Append("\t\t\tequipment = { ");
+				builder.Append(string.Join(", ", character.Equipment
+					.OrderBy(entry => entry.Key)
+					.Select(entry => $"[{entry.Key}] = {Quote(entry.Value)}")));
+				builder.AppendLine(" },");
+			}
 			builder.AppendLine("\t\t\tprofessions = {");
 			foreach (var profession in character.Professions)
 			{

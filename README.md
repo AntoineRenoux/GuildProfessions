@@ -72,4 +72,4 @@ L'API de prod est servie en HTTPS par le Caddy du VPS (bloc dans `/opt/entracte/
 - [x] Étape 3 — compagnon (down-sync + up-sync) *(boucle E2E validée en local : SavedVariables → upload → export → Data.lua)*
 - [x] Étape 4 — commandes de craft *(E2E validé : commande en jeu → serveur → Data.lua ; toasts addon message à valider à deux comptes)*
 - [x] Étape 4bis — canal manuel sans compagnon : chaînes d'import/export (`/export-addon`, `/import`, boutons Importer/Exporter dans `/gp`) *(codec à valider en jeu : C_EncodingUtil sur Forever)*
-- [ ] Étape 5 — onglet Membres / armurerie
+- [x] Étape 5 — onglet Membres / armurerie *(scan équipement + rendu 3D DressUpModel — à valider en jeu)*

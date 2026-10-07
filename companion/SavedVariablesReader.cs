@@ -69,6 +69,20 @@ public static class SavedVariablesReader
 						recipes));
 				}
 			}
+			Dictionary<int, string>? equipment = null;
+			var equipmentTable = characterTable.GetTable("equipment");
+			if (equipmentTable is not null)
+			{
+				equipment = [];
+				foreach (var (slotKey, linkValue) in equipmentTable.Map)
+				{
+					if (int.TryParse(slotKey, out var slot) && linkValue.AsString() is { } link)
+					{
+						equipment[slot] = link;
+					}
+				}
+			}
+
 			characters.Add(new UploadCharacter(
 				characterName,
 				characterTable.GetString("classFile"),
@@ -77,7 +91,8 @@ public static class SavedVariablesReader
 				characterTable.GetInt("gender"),
 				characterTable.GetInt("level"),
 				professions,
-				characterTable.GetString("guild")));
+				characterTable.GetString("guild"),
+				equipment));
 		}
 
 		return characters.Count == 0 && orders is null && orderActions is null

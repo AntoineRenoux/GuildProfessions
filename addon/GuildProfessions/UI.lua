@@ -452,6 +452,210 @@ local function OpenExportDialog()
 	dialog:Show()
 end
 
+-- Onglet Membres / armurerie --------------------------------------------------------
+
+local memberRowPool = {}
+local equipRowPool = {}
+local selectedMemberName
+
+local SLOT_ORDER = { 1, 2, 3, 15, 5, 9, 10, 6, 7, 8, 11, 12, 13, 14, 16, 17, 18, 4, 19 }
+local SLOT_LABELS = {
+	[1] = "Tête", [2] = "Cou", [3] = "Épaules", [4] = "Chemise", [5] = "Torse",
+	[6] = "Taille", [7] = "Jambes", [8] = "Pieds", [9] = "Poignets", [10] = "Mains",
+	[11] = "Anneau", [12] = "Anneau", [13] = "Bijou", [14] = "Bijou", [15] = "Dos",
+	[16] = "Main droite", [17] = "Main gauche", [18] = "À distance", [19] = "Tabard",
+}
+
+-- L'équipement arrive avec des clés chaîne (export JSON) ou numériques (Data.lua).
+local function NormalizedEquipment(member)
+	local out = {}
+	for key, link in pairs(member.equipment or {}) do
+		local slot = tonumber(key)
+		if slot then
+			out[slot] = link
+		end
+	end
+	return out
+end
+
+local function AverageItemLevel(equipment)
+	local total, count = 0, 0
+	for slot, link in pairs(equipment) do
+		if slot ~= 4 and slot ~= 19 then
+			local ok, itemLevel = pcall(function()
+				if C_Item and C_Item.GetDetailedItemLevelInfo then
+					return C_Item.GetDetailedItemLevelInfo(link)
+				end
+				return GetDetailedItemLevelInfo and GetDetailedItemLevelInfo(link) or nil
+			end)
+			if ok and itemLevel and itemLevel > 0 then
+				total = total + itemLevel
+				count = count + 1
+			end
+		end
+	end
+	if count > 0 then
+		return math.floor(total / count + 0.5)
+	end
+end
+
+local function TargetMatchesMember(name)
+	if not UnitExists("target") or not UnitIsPlayer("target") then
+		return false
+	end
+	local targetName, targetSurname = UnitFullName("target")
+	local full = (targetSurname and targetSurname ~= "") and (targetName .. " " .. targetSurname) or targetName
+	return full == name
+end
+
+local function ShowMemberDetail(member)
+	selectedMemberName = member.name
+	local panel = mainFrame.memberDetail
+	panel:Show()
+	mainFrame.memberHint:Hide()
+
+	local r, g, b = ClassColor(member.classFile)
+	panel.title:SetText(member.name)
+	panel.title:SetTextColor(r, g, b)
+
+	local equipment = NormalizedEquipment(member)
+	local averageItemLevel = AverageItemLevel(equipment)
+	panel.subtitle:SetText(("Niveau %s%s"):format(member.level or "?",
+		averageItemLevel and ("  ·  ilvl moyen %d"):format(averageItemLevel) or ""))
+
+	-- Modèle 3D : fidèle pour soi-même et pour la cible (SetUnit), générique
+	-- habillé (SetCustomRace + TryOn) pour un membre hors ligne — ses
+	-- personnalisations (visage...) ne sont pas accessibles aux addons.
+	local model = panel.model
+	local rendered, note = false, nil
+	pcall(model.ClearModel, model)
+	if member.name == GP.GetPlayerFullName() then
+		rendered = pcall(model.SetUnit, model, "player")
+	elseif TargetMatchesMember(member.name) then
+		rendered = pcall(model.SetUnit, model, "target")
+		note = "rendu fidèle (cible)"
+	elseif member.raceId and model.SetCustomRace then
+		local ok = pcall(model.SetCustomRace, model, member.raceId, (member.gender or 2) - 2)
+		if ok then
+			pcall(model.Undress, model)
+			for _, slot in ipairs(SLOT_ORDER) do
+				if equipment[slot] then
+					pcall(model.TryOn, model, equipment[slot])
+				end
+			end
+			rendered = true
+			note = "modèle générique + équipement scanné"
+		end
+	end
+	if rendered then
+		pcall(model.SetRotation, model, 0.4)
+	end
+	model:SetShown(rendered)
+	panel.modelFallback:SetShown(not rendered)
+	panel.modelNote:SetText(note or "")
+
+	-- Liste d'équipement : liens cliquables avec tooltip natif.
+	for _, row in ipairs(equipRowPool) do
+		row:Hide()
+	end
+	local index = 0
+	for _, slot in ipairs(SLOT_ORDER) do
+		local link = equipment[slot]
+		if link then
+			index = index + 1
+			local row = equipRowPool[index]
+			if not row then
+				row = CreateFrame("Button", nil, panel.equipList)
+				row:SetHeight(17)
+				row.slotText = row:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+				row.slotText:SetPoint("LEFT", 0, 0)
+				row.slotText:SetWidth(76)
+				row.slotText:SetJustifyH("LEFT")
+				row.linkText = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+				row.linkText:SetPoint("LEFT", row.slotText, "RIGHT", 4, 0)
+				row.linkText:SetPoint("RIGHT", row, "RIGHT", 0, 0)
+				row.linkText:SetJustifyH("LEFT")
+				row.linkText:SetWordWrap(false)
+				row:SetScript("OnEnter", function(self)
+					if self.link then
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+						pcall(GameTooltip.SetHyperlink, GameTooltip, self.link)
+						GameTooltip:Show()
+					end
+				end)
+				row:SetScript("OnLeave", function()
+					GameTooltip:Hide()
+				end)
+				equipRowPool[index] = row
+			end
+			row:SetParent(panel.equipList)
+			row:ClearAllPoints()
+			row:SetPoint("TOPLEFT", panel.equipList, "TOPLEFT", 0, -(index - 1) * 17)
+			row:SetPoint("RIGHT", panel.equipList, "RIGHT", 0, 0)
+			row.slotText:SetText(SLOT_LABELS[slot] or slot)
+			row.linkText:SetText(link)
+			row.link = link
+			row:Show()
+		end
+	end
+	panel.equipEmpty:SetShown(index == 0)
+end
+
+local function RefreshMembers()
+	local roster = GP.GetRoster()
+	local content = mainFrame.membersContent
+	for _, row in ipairs(memberRowPool) do
+		row:Hide()
+	end
+	local selected
+	for i, member in ipairs(roster) do
+		local row = memberRowPool[i]
+		if not row then
+			row = CreateFrame("Button", nil, content)
+			row:SetHeight(24)
+			row.name = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+			row.name:SetPoint("LEFT", 4, 0)
+			row.name:SetPoint("RIGHT", row, "RIGHT", -38, 0)
+			row.name:SetJustifyH("LEFT")
+			row.name:SetWordWrap(false)
+			row.level = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+			row.level:SetPoint("RIGHT", -4, 0)
+			local highlight = row:CreateTexture(nil, "HIGHLIGHT")
+			highlight:SetAllPoints()
+			highlight:SetColorTexture(1, 1, 1, 0.08)
+			row.selectedTex = row:CreateTexture(nil, "BACKGROUND")
+			row.selectedTex:SetAllPoints()
+			row.selectedTex:SetColorTexture(1, 0.82, 0, 0.12)
+			row:SetScript("OnClick", function(self)
+				ShowMemberDetail(self.member)
+				RefreshMembers()
+			end)
+			memberRowPool[i] = row
+		end
+		row:SetParent(content)
+		row:ClearAllPoints()
+		row:SetPoint("TOPLEFT", content, "TOPLEFT", 0, -(i - 1) * 24)
+		row:SetPoint("RIGHT", content, "RIGHT", 0, 0)
+		row.member = member
+		row.name:SetText(member.name)
+		row.name:SetTextColor(ClassColor(member.classFile))
+		row.level:SetText(member.level and ("niv. " .. member.level) or "")
+		row.selectedTex:SetShown(member.name == selectedMemberName)
+		row:Show()
+		if member.name == selectedMemberName then
+			selected = member
+		end
+	end
+	content:SetHeight(math.max(#roster * 24, 1))
+	if selected then
+		ShowMemberDetail(selected)
+	else
+		selectedMemberName = nil
+		mainFrame.memberDetail:Hide()
+		mainFrame.memberHint:Show()
+	end
+end
+
 -- Onglet Commandes ----------------------------------------------------------------
 
 local orderRowPool = {}
@@ -705,9 +909,58 @@ local function CreateMainFrame()
 	tabMembers:Hide()
 	frame.tabMembers = tabMembers
 
-	local membersPlaceholder = tabMembers:CreateFontString(nil, "OVERLAY", "GameFontDisableLarge")
-	membersPlaceholder:SetPoint("CENTER")
-	membersPlaceholder:SetText("Onglet Membres — prévu à l'étape 5\n(liste du roster + rendu 3D de l'équipement)")
+	-- Colonne gauche : liste des membres
+	local membersScroll = CreateFrame("ScrollFrame", nil, tabMembers, "UIPanelScrollFrameTemplate")
+	membersScroll:SetPoint("TOPLEFT", 0, 0)
+	membersScroll:SetPoint("BOTTOMLEFT", 0, 0)
+	membersScroll:SetWidth(210)
+	local membersContent = CreateFrame("Frame", nil, membersScroll)
+	membersContent:SetSize(1, 1)
+	membersScroll:SetScrollChild(membersContent)
+	membersScroll:SetScript("OnSizeChanged", function(_, width)
+		membersContent:SetWidth(width)
+	end)
+	frame.membersContent = membersContent
+
+	local memberHint = tabMembers:CreateFontString(nil, "OVERLAY", "GameFontDisable")
+	memberHint:SetPoint("CENTER", 110, 0)
+	memberHint:SetText("Sélectionne un membre pour voir\nson équipement et son apparence.")
+	frame.memberHint = memberHint
+
+	-- Panneau de droite : armurerie du membre sélectionné
+	local detail = CreateFrame("Frame", nil, tabMembers, "BackdropTemplate")
+	detail:SetPoint("TOPLEFT", membersScroll, "TOPRIGHT", 30, 0)
+	detail:SetPoint("BOTTOMRIGHT", 0, 0)
+	detail:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8x8" })
+	detail:SetBackdropColor(0, 0, 0, 0.3)
+	detail:Hide()
+	frame.memberDetail = detail
+
+	detail.title = detail:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+	detail.title:SetPoint("TOPLEFT", 12, -10)
+
+	detail.subtitle = detail:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+	detail.subtitle:SetPoint("TOPLEFT", 13, -32)
+	detail.subtitle:SetTextColor(0.8, 0.8, 0.8)
+
+	detail.model = CreateFrame("DressUpModel", nil, detail)
+	detail.model:SetPoint("TOPLEFT", 12, -50)
+	detail.model:SetSize(220, 330)
+
+	detail.modelFallback = detail:CreateFontString(nil, "OVERLAY", "GameFontDisable")
+	detail.modelFallback:SetPoint("CENTER", detail.model, "CENTER")
+	detail.modelFallback:SetText("Aperçu 3D indisponible\npour ce personnage.")
+
+	detail.modelNote = detail:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+	detail.modelNote:SetPoint("TOP", detail.model, "BOTTOM", 0, -2)
+
+	detail.equipList = CreateFrame("Frame", nil, detail)
+	detail.equipList:SetPoint("TOPLEFT", detail.model, "TOPRIGHT", 14, 0)
+	detail.equipList:SetPoint("BOTTOMRIGHT", -10, 10)
+
+	detail.equipEmpty = detail:CreateFontString(nil, "OVERLAY", "GameFontDisable")
+	detail.equipEmpty:SetPoint("TOPLEFT", detail.equipList, "TOPLEFT", 0, -4)
+	detail.equipEmpty:SetText("Aucun équipement connu — données à venir\nau prochain scan de ce membre.")
 
 	-- === Onglet 3 : Commandes ===
 	local tabOrders = CreateFrame("Frame", nil, frame)
@@ -762,6 +1015,8 @@ function GP.RefreshUI()
 	if state.tab == 1 then
 		RefreshProfessionButtons()
 		RefreshList()
+	elseif state.tab == 2 then
+		RefreshMembers()
 	elseif state.tab == 3 then
 		RefreshOrders()
 	end

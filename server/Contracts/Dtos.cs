@@ -29,7 +29,8 @@ public sealed record ExportCharacterDto(
 	int? RaceId,
 	int? Gender,
 	int? Level,
-	List<ExportProfessionDto> Professions);
+	List<ExportProfessionDto> Professions,
+	Dictionary<int, string>? Equipment = null);
 
 public sealed record ExportProfessionDto(
 	string Name,
@@ -72,7 +73,8 @@ public sealed record UploadCharacter(
 	int? Gender,
 	int? Level,
 	List<UploadProfession> Professions,
-	string? Guild = null);
+	string? Guild = null,
+	Dictionary<int, string>? Equipment = null);
 
 public sealed record UploadProfession(
 	string Name,

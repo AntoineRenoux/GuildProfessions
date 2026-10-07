@@ -34,6 +34,9 @@ public sealed class Character
 	public DateTime? LastSeenUtc { get; set; }
 	public DataSource Source { get; set; }
 
+	/// <summary>Équipement scanné, JSON { "slot (1-19)": "lien d'objet" } — opaque pour le serveur.</summary>
+	public string? EquipmentJson { get; set; }
+
 	public List<Profession> Professions { get; set; } = [];
 }
 
