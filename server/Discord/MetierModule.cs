@@ -16,14 +16,15 @@ public sealed class MetierModule(RosterService roster, AppDbContext db) : Intera
 		[Summary("niveau", "Niveau de compétence actuel"), MinValue(1), MaxValue(300)] int niveau,
 		[Summary("note", "Note libre (dispo, conditions...)")] string? note = null)
 	{
+		await DeferAsync();
 		if (!ProfessionChoices.IsValid(metier))
 		{
-			await RespondAsync($"Métier inconnu : **{metier}**. Utilise l'autocomplétion.", ephemeral: true);
+			await FollowupAsync($"Métier inconnu : **{metier}**. Utilise l'autocomplétion.");
 			return;
 		}
 		var result = await roster.SetProfessionFromDiscordAsync(
 			Context.User.Id.ToString(), Context.User.Username, personnage.Trim(), metier, niveau, 300, note);
-		await RespondAsync(result.Message, ephemeral: !result.Success);
+		await FollowupAsync(result.Message);
 	}
 
 	[SlashCommand("remove", "Retirer un métier d'un personnage")]
@@ -31,14 +32,16 @@ public sealed class MetierModule(RosterService roster, AppDbContext db) : Intera
 		[Summary("personnage", "Nom du personnage en jeu")] string personnage,
 		[Summary("metier", "Le métier à retirer"), Autocomplete(typeof(ProfessionAutocompleteHandler))] string metier)
 	{
+		await DeferAsync();
 		var result = await roster.RemoveProfessionAsync(Context.User.Id.ToString(), personnage.Trim(), metier);
-		await RespondAsync(result.Message, ephemeral: !result.Success);
+		await FollowupAsync(result.Message);
 	}
 
 	[SlashCommand("list", "Lister les métiers de la guilde")]
 	public async Task ListAsync(
 		[Summary("metier", "Limiter à un métier"), Autocomplete(typeof(ProfessionAutocompleteHandler))] string? metier = null)
 	{
+		await DeferAsync();
 		var query = db.Professions.AsNoTracking().Include(p => p.Character).AsQueryable();
 		if (metier is not null)
 		{
@@ -50,7 +53,7 @@ public sealed class MetierModule(RosterService roster, AppDbContext db) : Intera
 
 		if (professions.Count == 0)
 		{
-			await RespondAsync("Aucun métier enregistré pour l'instant. `/metier set` pour commencer !", ephemeral: true);
+			await FollowupAsync("Aucun métier enregistré pour l'instant. `/metier set` pour commencer !");
 			return;
 		}
 
@@ -68,7 +71,7 @@ public sealed class MetierModule(RosterService roster, AppDbContext db) : Intera
 		}
 		embed.WithFooter("✓ = scanné en jeu par l'addon");
 
-		await RespondAsync(embed: embed.Build());
+		await FollowupAsync(embed: embed.Build());
 	}
 
 	[SlashCommand("who", "Qui peut craft ? Recherche par métier, niveau ou recette")]
@@ -77,6 +80,7 @@ public sealed class MetierModule(RosterService roster, AppDbContext db) : Intera
 		[Summary("niveau_min", "Niveau de compétence minimal"), MinValue(1), MaxValue(300)] int? niveauMin = null,
 		[Summary("recette", "Texte à chercher dans les recettes connues")] string? recette = null)
 	{
+		await DeferAsync();
 		var query = db.Professions.AsNoTracking()
 			.Include(p => p.Character)
 			.Include(p => p.Recipes)
@@ -103,7 +107,7 @@ public sealed class MetierModule(RosterService roster, AppDbContext db) : Intera
 
 		if (professions.Count == 0)
 		{
-			await RespondAsync("Personne ne correspond à ces critères.", ephemeral: true);
+			await FollowupAsync("Personne ne correspond à ces critères.");
 			return;
 		}
 
@@ -124,6 +128,6 @@ public sealed class MetierModule(RosterService roster, AppDbContext db) : Intera
 				(string.IsNullOrEmpty(profession.Note) ? "_(pas de note)_" : $"_{profession.Note}_") + matchedRecipes);
 		}
 
-		await RespondAsync(embed: embed.Build());
+		await FollowupAsync(embed: embed.Build());
 	}
 }

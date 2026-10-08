@@ -15,11 +15,12 @@ public sealed class ImportExportModule(ExportBuilder exportBuilder, RosterServic
 	[SlashCommand("export-addon", "Obtenir la chaîne d'import pour l'addon (à coller en jeu : /gp → Importer)")]
 	public async Task ExportAddonAsync()
 	{
+		await DeferAsync(ephemeral: true);
 		var export = await exportBuilder.BuildAsync();
 		var encoded = StringCodec.Encode(export);
 		// En pièce jointe : pas de limite des 2000 caractères d'un message.
 		using var stream = new MemoryStream(Encoding.UTF8.GetBytes(encoded));
-		await RespondWithFileAsync(
+		await FollowupWithFileAsync(
 			new FileAttachment(stream, "guildprofessions-import.txt"),
 			$"Données de la guilde (version {export.Version}, {export.Characters.Count} personnages). " +
 			"Ouvre le fichier, copie tout, puis en jeu : `/gp` → **Importer**.",
@@ -35,6 +36,7 @@ public sealed class ImportExportModule(ExportBuilder exportBuilder, RosterServic
 	[ModalInteraction("gp_import_modal")]
 	public async Task HandleImportAsync(ImportModal modal)
 	{
+		await DeferAsync(ephemeral: true);
 		GuildProfessions.Server.Contracts.UploadPayload? payload;
 		try
 		{
@@ -42,12 +44,12 @@ public sealed class ImportExportModule(ExportBuilder exportBuilder, RosterServic
 		}
 		catch (Exception exception)
 		{
-			await RespondAsync($"Import impossible : {exception.Message}", ephemeral: true);
+			await FollowupAsync($"Import impossible : {exception.Message}", ephemeral: true);
 			return;
 		}
 		if (payload is null)
 		{
-			await RespondAsync("Import impossible : chaîne vide.", ephemeral: true);
+			await FollowupAsync("Import impossible : chaîne vide.", ephemeral: true);
 			return;
 		}
 
@@ -66,7 +68,7 @@ public sealed class ImportExportModule(ExportBuilder exportBuilder, RosterServic
 		{
 			summary.Append("\n⚠ ").Append(warning);
 		}
-		await RespondAsync(summary.ToString(), ephemeral: true);
+		await FollowupAsync(summary.ToString(), ephemeral: true);
 	}
 
 	public sealed class ImportModal : IModal

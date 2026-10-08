@@ -28,6 +28,17 @@ public sealed class DiscordBotService(
 		interactions.Log += OnLog;
 		client.Ready += OnReadyAsync;
 		client.InteractionCreated += OnInteractionAsync;
+		// Sans ce hook, une commande qui échoue (exception, précondition...)
+		// est totalement silencieuse côté serveur.
+		interactions.InteractionExecuted += (command, _, result) =>
+		{
+			if (!result.IsSuccess)
+			{
+				logger.LogError("Commande /{Command} en échec : {Error} — {Reason}",
+					command?.Name, result.Error, result.ErrorReason);
+			}
+			return Task.CompletedTask;
+		};
 
 		await interactions.AddModulesAsync(typeof(DiscordBotService).Assembly, services);
 		await client.LoginAsync(TokenType.Bot, token);
@@ -52,6 +63,9 @@ public sealed class DiscordBotService(
 
 		if (guildIds.Count > 0)
 		{
+			// Purge des commandes globales (un premier lancement les avait
+			// enregistrées) : sinon chaque commande apparaît en double.
+			await client.Rest.DeleteAllGlobalCommandsAsync();
 			foreach (var guildId in guildIds)
 			{
 				await interactions.RegisterCommandsToGuildAsync(guildId);

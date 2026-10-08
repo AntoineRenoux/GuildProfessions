@@ -16,9 +16,10 @@ public sealed class CraftModule(CraftOrderService orders, AppDbContext db) : Int
 		[Summary("quantite", "Quantité"), MinValue(1), MaxValue(200)] int quantite = 1,
 		[Summary("note", "Précisions (matériaux fournis, urgence...)")] string? note = null)
 	{
+		await DeferAsync();
 		var result = await orders.CreateFromDiscordAsync(
 			Context.User.Id.ToString(), Context.User.Username, artisan.Trim(), objet.Trim(), quantite, note);
-		await RespondAsync(result.Message, ephemeral: !result.Success);
+		await FollowupAsync(result.Message);
 	}
 
 	[SlashCommand("list", "Voir les commandes de craft en cours")]
@@ -27,6 +28,7 @@ public sealed class CraftModule(CraftOrderService orders, AppDbContext db) : Int
 		[Choice("toutes", "toutes"), Choice("mes commandes", "mine"), Choice("à crafter pour moi", "pour-moi")]
 		string filtre = "toutes")
 	{
+		await DeferAsync();
 		var memberCharacters = await db.Characters
 			.Where(c => c.Member!.DiscordId == Context.User.Id.ToString())
 			.Select(c => c.Name)
@@ -44,7 +46,7 @@ public sealed class CraftModule(CraftOrderService orders, AppDbContext db) : Int
 
 		if (list.Count == 0)
 		{
-			await RespondAsync("Aucune commande en cours.", ephemeral: true);
+			await FollowupAsync("Aucune commande en cours.");
 			return;
 		}
 
@@ -59,27 +61,30 @@ public sealed class CraftModule(CraftOrderService orders, AppDbContext db) : Int
 				(string.IsNullOrEmpty(order.Note) ? "" : $"\n_{order.Note}_"));
 		}
 		embed.WithFooter("/craft accept|done|cancel <id>");
-		await RespondAsync(embed: embed.Build());
+		await FollowupAsync(embed: embed.Build());
 	}
 
 	[SlashCommand("accept", "Accepter une commande (artisan)")]
 	public async Task AcceptAsync([Summary("id", "Numéro de la commande")] int id)
 	{
+		await DeferAsync();
 		var result = await orders.UpdateStatusFromDiscordAsync(Context.User.Id.ToString(), id, CraftOrderStatus.Accepted);
-		await RespondAsync(result.Message, ephemeral: !result.Success);
+		await FollowupAsync(result.Message);
 	}
 
 	[SlashCommand("done", "Marquer une commande comme terminée (artisan)")]
 	public async Task DoneAsync([Summary("id", "Numéro de la commande")] int id)
 	{
+		await DeferAsync();
 		var result = await orders.UpdateStatusFromDiscordAsync(Context.User.Id.ToString(), id, CraftOrderStatus.Done);
-		await RespondAsync(result.Message, ephemeral: !result.Success);
+		await FollowupAsync(result.Message);
 	}
 
 	[SlashCommand("cancel", "Annuler une commande (artisan ou demandeur)")]
 	public async Task CancelAsync([Summary("id", "Numéro de la commande")] int id)
 	{
+		await DeferAsync();
 		var result = await orders.UpdateStatusFromDiscordAsync(Context.User.Id.ToString(), id, CraftOrderStatus.Cancelled);
-		await RespondAsync(result.Message, ephemeral: !result.Success);
+		await FollowupAsync(result.Message);
 	}
 }
