@@ -1,0 +1,33 @@
+# Caddyfile du VPS — copie de référence.
+#
+# ⚠ Fichier DÉPLOYÉ : /opt/entracte/deploy/Caddyfile (monté dans le conteneur
+# entracte-caddy-1, partagé avec le projet Entracte — le bloc {$DOMAIN} est à lui).
+#
+# Pour appliquer une modification :
+#   scp deploy/Caddyfile root@195.200.15.142:/opt/entracte/deploy/Caddyfile
+#   ssh root@195.200.15.142 docker restart entracte-caddy-1
+# ⚠ Toujours `docker restart`, jamais `caddy reload` seul : le bind-mount du
+# fichier se fige sur l'inode, un fichier recréé n'est pas vu par le conteneur.
+#
+# Prérequis réseau : le conteneur guildprofessions-server-1 est raccordé au
+# réseau entracte_default (voir docker-compose.override.yml sur le VPS).
+
+{$DOMAIN} {
+	reverse_proxy api:8080
+}
+
+# API GuildProfessions (compagnons) ; tout le reste redirige vers la landing.
+gp.warpvault.com {
+	@app path /api/* /healthz
+	handle @app {
+		reverse_proxy guildprofessions-server-1:8080
+	}
+	handle {
+		redir https://formerhopesupport.warpvault.com{uri} 301
+	}
+}
+
+# Landing page + téléchargements de la guilde.
+formerhopesupport.warpvault.com {
+	reverse_proxy guildprofessions-server-1:8080
+}
