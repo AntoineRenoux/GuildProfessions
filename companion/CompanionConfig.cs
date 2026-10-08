@@ -10,6 +10,8 @@ public sealed class CompanionConfig
 	public string UploadToken { get; set; } = "";
 	public string WowPath { get; set; } = "";
 	public int PollMinutes { get; set; } = 10;
+	/// <summary>Windows : inscription automatique au démarrage de la session (HKCU Run).</summary>
+	public bool AutoStart { get; set; } = true;
 
 	private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web) { WriteIndented = true };
 

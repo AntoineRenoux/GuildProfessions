@@ -33,7 +33,8 @@ for RID in win-x64 linux-x64; do
 	"guildToken": "$GP_GUILD_TOKEN",
 	"uploadToken": "",
 	"wowPath": "",
-	"pollMinutes": 10
+	"pollMinutes": 10,
+	"autoStart": true
 }
 EOF
 	rm -f "publish/companion-dist/$RID"/*.pdb

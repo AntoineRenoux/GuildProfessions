@@ -3,6 +3,12 @@ using GuildProfessions.Companion;
 var baseDirectory = AppContext.BaseDirectory;
 var configPath = Path.Combine(baseDirectory, "config.json");
 
+// Relancé par le démarrage de Windows : pas de fenêtre visible.
+if (args.Contains("--background"))
+{
+	AutoStart.HideConsoleWindow();
+}
+
 SyncService.Log("GuildProfessions Companion — pont entre le serveur de guilde et l'addon.");
 
 var config = CompanionConfig.LoadOrCreate(configPath);
@@ -30,6 +36,8 @@ if (!Directory.Exists(config.WowPath))
 	SyncService.Log($"wowPath invalide : {config.WowPath}");
 	return 1;
 }
+
+AutoStart.Sync(config.AutoStart);
 
 using var cancellation = new CancellationTokenSource();
 Console.CancelKeyPress += (_, eventArgs) =>
