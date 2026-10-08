@@ -115,6 +115,27 @@ public sealed class LuaParserTests
 	}
 }
 
+public sealed class SelfUpdaterTests
+{
+	[Theory]
+	[InlineData("1.0.28", "1.0.27", true)]
+	[InlineData("1.0.28", "1.0.28", false)]
+	[InlineData("1.0.28", "1.0.28.0", false)] // version d'assembly à 4 composants : égale
+	[InlineData("1.0.9", "1.0.28", false)]     // pas de rétrogradation (comparaison numérique, pas texte)
+	[InlineData("1.0.100", "1.0.99", true)]
+	[InlineData("pas-une-version", "1.0.0", false)]
+	public void IsNewer_Should_CompareNumerically(string candidate, string current, bool expected)
+	{
+		Assert.Equal(expected, SelfUpdater.IsNewer(candidate, Version.Parse(current)));
+	}
+
+	[Fact]
+	public void CurrentRid_Should_MatchAPublishedBuild()
+	{
+		Assert.Contains(SelfUpdater.CurrentRid(), new[] { "win-x64", "linux-x64", "osx-x64", "osx-arm64" });
+	}
+}
+
 public sealed class WowLocatorTests
 {
 	[Fact]

@@ -7,6 +7,8 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<InvariantGlobalization>true</InvariantGlobalization>
 		<AssemblyName>GuildProfessionsCompanion</AssemblyName>
+		<!-- Remplacée au packaging par 1.0.<nombre de commits> (scripts/package-companion.sh). -->
+		<Version>1.0.0</Version>
 	</PropertyGroup>
 
 </Project>

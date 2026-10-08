@@ -12,6 +12,8 @@ public sealed class CompanionConfig
 	public int PollMinutes { get; set; } = 10;
 	/// <summary>Windows : inscription automatique au démarrage de la session (HKCU Run).</summary>
 	public bool AutoStart { get; set; } = true;
+	/// <summary>Vérifie au démarrage puis toutes les 6 h qu'une version plus récente n'est pas publiée.</summary>
+	public bool AutoUpdate { get; set; } = true;
 
 	private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web) { WriteIndented = true };
 

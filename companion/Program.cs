@@ -9,9 +9,16 @@ if (args.Contains("--background"))
 	AutoStart.HideConsoleWindow();
 }
 
-SyncService.Log("GuildProfessions Companion — pont entre le serveur de guilde et l'addon.");
+SyncService.Log($"GuildProfessions Companion v{SelfUpdater.CurrentVersion.ToString(3)} — pont entre le serveur de guilde et l'addon.");
+SelfUpdater.CleanupPreviousVersion();
 
 var config = CompanionConfig.LoadOrCreate(configPath);
+
+var updater = new SelfUpdater(config, baseDirectory);
+if (config.AutoUpdate && await updater.TryUpdateAsync(CancellationToken.None))
+{
+	updater.Restart(args);
+}
 if (string.IsNullOrEmpty(config.GuildToken) && string.IsNullOrEmpty(config.UploadToken))
 {
 	SyncService.Log("Aucun token dans config.json : la synchronisation sera inactive.");
@@ -48,6 +55,10 @@ Console.CancelKeyPress += (_, eventArgs) =>
 };
 
 using var sync = new SyncService(config, baseDirectory);
+if (config.AutoUpdate)
+{
+	_ = updater.RunPeriodicAsync(args, cancellation.Token);
+}
 try
 {
 	await sync.RunAsync(cancellation.Token);

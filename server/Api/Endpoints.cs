@@ -11,6 +11,16 @@ public static class Endpoints
 	{
 		app.MapGet("/healthz", () => Results.Ok(new { status = "ok" }));
 
+		// Manifeste de version du compagnon (écrit par scripts/package-companion.sh
+		// à côté des zips) : public, il ne contient que versions, URLs et empreintes.
+		app.MapGet("/api/v1/companion/manifest", (IWebHostEnvironment env) =>
+		{
+			var path = Path.Combine(env.WebRootPath ?? "wwwroot", "downloads", "companion-manifest.json");
+			return File.Exists(path)
+				? Results.File(path, "application/json")
+				: Results.NotFound();
+		});
+
 		app.MapGet("/api/v1/export", async (HttpRequest request, ExportBuilder exportBuilder, IConfiguration config, CancellationToken ct) =>
 		{
 			var expected = config["Api:GuildToken"];
