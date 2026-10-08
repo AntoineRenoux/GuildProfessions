@@ -50,8 +50,16 @@ Création du bot (une fois) : [discord.com/developers/applications](https://disc
 ## Distribuer le compagnon (zéro config pour les joueurs)
 
 ```bash
-scripts/package-companion.sh
+scripts/package-companion.sh --deploy
 ```
+
+**Publier une nouvelle version** = commiter, puis lancer cette commande. La version vaut
+`1.0.<nombre de commits>` ; le script refuse de packager du code non commité. `--deploy`
+envoie les zips sur le VPS puis, en dernier, `companion-manifest.json` (version + SHA-256
+de chaque zip). Les compagnons installés consultent ce manifeste au démarrage puis toutes
+les 6 h, et se mettent à jour seuls : téléchargement, vérification de l'empreinte,
+remplacement de l'exécutable, redémarrage — `config.json` n'est jamais touché.
+Désactivable par joueur avec `"autoUpdate": false`.
 
 Le script publie les exécutables autonomes win-x64 et linux-x64 et glisse à côté un
 `config.json` **pré-rempli** (URL de prod `https://gp.warpvault.com` + token de guilde lu
