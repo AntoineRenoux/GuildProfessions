@@ -80,12 +80,26 @@ public sealed class DiscordBotService(
 		}
 	}
 
-	private async Task OnInteractionAsync(SocketInteraction interaction)
+	private Task OnInteractionAsync(SocketInteraction interaction)
 	{
-		// Un scope DI par commande : les modules consomment le DbContext scoped.
-		await using var scope = services.CreateAsyncScope();
-		var context = new SocketInteractionContext(client, interaction);
-		await interactions.ExecuteCommandAsync(context, scope.ServiceProvider);
+		logger.LogDebug("Interaction reçue : {Type} de {User}.", interaction.Type, interaction.User?.Username);
+		// Détachée du thread de la gateway (pattern recommandé Discord.Net) :
+		// un traitement inline bloque la connexion et donc... la réponse.
+		_ = Task.Run(async () =>
+		{
+			try
+			{
+				// Un scope DI par commande : les modules consomment le DbContext scoped.
+				await using var scope = services.CreateAsyncScope();
+				var context = new SocketInteractionContext(client, interaction);
+				await interactions.ExecuteCommandAsync(context, scope.ServiceProvider);
+			}
+			catch (Exception exception)
+			{
+				logger.LogError(exception, "Échec de traitement d'une interaction.");
+			}
+		});
+		return Task.CompletedTask;
 	}
 
 	private Task OnLog(LogMessage message)
