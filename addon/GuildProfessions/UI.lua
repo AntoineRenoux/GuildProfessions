@@ -95,6 +95,9 @@ local function AcquireRow(i, parent)
 			if count > 0 then
 				GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
 				GameTooltip:SetText(("Clic : voir les %d recettes de %s"):format(count, self.entry.char.name), 1, 0.82, 0)
+				if self.entry.char.name ~= GP.GetPlayerFullName() then
+					GameTooltip:AddLine("et les lui commander", 0.8, 0.8, 0.8)
+				end
 				GameTooltip:Show()
 			end
 		end)
@@ -123,17 +126,9 @@ local function AcquireRow(i, parent)
 		row.bar.text = row.bar:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 		row.bar.text:SetPoint("CENTER")
 
-		row.orderButton = CreateFrame("Button", nil, row, "UIPanelButtonTemplate")
-		row.orderButton:SetSize(86, 20)
-		row.orderButton:SetPoint("RIGHT", row, "RIGHT", -4, 0)
-		row.orderButton:SetText("Commander")
-		row.orderButton:SetScript("OnClick", function(self)
-			GP.OpenOrderDialog(self.crafter, self.prefillItem)
-		end)
-
 		row.info = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 		row.info:SetPoint("LEFT", row.bar, "RIGHT", 10, 0)
-		row.info:SetPoint("RIGHT", row.orderButton, "LEFT", -6, 0)
+		row.info:SetPoint("RIGHT", row, "RIGHT", -6, 0)
 		row.info:SetJustifyH("LEFT")
 		row.info:SetWordWrap(false)
 
@@ -193,9 +188,6 @@ local function RefreshList()
 		end
 		row.info:SetText(info .. "   " .. source)
 
-		row.orderButton.crafter = entry.char.name
-		row.orderButton.prefillItem = entry.matched or ""
-		row.orderButton:SetShown(entry.char.name ~= GP.GetPlayerFullName() and GP.IsEligibleCharacter())
 		row:Show()
 	end
 	content:SetHeight(math.max(#entries * ROW_HEIGHT, 1))
@@ -204,7 +196,7 @@ end
 
 -- Fenêtre « Recettes connues » ------------------------------------------------------
 
-local RECIPE_ROW_HEIGHT = 18
+local RECIPE_ROW_HEIGHT = 24
 local recipesDialog
 local recipeRowPool = {}
 
@@ -232,9 +224,17 @@ local function RefreshRecipesDialog()
 		if not row then
 			row = CreateFrame("Button", nil, dialog.content)
 			row:SetHeight(RECIPE_ROW_HEIGHT)
+			row.orderButton = CreateFrame("Button", nil, row, "UIPanelButtonTemplate")
+			row.orderButton:SetSize(84, 20)
+			row.orderButton:SetPoint("RIGHT", row, "RIGHT", -2, 0)
+			row.orderButton:SetText("Commander")
+			row.orderButton:SetScript("OnClick", function(self)
+				local parent = self:GetParent()
+				GP.OpenOrderDialog(recipesDialog.crafterName, parent.recipeName)
+			end)
 			row.text = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 			row.text:SetPoint("LEFT", 6, 0)
-			row.text:SetPoint("RIGHT", -6, 0)
+			row.text:SetPoint("RIGHT", row.orderButton, "LEFT", -6, 0)
 			row.text:SetJustifyH("LEFT")
 			row.text:SetWordWrap(false)
 			local highlight = row:CreateTexture(nil, "HIGHLIGHT")
@@ -268,6 +268,7 @@ local function RefreshRecipesDialog()
 		row.recipeId = item.id
 		row.recipeName = item.name
 		row.text:SetText(item.name)
+		row.orderButton:SetShown(dialog.canOrder)
 		row:Show()
 	end
 	dialog.content:SetHeight(math.max(#items * RECIPE_ROW_HEIGHT, 1))
@@ -343,6 +344,9 @@ function GP.OpenRecipesDialog(char, prof)
 	dialog.subtitle:SetText(("%s %d/%d%s"):format(prof.name, prof.level or 0, prof.max or 0,
 		prof.scannedAt and ("  ·  relevé le " .. prof.scannedAt) or ""))
 	dialog.recipes = prof.recipes
+	dialog.crafterName = char.name
+	-- Pas de commande à soi-même, ni depuis un perso hors guilde.
+	dialog.canOrder = char.name ~= GP.GetPlayerFullName() and GP.IsEligibleCharacter()
 	dialog.searchBox:SetText("")
 	RefreshRecipesDialog()
 	dialog:Show()
@@ -434,9 +438,9 @@ local orderDialog
 
 local function CreateOrderDialog()
 	local dialog = CreateFrame("Frame", "GuildProfessionsOrderDialog", UIParent, "BackdropTemplate")
-	dialog:SetSize(340, 210)
+	dialog:SetSize(320, 168)
 	dialog:SetPoint("CENTER")
-	dialog:SetFrameStrata("DIALOG")
+	dialog:SetFrameStrata("FULLSCREEN_DIALOG")
 	dialog:EnableMouse(true)
 	dialog:SetMovable(true)
 	dialog:RegisterForDrag("LeftButton")
@@ -453,45 +457,43 @@ local function CreateOrderDialog()
 	dialog.title = dialog:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	dialog.title:SetPoint("TOP", 0, -16)
 
-	local itemLabel = dialog:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-	itemLabel:SetPoint("TOPLEFT", 20, -44)
-	itemLabel:SetText("Objet / recette")
-	dialog.itemBox = CreateFrame("EditBox", nil, dialog, "InputBoxTemplate")
-	dialog.itemBox:SetSize(290, 20)
-	dialog.itemBox:SetPoint("TOPLEFT", itemLabel, "BOTTOMLEFT", 6, -4)
-	dialog.itemBox:SetAutoFocus(false)
+	-- La recette vient de la ligne cliquée : affichée, pas éditable.
+	dialog.itemText = dialog:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	dialog.itemText:SetPoint("TOP", 0, -40)
+	dialog.itemText:SetWidth(280)
+	dialog.itemText:SetTextColor(1, 0.82, 0)
 
 	local qtyLabel = dialog:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-	qtyLabel:SetPoint("TOPLEFT", 20, -96)
-	qtyLabel:SetText("Quantité")
+	qtyLabel:SetPoint("TOPRIGHT", dialog, "TOP", -6, -76)
+	qtyLabel:SetText("Quantité :")
 	dialog.qtyBox = CreateFrame("EditBox", nil, dialog, "InputBoxTemplate")
 	dialog.qtyBox:SetSize(50, 20)
-	dialog.qtyBox:SetPoint("TOPLEFT", qtyLabel, "BOTTOMLEFT", 6, -4)
+	dialog.qtyBox:SetPoint("LEFT", qtyLabel, "RIGHT", 12, 0)
 	dialog.qtyBox:SetAutoFocus(false)
 	dialog.qtyBox:SetNumeric(true)
 	dialog.qtyBox:SetMaxLetters(3)
+	dialog.qtyBox:SetJustifyH("CENTER")
 
-	local noteLabel = dialog:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-	noteLabel:SetPoint("TOPLEFT", 110, -96)
-	noteLabel:SetText("Note (optionnelle)")
-	dialog.noteBox = CreateFrame("EditBox", nil, dialog, "InputBoxTemplate")
-	dialog.noteBox:SetSize(196, 20)
-	dialog.noteBox:SetPoint("TOPLEFT", noteLabel, "BOTTOMLEFT", 6, -4)
-	dialog.noteBox:SetAutoFocus(false)
+	local function Submit()
+		local qty = tonumber(dialog.qtyBox:GetText()) or 0
+		if qty < 1 then
+			dialog.qtyBox:SetText("1")
+			dialog.qtyBox:HighlightText()
+			return
+		end
+		GP.CreateOrder(dialog.crafter, dialog.item, qty, nil)
+		dialog:Hide()
+		print(("|cff33ff99GuildProfessions|r — commande de %d× %s envoyée à %s. Synchronisée au prochain /reload ou déco.")
+			:format(qty, dialog.item, dialog.crafter))
+	end
+	dialog.qtyBox:SetScript("OnEnterPressed", Submit)
+	dialog.qtyBox:SetScript("OnEscapePressed", function() dialog:Hide() end)
 
 	local accept = CreateFrame("Button", nil, dialog, "UIPanelButtonTemplate")
 	accept:SetSize(120, 24)
 	accept:SetPoint("BOTTOMLEFT", 24, 18)
 	accept:SetText("Commander")
-	accept:SetScript("OnClick", function()
-		local item = dialog.itemBox:GetText()
-		if item == "" then
-			return
-		end
-		GP.CreateOrder(dialog.crafter, item, tonumber(dialog.qtyBox:GetText()) or 1, dialog.noteBox:GetText())
-		dialog:Hide()
-		print(("|cff33ff99GuildProfessions|r — commande envoyée à %s. Synchronisée au prochain /reload ou déco."):format(dialog.crafter))
-	end)
+	accept:SetScript("OnClick", Submit)
 
 	local cancel = CreateFrame("Button", nil, dialog, "UIPanelButtonTemplate")
 	cancel:SetSize(120, 24)
@@ -502,15 +504,16 @@ local function CreateOrderDialog()
 	return dialog
 end
 
-function GP.OpenOrderDialog(crafter, prefillItem)
+function GP.OpenOrderDialog(crafter, item)
 	orderDialog = orderDialog or CreateOrderDialog()
 	orderDialog.crafter = crafter
+	orderDialog.item = item
 	orderDialog.title:SetText("Commande à " .. crafter)
-	orderDialog.itemBox:SetText(prefillItem or "")
+	orderDialog.itemText:SetText(item)
 	orderDialog.qtyBox:SetText("1")
-	orderDialog.noteBox:SetText("")
 	orderDialog:Show()
-	orderDialog.itemBox:SetFocus()
+	orderDialog.qtyBox:SetFocus()
+	orderDialog.qtyBox:HighlightText()
 end
 
 -- Fenêtres Importer / Exporter -----------------------------------------------------
@@ -1154,7 +1157,7 @@ local function CreateMainFrame()
 
 	local ordersEmptyText = tabOrders:CreateFontString(nil, "OVERLAY", "GameFontDisable")
 	ordersEmptyText:SetPoint("CENTER", ordersScroll, "CENTER")
-	ordersEmptyText:SetText("Aucune commande. Onglet Métiers → bouton « Commander » sur un artisan.")
+	ordersEmptyText:SetText("Aucune commande. Onglet Métiers → clic sur un artisan → « Commander » en face de la recette.")
 	ordersEmptyText:Hide()
 	frame.ordersEmptyText = ordersEmptyText
 
