@@ -44,6 +44,10 @@ using (var scope = app.Services.CreateScope())
 	db.Database.Migrate();
 }
 
+// Landing page (wwwroot) + téléchargements (volume /app/wwwroot/downloads sur le VPS).
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.MapApiEndpoints();
 
 app.Run();

@@ -242,11 +242,17 @@ public static class WowLocator
 		return drives;
 	}
 
-	// 5. Linux : WoW sous Steam/Proton (et Lutris-GE au passage).
+	// 5. macOS : installation Battle.net standard.
+	// 6. Linux : WoW sous Steam/Proton (et Lutris-GE au passage).
 	private static IEnumerable<string> FromSteamProton()
 	{
 		if (OperatingSystem.IsWindows())
 		{
+			yield break;
+		}
+		if (OperatingSystem.IsMacOS())
+		{
+			yield return "/Applications/World of Warcraft";
 			yield break;
 		}
 		var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);

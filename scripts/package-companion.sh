@@ -22,7 +22,13 @@ if [ -z "$GP_GUILD_TOKEN" ]; then
 fi
 
 rm -rf publish/companion-dist
-for RID in win-x64 linux-x64; do
+
+# Zip de l'addon (le dossier à la racine, règle CurseForge/manuelle).
+mkdir -p publish/companion-dist
+(cd addon && zip -qr ../publish/companion-dist/GuildProfessions-addon.zip GuildProfessions)
+echo "  → publish/companion-dist/GuildProfessions-addon.zip"
+
+for RID in win-x64 linux-x64 osx-x64 osx-arm64; do
 	echo "— publication $RID..."
 	dotnet publish companion -c Release -r "$RID" --self-contained \
 		-p:PublishSingleFile=true -p:PublishTrimmed=false \

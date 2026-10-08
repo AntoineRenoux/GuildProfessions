@@ -12,3 +12,5 @@ services:
       Guild__Name: ${GUILD_NAME:-}
     volumes:
       - ./data:/data
+      # Zips addon + compagnon servis par la landing page (/downloads/...).
+      - ./downloads:/app/wwwroot/downloads:ro
