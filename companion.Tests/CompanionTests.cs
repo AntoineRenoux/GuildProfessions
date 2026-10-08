@@ -115,6 +115,28 @@ public sealed class LuaParserTests
 	}
 }
 
+public sealed class WowLocatorTests
+{
+	[Fact]
+	public void ExtractWowPaths_Should_FindPathsInBinaryBlob()
+	{
+		// Simule un product.db : chemins ASCII noyés dans du binaire.
+		var blob = new List<byte> { 0x0A, 0x2E, 0x01 };
+		blob.AddRange("E:/Jeux/World of Warcraft"u8.ToArray());
+		blob.Add(0x00);
+		blob.AddRange("C:/ProgramData/Battle.net"u8.ToArray()); // sans WoW : ignoré
+		blob.Add(0x12);
+		blob.AddRange("prefs.json"u8.ToArray()); // pas un chemin : ignoré
+		blob.Add(0xFF);
+
+		var paths = WowLocator.ExtractWowPaths([.. blob]);
+
+		var path = Assert.Single(paths);
+		Assert.Contains("World of Warcraft", path);
+		Assert.StartsWith("E:", path);
+	}
+}
+
 public sealed class DataLuaWriterTests
 {
 	[Fact]

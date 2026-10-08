@@ -20,15 +20,15 @@ if (string.IsNullOrEmpty(config.GuildToken) && string.IsNullOrEmpty(config.Uploa
 
 if (string.IsNullOrEmpty(config.WowPath))
 {
-	var detected = CompanionConfig.DetectWowPath();
+	var detected = WowLocator.Detect();
 	if (detected is null)
 	{
 		SyncService.Log("Impossible de localiser World of Warcraft : renseigne wowPath dans config.json");
 		SyncService.Log(@"(le dossier de la branche, ex. C:\Program Files (x86)\World of Warcraft\_forever_).");
 		return 1;
 	}
-	config.WowPath = detected;
-	SyncService.Log($"WoW détecté : {detected}");
+	config.WowPath = detected.Value.Path;
+	SyncService.Log($"WoW détecté via {detected.Value.Source} : {detected.Value.Path}");
 }
 
 if (!Directory.Exists(config.WowPath))
