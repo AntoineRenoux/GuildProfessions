@@ -157,7 +157,8 @@ function GP.GetRecipeName(spellId)
 	end
 	if not name then
 		local server = GP.GetServerData()
-		name = server.recipeNames and server.recipeNames[spellId]
+		-- Clés numériques (Data.lua) ou texte (JSON d'une chaîne importée).
+		name = server.recipeNames and (server.recipeNames[spellId] or server.recipeNames[tostring(spellId)])
 	end
 	if name then
 		recipeNameCache[spellId] = name

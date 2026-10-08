@@ -79,8 +79,28 @@ end
 local function AcquireRow(i, parent)
 	local row = rowPool[i]
 	if not row then
-		row = CreateFrame("Frame", nil, parent)
+		row = CreateFrame("Button", nil, parent)
 		row:SetHeight(ROW_HEIGHT)
+		row:RegisterForClicks("LeftButtonUp")
+		local rowHighlight = row:CreateTexture(nil, "HIGHLIGHT")
+		rowHighlight:SetAllPoints()
+		rowHighlight:SetColorTexture(1, 0.82, 0, 0.08)
+		row:SetScript("OnClick", function(self)
+			if self.entry and self.entry.prof.recipes and #self.entry.prof.recipes > 0 then
+				GP.OpenRecipesDialog(self.entry.char, self.entry.prof)
+			end
+		end)
+		row:SetScript("OnEnter", function(self)
+			local count = self.entry and self.entry.prof.recipes and #self.entry.prof.recipes or 0
+			if count > 0 then
+				GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+				GameTooltip:SetText(("Clic : voir les %d recettes de %s"):format(count, self.entry.char.name), 1, 0.82, 0)
+				GameTooltip:Show()
+			end
+		end)
+		row:SetScript("OnLeave", function()
+			GameTooltip:Hide()
+		end)
 
 		row.name = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 		row.name:SetPoint("LEFT", 4, 0)
@@ -153,16 +173,18 @@ local function RefreshList()
 		row.bar:SetValue(level)
 		row.bar.text:SetText(level .. " / " .. max)
 
-		local info
-		if entry.matched then
-			info = "|cff80ff80" .. entry.matched .. "|r"
-		elseif entry.prof.note and entry.prof.note ~= "" then
-			info = entry.prof.note
-		elseif entry.prof.recipes and #entry.prof.recipes > 0 then
-			info = #entry.prof.recipes .. " recettes connues"
-		else
-			info = "—"
+		local recipeCount = entry.prof.recipes and #entry.prof.recipes or 0
+		local parts = {}
+		if recipeCount > 0 then
+			parts[#parts + 1] = ("|cffffd100%d recette%s|r"):format(recipeCount, recipeCount > 1 and "s" or "")
 		end
+		if entry.matched then
+			parts[#parts + 1] = "|cff80ff80" .. entry.matched .. "|r"
+		elseif entry.prof.note and entry.prof.note ~= "" then
+			parts[#parts + 1] = entry.prof.note
+		end
+		local info = #parts > 0 and table.concat(parts, " · ") or "—"
+		row.entry = entry
 		local source
 		if entry.prof.source == "addon" then
 			source = "|cff999999scan " .. (entry.prof.scannedAt or "") .. "|r"
@@ -178,6 +200,152 @@ local function RefreshList()
 	end
 	content:SetHeight(math.max(#entries * ROW_HEIGHT, 1))
 	mainFrame.emptyText:SetShown(#entries == 0)
+end
+
+-- Fenêtre « Recettes connues » ------------------------------------------------------
+
+local RECIPE_ROW_HEIGHT = 18
+local recipesDialog
+local recipeRowPool = {}
+
+local function RecipeDisplayName(id)
+	return GP.GetRecipeName(id) or ("Recette #" .. id)
+end
+
+local function RefreshRecipesDialog()
+	local dialog = recipesDialog
+	local search = string.lower(dialog.searchBox:GetText() or "")
+	local items = {}
+	for _, id in ipairs(dialog.recipes or {}) do
+		local name = RecipeDisplayName(id)
+		if search == "" or string.lower(name):find(search, 1, true) then
+			items[#items + 1] = { id = id, name = name }
+		end
+	end
+	table.sort(items, function(a, b) return a.name < b.name end)
+
+	for _, row in ipairs(recipeRowPool) do
+		row:Hide()
+	end
+	for i, item in ipairs(items) do
+		local row = recipeRowPool[i]
+		if not row then
+			row = CreateFrame("Button", nil, dialog.content)
+			row:SetHeight(RECIPE_ROW_HEIGHT)
+			row.text = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+			row.text:SetPoint("LEFT", 6, 0)
+			row.text:SetPoint("RIGHT", -6, 0)
+			row.text:SetJustifyH("LEFT")
+			row.text:SetWordWrap(false)
+			local highlight = row:CreateTexture(nil, "HIGHLIGHT")
+			highlight:SetAllPoints()
+			highlight:SetColorTexture(1, 1, 1, 0.08)
+			row:SetScript("OnEnter", function(self)
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+				-- Tooltip natif de la recette ; repli sur le nom si l'API diffère.
+				if not pcall(GameTooltip.SetSpellByID, GameTooltip, self.recipeId) then
+					GameTooltip:SetText(self.recipeName)
+				end
+				GameTooltip:Show()
+			end)
+			row:SetScript("OnLeave", function()
+				GameTooltip:Hide()
+			end)
+			-- Maj+clic : lien de la recette dans le chat (pour la demander à l'artisan).
+			row:SetScript("OnClick", function(self)
+				if IsModifiedClick("CHATLINK") then
+					local link = C_Spell and C_Spell.GetSpellLink and C_Spell.GetSpellLink(self.recipeId)
+					if link then
+						ChatEdit_InsertLink(link)
+					end
+				end
+			end)
+			recipeRowPool[i] = row
+		end
+		row:ClearAllPoints()
+		row:SetPoint("TOPLEFT", dialog.content, "TOPLEFT", 0, -(i - 1) * RECIPE_ROW_HEIGHT)
+		row:SetPoint("RIGHT", dialog.content, "RIGHT", 0, 0)
+		row.recipeId = item.id
+		row.recipeName = item.name
+		row.text:SetText(item.name)
+		row:Show()
+	end
+	dialog.content:SetHeight(math.max(#items * RECIPE_ROW_HEIGHT, 1))
+	dialog.countText:SetText(("%d / %d recettes"):format(#items, #(dialog.recipes or {})))
+end
+
+local function CreateRecipesDialog()
+	local dialog = CreateFrame("Frame", "GuildProfessionsRecipesDialog", UIParent, "BackdropTemplate")
+	dialog:SetSize(380, 460)
+	dialog:SetPoint("CENTER", 220, 0)
+	dialog:SetFrameStrata("DIALOG")
+	dialog:EnableMouse(true)
+	dialog:SetMovable(true)
+	dialog:RegisterForDrag("LeftButton")
+	dialog:SetScript("OnDragStart", dialog.StartMoving)
+	dialog:SetScript("OnDragStop", dialog.StopMovingOrSizing)
+	dialog:SetBackdrop({
+		bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background-Dark",
+		edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+		edgeSize = 24,
+		insets = { left = 6, right = 6, top = 6, bottom = 6 },
+	})
+	tinsert(UISpecialFrames, "GuildProfessionsRecipesDialog")
+
+	local close = CreateFrame("Button", nil, dialog, "UIPanelCloseButton")
+	close:SetPoint("TOPRIGHT", -4, -4)
+
+	dialog.title = dialog:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	dialog.title:SetPoint("TOPLEFT", 18, -16)
+	dialog.title:SetPoint("RIGHT", -36, 0)
+	dialog.title:SetJustifyH("LEFT")
+
+	dialog.subtitle = dialog:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+	dialog.subtitle:SetPoint("TOPLEFT", 18, -34)
+	dialog.subtitle:SetTextColor(0.7, 0.7, 0.7)
+
+	dialog.searchBox = CreateFrame("EditBox", nil, dialog, "InputBoxTemplate")
+	dialog.searchBox:SetSize(220, 20)
+	dialog.searchBox:SetPoint("TOPLEFT", 24, -54)
+	dialog.searchBox:SetAutoFocus(false)
+	dialog.searchBox:SetScript("OnTextChanged", RefreshRecipesDialog)
+	dialog.searchBox:SetScript("OnEscapePressed", function(self)
+		self:SetText("")
+		self:ClearFocus()
+	end)
+
+	dialog.countText = dialog:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+	dialog.countText:SetPoint("LEFT", dialog.searchBox, "RIGHT", 12, 0)
+
+	local scroll = CreateFrame("ScrollFrame", nil, dialog, "UIPanelScrollFrameTemplate")
+	scroll:SetPoint("TOPLEFT", 14, -84)
+	scroll:SetPoint("BOTTOMRIGHT", -34, 36)
+	dialog.content = CreateFrame("Frame", nil, scroll)
+	dialog.content:SetSize(1, 1)
+	scroll:SetScrollChild(dialog.content)
+	scroll:SetScript("OnSizeChanged", function(_, width)
+		dialog.content:SetWidth(width)
+	end)
+
+	local hint = dialog:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+	hint:SetPoint("BOTTOM", 0, 16)
+	hint:SetText("Survol : détail · Maj+clic : lien dans le chat")
+
+	return dialog
+end
+
+function GP.OpenRecipesDialog(char, prof)
+	recipesDialog = recipesDialog or CreateRecipesDialog()
+	local dialog = recipesDialog
+	local r, g, b = ClassColor(char.classFile)
+	dialog.title:SetText(char.name)
+	dialog.title:SetTextColor(r, g, b)
+	dialog.subtitle:SetText(("%s %d/%d%s"):format(prof.name, prof.level or 0, prof.max or 0,
+		prof.scannedAt and ("  ·  relevé le " .. prof.scannedAt) or ""))
+	dialog.recipes = prof.recipes
+	dialog.searchBox:SetText("")
+	RefreshRecipesDialog()
+	dialog:Show()
 end
 
 -- Filtres ------------------------------------------------------------------------
