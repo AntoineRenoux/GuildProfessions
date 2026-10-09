@@ -14,6 +14,8 @@ public sealed class CompanionConfig
 	public bool AutoStart { get; set; } = true;
 	/// <summary>Vérifie au démarrage puis toutes les 6 h qu'une version plus récente n'est pas publiée.</summary>
 	public bool AutoUpdate { get; set; } = true;
+	/// <summary>Pack tout-en-un : le compagnon installe l'addon dans WoW et le tient à jour.</summary>
+	public bool InstallAddon { get; set; }
 
 	private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web) { WriteIndented = true };
 

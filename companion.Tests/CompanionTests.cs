@@ -115,6 +115,80 @@ public sealed class LuaParserTests
 	}
 }
 
+public sealed class AddonInstallerTests : IDisposable
+{
+	private readonly string _addOns = Path.Combine(Path.GetTempPath(), "gp-addons-" + Guid.NewGuid().ToString("N"));
+
+	public void Dispose()
+	{
+		if (Directory.Exists(_addOns))
+		{
+			Directory.Delete(_addOns, recursive: true);
+		}
+	}
+
+	private static byte[] Zip(params (string Path, string Content)[] files)
+	{
+		using var memory = new MemoryStream();
+		using (var zip = new System.IO.Compression.ZipArchive(memory, System.IO.Compression.ZipArchiveMode.Create, leaveOpen: true))
+		{
+			foreach (var (path, content) in files)
+			{
+				using var writer = new StreamWriter(zip.CreateEntry(path).Open());
+				writer.Write(content);
+			}
+		}
+		return memory.ToArray();
+	}
+
+	[Fact]
+	public void InstallFromZip_Should_InstallFiles_AndNeverTouchDataLua()
+	{
+		var addon = Path.Combine(_addOns, "GuildProfessions");
+		Directory.CreateDirectory(addon);
+		File.WriteAllText(Path.Combine(addon, "Data.lua"), "-- données réelles de la guilde");
+
+		var count = AddonInstaller.InstallFromZip(Zip(
+			("GuildProfessions/GuildProfessions.toc", "## Interface: 16001\n## Version: 1.0.31\n"),
+			("GuildProfessions/Core.lua", "-- code"),
+			("GuildProfessions/Data.lua", "-- version vide du zip")), _addOns);
+
+		Assert.Equal(2, count);
+		Assert.Equal("-- données réelles de la guilde", File.ReadAllText(Path.Combine(addon, "Data.lua")));
+		Assert.Equal("1.0.31", AddonInstaller.ReadInstalledVersion(_addOns));
+	}
+
+	[Fact]
+	public void InstallFromZip_Should_RemoveFilesNoLongerShipped()
+	{
+		var addon = Path.Combine(_addOns, "GuildProfessions");
+		Directory.CreateDirectory(addon);
+		File.WriteAllText(Path.Combine(addon, "Ancien.lua"), "-- retiré dans la nouvelle version");
+
+		AddonInstaller.InstallFromZip(Zip(("GuildProfessions/Core.lua", "-- code")), _addOns);
+
+		Assert.False(File.Exists(Path.Combine(addon, "Ancien.lua")));
+		Assert.True(File.Exists(Path.Combine(addon, "Core.lua")));
+	}
+
+	[Fact]
+	public void InstallFromZip_Should_IgnoreEntriesEscapingTheAddonFolder()
+	{
+		AddonInstaller.InstallFromZip(Zip(
+			("GuildProfessions/../../evil.txt", "zip-slip"),
+			("AutreAddon/Core.lua", "-- pas à nous")), _addOns);
+
+		Assert.False(File.Exists(Path.Combine(_addOns, "..", "evil.txt")));
+		Assert.False(Directory.Exists(Path.Combine(_addOns, "AutreAddon")));
+	}
+
+	[Fact]
+	public void ReadInstalledVersion_Should_ReturnNull_WhenAddonAbsent()
+	{
+		Assert.Null(AddonInstaller.ReadInstalledVersion(_addOns));
+	}
+}
+
 public sealed class SelfUpdaterTests
 {
 	[Theory]

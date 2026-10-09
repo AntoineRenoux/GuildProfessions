@@ -8,9 +8,11 @@ using System.Text.Json;
 
 namespace GuildProfessions.Companion;
 
-public sealed record CompanionManifest(string Version, Dictionary<string, CompanionAsset> Assets);
+public sealed record CompanionManifest(string Version, Dictionary<string, CompanionAsset> Assets, AddonAsset? Addon = null);
 
 public sealed record CompanionAsset(string Url, string Sha256);
+
+public sealed record AddonAsset(string Version, string Url, string Sha256);
 
 /// <summary>
 /// Mise à jour automatique : compare la version embarquée au manifeste publié
@@ -164,11 +166,15 @@ public sealed class SelfUpdater(CompanionConfig config, string baseDirectory)
 		}
 	}
 
-	public async Task RunPeriodicAsync(string[] args, CancellationToken ct)
+	public async Task RunPeriodicAsync(string[] args, AddonInstaller? addonInstaller, CancellationToken ct)
 	{
 		using var timer = new PeriodicTimer(TimeSpan.FromHours(6));
 		while (await timer.WaitForNextTickAsync(ct))
 		{
+			if (addonInstaller is not null)
+			{
+				await addonInstaller.EnsureLatestAsync(ct);
+			}
 			if (await TryUpdateAsync(ct))
 			{
 				Restart(args);

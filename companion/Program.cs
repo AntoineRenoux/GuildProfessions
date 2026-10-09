@@ -46,6 +46,15 @@ if (!Directory.Exists(config.WowPath))
 
 AutoStart.Sync(config.AutoStart);
 
+// Pack tout-en-un : l'addon est installé (ou mis à jour) avant la première
+// synchro, qui écrira ensuite son Data.lua.
+AddonInstaller? addonInstaller = null;
+if (config.InstallAddon)
+{
+	addonInstaller = new AddonInstaller(config);
+	await addonInstaller.EnsureLatestAsync(CancellationToken.None);
+}
+
 using var cancellation = new CancellationTokenSource();
 Console.CancelKeyPress += (_, eventArgs) =>
 {
@@ -57,7 +66,7 @@ Console.CancelKeyPress += (_, eventArgs) =>
 using var sync = new SyncService(config, baseDirectory);
 if (config.AutoUpdate)
 {
-	_ = updater.RunPeriodicAsync(args, cancellation.Token);
+	_ = updater.RunPeriodicAsync(args, addonInstaller, cancellation.Token);
 }
 try
 {
