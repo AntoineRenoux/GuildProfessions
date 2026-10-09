@@ -25,6 +25,7 @@
 		--font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
 	}
 	* { box-sizing: border-box; }
+	[hidden] { display: none !important; }
 	html { scroll-behavior: smooth; }
 	@media (prefers-reduced-motion: reduce) {
 		html { scroll-behavior: auto; }
@@ -62,6 +63,32 @@
 		padding: 10px 12px; border-radius: 8px; min-height: 44px; display: inline-flex; align-items: center;
 	}
 	.nav-links a:hover { color: var(--text); background: var(--surface-2); }
+	.nav-toggle {
+		display: none; margin-left: auto; cursor: pointer;
+		width: 44px; height: 44px; border-radius: 10px;
+		background: var(--surface); border: 1px solid var(--border); color: var(--text);
+		align-items: center; justify-content: center;
+	}
+	.nav-toggle .icon-close { display: none; }
+	header.nav.open .nav-toggle .icon-open { display: none; }
+	header.nav.open .nav-toggle .icon-close { display: block; }
+	/* Les ancres ne doivent pas atterrir sous le menu collé en haut. */
+	section[id] { scroll-margin-top: 72px; }
+
+	@media (max-width: 760px) {
+		.nav-toggle { display: inline-flex; }
+		.nav-links {
+			display: none;
+			position: absolute; top: 100%; left: 0; right: 0;
+			flex-direction: column; gap: 0;
+			background: rgba(11, 13, 18, 0.97); backdrop-filter: blur(10px);
+			border-bottom: 1px solid var(--border);
+			padding: 8px 20px 14px;
+		}
+		header.nav.open .nav-links { display: flex; }
+		.nav-links a { font-size: 16px; padding: 12px 8px; border-bottom: 1px solid var(--border); border-radius: 0; }
+		.nav-links a:last-child { border-bottom: none; }
+	}
 
 	/* ---- Hero ---- */
 	.hero { position: relative; padding: 88px 0 72px; text-align: center; overflow: hidden; }
@@ -247,6 +274,36 @@
 
 	footer { border-top: 1px solid var(--border); padding: 36px 0 44px; text-align: center; color: var(--text-2); font-size: 14px; }
 	footer .brand { justify-content: center; margin-bottom: 8px; }
+
+	.version-badge {
+		display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap;
+		margin: 0 0 18px 50px; padding: 6px 12px; border-radius: 999px;
+		background: var(--surface); border: 1px solid var(--border);
+		font-size: 13px; color: var(--text-2);
+	}
+	.version-badge strong { color: var(--green); font-weight: 700; }
+	.version-badge .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex: none; }
+
+	/* ---- Mobile ---- */
+	@media (max-width: 760px) {
+		section { padding: 48px 0; }
+		.hero { padding: 52px 0 44px; }
+		.lede { font-size: 16.5px; }
+		.sub { margin-bottom: 30px; }
+		.cta-row .btn { flex: 1 1 100%; justify-content: center; }
+		.dl-step-title { font-size: 17px; flex-wrap: wrap; }
+		.dl-step-hint, .version-badge { margin-left: 0; }
+		.steps li { padding: 16px 16px 16px 56px; }
+		.steps li::before { left: 14px; width: 28px; height: 28px; }
+		.cmd { flex-direction: column; gap: 6px; padding: 14px 16px; }
+		.cmd code { min-width: 0; }
+		.tabs { gap: 6px; }
+		.tab { flex: 1 1 0; justify-content: center; padding: 12px 10px; }
+		.flow { padding: 16px; }
+		.note { padding: 12px 14px; }
+		summary { padding: 16px; }
+		details .body { padding: 0 16px 16px; }
+	}
 </style>
 </head>
 <body>
@@ -257,7 +314,11 @@
 			<svg class="sigil" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l7 4v6c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6z"/><path d="M9 11l2 2 4-4"/></svg>
 			GuildProfessions
 		</a>
-		<nav class="nav-links" aria-label="Navigation principale">
+		<button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Ouvrir le menu">
+			<svg class="icon-open" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+			<svg class="icon-close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+		</button>
+		<nav class="nav-links" id="nav-links" aria-label="Navigation principale">
 			<a href="#fonctionnement">Fonctionnement</a>
 			<a href="#telechargements">Téléchargements</a>
 			<a href="#installation">Installation</a>
@@ -403,6 +464,12 @@
 			<div class="dl-step">
 				<h3 class="dl-step-title"><span class="step-badge" aria-hidden="true">2</span> Le compagnon <span style="color: var(--gold); font-weight: 600;">— choisis ton système</span></h3>
 				<p class="dl-step-hint">C'est lui qui rend tout automatique. Un seul zip à prendre, celui de ta machine.</p>
+				<p class="version-badge" id="companion-version" hidden>
+					<span class="dot" aria-hidden="true"></span>
+					<span>Version actuelle <strong id="companion-version-number"></strong></span>
+					<span id="companion-version-date"></span>
+					<span>· se met à jour tout seul</span>
+				</p>
 				<div class="dl-grid">
 				<a class="dl" href="/downloads/GuildProfessionsCompanion-win-x64.zip">
 					<span class="os">
@@ -617,6 +684,33 @@
 			if (e.key === 'ArrowLeft') { const previous = list[(index - 1 + list.length) % list.length]; previous.focus(); selectTab(previous); }
 		});
 	});
+	// Menu mobile.
+	const header = document.querySelector('header.nav');
+	const toggle = document.querySelector('.nav-toggle');
+	function setMenu(open) {
+		header.classList.toggle('open', open);
+		toggle.setAttribute('aria-expanded', open);
+		toggle.setAttribute('aria-label', open ? 'Fermer le menu' : 'Ouvrir le menu');
+	}
+	toggle.addEventListener('click', () => setMenu(!header.classList.contains('open')));
+	document.querySelectorAll('.nav-links a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+	document.addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
+
+	// Version du compagnon, lue dans le manifeste publié avec les zips.
+	fetch('/api/v1/companion/manifest', { cache: 'no-store' })
+		.then(r => r.ok ? r.json() : null)
+		.then(manifest => {
+			if (!manifest || !manifest.version) return;
+			document.getElementById('companion-version-number').textContent = 'v' + manifest.version;
+			if (manifest.publishedUtc) {
+				const date = new Date(manifest.publishedUtc);
+				document.getElementById('companion-version-date').textContent =
+					'· publiée le ' + date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+			}
+			document.getElementById('companion-version').hidden = false;
+		})
+		.catch(() => { /* badge simplement non affiché */ });
+
 	// Pré-sélection de l'onglet selon l'OS du visiteur.
 	const ua = navigator.userAgent;
 	if (/Mac/i.test(ua)) selectTab(document.getElementById('tab-mac'));
