@@ -125,6 +125,9 @@ namespace GuildProfessions.Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("MainCharacterId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("UploadToken")
                         .HasColumnType("TEXT");
 
@@ -132,6 +135,8 @@ namespace GuildProfessions.Server.Migrations
 
                     b.HasIndex("DiscordId")
                         .IsUnique();
+
+                    b.HasIndex("MainCharacterId");
 
                     b.ToTable("Members");
                 });
@@ -220,6 +225,16 @@ namespace GuildProfessions.Server.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Member");
+                });
+
+            modelBuilder.Entity("GuildProfessions.Server.Data.Member", b =>
+                {
+                    b.HasOne("GuildProfessions.Server.Data.Character", "MainCharacter")
+                        .WithMany()
+                        .HasForeignKey("MainCharacterId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("MainCharacter");
                 });
 
             modelBuilder.Entity("GuildProfessions.Server.Data.Profession", b =>

@@ -182,6 +182,77 @@ public sealed class RosterServiceTests : IDisposable
 		Assert.Equal("|Hitem:16963|h[Casque]|h", equipment[1]);
 	}
 
+	[Fact]
+	public async Task LinkCharacter_Should_SetMainCharacterOnFirstLinkOnly()
+	{
+		await _roster.LinkCharacterAsync("42", "anto", "Asdubral Vect");
+		await _roster.LinkCharacterAsync("42", "anto", "Sallymarow Vect");
+
+		Assert.Equal("Asdubral Vect", await _roster.GetMainCharacterNameAsync("42"));
+	}
+
+	[Fact]
+	public async Task SetMainCharacter_Should_SwitchMain_WhenCharacterLinkedToCaller_CaseInsensitive()
+	{
+		await _roster.LinkCharacterAsync("42", "anto", "Asdubral Vect");
+		await _roster.LinkCharacterAsync("42", "anto", "Sallymarow Vect");
+
+		var result = await _roster.SetMainCharacterAsync("42", "sallymarow vect");
+
+		Assert.True(result.Success);
+		Assert.Equal("Sallymarow Vect", await _roster.GetMainCharacterNameAsync("42"));
+	}
+
+	[Fact]
+	public async Task SetMainCharacter_Should_Refuse_WhenCharacterUnknownOrLinkedToAnotherMember()
+	{
+		await _roster.LinkCharacterAsync("42", "anto", "Asdubral Vect");
+		await _roster.LinkCharacterAsync("99", "autre", "Thorgal");
+
+		var unknown = await _roster.SetMainCharacterAsync("42", "Inconnu");
+		var foreign = await _roster.SetMainCharacterAsync("42", "Thorgal");
+
+		Assert.False(unknown.Success);
+		Assert.False(foreign.Success);
+		Assert.Equal("Asdubral Vect", await _roster.GetMainCharacterNameAsync("42"));
+	}
+
+	[Fact]
+	public async Task DeletingMainCharacter_Should_ClearMainCharacter()
+	{
+		await _roster.LinkCharacterAsync("42", "anto", "Asdubral Vect");
+		_db.ChangeTracker.Clear();
+
+		_db.Characters.Remove(await _db.Characters.SingleAsync());
+		await _db.SaveChangesAsync();
+		_db.ChangeTracker.Clear();
+
+		Assert.Null((await _db.Members.SingleAsync()).MainCharacterId);
+	}
+
+	[Fact]
+	public async Task GetNicknameTargets_Should_ListOnlyMembersWithMainCharacter()
+	{
+		await _roster.LinkCharacterAsync("42", "anto", "Asdubral Vect");
+		await _roster.GetOrCreateMemberAsync("7", "sans-perso");
+
+		var targets = await _roster.GetNicknameTargetsAsync();
+
+		Assert.Equal([("42", "Asdubral Vect")], targets);
+	}
+
+	[Theory]
+	[InlineData("Asdubral Vect", "Asdubral Vect")]
+	[InlineData("  Asdubral   Vect ", "Asdubral Vect")]
+	[InlineData("Unprénomtrèstrèslong Etunnomdefamilleinterminable", "Unprénomtrèstrèslong Etunnomdefa")]
+	public void NicknameFor_Should_NormalizeAndCapAt32Characters(string characterName, string expected)
+	{
+		var nickname = GuildProfessions.Server.Discord.NicknameSync.For(characterName);
+
+		Assert.Equal(expected, nickname);
+		Assert.True(nickname.Length <= 32);
+	}
+
 	#region Helper Methods
 
 	private static UploadPayload Payload(string characterName, params (string Name, int Level)[] professions)

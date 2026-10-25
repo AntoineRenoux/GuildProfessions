@@ -19,6 +19,7 @@ builder.Services.AddScoped<RosterService>();
 builder.Services.AddScoped<ExportBuilder>();
 builder.Services.AddScoped<CraftOrderService>();
 builder.Services.AddSingleton<ICraftOrderNotifier, DiscordCraftOrderNotifier>();
+builder.Services.AddSingleton<NicknameSync>();
 
 builder.Services.AddSingleton(new DiscordSocketClient(new DiscordSocketConfig
 {

@@ -27,6 +27,12 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
 			.HasForeignKey(c => c.MemberId)
 			.OnDelete(DeleteBehavior.SetNull);
 
+		modelBuilder.Entity<Member>()
+			.HasOne(m => m.MainCharacter)
+			.WithMany()
+			.HasForeignKey(m => m.MainCharacterId)
+			.OnDelete(DeleteBehavior.SetNull);
+
 		modelBuilder.Entity<Profession>()
 			.HasIndex(p => new { p.CharacterId, p.Name })
 			.IsUnique();

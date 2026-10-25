@@ -44,8 +44,10 @@ l'ID du serveur de guilde, sans rien changer d'autre :
 
 Création du bot (une fois) : [discord.com/developers/applications](https://discord.com/developers/applications)
 → New Application → onglet **Bot** → Reset Token (= `Discord:Token`). Invitation sur un serveur :
-`https://discord.com/oauth2/authorize?client_id=<APPLICATION_ID>&scope=bot+applications.commands&permissions=51200`
-(51200 = envoyer des messages, intégrer des liens, joindre des fichiers).
+`https://discord.com/oauth2/authorize?client_id=<APPLICATION_ID>&scope=bot+applications.commands&permissions=134268928`
+(134268928 = envoyer des messages, intégrer des liens, joindre des fichiers + gérer les pseudos).
+Pour que le bot renomme les membres avec leur personnage principal, son rôle doit être placé **au-dessus**
+des leurs dans les paramètres du serveur. Discord interdit de renommer le propriétaire du serveur.
 
 ## Distribuer le compagnon (zéro config pour les joueurs)
 

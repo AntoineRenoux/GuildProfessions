@@ -16,6 +16,10 @@ public sealed class Member
 	public required string DiscordName { get; set; }
 	public string? UploadToken { get; set; }
 
+	/// <summary>Personnage dont le nom devient le pseudo Discord du membre (posé au premier /link, changé par /main).</summary>
+	public int? MainCharacterId { get; set; }
+	public Character? MainCharacter { get; set; }
+
 	public List<Character> Characters { get; set; } = [];
 }
 

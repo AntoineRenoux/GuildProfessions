@@ -48,8 +48,51 @@ public sealed class RosterService(AppDbContext db)
 			return new OperationResult(false, $"**{characterName}** est déjà lié à un autre compte Discord.");
 		}
 		character.MemberId = member.Id;
+		if (member.MainCharacterId is null)
+		{
+			// Le premier personnage lié devient le principal (son nom = le pseudo Discord).
+			member.MainCharacter = character;
+		}
 		await SaveWithVersionBumpAsync(ct);
 		return new OperationResult(true, $"**{characterName}** est maintenant lié à ton compte Discord.");
+	}
+
+	public async Task<OperationResult> SetMainCharacterAsync(string discordId, string characterName, CancellationToken ct = default)
+	{
+		var member = await db.Members.SingleOrDefaultAsync(m => m.DiscordId == discordId, ct);
+		var lowered = characterName.ToLower();
+		var character = await db.Characters.SingleOrDefaultAsync(c => c.Name.ToLower() == lowered, ct);
+		if (character is null)
+		{
+			return new OperationResult(false, $"Personnage **{characterName}** inconnu de l'annuaire.");
+		}
+		if (member is null || character.MemberId != member.Id)
+		{
+			return new OperationResult(false, $"**{character.Name}** n'est pas lié à ton compte. Fais d'abord `/link personnage:{character.Name}`.");
+		}
+		member.MainCharacterId = character.Id;
+		await db.SaveChangesAsync(ct);
+		return new OperationResult(true, $"**{character.Name}** est maintenant ton personnage principal.");
+	}
+
+	/// <summary>Nom du personnage principal d'un membre, null s'il n'en a pas.</summary>
+	public async Task<string?> GetMainCharacterNameAsync(string discordId, CancellationToken ct = default)
+	{
+		return await db.Members.AsNoTracking()
+			.Where(m => m.DiscordId == discordId && m.MainCharacter != null)
+			.Select(m => m.MainCharacter!.Name)
+			.SingleOrDefaultAsync(ct);
+	}
+
+	/// <summary>Couples (membre Discord, nom du principal) pour réaligner tous les pseudos.</summary>
+	public async Task<List<(string DiscordId, string CharacterName)>> GetNicknameTargetsAsync(CancellationToken ct = default)
+	{
+		var rows = await db.Members.AsNoTracking()
+			.Where(m => m.MainCharacter != null)
+			.OrderBy(m => m.Id)
+			.Select(m => new { m.DiscordId, Name = m.MainCharacter!.Name })
+			.ToListAsync(ct);
+		return rows.Select(r => (r.DiscordId, r.Name)).ToList();
 	}
 
 	public async Task<string> GetOrCreateUploadTokenAsync(string discordId, string discordName, CancellationToken ct = default)

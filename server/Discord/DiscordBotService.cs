@@ -52,14 +52,8 @@ public sealed class DiscordBotService(
 
 	private async Task OnReadyAsync()
 	{
-		// Discord:GuildIds = IDs de serveurs séparés par des virgules (test,
-		// prod...). L'enregistrement par serveur est immédiat ; passer en prod
-		// = ajouter l'ID du serveur de guilde à la liste, sans rien retirer.
-		var guildIds = (config["Discord:GuildIds"] ?? config["Discord:GuildId"] ?? "")
-			.Split([',', ';', ' '], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-			.Select(raw => ulong.TryParse(raw, out var id) ? id : 0)
-			.Where(id => id > 0)
-			.ToList();
+		// L'enregistrement par serveur est immédiat (global : ~1 h de propagation).
+		var guildIds = DiscordGuildIds.Parse(config);
 
 		if (guildIds.Count > 0)
 		{
@@ -77,6 +71,33 @@ public sealed class DiscordBotService(
 			// Global : propagation en ~1 h côté Discord.
 			await interactions.RegisterCommandsGloballyAsync();
 			logger.LogInformation("Commandes slash enregistrées globalement.");
+		}
+
+		_ = Task.Run(ReconcileNicknamesAsync);
+	}
+
+	// Réaligne les pseudos de tous les membres ayant un personnage principal :
+	// rattrape un renommage manuel, ou un membre arrivé sur le serveur après son /link.
+	private async Task ReconcileNicknamesAsync()
+	{
+		try
+		{
+			await using var scope = services.CreateAsyncScope();
+			var roster = scope.ServiceProvider.GetRequiredService<GuildProfessions.Server.Services.RosterService>();
+			var nicknames = scope.ServiceProvider.GetRequiredService<NicknameSync>();
+			var targets = await roster.GetNicknameTargetsAsync();
+			var updated = 0;
+			foreach (var (discordId, characterName) in targets)
+			{
+				var outcomes = await nicknames.SyncAsync(discordId, characterName);
+				updated += outcomes.Count(o => o == NicknameOutcome.Updated);
+			}
+			logger.LogInformation("Pseudos réalignés : {Updated} modifié(s) pour {Members} membre(s) ayant un personnage principal.",
+				updated, targets.Count);
+		}
+		catch (Exception exception)
+		{
+			logger.LogError(exception, "Réalignement des pseudos en échec.");
 		}
 	}
 
