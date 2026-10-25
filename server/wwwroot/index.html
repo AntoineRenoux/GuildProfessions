@@ -324,6 +324,18 @@
 	}
 	.aio-note .mode-title { margin: 0 0 6px; }
 	.aio-note p:last-child { margin: 0; color: var(--text-2); font-size: 14.5px; }
+	/* ---- Onglet Admin ---- */
+	.tab-admin { gap: 6px; }
+	.admin-intro { max-width: 780px; margin: 0 auto 26px; color: var(--text-2); }
+	.admin-intro strong { color: var(--text); }
+	.admin-block { max-width: 780px; margin: 0 auto 30px; }
+	.admin-block .steps { max-width: none; }
+	.admin-release {
+		padding: 18px 18px 6px; border-radius: var(--radius);
+		border: 1px solid rgba(240, 192, 80, 0.55); background: rgba(240, 192, 80, 0.05);
+	}
+	.admin-note { margin: 0 0 16px; color: var(--text-2); font-size: 14.5px; }
+	.admin-note strong { color: var(--gold-strong); }
 	.alacarte-divider {
 		max-width: 980px; margin: 0 auto 30px; display: flex; align-items: center; gap: 16px;
 		color: var(--text-2); font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
@@ -629,10 +641,14 @@
 			<h2 id="install-title">Installation</h2>
 			<p class="sub">Choisis ton système — deux étapes, cinq minutes, et c'est pour toujours.</p>
 
-			<div class="tabs" role="tablist" aria-label="Système d'exploitation">
+			<div class="tabs" role="tablist" aria-label="Guide d'installation">
 				<button class="tab" role="tab" id="tab-win" aria-selected="true" aria-controls="panel-win">Windows</button>
 				<button class="tab" role="tab" id="tab-mac" aria-selected="false" aria-controls="panel-mac">Mac</button>
 				<button class="tab" role="tab" id="tab-linux" aria-selected="false" aria-controls="panel-linux">Linux</button>
+				<button class="tab tab-admin" role="tab" id="tab-admin" aria-selected="false" aria-controls="panel-admin">
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+					Admin
+				</button>
 			</div>
 
 			<div class="panel active" id="panel-win" role="tabpanel" aria-labelledby="tab-win">
@@ -646,7 +662,7 @@
 						<h4>Installe l'addon</h4>
 						<p>Dézippe <code>GuildProfessions-addon.zip</code> et place le dossier <code>GuildProfessions</code> dans
 						<code>C:\Program Files (x86)\World of Warcraft\_forever_\Interface\AddOns\</code>
-						(adapte le début du chemin si WoW est installé ailleurs). Au prochain lancement du jeu, vérifie qu'il apparaît dans la liste des addons, puis tape <code>/gp</code> en jeu.</p>
+						(adapte le début du chemin si WoW est installé ailleurs ; pendant la bêta, le dossier s'appelle <code>_classic_beta_</code> au lieu de <code>_forever_</code>). Au prochain lancement du jeu, vérifie qu'il apparaît dans la liste des addons, puis tape <code>/gp</code> en jeu.</p>
 					</li>
 					<li>
 						<h4>Lance le compagnon</h4>
@@ -714,6 +730,86 @@
 						<p>En jeu, ouvre chaque fenêtre de métier une fois : l'addon enregistre tes patrons connus, le compagnon les envoie à ta prochaine déconnexion ou à ton prochain <code>/reload</code>.</p>
 					</li>
 				</ol>
+			</div>
+
+			<div class="panel" id="panel-admin" role="tabpanel" aria-labelledby="tab-admin">
+				<p class="admin-intro">Pour les officiers qui administrent l'outil — les joueurs n'ont rien à lire ici. Tout se règle une fois ; la case <strong>« À la sortie officielle »</strong> est à repasser le jour où WoW: Forever quitte la bêta.</p>
+
+				<div class="admin-block">
+					<p class="mode-title">Serveur Discord de la guilde</p>
+					<ol class="steps">
+						<li>
+							<h4>Inviter le bot avec toutes ses permissions</h4>
+							<p>Avec ce lien (il ajoute le compte du bot <em>et</em> ses commandes) :</p>
+							<pre><code>https://discord.com/oauth2/authorize?client_id=1557379698617491596&amp;scope=bot+applications.commands&amp;permissions=134268928</code></pre>
+							<p>Permissions demandées : envoyer des messages, intégrer des liens, joindre des fichiers, gérer les pseudos. Vérifie ensuite que le bot apparaît bien dans la <strong>liste des membres</strong> : un lien d'installation qui n'ajoute que les commandes laisse le bot absent, et les messages privés et les pseudos ne marchent pas.</p>
+						</li>
+						<li>
+							<h4>Placer le rôle du bot au-dessus des membres</h4>
+							<p>Paramètres du serveur → Rôles : glisse le rôle du bot <strong>au-dessus</strong> des rôles des joueurs. Sinon il ne peut pas les renommer avec leur personnage principal. Discord interdit dans tous les cas de renommer le propriétaire du serveur.</p>
+						</li>
+						<li>
+							<h4>Déclarer le serveur auprès du bot</h4>
+							<p>Ajoute l'identifiant du serveur (clic droit sur son nom → Copier l'identifiant ; mode développeur requis) à <code>DISCORD_GUILD_IDS</code> dans la configuration du serveur, voir plus bas. Les commandes y apparaissent dès le redémarrage du bot.</p>
+						</li>
+					</ol>
+				</div>
+
+				<div class="admin-block">
+					<p class="mode-title">Serveur de la guilde (VPS)</p>
+					<ol class="steps">
+						<li>
+							<h4>Le fichier <code>.env</code></h4>
+							<p>Dans <code>/opt/guildprofessions/.env</code> (jamais versionné) :</p>
+							<pre><code>DISCORD_TOKEN=…            # portail développeur Discord → Bot → Reset Token
+DISCORD_GUILD_IDS=…,…      # serveurs où activer les commandes, séparés par des virgules
+API_GUILD_TOKEN=…          # token partagé des compagnons (openssl rand -hex 24)
+GUILD_NAME=FORMER HOPE     # nom exact de la guilde en jeu (rejet des rerolls)</code></pre>
+							<p>Puis <code>docker compose up -d</code> dans le même dossier. Changer <code>API_GUILD_TOKEN</code> déconnecte tous les compagnons distribués : il faut alors republier les zips.</p>
+						</li>
+						<li>
+							<h4>Publier une nouvelle version</h4>
+							<p>Après un commit, depuis le dépôt :</p>
+							<pre><code>scripts/package-companion.sh --deploy</code></pre>
+							<p>Les compagnons installés et l'addon des joueurs du pack tout-en-un se mettent à jour seuls (au démarrage, ou sous 6 h). Les joueurs « à la carte » doivent re-télécharger le zip de l'addon.</p>
+						</li>
+					</ol>
+				</div>
+
+				<div class="admin-block admin-release">
+					<p class="mode-title">À la sortie officielle de WoW: Forever</p>
+					<p class="admin-note">Tous les tests ont été faits sur la <strong>bêta</strong>, installée dans le dossier <code>_classic_beta_</code>. Le dossier, le code produit et le numéro d'interface de la version finale ne sont pas connus d'avance : à vérifier le jour J.</p>
+					<ol class="steps">
+						<li>
+							<h4>Numéro d'interface de l'addon</h4>
+							<p>En jeu sur la version finale, tape :</p>
+							<pre><code>/dump select(4, GetBuildInfo())</code></pre>
+							<p>Si le résultat n'est pas <code>16001</code>, remplace la ligne <code>## Interface: 16001</code> dans <code>addon/GuildProfessions/GuildProfessions.toc</code>, commite puis publie (étape précédente). Sans ça, le jeu marque l'addon « périmé » et le désactive. En attendant, les joueurs peuvent cocher <strong>Charger les addons périmés</strong> dans la liste des addons.</p>
+						</li>
+						<li>
+							<h4>Dossier du jeu : rien à faire, en principe</h4>
+							<p>Le compagnon ne se fie pas au nom du dossier. Il lit les métadonnées du launcher Blizzard et retient la branche dont le client est en <strong>1.60 ou plus</strong> (Classic Era est en 1.15). Si la version finale et la bêta sont installées toutes les deux, il préfère la version finale. Si un joueur voit « Impossible de localiser World of Warcraft », il renseigne <code>wowPath</code> dans le <code>config.json</code> du compagnon : le dossier de la branche, celui qui contient <code>Interface</code> et <code>WTF</code>.</p>
+						</li>
+						<li>
+							<h4>Repartir d'un annuaire propre</h4>
+							<p>Les personnages de la bêta n'existeront pas sur les royaumes définitifs. Vide la base avant d'ouvrir l'outil à la guilde (arrêt du conteneur, suppression de <code>data/guildprofessions.db</code>, redémarrage : le schéma se recrée tout seul). Vérifie aussi que <code>GUILD_NAME</code> correspond au nom de la guilde recréée en jeu.</p>
+						</li>
+						<li>
+							<h4>Mettre à jour ce guide</h4>
+							<p>Les chemins d'installation des onglets Windows / Mac / Linux supposent un dossier <code>_forever_</code> : remplace-le par le vrai nom de dossier s'il diffère.</p>
+						</li>
+					</ol>
+				</div>
+
+				<div class="admin-block">
+					<p class="mode-title">Vérifier que tout tourne</p>
+					<ol class="steps">
+						<li>
+							<h4>Trois contrôles rapides</h4>
+							<p><a href="https://gp.warpvault.com/healthz">gp.warpvault.com/healthz</a> doit répondre <code>{"status":"ok"}</code> ; <code>/metier list</code> sur Discord doit répondre ; la version du compagnon affichée dans Téléchargements doit être la dernière publiée.</p>
+						</li>
+					</ol>
+				</div>
 			</div>
 
 			<p class="note"><strong>Pas envie d'installer le compagnon ?</strong> L'addon seul suffit, en mode manuel : sur Discord, <code>/export-addon</code> te donne une chaîne à coller en jeu (<code>/gp</code> → Importer), et le bouton <strong>Exporter</strong> en jeu te donne la chaîne à coller dans <code>/import</code> sur Discord. Même résultat, juste un copier-coller de temps en temps.</p>

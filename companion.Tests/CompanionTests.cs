@@ -210,6 +210,83 @@ public sealed class SelfUpdaterTests
 	}
 }
 
+public sealed class ForeverBranchTests : IDisposable
+{
+	private readonly string _wow = Path.Combine(Path.GetTempPath(), "gp-wow-" + Guid.NewGuid().ToString("N"));
+
+	public ForeverBranchTests() => Directory.CreateDirectory(_wow);
+
+	public void Dispose() => Directory.Delete(_wow, recursive: true);
+
+	// Format réel du launcher (relevé sur la bêta, 2026-10), colonnes inutiles abrégées.
+	private void BuildInfo(params (string Version, string Product)[] rows)
+	{
+		var lines = new List<string> { "Branch!STRING:0|Active!DEC:1|Build Key!HEX:16|Version!STRING:0|KeyRing!HEX:16|Product!STRING:0" };
+		lines.AddRange(rows.Select(r => $"eu|1|abc|{r.Version}||{r.Product}"));
+		File.WriteAllLines(Path.Combine(_wow, ".build.info"), lines);
+	}
+
+	private string Branch(string folder, string? product)
+	{
+		var dir = Path.Combine(_wow, folder);
+		Directory.CreateDirectory(Path.Combine(dir, "WTF"));
+		if (product is not null)
+		{
+			File.WriteAllLines(Path.Combine(dir, ".flavor.info"), ["Product Flavor!STRING:0", product]);
+		}
+		return dir;
+	}
+
+	[Fact]
+	public void FindForeverBranch_Should_PickBeta_NotClassicEra_TodaysSetup()
+	{
+		BuildInfo(("1.15.9.70003", "wow_classic_era"), ("1.60.1.70450", "wow_classic_beta"));
+		Branch("_classic_era_", "wow_classic_era");
+		var beta = Branch("_classic_beta_", "wow_classic_beta");
+
+		Assert.Equal(beta, WowLocator.FindForeverBranch(_wow));
+	}
+
+	[Fact]
+	public void FindForeverBranch_Should_FindReleaseUnderUnknownFolderName()
+	{
+		BuildInfo(("1.15.9.70003", "wow_classic_era"), ("1.61.0.80000", "wow_classic_plus"));
+		Branch("_classic_era_", "wow_classic_era");
+		var release = Branch("_classic_plus_", "wow_classic_plus");
+
+		Assert.Equal(release, WowLocator.FindForeverBranch(_wow));
+	}
+
+	[Fact]
+	public void FindForeverBranch_Should_PreferReleaseOverBeta_WhenBothInstalled()
+	{
+		BuildInfo(("1.60.1.70450", "wow_classic_beta"), ("1.60.2.81000", "wow_forever"));
+		Branch("_classic_beta_", "wow_classic_beta");
+		var release = Branch("_forever_", "wow_forever");
+
+		Assert.Equal(release, WowLocator.FindForeverBranch(_wow));
+	}
+
+	[Fact]
+	public void FindForeverBranch_Should_ReturnNull_WhenOnlyClassicEraInstalled()
+	{
+		BuildInfo(("1.15.9.70003", "wow_classic_era"));
+		Branch("_classic_era_", "wow_classic_era");
+		Branch("_retail_", null);
+
+		Assert.Null(WowLocator.FindForeverBranch(_wow));
+	}
+
+	[Fact]
+	public void FindForeverBranch_Should_FallBackToForeverFolderNames_WithoutLauncherMetadata()
+	{
+		Branch("_classic_era_", null);
+		var forever = Branch("_forever_", null);
+
+		Assert.Equal(forever, WowLocator.FindForeverBranch(_wow));
+	}
+}
+
 public sealed class WowLocatorTests
 {
 	[Fact]

@@ -12,32 +12,157 @@ namespace GuildProfessions.Companion;
 /// 3. Processus Wow*.exe en cours d'exécution
 /// 4. Chemins conventionnels + balayage des lecteurs fixes
 /// 5. Préfixes Steam/Proton (Linux)
+/// Dans chaque installation trouvée, la branche Forever est choisie par sa
+/// version (FindForeverBranch), pas par le nom de son dossier.
 /// Un échec total → wowPath manuel dans config.json.
 /// </summary>
 public static class WowLocator
 {
-	private static readonly string[] Branches = ["_forever_", "_classic_beta_", "_classic_era_", "_retail_"];
+	// Repli quand le launcher n'a pas laissé de .build.info : noms de dossiers
+	// propres à Forever uniquement. Classic Era (_classic_era_) et Retail sont
+	// volontairement absents : y installer l'addon serait pire qu'échouer.
+	private static readonly string[] ForeverFolderNames = ["_forever_", "_classic_beta_", "_forever_beta_"];
+
+	private static readonly string[] TestProductMarkers = ["beta", "ptr", "alpha", "test"];
 
 	public static (string Path, string Source)? Detect()
 	{
-		foreach (var (baseDir, source) in CandidateBases())
+		foreach (var (candidate, source) in CandidateBases())
 		{
-			// Le candidat peut être une base (contenant les branches) ou
-			// directement un dossier de branche.
-			if (IsBranchDirectory(baseDir))
+			// Le candidat peut être une base (contenant les branches) ou un dossier
+			// de branche (registre, exe en cours) : on remonte alors à sa base pour
+			// choisir la branche Forever, qui n'est pas forcément celle-là.
+			var baseDir = IsBranchDirectory(candidate) && Path.GetDirectoryName(candidate) is { } parent
+				? parent
+				: candidate;
+			if (FindForeverBranch(baseDir) is { } branch)
 			{
-				return (baseDir, source);
-			}
-			foreach (var branch in Branches)
-			{
-				var candidate = Path.Combine(baseDir, branch);
-				if (IsBranchDirectory(candidate))
-				{
-					return (candidate, source);
-				}
+				return (branch, source);
 			}
 		}
 		return null;
+	}
+
+	/// <summary>
+	/// Dossier de la branche WoW: Forever dans une installation WoW. Le nom du
+	/// dossier n'est pas fiable (« _classic_beta_ » pendant la bêta, inconnu à
+	/// la sortie) : on lit le .build.info du launcher (version + code produit
+	/// de chaque branche) et le .flavor.info de chaque dossier (code produit).
+	/// </summary>
+	public static string? FindForeverBranch(string baseDir)
+	{
+		if (!Directory.Exists(baseDir))
+		{
+			return null;
+		}
+
+		var products = ForeverProducts(Path.Combine(baseDir, ".build.info"));
+		if (products.Count > 0)
+		{
+			var folders = Directory.EnumerateDirectories(baseDir, "_*_")
+				.Select(dir => (Dir: dir, Product: ReadFlavor(dir)))
+				.Where(f => f.Product is not null)
+				.ToList();
+			foreach (var product in products)
+			{
+				var match = folders.FirstOrDefault(f => string.Equals(f.Product, product, StringComparison.OrdinalIgnoreCase));
+				if (match.Dir is not null)
+				{
+					return match.Dir;
+				}
+			}
+		}
+
+		foreach (var name in ForeverFolderNames)
+		{
+			var candidate = Path.Combine(baseDir, name);
+			if (IsBranchDirectory(candidate))
+			{
+				return candidate;
+			}
+		}
+		return null;
+	}
+
+	/// <summary>
+	/// Codes produit des branches Forever d'après le .build.info : client en
+	/// 1.60 ou plus (Classic Era est en 1.15), ou produit nommé « forever ».
+	/// La version de sortie passe avant les bêtas et PTR.
+	/// </summary>
+	public static List<string> ForeverProducts(string buildInfoPath)
+	{
+		if (!File.Exists(buildInfoPath))
+		{
+			return [];
+		}
+		string[] lines;
+		try
+		{
+			lines = File.ReadAllLines(buildInfoPath);
+		}
+		catch (IOException)
+		{
+			return [];
+		}
+		if (lines.Length < 2)
+		{
+			return [];
+		}
+
+		// En-tête : « Branch!STRING:0|Active!DEC:1|...|Version!STRING:0|...|Product!STRING:0 »
+		var headers = lines[0].Split('|').Select(h => h.Split('!')[0].Trim()).ToList();
+		var versionIndex = headers.IndexOf("Version");
+		var productIndex = headers.IndexOf("Product");
+		if (versionIndex < 0 || productIndex < 0)
+		{
+			return [];
+		}
+
+		var products = new List<string>();
+		foreach (var line in lines.Skip(1))
+		{
+			var fields = line.Split('|');
+			if (fields.Length <= Math.Max(versionIndex, productIndex))
+			{
+				continue;
+			}
+			var product = fields[productIndex].Trim();
+			if (product.Length > 0 && IsForeverVersion(fields[versionIndex], product) && !products.Contains(product))
+			{
+				products.Add(product);
+			}
+		}
+		return products
+			.OrderBy(p => TestProductMarkers.Any(marker => p.Contains(marker, StringComparison.OrdinalIgnoreCase)))
+			.ToList();
+	}
+
+	private static bool IsForeverVersion(string version, string product)
+	{
+		if (product.Contains("forever", StringComparison.OrdinalIgnoreCase))
+		{
+			return true;
+		}
+		var parts = version.Trim().Split('.');
+		return parts.Length >= 2
+			&& int.TryParse(parts[0], out var major) && major == 1
+			&& int.TryParse(parts[1], out var minor) && minor >= 60;
+	}
+
+	// .flavor.info : « Product Flavor!STRING:0 » puis le code produit.
+	private static string? ReadFlavor(string branchDir)
+	{
+		var path = Path.Combine(branchDir, ".flavor.info");
+		try
+		{
+			return File.Exists(path)
+				? File.ReadAllLines(path).Select(l => l.Trim()).LastOrDefault(l => l.Length > 0 && !l.Contains('!'))
+				: null;
+		}
+		catch (IOException)
+		{
+			return null;
+		}
 	}
 
 	private static bool IsBranchDirectory(string path) =>
