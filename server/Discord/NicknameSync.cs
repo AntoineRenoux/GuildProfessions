@@ -59,11 +59,13 @@ public sealed partial class NicknameSync(DiscordSocketClient client, IConfigurat
 				await member.ModifyAsync(properties => properties.Nickname = nickname);
 				outcomes.Add(NicknameOutcome.Updated);
 			}
-			catch (HttpException exception) when (exception.DiscordCode == DiscordErrorCode.UnknownMember)
+			catch (HttpException exception) when (exception.HttpCode == System.Net.HttpStatusCode.NotFound
+				|| exception.DiscordCode == DiscordErrorCode.UnknownMember)
 			{
 				outcomes.Add(NicknameOutcome.NotMember);
 			}
-			catch (HttpException exception) when (exception.DiscordCode == DiscordErrorCode.MissingPermissions)
+			catch (HttpException exception) when (exception.HttpCode == System.Net.HttpStatusCode.Forbidden
+				|| exception.DiscordCode == DiscordErrorCode.MissingPermissions)
 			{
 				// Propriétaire du serveur, ou rôle du bot placé sous celui du membre.
 				outcomes.Add(NicknameOutcome.Forbidden);
