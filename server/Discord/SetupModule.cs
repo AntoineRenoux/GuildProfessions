@@ -50,15 +50,26 @@ public sealed class SetupModule(GuildDirectory guilds, GuildContext guildContext
 	}
 
 	private Task OpenNameStepAsync() =>
-		RespondWithModalAsync<SetupModal>("gk_setup_modal", modifyModal: modal =>
+		RespondWithModalAsync<SetupModal>("gk_setup_modal", modifyModal: modal => TranslateNameStep(modal, l));
+
+	/// <summary>
+	/// Traduit la fenêtre de l'étape 1. Depuis Discord.Net 3.18, [InputLabel] enveloppe le champ
+	/// dans un composant Label : le libellé se met sur ce Label, jamais sur le champ lui-même,
+	/// sinon Discord refuse la fenêtre (erreur 50035, TEXT_INPUT_COMPONENT_LABEL_IN_LABEL_COMPONENT).
+	/// </summary>
+	public static void TranslateNameStep(ModalBuilder modal, BotLocalizer l)
+	{
+		modal.WithTitle(l.T("Guildkeep · Étape 1 sur 3", "Guildkeep · Step 1 of 3"));
+		var label = modal.Components.OfType<LabelBuilder>()
+			.FirstOrDefault(c => c.Component is TextInputBuilder { CustomId: "guild_name" });
+		if (label is not null)
+			label.Label = l.T("Nom exact de la guilde en jeu", "Exact in-game guild name");
+		modal.UpdateTextInput("guild_name", input =>
 		{
-			modal.WithTitle(l.T("Guildkeep · Étape 1 sur 3", "Guildkeep · Step 1 of 3"));
-			modal.UpdateTextInput("guild_name", input =>
-			{
-				input.Label = l.T("Nom exact de la guilde en jeu", "Exact in-game guild name");
-				input.Placeholder = l.T("ex. FORMER HOPE", "e.g. FORMER HOPE");
-			});
+			input.Label = null;
+			input.Placeholder = l.T("ex. FORMER HOPE", "e.g. FORMER HOPE");
 		});
+	}
 
 	// ---- Assistant : étape 1, le nom ----------------------------------------------------
 
