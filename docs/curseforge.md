@@ -2,59 +2,72 @@
 
 Textes à coller dans la console auteur CurseForge (https://authors.curseforge.com),
 projet WoW, saveur **WoW: Forever**. Les publications suivantes se font avec
-`scripts/package-companion.sh --deploy --curseforge`.
+`scripts/package-companion.sh --deploy --curseforge` (le journal des commits de
+l'addon sert de changelog, exigé par CurseForge pour chaque fichier).
 
 ## Champs du projet
 
-- **Name :** Guildkeep
-- **Summary (anglais, ~120 caractères) :** Guild management for WoW: Forever: crafters, craft orders and members, in game and on Discord.
+Règles suivies : [moderation policies CurseForge](https://support.curseforge.com/support/solutions/articles/9000197279-moderation-policies)
+— anglais d'abord, description fonctionnelle, aucun lien de téléchargement externe,
+site personnel en bas de page, avatar 400×400, journal de modifications à chaque fichier.
+
+- **Name :** Guildkeep (en anglais, sans version ni nom de jeu)
+- **Summary (une phrase, différente de la description) :** Guild management for WoW: Forever: crafter directory, craft orders and members, synced in game and on Discord.
 - **Catégorie principale :** Guild — secondaires : Professions, Chat & Communication
-- **Site :** https://guildkeep.warpvault.com
-- **Code source :** https://github.com/AntoineRenoux/GuildProfessions
-- **Tickets :** https://github.com/AntoineRenoux/GuildProfessions/issues
-- **Logo :** `branding/guildkeep-icon-512.png`
+- **Avatar :** `branding/guildkeep-icon-400.png` (400×400, PNG, pas de WebP)
 - **Licence :** à choisir (le dépôt n'en a pas encore)
+- **Canal de contact recommandé :** tickets GitHub (https://github.com/AntoineRenoux/GuildProfessions/issues)
 
 ## Description (Markdown)
 
 ```markdown
-# Guildkeep
+**Guildkeep** turns your guild window into a guild office: a searchable directory of who can craft what, craft orders between members, and a sheet for every member. Free, no account, no password.
 
-**Guild management for WoW: Forever, in game and on Discord.** Free, no account.
+## What it adds in game
 
-Guildkeep keeps your guild organised: who can craft what, at which level, what to send them, and who is in the guild. Everything is shared with your guild's Discord server through the Guildkeep bot.
+**A Guildkeep tab in the guild window**, also opened with `/gkeep`. Three tabs:
 
-## What it does
+**Professions**
+- Every member's professions with their level and rank, coloured by progress.
+- Search any recipe by name ("flask", "robe"): only the crafters who know it stay in the list.
+- Filter by profession and by minimum skill level, sort by name, profession, level or number of recipes.
+- "Voir (N)" (View) opens a crafter's full recipe list, searchable; shift-click links a recipe in chat.
 
-- **Crafter directory.** Every member's professions, levels and known recipes. Search a recipe ("flask", "robe"), set a minimum level, see who is online.
-- **Craft orders.** Order from a crafter in two clicks. The addon lists the reagents to send, what you already hold, and which ones another member can craft.
-- **Members.** Each member's characters, scanned gear and professions, as a character sheet.
-- **Guild tab.** Open Guildkeep from its tab in the guild window, or with `/gkeep`.
-- **Coming next:** raid organisation (sign-ups, roster by role, attendance).
+**Orders**
+- Order a recipe from a crafter in two clicks, with a quantity.
+- The order window lists every reagent to send, how many you already carry, and which ones another member can craft for you (with the full reagent tree).
+- Track orders you placed and orders you must craft: accept, mark done, cancel.
 
-## How it works
+**Members**
+- Every member's characters with class, level and who is online.
+- A character sheet with the gear scanned at their last logout, item quality colours and a 3D preview.
 
-An addon can't reach the internet, so Guildkeep comes with a small **companion app** (Windows, Mac, Linux) that syncs your guild's data while you play, the same way GatherMate2 or the WeakAuras Companion work.
+**Your own data is read automatically**: professions and gear when you log in, recipes the first time you open each profession window (a chat message confirms how many were read). Characters outside your guild are never scanned.
 
-1. A guild admin invites the Guildkeep bot on Discord and runs `/gkeep-setup`.
-2. Each player downloads the guild pack from the install link: the companion and this addon, already set up.
-3. Open each profession window once in game: your recipes are read and shared at your next logout or `/reload`.
+## Sharing with your guild
 
-No companion? `/gkeep export` and `/gkeep import` on Discord swap the data by copy and paste.
+An addon cannot reach the internet, so guild data travels in one of two ways:
 
-## Privacy
+- **Copy and paste, no extra software.** Export your data from the addon window and send it with the Guildkeep Discord bot (`/gkeep import`); get the guild's data back with `/gkeep export` and paste it into the addon (Import button).
+- **Automatic sync.** Your guild admin sets Guildkeep up on Discord with `/gkeep-setup` and shares the guild's install guide. A small companion app then syncs everything in the background while you play, the way well-known companion apps for other addons do. It never launches or changes the game, and only reads and writes the Guildkeep addon's own files.
 
-Guildkeep never asks for a password, an email or a Battle.net account. Each guild is isolated from the others. Details: https://guildkeep.warpvault.com/confidentialite.html
+On Discord, every command lives under `/gkeep` (in English or French, following each user's Discord language): who can craft a recipe, a character's recipes, the whole directory, craft orders with direct-message notifications.
 
-## Links
+## Good to know
 
-- Website and install guide: https://guildkeep.warpvault.com
-- Source code: https://github.com/AntoineRenoux/GuildProfessions
-- Terms of use: https://guildkeep.warpvault.com/conditions.html
-
-*World of Warcraft is a trademark of Blizzard Entertainment. Guildkeep is not affiliated with Blizzard Entertainment.*
+- Built for **WoW: Forever** (interface 16001).
+- **The in-game interface is in French for now**; an English translation is planned. The Discord bot already speaks English and French.
+- Each guild's data is isolated from other guilds. Guildkeep never asks for a password, an email or a Battle.net account.
+- Coming next: raid organisation (sign-ups, roster by role, attendance).
+- Bug reports and suggestions: GitHub issues, link below.
 
 ---
 
-**Français.** Guildkeep gère ta guilde WoW: Forever, en jeu et sur Discord : l'annuaire des artisans et leurs recettes, les commandes de craft, les membres et leur équipement, et bientôt les raids. Gratuit, sans compte. Guide d'installation : https://guildkeep.warpvault.com
+**Français.** Guildkeep ajoute un onglet à la fenêtre de guilde : l'annuaire des artisans et de leurs recettes, les commandes de craft entre membres (avec les composants à envoyer) et la fiche de chaque membre. Partage avec la guilde par le bot Discord, en copier-coller ou automatiquement avec l'app compagnon. Gratuit, sans compte.
+
+---
+
+Website and setup guide: https://guildkeep.warpvault.com · Source code and issues: https://github.com/AntoineRenoux/GuildProfessions · Privacy: https://guildkeep.warpvault.com/confidentialite.html
+
+*World of Warcraft is a trademark of Blizzard Entertainment. Guildkeep is not affiliated with or endorsed by Blizzard Entertainment.*
 ```
