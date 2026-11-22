@@ -26,6 +26,7 @@ builder.Services.AddScoped<UploadIngestion>();
 builder.Services.AddSingleton<ICraftOrderNotifier, DiscordCraftOrderNotifier>();
 builder.Services.AddSingleton<NicknameSync>();
 builder.Services.AddSingleton<SiteLinks>();
+builder.Services.AddSingleton<GuildPackBuilder>();
 
 builder.Services.AddSingleton(new DiscordSocketClient(new DiscordSocketConfig
 {

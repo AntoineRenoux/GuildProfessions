@@ -20,6 +20,33 @@ public static class Endpoints
 				: Results.NotFound();
 		});
 
+		// Lien d'installation d'une guilde (/rejoindre/{code}) : de quoi afficher la page.
+		app.MapGet("/api/v1/join/{code}", async (string code, GuildDirectory guilds, GuildPackBuilder packs, CancellationToken ct) =>
+		{
+			var guild = await guilds.FindByInviteCodeAsync(code, ct);
+			if (guild is null)
+			{
+				return Results.NotFound();
+			}
+			var platforms = GuildPackBuilder.Platforms
+				.Where(p => packs.TemplatePath(p.Key) is not null)
+				.Select(p => new { id = p.Key, label = p.Value, url = $"/api/v1/pack/{code}/{p.Key}" });
+			return Results.Ok(new { name = guild.Name, locale = guild.Locale, platforms });
+		});
+
+		// Pack tout-en-un de la guilde, son config.json réglé à la volée (token compris).
+		app.MapGet("/api/v1/pack/{code}/{platform}", async (string code, string platform, GuildDirectory guilds,
+			GuildPackBuilder packs, CancellationToken ct) =>
+		{
+			var guild = await guilds.FindByInviteCodeAsync(code, ct);
+			var template = packs.TemplatePath(platform);
+			if (guild is null || template is null)
+			{
+				return Results.NotFound();
+			}
+			return Results.File(packs.Build(guild, template), "application/zip", GuildPackBuilder.FileName(guild, platform));
+		});
+
 		// Le token de guilde désigne la guilde : l'export ne contient que ses données.
 		app.MapGet("/api/v1/export", async (HttpRequest request, GuildDirectory guilds, GuildContext guildContext,
 			ExportBuilder exportBuilder, CancellationToken ct) =>
