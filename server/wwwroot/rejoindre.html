@@ -7,7 +7,7 @@
 <title>Guildkeep · rejoindre ta guilde</title>
 <link rel="preload" href="/fonts/cinzel-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/alegreya-sans-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/site.css?v=2">
+<link rel="stylesheet" href="/site.css?v=3">
 <script>document.documentElement.classList.add('js');try{var l=localStorage.getItem('gk-lang')||((navigator.language||'fr').toLowerCase().indexOf('fr')===0?'fr':'en');document.documentElement.lang=l}catch(e){}</script>
 </head>
 <body>
@@ -25,10 +25,10 @@
 
 <main class="page">
 	<div class="page-grid">
-		<figure class="page-art" data-rise style="--i:2">
-			<img src="/img/metiers/imprimeur.jpg" width="751" height="879" alt="Gravure : l'atelier de l'imprimeur, Ständebuch de Jost Amman, 1568">
-			<figcaption><span lang="fr">L'imprimeur, Ständebuch, 1568. Ton pack sort de presse, réglé pour ta guilde.</span><span lang="en">The printer, Ständebuch, 1568. Your pack comes off the press, set for your guild.</span></figcaption>
-		</figure>
+		<aside class="page-art item-card" data-rise style="--i:2" aria-label="Objet / Item">
+			<div class="item-head"><svg class="item-icon" viewBox="0 0 48 48" aria-hidden="true"><path fill="#e2b65a" d="M17 12c0-5 3-8 7-8s7 3 7 8h-3c0-3-2-5-4-5s-4 2-4 5z"/><path fill="#e2b65a" d="M10 14h28l4 26a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4z"/><path fill="#5a1a0c" d="M20 22h8v6h-8z"/></svg><p class="item-name"><span lang="fr">Pack de la guilde</span><span lang="en">Guild pack</span></p></div>
+			<p class="item-bind"><span lang="fr">Lié à ta guilde</span><span lang="en">Bound to your guild</span></p><p class="item-line"><span lang="fr">Contient : GuildkeepCompanion, l'addon Guildkeep, le réglage de ta guilde</span><span lang="en">Contains: GuildkeepCompanion, the Guildkeep addon, your guild's settings</span></p><p class="item-use"><span lang="fr">Utiliser : installe l'addon et synchronise tes métiers avec ta guilde, tout seul.</span><span lang="en">Use: installs the addon and syncs your professions with your guild, by itself.</span></p><p class="item-flavor"><span lang="fr">« Ni mot de passe, ni e-mail. »</span><span lang="en">"No password, no email."</span></p>
+		</aside>
 		<div class="page-main">
 		<h1 class="lines">
 			<span class="line"><span data-line style="--i:0"><span lang="fr">Rejoindre</span><span lang="en">Join</span></span></span>
@@ -59,22 +59,22 @@
 			</div>
 
 			<div data-os-panel="win" style="display:grid;gap:4px;margin-top:12px">
-				<div class="step-band"><h3><span lang="fr">Dézippe le pack</span><span lang="en">Unzip the pack</span></h3><p><span lang="fr">Où tu veux : le dossier Guildkeep peut rester dans Téléchargements.</span><span lang="en">Anywhere: the Guildkeep folder can stay in Downloads.</span></p></div>
-				<div class="step-band"><h3><span lang="fr">Lance GuildkeepCompanion</span><span lang="en">Run GuildkeepCompanion</span></h3><div><p><span lang="fr">Si Windows affiche « Windows a protégé votre ordinateur » : « Informations complémentaires », puis « Exécuter quand même ». Une seule fois.</span><span lang="en">If Windows shows "Windows protected your PC": "More info", then "Run anyway". Once only.</span></p><p><span lang="fr">Il trouve World of Warcraft, installe l'addon, et démarrera ensuite tout seul avec Windows.</span><span lang="en">It finds World of Warcraft, installs the addon, and will then start by itself with Windows.</span></p></div></div>
-				<div class="step-band"><h3><span lang="fr">En jeu</span><span lang="en">In game</span></h3><p><span lang="fr"><code>/gkeep</code>, ou l'onglet Guildkeep dans la fenêtre de guilde. Si WoW était ouvert pendant l'installation, relance le jeu.</span><span lang="en"><code>/gkeep</code>, or the Guildkeep tab in the guild window. If WoW was open during the install, restart the game.</span></p></div>
+				<div class="step-band" data-reveal><h3><span lang="fr">Dézippe le pack</span><span lang="en">Unzip the pack</span></h3><p><span lang="fr">Où tu veux : le dossier Guildkeep peut rester dans Téléchargements.</span><span lang="en">Anywhere: the Guildkeep folder can stay in Downloads.</span></p></div>
+				<div class="step-band" data-reveal><h3><span lang="fr">Lance GuildkeepCompanion</span><span lang="en">Run GuildkeepCompanion</span></h3><div><p><span lang="fr">Si Windows affiche « Windows a protégé votre ordinateur » : « Informations complémentaires », puis « Exécuter quand même ». Une seule fois.</span><span lang="en">If Windows shows "Windows protected your PC": "More info", then "Run anyway". Once only.</span></p><p><span lang="fr">Il trouve World of Warcraft, installe l'addon, et démarrera ensuite tout seul avec Windows.</span><span lang="en">It finds World of Warcraft, installs the addon, and will then start by itself with Windows.</span></p></div></div>
+				<div class="step-band" data-reveal><h3><span lang="fr">En jeu</span><span lang="en">In game</span></h3><p><span lang="fr"><code>/gkeep</code>, ou l'onglet Guildkeep dans la fenêtre de guilde. Si WoW était ouvert pendant l'installation, relance le jeu.</span><span lang="en"><code>/gkeep</code>, or the Guildkeep tab in the guild window. If WoW was open during the install, restart the game.</span></p></div>
 			</div>
 
 			<div data-os-panel="mac" style="display:grid;gap:4px;margin-top:12px" hidden>
-				<div class="step-band"><h3><span lang="fr">Télécharge le pack</span><span lang="en">Download the pack</span></h3><p><span lang="fr">Safari le dézippe tout seul dans Téléchargements : un dossier Guildkeep.</span><span lang="en">Safari unzips it by itself into Downloads: a Guildkeep folder.</span></p></div>
-				<div class="step-band"><h3><span lang="fr">Autorise-le une fois</span><span lang="en">Allow it once</span></h3><div><p><span lang="fr">GuildkeepCompanion n'est pas notarisé par Apple, macOS le refuse la première fois. Lance-le, puis Réglages Système, Confidentialité et sécurité, tout en bas : « Ouvrir quand même ».</span><span lang="en">GuildkeepCompanion isn't notarized by Apple, so macOS refuses it the first time. Run it, then System Settings, Privacy &amp; Security, at the bottom: "Open Anyway".</span></p><p><span lang="fr">Ou dans le Terminal :</span><span lang="en">Or in Terminal:</span> <code>xattr -dr com.apple.quarantine ~/Downloads/Guildkeep</code></p></div></div>
-				<div class="step-band"><h3><span lang="fr">Lance-le</span><span lang="en">Run it</span></h3><p><span lang="fr">Dans le Terminal :</span><span lang="en">In Terminal:</span> <code>cd ~/Downloads/Guildkeep &amp;&amp; ./GuildkeepCompanion</code> <span lang="fr">Laisse-le tourner pendant que tu joues.</span><span lang="en">Leave it running while you play.</span></p></div>
-				<div class="step-band"><h3><span lang="fr">En jeu</span><span lang="en">In game</span></h3><p><span lang="fr"><code>/gkeep</code>, ou l'onglet Guildkeep dans la fenêtre de guilde.</span><span lang="en"><code>/gkeep</code>, or the Guildkeep tab in the guild window.</span></p></div>
+				<div class="step-band" data-reveal><h3><span lang="fr">Télécharge le pack</span><span lang="en">Download the pack</span></h3><p><span lang="fr">Safari le dézippe tout seul dans Téléchargements : un dossier Guildkeep.</span><span lang="en">Safari unzips it by itself into Downloads: a Guildkeep folder.</span></p></div>
+				<div class="step-band" data-reveal><h3><span lang="fr">Autorise-le une fois</span><span lang="en">Allow it once</span></h3><div><p><span lang="fr">GuildkeepCompanion n'est pas notarisé par Apple, macOS le refuse la première fois. Lance-le, puis Réglages Système, Confidentialité et sécurité, tout en bas : « Ouvrir quand même ».</span><span lang="en">GuildkeepCompanion isn't notarized by Apple, so macOS refuses it the first time. Run it, then System Settings, Privacy &amp; Security, at the bottom: "Open Anyway".</span></p><p><span lang="fr">Ou dans le Terminal :</span><span lang="en">Or in Terminal:</span> <code>xattr -dr com.apple.quarantine ~/Downloads/Guildkeep</code></p></div></div>
+				<div class="step-band" data-reveal><h3><span lang="fr">Lance-le</span><span lang="en">Run it</span></h3><p><span lang="fr">Dans le Terminal :</span><span lang="en">In Terminal:</span> <code>cd ~/Downloads/Guildkeep &amp;&amp; ./GuildkeepCompanion</code> <span lang="fr">Laisse-le tourner pendant que tu joues.</span><span lang="en">Leave it running while you play.</span></p></div>
+				<div class="step-band" data-reveal><h3><span lang="fr">En jeu</span><span lang="en">In game</span></h3><p><span lang="fr"><code>/gkeep</code>, ou l'onglet Guildkeep dans la fenêtre de guilde.</span><span lang="en"><code>/gkeep</code>, or the Guildkeep tab in the guild window.</span></p></div>
 			</div>
 
 			<div data-os-panel="linux" style="display:grid;gap:4px;margin-top:12px" hidden>
-				<div class="step-band"><h3><span lang="fr">Dézippe et lance</span><span lang="en">Unzip and run</span></h3><p><code>chmod +x GuildkeepCompanion &amp;&amp; ./GuildkeepCompanion</code> <span lang="fr">Les installations Steam/Proton et Lutris sont détectées.</span><span lang="en">Steam/Proton and Lutris installs are detected.</span></p></div>
-				<div class="step-band"><h3><span lang="fr">Laisse-le tourner</span><span lang="en">Keep it running</span></h3><p><span lang="fr">Pendant que tu joues : un terminal, tmux, ou un service systemd utilisateur.</span><span lang="en">While you play: a terminal, tmux, or a systemd user service.</span></p></div>
-				<div class="step-band"><h3><span lang="fr">En jeu</span><span lang="en">In game</span></h3><p><span lang="fr"><code>/gkeep</code>, ou l'onglet Guildkeep dans la fenêtre de guilde.</span><span lang="en"><code>/gkeep</code>, or the Guildkeep tab in the guild window.</span></p></div>
+				<div class="step-band" data-reveal><h3><span lang="fr">Dézippe et lance</span><span lang="en">Unzip and run</span></h3><p><code>chmod +x GuildkeepCompanion &amp;&amp; ./GuildkeepCompanion</code> <span lang="fr">Les installations Steam/Proton et Lutris sont détectées.</span><span lang="en">Steam/Proton and Lutris installs are detected.</span></p></div>
+				<div class="step-band" data-reveal><h3><span lang="fr">Laisse-le tourner</span><span lang="en">Keep it running</span></h3><p><span lang="fr">Pendant que tu joues : un terminal, tmux, ou un service systemd utilisateur.</span><span lang="en">While you play: a terminal, tmux, or a systemd user service.</span></p></div>
+				<div class="step-band" data-reveal><h3><span lang="fr">En jeu</span><span lang="en">In game</span></h3><p><span lang="fr"><code>/gkeep</code>, ou l'onglet Guildkeep dans la fenêtre de guilde.</span><span lang="en"><code>/gkeep</code>, or the Guildkeep tab in the guild window.</span></p></div>
 			</div>
 		</section>
 
@@ -91,10 +91,10 @@
 		<a href="https://github.com/AntoineRenoux/GuildProfessions" rel="noopener"><span lang="fr">Code source</span><span lang="en">Source code</span></a>
 	</nav>
 	<span class="end">2026</span>
-	<span class="credit"><span lang="fr">Gravure : Jost Amman, Das Ständebuch, 1568, domaine public, via Wikimedia Commons.</span><span lang="en">Woodcut: Jost Amman, Das Ständebuch, 1568, public domain, via Wikimedia Commons.</span></span>
+	<span class="credit"><span lang="fr">World of Warcraft est une marque de Blizzard Entertainment ; Guildkeep n'y est pas affilié.</span><span lang="en">World of Warcraft is a trademark of Blizzard Entertainment; Guildkeep is not affiliated.</span></span>
 </footer>
 
-<script src="/site.js?v=2" defer></script>
-<script src="/join.js?v=2" defer></script>
+<script src="/site.js?v=3" defer></script>
+<script src="/join.js?v=3" defer></script>
 </body>
 </html>

@@ -7,10 +7,11 @@
 <meta name="description" content="Guildkeep tient l'annuaire des artisans de ta guilde WoW: Forever, en jeu et sur Discord : qui sait fabriquer quoi, à quel niveau, et quoi lui envoyer. Gratuit, sans compte.">
 <link rel="preload" href="/fonts/cinzel-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/alegreya-sans-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/site.css?v=2">
+<link rel="stylesheet" href="/site.css?v=3">
 <script>document.documentElement.classList.add('js');try{var l=localStorage.getItem('gk-lang')||((navigator.language||'fr').toLowerCase().indexOf('fr')===0?'fr':'en');document.documentElement.lang=l}catch(e){}</script>
 </head>
 <body>
+<svg class="sprite" aria-hidden="true" focusable="false"><defs><linearGradient id="gk-gold" gradientUnits="userSpaceOnUse" x1="0" y1="4" x2="0" y2="44"><stop offset="0" stop-color="#fff1bf"/><stop offset=".45" stop-color="#f0c25e"/><stop offset="1" stop-color="#9a6a20"/></linearGradient><symbol id="i-forge" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M6 15h25c1 5 5 8 11 8v4H31l3 9H14l3-9h-3C9 27 6 22 6 15z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.2" d="M36 6l4 4M33 9l4 4"/></symbol><symbol id="i-cuir" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M24 6c4 4 9 3 13 0-1 6 2 9 5 11-4 3-4 8-1 12-5 1-7 5-7 11-4-2-7-2-10 0-3-2-6-2-10 0 0-6-2-10-7-11 3-4 3-9-1-12 3-2 6-5 5-11 4 3 9 4 13 0z"/><path fill="none" stroke="#1a1208" stroke-width="2" stroke-linecap="round" d="M24 14v22M17 20l7 4 7-4"/></symbol><symbol id="i-couture" viewBox="0 0 48 48"><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.2" d="M10 38L36 12"/><ellipse fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.2" cx="37.5" cy="10.5" rx="3.2" ry="1.8" transform="rotate(-45 37.5 10.5)"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M39 9c6 6-4 12-10 16s-14 10-8 17"/></symbol><symbol id="i-ingenierie" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M42.8 21.0L42.8 27.0L37.6 27.2L35.9 31.3L39.4 35.1L35.1 39.4L31.3 35.9L27.2 37.6L27.0 42.8L21.0 42.8L20.8 37.6L16.7 35.9L12.9 39.4L8.6 35.1L12.1 31.3L10.4 27.2L5.2 27.0L5.2 21.0L10.4 20.8L12.1 16.7L8.6 12.9L12.9 8.6L16.7 12.1L20.8 10.4L21.0 5.2L27.0 5.2L27.2 10.4L31.3 12.1L35.1 8.6L39.4 12.9L35.9 16.7L37.6 20.8Z"/><circle fill="#1a1208" cx="24" cy="24" r="6"/></symbol><symbol id="i-alchimie" viewBox="0 0 48 48"><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.2" d="M18 6h12M21 6v12L10 37a3.5 3.5 0 0 0 3 5h22a3.5 3.5 0 0 0 3-5L27 18V6"/><path fill="url(#gk-gold)" d="M14.5 30h19l4.3 7.6a2 2 0 0 1-1.8 3H12a2 2 0 0 1-1.8-3z"/><circle fill="url(#gk-gold)" cx="27" cy="25" r="1.6"/><circle fill="url(#gk-gold)" cx="22" cy="21" r="1.1"/></symbol><symbol id="i-enchantement" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M24 4l4.2 15.8L44 24l-15.8 4.2L24 44l-4.2-15.8L4 24l15.8-4.2z"/><circle fill="#1a1208" cx="24" cy="24" r="3.4"/></symbol><symbol id="i-minage" viewBox="0 0 48 48"><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-linejoin="round" stroke-width="5.5" d="M8 20Q24 4 40 20"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.2" d="M24 11L24 44"/></symbol><symbol id="i-herboristerie" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M9 39C9 20 21 8 40 8c0 19-12 31-31 31z"/><path fill="none" stroke="#1a1208" stroke-width="2" stroke-linecap="round" d="M9 39L30 18M18 30h8M23 25v-7"/></symbol><symbol id="i-depecage" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M10 34L33 8c5 2 7 7 4 12L16 39z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.2" d="M12 37l-5 5"/></symbol><symbol id="i-cuisine" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M9 22h30v9a9 9 0 0 1-9 9H18a9 9 0 0 1-9-9z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.2" d="M5 24h4M39 24h4M18 6c-2 3 2 5 0 9M25 5c-2 3 2 5 0 9M32 6c-2 3 2 5 0 9"/></symbol><symbol id="i-secourisme" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M19 7h10v12h12v10H29v12H19V29H7V19h12z"/></symbol><symbol id="i-peche" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M5 24c8-11 23-11 31 0-8 11-23 11-31 0z"/><path fill="url(#gk-gold)" d="M35 24l9-8v16z"/><circle fill="#1a1208" cx="14" cy="22" r="2"/></symbol></defs></svg>
 
 <header class="topbar">
 	<a class="wordmark" href="/">Guildkeep</a>
@@ -37,27 +38,6 @@
 		</h1>
 		<div class="rule" data-rise style="--i:0" aria-hidden="true"><i></i></div>
 
-		<div class="chips-phone">
-			<div class="chip chip-a" data-ui>
-				<label for="chip-prof"><span lang="fr">Métier</span><span lang="en">Profession</span></label>
-				<select id="chip-prof"></select>
-			</div>
-			<div class="chip chip-b" data-ui>
-				<span class="chip-label"><span lang="fr">Niveau minimum</span><span lang="en">Minimum level</span></span>
-				<div class="chip-row">
-					<input id="chip-level" type="range" min="1" max="300" step="1" value="225" aria-label="Niveau minimum / Minimum level">
-					<output id="chip-level-out" for="chip-level" class="nums">225</output>
-				</div>
-			</div>
-			<div class="chip chip-c" data-ui>
-				<span class="chip-label"><span lang="fr">Langue du bot</span><span lang="en">Bot language</span></span>
-				<div class="switch" role="group" aria-label="Langue / Language">
-					<button type="button" data-set-lang="fr" aria-pressed="true">FR</button>
-					<button type="button" data-set-lang="en" aria-pressed="false">EN</button>
-				</div>
-			</div>
-		</div>
-
 		<p class="hero-lead" data-rise style="--i:0">
 			<span lang="fr">Guildkeep tient l'annuaire des artisans de ta guilde WoW: Forever, en jeu et sur Discord. Gratuit, sans compte.</span>
 			<span lang="en">Guildkeep keeps your WoW: Forever guild's crafter directory, in game and on Discord. Free, no account.</span>
@@ -67,21 +47,32 @@
 			<a class="button is-quiet" href="#rejoindre"><span lang="fr">J'ai un lien de ma guilde</span><span lang="en">I have my guild's link</span></a>
 		</div>
 
-		<!-- La réponse du bot, recalculée par les trois commandes ci-dessus. -->
-		<div class="answer" data-rise style="--i:2" aria-live="polite">
-			<figure class="answer-plate">
-				<img id="answer-img" src="/img/metiers/forge.jpg" width="470" height="602" alt="Gravure : le forgeron, Ständebuch de Jost Amman, 1568">
-				<span class="plate-name" id="answer-plate-name" hidden></span>
-			</figure>
-			<div class="discord" data-ui>
-				<div class="who"><span class="avatar">G</span><span class="name">Guildkeep</span><span class="tag">BOT</span>
-					<span class="muted" id="answer-cmd"></span></div>
-				<div class="embed" id="answer-embed">
-					<h4 id="answer-title"><span lang="fr">Qui peut le fabriquer ?</span><span lang="en">Who can craft it?</span></h4>
-					<div id="answer-rows">
-						<div class="field"><b>Bragg Ferrefond · Forge 300/300</b><span lang="fr">dispo le soir, fournir les barres</span><span lang="en">evenings, bring the bars</span></div>
+		<!-- Le tableau des métiers : la recherche « qui sait le faire ? » de l'addon, sur une guilde d'exemple. -->
+		<div class="board" data-rise style="--i:2">
+			<div class="board-head"><b>Guildkeep</b><span>&lt;La Garde d'Ambre&gt;</span><small><span lang="fr">guilde d'exemple</span><span lang="en">sample guild</span></small></div>
+			<div class="board-body">
+				<div class="board-pick">
+					<p class="board-label" id="prof-label"><span lang="fr">Métier</span><span lang="en">Profession</span></p>
+					<div class="slots" id="slots" role="radiogroup" aria-labelledby="prof-label"></div>
+					<div class="board-level">
+						<label for="chip-level" class="board-label"><span lang="fr">Niveau minimum</span><span lang="en">Minimum level</span></label>
+						<div class="board-range">
+							<input id="chip-level" type="range" min="1" max="300" step="1" value="225">
+							<output id="chip-level-out" for="chip-level" class="nums">225</output>
+						</div>
 					</div>
-					<div class="footer"><span lang="fr">Exemple : guilde fictive « La Garde d'Ambre »</span><span lang="en">Example: fictional guild "La Garde d'Ambre"</span></div>
+				</div>
+				<div class="tooltip" aria-live="polite">
+					<div class="tooltip-head">
+						<svg class="tooltip-icon" aria-hidden="true"><use id="answer-icon" href="#i-forge"/></svg>
+						<div><h2 class="tooltip-title" id="answer-title"><span lang="fr">Forge</span><span lang="en">Blacksmithing</span></h2>
+						<p class="tooltip-sub" id="answer-sub"><span lang="fr">2 artisans à 225 ou plus</span><span lang="en">2 crafters at 225 or above</span></p></div>
+					</div>
+					<ul class="crafters" id="answer-rows">
+						<li><span class="who q-legend">Bragg Ferrefond</span><span class="lvl nums">300</span><i class="meter"><i style="width:100%"></i></i><span class="c-note">dispo le soir, fournir les barres</span></li>
+						<li><span class="who q-epic">Hilde Marteau</span><span class="lvl nums">262</span><i class="meter"><i style="width:87%"></i></i><span class="c-note">armes surtout</span></li>
+					</ul>
+					<p class="tooltip-cmd"><span lang="fr">Sur Discord :</span><span lang="en">On Discord:</span> <code id="answer-cmd">/gkeep metier qui metier:Forge niveau_min:225</code></p>
 				</div>
 			</div>
 		</div>
@@ -278,9 +269,9 @@
 		</div>
 		<div>
 			<div class="bands" role="tabpanel" id="b-metiers" aria-labelledby="t-metiers">
-				<div class="band"><div><code><span lang="fr">/gkeep metier qui</span><span lang="en">/gkeep profession who</span></code><span class="alt"><span lang="en">FR : /gkeep metier qui</span><span lang="fr">EN : /gkeep profession who</span></span></div><p><span lang="fr">Qui peut fabriquer une recette, par métier ou niveau minimum.</span><span lang="en">Who can craft a recipe, by profession or minimum level.</span></p><div class="faces"><img src="/img/metiers/forge.jpg" alt="" width="36" height="36" loading="lazy"><img src="/img/metiers/couture.jpg" alt="" width="36" height="36" loading="lazy"><img src="/img/metiers/alchimie.jpg" alt="" width="36" height="36" loading="lazy"></div></div>
-				<div class="band"><div><code><span lang="fr">/gkeep metier recettes</span><span lang="en">/gkeep profession recipes</span></code><span class="alt"><span lang="en">FR : /gkeep metier recettes</span><span lang="fr">EN : /gkeep profession recipes</span></span></div><p><span lang="fr">Toutes les recettes d'un personnage, filtrables par texte.</span><span lang="en">All of a character's recipes, filterable by text.</span></p><div class="faces"><img src="/img/metiers/enchantement.jpg" alt="" width="36" height="36" loading="lazy"></div></div>
-				<div class="band"><div><code><span lang="fr">/gkeep metier liste</span><span lang="en">/gkeep profession list</span></code><span class="alt"><span lang="en">FR : /gkeep metier liste</span><span lang="fr">EN : /gkeep profession list</span></span></div><p><span lang="fr">L'annuaire entier, ou un seul métier.</span><span lang="en">The whole directory, or one profession.</span></p><div class="faces"><img src="/img/metiers/cuir.jpg" alt="" width="36" height="36" loading="lazy"><img src="/img/metiers/ingenierie.jpg" alt="" width="36" height="36" loading="lazy"></div></div>
+				<div class="band"><div><code><span lang="fr">/gkeep metier qui</span><span lang="en">/gkeep profession who</span></code><span class="alt"><span lang="en">FR : /gkeep metier qui</span><span lang="fr">EN : /gkeep profession who</span></span></div><p><span lang="fr">Qui peut fabriquer une recette, par métier ou niveau minimum.</span><span lang="en">Who can craft a recipe, by profession or minimum level.</span></p><div class="faces" aria-hidden="true"><svg><use href="#i-forge"/></svg><svg><use href="#i-couture"/></svg><svg><use href="#i-alchimie"/></svg></div></div>
+				<div class="band"><div><code><span lang="fr">/gkeep metier recettes</span><span lang="en">/gkeep profession recipes</span></code><span class="alt"><span lang="en">FR : /gkeep metier recettes</span><span lang="fr">EN : /gkeep profession recipes</span></span></div><p><span lang="fr">Toutes les recettes d'un personnage, filtrables par texte.</span><span lang="en">All of a character's recipes, filterable by text.</span></p><div class="faces" aria-hidden="true"><svg><use href="#i-enchantement"/></svg></div></div>
+				<div class="band"><div><code><span lang="fr">/gkeep metier liste</span><span lang="en">/gkeep profession list</span></code><span class="alt"><span lang="en">FR : /gkeep metier liste</span><span lang="fr">EN : /gkeep profession list</span></span></div><p><span lang="fr">L'annuaire entier, ou un seul métier.</span><span lang="en">The whole directory, or one profession.</span></p><div class="faces" aria-hidden="true"><svg><use href="#i-cuir"/></svg><svg><use href="#i-ingenierie"/></svg></div></div>
 				<div class="band"><div><code><span lang="fr">/gkeep metier definir</span><span lang="en">/gkeep profession set</span></code><span class="alt"><span lang="en">FR : /gkeep metier definir</span><span lang="fr">EN : /gkeep profession set</span></span></div><p><span lang="fr">Déclarer un métier sans l'addon (le relevé en jeu prime).</span><span lang="en">Declare a profession without the addon (the in-game scan wins).</span></p><span class="who"><span lang="fr">toi</span><span lang="en">you</span></span></div>
 				<div class="band"><div><code><span lang="fr">/gkeep metier retirer</span><span lang="en">/gkeep profession remove</span></code><span class="alt"><span lang="en">FR : /gkeep metier retirer</span><span lang="fr">EN : /gkeep profession remove</span></span></div><p><span lang="fr">Retirer un métier d'un de tes personnages.</span><span lang="en">Remove a profession from one of your characters.</span></p><span class="who"><span lang="fr">toi</span><span lang="en">you</span></span></div>
 			</div>
@@ -309,10 +300,6 @@
 	<div class="wrap faq">
 		<div class="faq-side">
 			<h2 id="faq-titre"><span lang="fr">Tes questions</span><span lang="en">Your questions</span></h2>
-			<figure data-reveal>
-				<img src="/img/metiers/alchimie.jpg" width="909" height="1200" alt="Gravure : l'apothicaire dans son officine, Ständebuch de Jost Amman, 1568" loading="lazy">
-				<figcaption><span lang="fr">L'apothicaire, Ständebuch, 1568 : l'alchimiste de la guilde.</span><span lang="en">The apothecary, Ständebuch, 1568: the guild's alchemist.</span></figcaption>
-			</figure>
 		</div>
 		<div class="faq-list">
 			<details name="faq" open>
@@ -373,9 +360,9 @@
 		<a href="#questions"><span lang="fr">Aide</span><span lang="en">Help</span></a>
 	</nav>
 	<span class="end">2026</span>
-	<span class="credit"><span lang="fr">Gravures : Jost Amman, Das Ständebuch, 1568, domaine public, via Wikimedia Commons. World of Warcraft est une marque de Blizzard Entertainment ; Guildkeep n'y est pas affilié.</span><span lang="en">Woodcuts: Jost Amman, Das Ständebuch, 1568, public domain, via Wikimedia Commons. World of Warcraft is a trademark of Blizzard Entertainment; Guildkeep is not affiliated.</span></span>
+	<span class="credit"><span lang="fr">World of Warcraft est une marque de Blizzard Entertainment ; Guildkeep n'y est pas affilié.</span><span lang="en">World of Warcraft is a trademark of Blizzard Entertainment; Guildkeep is not affiliated.</span></span>
 </footer>
 
-<script src="/site.js?v=2" defer></script>
+<script src="/site.js?v=3" defer></script>
 </body>
 </html>

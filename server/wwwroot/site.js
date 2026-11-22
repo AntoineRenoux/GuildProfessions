@@ -21,62 +21,66 @@
 
 	// ---- Hero : la recherche « qui sait le faire ? » sur une guilde d'exemple ------------------
 	const PROFESSIONS = [
-		{ id: 'forge', fr: 'Forge', en: 'Blacksmithing', art: 'forge', alt: ['le forgeron', 'the blacksmith'], crafters: [['Bragg Ferrefond', 300, 'dispo le soir, fournir les barres', 'evenings, bring the bars'], ['Hilde Marteau', 262, 'armes surtout', 'mostly weapons'], ['Ondrin Cendre', 190, '', '']] },
-		{ id: 'cuir', fr: 'Travail du cuir', en: 'Leatherworking', art: 'cuir', alt: ['le corroyeur', 'the leatherworker'], crafters: [['Sorcha Tanne', 300, 'cuir épais fourni', 'heavy leather provided'], ['Kael Ronce', 241, '', '']] },
-		{ id: 'couture', fr: 'Couture', en: 'Tailoring', art: 'couture', alt: ['le tailleur', 'the tailor'], crafters: [['Ysolde Brume', 300, 'robes runiques', 'runecloth robes'], ['Mireille Fil', 275, 'sacs 16 places', '16-slot bags'], ['Tobias Lin', 120, '', '']] },
-		{ id: 'ingenierie', fr: 'Ingénierie', en: 'Engineering', art: 'ingenierie', alt: ["l'horloger", 'the clockmaker'], crafters: [['Tamsin Rouage', 300, 'lunettes et explosifs', 'goggles and explosives'], ['Pip Vapeur', 210, '', '']] },
-		{ id: 'alchimie', fr: 'Alchimie', en: 'Alchemy', art: 'alchimie', alt: ["l'apothicaire", 'the apothecary'], crafters: [['Maël Corvin', 300, 'transmutation arcanite', 'arcanite transmute'], ['Elwin Sauge', 265, 'flacons sur demande', 'flasks on request'], ['Nora Fiel', 230, '', '']] },
-		{ id: 'enchantement', fr: 'Enchantement', en: 'Enchanting', art: 'enchantement', alt: ["l'astronome", 'the astronomer'], crafters: [['Aurèle Vesper', 300, 'arme +15 agilité', 'weapon +15 agility'], ['Liv Astrale', 245, '', '']] },
-		{ id: 'minage', fr: 'Minage', en: 'Mining', art: null, alt: ['le mineur', 'the miner'], crafters: [['Dunrik Galet', 300, 'thorium au kilo', 'thorium by the stack'], ['Ilsa Roche', 180, '', '']] },
-		{ id: 'herboristerie', fr: 'Herboristerie', en: 'Herbalism', art: null, alt: ['le paysan', 'the farmer'], crafters: [['Elwin Sauge', 286, 'lotus noir parfois', 'black lotus sometimes'], ['Faye Ortie', 150, '', '']] },
-		{ id: 'depecage', fr: 'Dépeçage', en: 'Skinning', art: null, alt: ['le pelletier', 'the furrier'], crafters: [['Sorcha Tanne', 300, '', ''], ['Kael Ronce', 230, '', '']] },
-		{ id: 'cuisine', fr: 'Cuisine', en: 'Cooking', art: null, alt: ['le cuisinier', 'the cook'], crafters: [['Bragg Ferrefond', 285, 'festins pour les raids', 'raid feasts'], ['Mireille Fil', 225, '', '']] },
-		{ id: 'secourisme', fr: 'Secourisme', en: 'First Aid', art: null, alt: ['le barbier-chirurgien', 'the barber-surgeon'], crafters: [['Nora Fiel', 300, 'bandages d’étoffe runique', 'runecloth bandages']] },
-		{ id: 'peche', fr: 'Pêche', en: 'Fishing', art: null, alt: ['le pêcheur', 'the fisherman'], crafters: [['Pip Vapeur', 300, 'poissons de raid', 'raid fish'], ['Tobias Lin', 140, '', '']] },
+		{ id: 'forge', fr: 'Forge', en: 'Blacksmithing', crafters: [['Bragg Ferrefond', 300, 'dispo le soir, fournir les barres', 'evenings, bring the bars'], ['Hilde Marteau', 262, 'armes surtout', 'mostly weapons'], ['Ondrin Cendre', 190, '', '']] },
+		{ id: 'cuir', fr: 'Travail du cuir', en: 'Leatherworking', crafters: [['Sorcha Tanne', 300, 'cuir épais fourni', 'heavy leather provided'], ['Kael Ronce', 241, '', '']] },
+		{ id: 'couture', fr: 'Couture', en: 'Tailoring', crafters: [['Ysolde Brume', 300, 'robes runiques', 'runecloth robes'], ['Mireille Fil', 275, 'sacs 16 places', '16-slot bags'], ['Tobias Lin', 120, '', '']] },
+		{ id: 'ingenierie', fr: 'Ingénierie', en: 'Engineering', crafters: [['Tamsin Rouage', 300, 'lunettes et explosifs', 'goggles and explosives'], ['Pip Vapeur', 210, '', '']] },
+		{ id: 'alchimie', fr: 'Alchimie', en: 'Alchemy', crafters: [['Maël Corvin', 300, 'transmutation arcanite', 'arcanite transmute'], ['Elwin Sauge', 265, 'flacons sur demande', 'flasks on request'], ['Nora Fiel', 230, '', '']] },
+		{ id: 'enchantement', fr: 'Enchantement', en: 'Enchanting', crafters: [['Aurèle Vesper', 300, 'arme +15 agilité', 'weapon +15 agility'], ['Liv Astrale', 245, '', '']] },
+		{ id: 'minage', fr: 'Minage', en: 'Mining', crafters: [['Dunrik Galet', 300, 'thorium au kilo', 'thorium by the stack'], ['Ilsa Roche', 180, '', '']] },
+		{ id: 'herboristerie', fr: 'Herboristerie', en: 'Herbalism', crafters: [['Elwin Sauge', 286, 'lotus noir parfois', 'black lotus sometimes'], ['Faye Ortie', 150, '', '']] },
+		{ id: 'depecage', fr: 'Dépeçage', en: 'Skinning', crafters: [['Sorcha Tanne', 300, '', ''], ['Kael Ronce', 230, '', '']] },
+		{ id: 'cuisine', fr: 'Cuisine', en: 'Cooking', crafters: [['Bragg Ferrefond', 285, 'festins pour les raids', 'raid feasts'], ['Mireille Fil', 225, '', '']] },
+		{ id: 'secourisme', fr: 'Secourisme', en: 'First Aid', crafters: [['Nora Fiel', 300, 'bandages d’étoffe runique', 'runecloth bandages']] },
+		{ id: 'peche', fr: 'Pêche', en: 'Fishing', crafters: [['Pip Vapeur', 300, 'poissons de raid', 'raid fish'], ['Tobias Lin', 140, '', '']] },
 	];
-	const select = document.getElementById('chip-prof');
+	// Couleur de qualité des objets selon le niveau : 300 légendaire, 250 épique, 200 rare, 150 peu commun.
+	const quality = (lvl) => (lvl >= 300 ? 'q-legend' : lvl >= 250 ? 'q-epic' : lvl >= 200 ? 'q-rare' : lvl >= 150 ? 'q-uncommon' : 'q-common');
+	const slots = document.getElementById('slots');
 	const level = document.getElementById('chip-level');
 	const levelOut = document.getElementById('chip-level-out');
-	const img = document.getElementById('answer-img');
-	const plateName = document.getElementById('answer-plate-name');
+	const icon = document.getElementById('answer-icon');
+	const title = document.getElementById('answer-title');
+	const sub = document.getElementById('answer-sub');
 	const rows = document.getElementById('answer-rows');
 	const cmd = document.getElementById('answer-cmd');
-	const embed = document.getElementById('answer-embed');
 	const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+	let current = 'forge';
 
 	const renderAnswer = () => {
-		if (!select) return;
-		const prof = PROFESSIONS.find((p) => p.id === select.value) || PROFESSIONS[0];
+		const prof = PROFESSIONS.find((p) => p.id === current) || PROFESSIONS[0];
 		const min = Number(level.value);
 		levelOut.textContent = String(min);
 		const name = T(prof.fr, prof.en);
-		// Pas de gravure pour ce métier : son nom, en grand, sur le même fond.
-		img.hidden = !prof.art;
-		plateName.hidden = Boolean(prof.art);
-		plateName.textContent = name;
-		if (prof.art) {
-			img.src = `/img/metiers/${prof.art}.jpg`;
-			img.alt = T(`Gravure : ${prof.alt[0]}, Ständebuch de Jost Amman, 1568`, `Woodcut: ${prof.alt[1]}, Jost Amman's Ständebuch, 1568`);
-		}
-		cmd.textContent = T(`/gkeep metier qui metier:${prof.fr} niveau_min:${min}`, `/gkeep profession who profession:${prof.en} min_level:${min}`);
+		icon.setAttribute('href', `#i-${prof.id}`);
+		title.textContent = name;
 		const found = prof.crafters.filter((c) => c[1] >= min);
-		embed.classList.toggle('amber', found.length === 0);
-		rows.innerHTML = found.length
-			? found.map((c) => `<div class="field"><b>${esc(c[0])} · ${esc(name)} ${c[1]}/300</b>${esc(T(c[2], c[3]) || T('pas de note', 'no note'))}</div>`).join('')
-			: `<div class="field">${esc(T(`Personne en ${name} à ${min} ou plus. Baisse le niveau minimum.`, `Nobody in ${name} at ${min} or above. Lower the minimum level.`))}</div>`;
+		sub.textContent = found.length
+			? T(`${found.length} artisan${found.length > 1 ? 's' : ''} à ${min} ou plus`, `${found.length} crafter${found.length > 1 ? 's' : ''} at ${min} or above`)
+			: T(`Personne à ${min} ou plus : baisse le niveau.`, `Nobody at ${min} or above: lower the level.`);
+		rows.innerHTML = found.map((c) => `<li><span class="who ${quality(c[1])}">${esc(c[0])}</span><span class="lvl nums">${c[1]}</span><i class="meter"><i style="width:${Math.round((c[1] / 300) * 100)}%"></i></i>${T(c[2], c[3]) ? `<span class="c-note">${esc(T(c[2], c[3]))}</span>` : ''}</li>`).join('');
+		cmd.textContent = T(`/gkeep metier qui metier:${prof.fr} niveau_min:${min}`, `/gkeep profession who profession:${prof.en} min_level:${min}`);
+		slots.querySelectorAll('button').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.prof === current)));
 	};
-	const fillSelect = () => {
-		if (!select) return;
-		const current = select.value || 'forge';
-		select.innerHTML = PROFESSIONS.map((p) => `<option value="${p.id}">${esc(T(p.fr, p.en))}</option>`).join('');
-		select.value = current;
+	const fillSlots = () => {
+		slots.innerHTML = PROFESSIONS.map((p) => `<button type="button" role="radio" class="slot" data-prof="${p.id}" aria-checked="false" title="${esc(T(p.fr, p.en))}"><svg aria-hidden="true"><use href="#i-${p.id}"/></svg><span class="sr-only">${esc(T(p.fr, p.en))}</span></button>`).join('');
+		slots.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => { current = b.dataset.prof; renderAnswer(); }));
 		renderAnswer();
 	};
-	if (select) {
-		fillSelect();
-		select.addEventListener('change', renderAnswer);
+	if (slots) {
+		fillSlots();
+		// Flèches du clavier dans le groupe de métiers.
+		slots.addEventListener('keydown', (e) => {
+			const d = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+			if (!d) return;
+			e.preventDefault();
+			const i = PROFESSIONS.findIndex((p) => p.id === current);
+			current = PROFESSIONS[(i + d + PROFESSIONS.length) % PROFESSIONS.length].id;
+			renderAnswer();
+			slots.querySelector(`[data-prof="${current}"]`).focus();
+		});
 		level.addEventListener('input', renderAnswer);
-		document.addEventListener('gk:lang', fillSelect);
+		document.addEventListener('gk:lang', fillSlots);
 	}
 
 	// ---- Vitrine : seul le fragment centré est éclairé -------------------------------------------
