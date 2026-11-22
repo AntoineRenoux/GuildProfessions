@@ -312,7 +312,7 @@ public sealed class WowLocatorTests
 public sealed class DataLuaWriterTests
 {
 	[Fact]
-	public void Build_Should_MatchExpectedLuaShape()
+	public void Build_Should_WriteOneSectionPerGuild()
 	{
 		var export = new ExportDto(
 			42,
@@ -326,36 +326,132 @@ public sealed class DataLuaWriterTests
 			],
 			[
 				new ExportOrderDto(7, null, "Nayra", "Grimbart", "Flacon des Titans", 2, "urgent", "open", "2026-10-07 10:00"),
-			]);
+			],
+			"FORMER HOPE");
+		var other = new ExportDto(3, new DateTime(2026, 10, 7, 18, 0, 0, DateTimeKind.Utc), [], [], [], "Les Autres");
 
-		var lua = DataLuaWriter.Build(export);
+		var lua = DataLuaWriter.Build([export, other]);
 
 		var expected = """
-			-- Fichier généré par l'app compagnon GuildProfessions.
+			-- Fichier généré par l'app compagnon Guildkeep.
 			-- Ne pas éditer : écrasé à chaque synchronisation.
 			GuildProfessions_ServerData = {
-				version = 42,
-				generatedUtc = "2026-10-07 18:00 UTC",
-				recipeNames = {
-					[17635] = "Flacon des \"Titans\"",
-				},
-				characters = {
+				guilds = {
 					{
-						name = "Grimbart",
-						classFile = "PALADIN",
-						level = 60,
-						professions = {
-							{ name = "Alchimie", level = 295, max = 300, source = "addon", note = "Transmute dispo", scannedAt = "2026-10-07 12:00", recipes = { 17635 } },
+						version = 42,
+						generatedUtc = "2026-10-07 18:00 UTC",
+						guildName = "FORMER HOPE",
+						recipeNames = {
+							[17635] = "Flacon des \"Titans\"",
+						},
+						characters = {
+							{
+								name = "Grimbart",
+								classFile = "PALADIN",
+								level = 60,
+								professions = {
+									{ name = "Alchimie", level = 295, max = 300, source = "addon", note = "Transmute dispo", scannedAt = "2026-10-07 12:00", recipes = { 17635 } },
+								},
+							},
+						},
+						orders = {
+							{ id = 7, requester = "Nayra", crafter = "Grimbart", item = "Flacon des Titans", qty = 2, status = "open", createdUtc = "2026-10-07 10:00", note = "urgent" },
 						},
 					},
-				},
-				orders = {
-					{ id = 7, requester = "Nayra", crafter = "Grimbart", item = "Flacon des Titans", qty = 2, status = "open", createdUtc = "2026-10-07 10:00", note = "urgent" },
+					{
+						version = 3,
+						generatedUtc = "2026-10-07 18:00 UTC",
+						guildName = "Les Autres",
+						recipeNames = {
+						},
+						characters = {
+						},
+						orders = {
+						},
+					},
 				},
 			}
 
 			""".ReplaceLineEndings(Environment.NewLine);
 
 		Assert.Equal(expected, lua);
+		// Le fichier reste lisible par le parseur Lua du compagnon.
+		Assert.NotNull(LuaParser.ParseSavedVariable(lua, "GuildProfessions_ServerData").GetTable("guilds"));
+	}
+}
+
+public sealed class MultiGuildTests : IDisposable
+{
+	private readonly string _directory = Path.Combine(Path.GetTempPath(), "gk-tests-" + Guid.NewGuid().ToString("N"));
+
+	public void Dispose()
+	{
+		if (Directory.Exists(_directory))
+		{
+			Directory.Delete(_directory, recursive: true);
+		}
+	}
+
+	private static GuildEntry Guild(string name) => new() { Name = name, Token = "token-" + name };
+
+	private static UploadCharacter Character(string name, string? guild) =>
+		new(name, "WARRIOR", null, null, null, 60, [], guild);
+
+	[Fact]
+	public void Split_Should_SendEachCharacter_OnlyToItsOwnGuild()
+	{
+		var payload = new UploadPayload(
+			[Character("Aldrin", "FORMER HOPE"), Character("Mira", "les autres"), Character("Reroll", "Inconnue"), Character("Vieux", null)],
+			[
+				new UploadOrder("o1", "Aldrin", "Bob", "Lingot", 1, null, null),
+				new UploadOrder("o2", "Mira", "Zed", "Potion", 1, null, null),
+			],
+			[new UploadOrderAction(12, null, "done")]);
+
+		var uploads = UploadSplitter.Split(payload, [Guild("FORMER HOPE"), Guild("Les Autres")], out var unregistered);
+
+		var hope = uploads.Single(u => u.Guild.Name == "FORMER HOPE").Payload;
+		Assert.Equal(["Aldrin"], hope.Characters.Select(c => c.Name));
+		Assert.Equal(["o1"], hope.Orders!.Select(o => o.ClientId));
+		Assert.Equal(["Mira", "Reroll"], hope.DepartedCharacters!);
+		Assert.Single(hope.OrderActions!);
+
+		var autres = uploads.Single(u => u.Guild.Name == "Les Autres").Payload;
+		Assert.Equal(["Mira"], autres.Characters.Select(c => c.Name));
+		Assert.Equal(["o2"], autres.Orders!.Select(o => o.ClientId));
+		Assert.Equal(["Aldrin", "Reroll"], autres.DepartedCharacters!);
+
+		Assert.Equal(["Inconnue"], unregistered);
+	}
+
+	[Fact]
+	public void Store_Should_AddGuilds_AndUpdateOneWhoseLinkWasRegenerated()
+	{
+		var store = new GuildStore(Path.Combine(_directory, "guildes.json"));
+
+		Assert.True(store.AddOrUpdate(new GuildEntry { Name = "FORMER HOPE", Token = "a", ApiBaseUrl = "https://api" }));
+		Assert.True(store.AddOrUpdate(new GuildEntry { Name = "Les Autres", Token = "b", ApiBaseUrl = "https://api" }));
+		Assert.False(store.AddOrUpdate(new GuildEntry { Name = "FORMER HOPE", Token = "a", ApiBaseUrl = "https://api" }));
+		Assert.True(store.AddOrUpdate(new GuildEntry { Name = "former hope", Token = "a2", ApiBaseUrl = "https://api" }));
+
+		var guilds = store.Load();
+		Assert.Equal(2, guilds.Count);
+		Assert.Contains(guilds, g => g.Token == "a2" && GuildStore.SameGuild(g.Name, "FORMER HOPE"));
+		Assert.DoesNotContain(guilds, g => g.Token == "a");
+
+		store.SetName("b", "Les Autres Renommés");
+		Assert.Contains(store.Load(), g => g.Name == "Les Autres Renommés");
+	}
+
+	[Fact]
+	public void SingleInstance_Should_RefuseASecondCompanion_UntilTheFirstStops()
+	{
+		using (var first = SingleInstance.TryAcquire(_directory))
+		{
+			Assert.NotNull(first);
+			Assert.Null(SingleInstance.TryAcquire(_directory));
+		}
+		using var again = SingleInstance.TryAcquire(_directory);
+		Assert.NotNull(again);
 	}
 }

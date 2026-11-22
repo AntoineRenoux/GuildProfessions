@@ -19,10 +19,31 @@ if (config.AutoUpdate && await updater.TryUpdateAsync(CancellationToken.None))
 {
 	updater.Restart(args);
 }
-if (string.IsNullOrEmpty(config.GuildToken) && string.IsNullOrEmpty(config.UploadToken))
+// La guilde de ce pack rejoint la liste des guildes du poste (un joueur peut
+// avoir des personnages dans plusieurs guildes : un pack par guilde, un seul
+// compagnon pour toutes).
+var guildStore = GuildStore.Default();
+if (!string.IsNullOrEmpty(config.GuildToken) && guildStore.AddOrUpdate(new GuildEntry
 {
-	SyncService.Log("Aucun token dans config.json : la synchronisation sera inactive.");
-	SyncService.Log("Utilise le zip fourni par l'officier (config.json pré-rempli) ou renseigne guildToken.");
+	Name = config.GuildName,
+	Token = config.GuildToken,
+	ApiBaseUrl = config.ApiBaseUrl,
+	UploadToken = config.UploadToken,
+}))
+{
+	SyncService.Log($"Guilde « {(config.GuildName.Length > 0 ? config.GuildName : "du pack")} » ajoutée à ce poste.");
+}
+if (guildStore.Load().Count == 0)
+{
+	SyncService.Log("Aucune guilde : télécharge le pack depuis le lien de ta guilde (donné par son administrateur) et lance-le.");
+}
+
+// Un seul compagnon par poste : s'il tourne déjà, il lira la guilde ajoutée ci-dessus.
+using var instanceLock = SingleInstance.TryAcquire(GuildStore.DefaultDirectory);
+if (instanceLock is null)
+{
+	SyncService.Log("Le compagnon tourne déjà sur ce poste : il synchronise maintenant cette guilde aussi. Tu peux fermer cette fenêtre.");
+	return 0;
 }
 
 if (string.IsNullOrEmpty(config.WowPath))
@@ -63,7 +84,7 @@ Console.CancelKeyPress += (_, eventArgs) =>
 	SyncService.Log("Arrêt demandé...");
 };
 
-using var sync = new SyncService(config, baseDirectory);
+using var sync = new SyncService(config, guildStore, baseDirectory);
 if (config.AutoUpdate)
 {
 	_ = updater.RunPeriodicAsync(args, addonInstaller, cancellation.Token);

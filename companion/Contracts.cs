@@ -45,7 +45,9 @@ public sealed record ExportProfessionDto(
 public sealed record UploadPayload(
 	List<UploadCharacter> Characters,
 	List<UploadOrder>? Orders = null,
-	List<UploadOrderAction>? OrderActions = null);
+	List<UploadOrderAction>? OrderActions = null,
+	// Personnages du joueur relevés dans une autre guilde : la guilde destinataire les retire.
+	List<string>? DepartedCharacters = null);
 
 public sealed record UploadOrder(
 	string ClientId,

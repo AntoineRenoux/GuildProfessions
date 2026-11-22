@@ -10,23 +10,26 @@ public sealed class SyncService : IDisposable
 	private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
 	private readonly CompanionConfig _config;
+	private readonly GuildStore _guilds;
 	private readonly HttpClient _http;
+	private readonly HashSet<string> _reportedUnregistered = new(StringComparer.OrdinalIgnoreCase);
 	private readonly string _statePath;
 	private readonly List<FileSystemWatcher> _watchers = [];
 	private SyncState _state;
 	private DateTime _lastUploadTrigger = DateTime.MinValue;
 
-	public SyncService(CompanionConfig config, string stateDirectory)
+	public SyncService(CompanionConfig config, GuildStore guilds, string stateDirectory)
 	{
 		_config = config;
-		_http = new HttpClient { BaseAddress = new Uri(config.ApiBaseUrl.TrimEnd('/') + "/") };
+		_guilds = guilds;
+		_http = new HttpClient();
 		_statePath = Path.Combine(stateDirectory, "companion-state.json");
 		_state = File.Exists(_statePath)
 			? JsonSerializer.Deserialize<SyncState>(File.ReadAllText(_statePath), JsonOptions) ?? new SyncState()
 			: new SyncState();
 	}
 
-	private string AddonDataPath => Path.Combine(_config.WowPath, "Interface", "AddOns", "GuildProfessions", "Data.lua");
+	private string AddonDataPath => Path.Combine(_config.WowPath, "Interface", "AddOns", AddonInstaller.AddonFolder, "Data.lua");
 
 	private IEnumerable<string> SavedVariablesFiles()
 	{
@@ -45,90 +48,144 @@ public sealed class SyncService : IDisposable
 		}
 	}
 
-	// ---- Down-sync : serveur -> Data.lua ------------------------------------
+	private Uri ApiUri(GuildEntry guild, string relative) =>
+		new(new Uri((guild.ApiBaseUrl.Length > 0 ? guild.ApiBaseUrl : _config.ApiBaseUrl).TrimEnd('/') + "/"), relative);
+
+	// ---- Down-sync : serveur -> Data.lua (une section par guilde) ---------------
 
 	public async Task DownSyncAsync(CancellationToken ct)
 	{
-		if (string.IsNullOrEmpty(_config.GuildToken))
+		var guilds = _guilds.Load();
+		if (guilds.Count == 0)
 		{
-			Log("Down-sync ignoré : guildToken absent de config.json.");
+			Log("Aucune guilde : lance le pack téléchargé depuis le lien de ta guilde.");
 			return;
 		}
-		try
+		var exports = new List<ExportDto>();
+		foreach (var guild in guilds)
 		{
-			using var request = new HttpRequestMessage(HttpMethod.Get, "api/v1/export");
-			request.Headers.Add("X-Guild-Token", _config.GuildToken);
-			using var response = await _http.SendAsync(request, ct);
-			response.EnsureSuccessStatusCode();
-			var export = await response.Content.ReadFromJsonAsync<ExportDto>(JsonOptions, ct)
-				?? throw new InvalidOperationException("Export vide.");
-
-			if (export.Version == _state.LastVersion && File.Exists(AddonDataPath))
+			try
 			{
-				Log($"Down-sync : version {export.Version} inchangée, rien à écrire.");
+				using var request = new HttpRequestMessage(HttpMethod.Get, ApiUri(guild, "api/v1/export"));
+				request.Headers.Add("X-Guild-Token", guild.Token);
+				using var response = await _http.SendAsync(request, ct);
+				if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+				{
+					Log($"Guilde « {Display(guild)} » : lien révoqué ou guilde supprimée. Retélécharge son pack depuis le nouveau lien.");
+					continue;
+				}
+				response.EnsureSuccessStatusCode();
+				var export = await response.Content.ReadFromJsonAsync<ExportDto>(JsonOptions, ct)
+					?? throw new InvalidOperationException("Export vide.");
+				if (export.GuildName is { Length: > 0 } name)
+				{
+					_guilds.SetName(guild.Token, name);
+				}
+				exports.Add(export);
+			}
+			catch (Exception exception) when (exception is not OperationCanceledException)
+			{
+				// Une guilde injoignable ne doit pas effacer sa section : on réessaie au prochain cycle.
+				Log($"Down-sync en échec pour « {Display(guild)} » : {exception.Message}");
 				return;
 			}
+		}
 
-			Directory.CreateDirectory(Path.GetDirectoryName(AddonDataPath)!);
-			await File.WriteAllTextAsync(AddonDataPath, DataLuaWriter.Build(export), ct);
-			_state = _state with { LastVersion = export.Version };
-			SaveState();
-			Log($"Down-sync : Data.lua écrit (version {export.Version}, {export.Characters.Count} personnages). /reload en jeu pour charger.");
-		}
-		catch (Exception exception) when (exception is not OperationCanceledException)
+		var versions = exports.ToDictionary(e => e.GuildName ?? "", e => e.Version);
+		if (File.Exists(AddonDataPath) && SameVersions(versions, _state.GuildVersions))
 		{
-			Log($"Down-sync en échec : {exception.Message}");
+			Log("Down-sync : rien de nouveau.");
+			return;
 		}
+		Directory.CreateDirectory(Path.GetDirectoryName(AddonDataPath)!);
+		await File.WriteAllTextAsync(AddonDataPath, DataLuaWriter.Build(exports), ct);
+		_state = _state with { GuildVersions = versions };
+		SaveState();
+		Log($"Down-sync : Data.lua écrit ({string.Join(", ", exports.Select(e => $"{e.GuildName} : {e.Characters.Count} personnages"))}). /reload en jeu pour charger.");
 	}
 
-	// ---- Up-sync : SavedVariables -> serveur -----------------------------------
+	private static bool SameVersions(Dictionary<string, long> a, Dictionary<string, long> b) =>
+		a.Count == b.Count && a.All(entry => b.TryGetValue(entry.Key, out var version) && version == entry.Value);
+
+	private static string Display(GuildEntry guild) => guild.Name.Length > 0 ? guild.Name : "guilde sans nom";
+
+	// ---- Up-sync : SavedVariables -> serveur, guilde par guilde -------------------
 
 	public async Task UpSyncAsync(string reason, CancellationToken ct)
 	{
-		if (string.IsNullOrEmpty(_config.UploadToken) && string.IsNullOrEmpty(_config.GuildToken))
+		var guilds = _guilds.Load();
+		if (guilds.Count == 0)
 		{
-			Log("Up-sync ignoré : aucun token (guildToken ou uploadToken) dans config.json.");
 			return;
 		}
 		foreach (var file in SavedVariablesFiles())
 		{
+			UploadPayload? payload;
 			try
 			{
-				var content = await ReadWithRetryAsync(file, ct);
-				var payload = SavedVariablesReader.BuildPayload(content);
-				if (payload is null)
-				{
-					continue;
-				}
-
-				var json = JsonSerializer.Serialize(payload, JsonOptions);
-				var hash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(json)));
-				if (_state.UploadHashes.GetValueOrDefault(file) == hash)
-				{
-					continue;
-				}
-
-				using var request = new HttpRequestMessage(HttpMethod.Post, "api/v1/upload");
-				if (!string.IsNullOrEmpty(_config.UploadToken))
-				{
-					request.Headers.Add("X-Upload-Token", _config.UploadToken);
-				}
-				else
-				{
-					request.Headers.Add("X-Guild-Token", _config.GuildToken);
-				}
-				request.Content = new StringContent(json, Encoding.UTF8, "application/json");
-				using var response = await _http.SendAsync(request, ct);
-				response.EnsureSuccessStatusCode();
-
-				_state.UploadHashes[file] = hash;
-				SaveState();
-				Log($"Up-sync ({reason}) : {payload.Characters.Count} personnage(s) envoyés depuis {Path.GetFileName(Path.GetDirectoryName(Path.GetDirectoryName(file)))}.");
+				payload = SavedVariablesReader.BuildPayload(await ReadWithRetryAsync(file, ct));
 			}
 			catch (Exception exception) when (exception is not OperationCanceledException)
 			{
-				Log($"Up-sync en échec pour {file} : {exception.Message}");
+				Log($"Lecture de {file} impossible : {exception.Message}");
+				continue;
 			}
+			if (payload is null)
+			{
+				continue;
+			}
+
+			var uploads = UploadSplitter.Split(payload, guilds, out var unregistered);
+			foreach (var name in unregistered.Where(_reportedUnregistered.Add))
+			{
+				Log($"Personnages de la guilde « {name} » non envoyés : cette guilde n'est pas inscrite sur ce poste " +
+					"(son administrateur doit lancer /gkeep-setup, puis lance le pack depuis son lien).");
+			}
+			foreach (var upload in uploads)
+			{
+				await UploadAsync(file, upload, reason, ct);
+			}
+		}
+	}
+
+	private async Task UploadAsync(string file, UploadSplitter.GuildUpload upload, string reason, CancellationToken ct)
+	{
+		var guild = upload.Guild;
+		try
+		{
+			var json = JsonSerializer.Serialize(upload.Payload, JsonOptions);
+			var hash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(json)));
+			var stateKey = $"{file}|{guild.Token}";
+			if (_state.UploadHashes.GetValueOrDefault(stateKey) == hash)
+			{
+				return;
+			}
+
+			using var request = new HttpRequestMessage(HttpMethod.Post, ApiUri(guild, "api/v1/upload"));
+			if (guild.UploadToken.Length > 0)
+			{
+				request.Headers.Add("X-Upload-Token", guild.UploadToken);
+			}
+			else
+			{
+				request.Headers.Add("X-Guild-Token", guild.Token);
+			}
+			request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+			using var response = await _http.SendAsync(request, ct);
+			response.EnsureSuccessStatusCode();
+			var result = await response.Content.ReadFromJsonAsync<UploadResultDto>(JsonOptions, ct);
+
+			_state.UploadHashes[stateKey] = hash;
+			SaveState();
+			Log($"Up-sync ({reason}) vers « {Display(guild)} » : {upload.Payload.Characters.Count} personnage(s).");
+			foreach (var warning in result?.Warnings ?? [])
+			{
+				Log($"  ⚠ {warning}");
+			}
+		}
+		catch (Exception exception) when (exception is not OperationCanceledException)
+		{
+			Log($"Up-sync en échec vers « {Display(guild)} » : {exception.Message}");
 		}
 	}
 
@@ -230,7 +287,11 @@ public sealed class SyncService : IDisposable
 
 	private sealed record SyncState
 	{
-		public long LastVersion { get; init; }
+		/// <summary>Version de l'export de chaque guilde écrite dans Data.lua.</summary>
+		public Dictionary<string, long> GuildVersions { get; init; } = [];
+		/// <summary>Empreinte du dernier envoi, par (fichier SavedVariables, guilde).</summary>
 		public Dictionary<string, string> UploadHashes { get; init; } = [];
 	}
+
+	private sealed record UploadResultDto(bool Applied, long Version, List<string>? Warnings);
 }
