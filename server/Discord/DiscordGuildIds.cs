@@ -1,8 +1,9 @@
 namespace GuildProfessions.Server.Discord;
 
 /// <summary>
-/// Discord:GuildIds = IDs de serveurs séparés par des virgules (test, prod...).
-/// Passer en prod = ajouter l'ID du serveur de guilde, sans rien retirer.
+/// Discord:GuildIds (développement) : IDs de serveurs séparés par des
+/// virgules, où les commandes sont enregistrées immédiatement. Vide en
+/// production : commandes globales, disponibles sur tout serveur qui invite le bot.
 /// </summary>
 public static class DiscordGuildIds
 {

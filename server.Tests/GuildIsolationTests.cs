@@ -200,7 +200,7 @@ public sealed class GuildIsolationTests : IDisposable
 
 	private sealed class NullNotifier : ICraftOrderNotifier
 	{
-		public Task NotifyNewOrderAsync(CraftOrder order, string? crafterDiscordId) => Task.CompletedTask;
+		public Task NotifyNewOrderAsync(CraftOrder order, string? crafterDiscordId, string? announceChannelId = null) => Task.CompletedTask;
 		public Task NotifyStatusChangedAsync(CraftOrder order, string? requesterDiscordId) => Task.CompletedTask;
 	}
 }

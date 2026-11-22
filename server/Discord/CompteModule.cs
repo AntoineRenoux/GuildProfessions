@@ -1,9 +1,13 @@
+using Discord;
 using Discord.Interactions;
+using GuildProfessions.Server.Data;
 using GuildProfessions.Server.Services;
 
 namespace GuildProfessions.Server.Discord;
 
-public sealed class CompteModule(RosterService roster, NicknameSync nicknames) : InteractionModuleBase<SocketInteractionContext>
+[RequireRegisteredGuild]
+[CommandContextType(InteractionContextType.Guild)]
+public sealed class CompteModule(RosterService roster, NicknameSync nicknames, GuildContext guildContext) : InteractionModuleBase<SocketInteractionContext>
 {
 	[SlashCommand("link", "Lier un personnage à ton compte Discord (le premier devient ton pseudo)")]
 	public async Task LinkAsync(
@@ -15,7 +19,7 @@ public sealed class CompteModule(RosterService roster, NicknameSync nicknames) :
 		var nicknameNote = "";
 		if (result.Success && await roster.GetMainCharacterNameAsync(discordId) is { } main)
 		{
-			nicknameNote = NicknameSync.Describe(await nicknames.SyncAsync(discordId, main), main);
+			nicknameNote = NicknameSync.Describe(await nicknames.SyncAsync(guildContext.Required, discordId, main), main);
 		}
 		await FollowupAsync(result.Message + nicknameNote);
 	}
@@ -30,8 +34,10 @@ public sealed class CompteModule(RosterService roster, NicknameSync nicknames) :
 		var nicknameNote = "";
 		if (result.Success && await roster.GetMainCharacterNameAsync(discordId) is { } main)
 		{
-			nicknameNote = NicknameSync.Describe(await nicknames.SyncAsync(discordId, main), main) +
-				"\n_Ce pseudo est réappliqué automatiquement : pour le changer, utilise `/main` plutôt que les réglages Discord._";
+			nicknameNote = NicknameSync.Describe(await nicknames.SyncAsync(guildContext.Required, discordId, main), main) +
+				(guildContext.Required.SyncNicknames
+					? "\n_Ce pseudo est réappliqué automatiquement : pour le changer, utilise `/main` plutôt que les réglages Discord._"
+					: "");
 		}
 		await FollowupAsync(result.Message + nicknameNote, ephemeral: true);
 	}

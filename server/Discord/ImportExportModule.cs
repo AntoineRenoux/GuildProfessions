@@ -9,6 +9,8 @@ namespace GuildProfessions.Server.Discord;
 /// Canal manuel, sans app compagnon : le bot fournit la chaîne à coller en
 /// jeu (/gp → Importer) et ingère celle produite en jeu (/gp → Exporter).
 /// </summary>
+[RequireRegisteredGuild]
+[CommandContextType(InteractionContextType.Guild)]
 public sealed class ImportExportModule(ExportBuilder exportBuilder, RosterService roster, UploadIngestion ingestion)
 	: InteractionModuleBase<SocketInteractionContext>
 {

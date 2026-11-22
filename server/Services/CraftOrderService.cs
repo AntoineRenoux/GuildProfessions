@@ -7,17 +7,18 @@ namespace GuildProfessions.Server.Services;
 /// <summary>Notification Discord (DM) — no-op quand le bot n'est pas connecté.</summary>
 public interface ICraftOrderNotifier
 {
-	Task NotifyNewOrderAsync(CraftOrder order, string? crafterDiscordId);
+	/// <param name="announceChannelId">Salon Discord où annoncer la commande (option de la guilde).</param>
+	Task NotifyNewOrderAsync(CraftOrder order, string? crafterDiscordId, string? announceChannelId = null);
 	Task NotifyStatusChangedAsync(CraftOrder order, string? requesterDiscordId);
 }
 
 public sealed class NullCraftOrderNotifier : ICraftOrderNotifier
 {
-	public Task NotifyNewOrderAsync(CraftOrder order, string? crafterDiscordId) => Task.CompletedTask;
+	public Task NotifyNewOrderAsync(CraftOrder order, string? crafterDiscordId, string? announceChannelId = null) => Task.CompletedTask;
 	public Task NotifyStatusChangedAsync(CraftOrder order, string? requesterDiscordId) => Task.CompletedTask;
 }
 
-public sealed class CraftOrderService(AppDbContext db, RosterService roster, ICraftOrderNotifier notifier)
+public sealed class CraftOrderService(AppDbContext db, RosterService roster, ICraftOrderNotifier notifier, GuildContext? guildContext = null)
 {
 	// Transitions permises : Open -> Accepted -> Done ; annulation tant que non terminé.
 	private static readonly Dictionary<CraftOrderStatus, CraftOrderStatus[]> AllowedTransitions = new()
@@ -54,7 +55,7 @@ public sealed class CraftOrderService(AppDbContext db, RosterService roster, ICr
 		db.CraftOrders.Add(order);
 		await roster.BumpVersionAndSaveAsync(ct);
 
-		await notifier.NotifyNewOrderAsync(order, await FindDiscordIdAsync(crafterCharacter, ct));
+		await notifier.NotifyNewOrderAsync(order, await FindDiscordIdAsync(crafterCharacter, ct), guildContext?.Guild?.OrdersChannelId);
 		return new OperationResult(true, $"Commande **#{order.Id}** créée : {order.Quantity}× {item} chez **{crafterCharacter}**.");
 	}
 
@@ -139,7 +140,7 @@ public sealed class CraftOrderService(AppDbContext db, RosterService roster, ICr
 			db.CraftOrders.Add(order);
 			changed = true;
 			await db.SaveChangesAsync(ct);
-			await notifier.NotifyNewOrderAsync(order, await FindDiscordIdAsync(order.CrafterCharacter, ct));
+			await notifier.NotifyNewOrderAsync(order, await FindDiscordIdAsync(order.CrafterCharacter, ct), guildContext?.Guild?.OrdersChannelId);
 		}
 
 		foreach (var action in payload.OrderActions ?? [])

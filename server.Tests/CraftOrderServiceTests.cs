@@ -27,7 +27,7 @@ public sealed class CraftOrderServiceTests : IDisposable
 		_db.Database.EnsureCreated();
 		_guild.Use(TestGuilds.Create(_db, "FORMER HOPE", "former-hope"));
 		_roster = new RosterService(_db, _guild);
-		_orders = new CraftOrderService(_db, _roster, _notifier);
+		_orders = new CraftOrderService(_db, _roster, _notifier, _guild);
 	}
 
 	public void Dispose()
@@ -143,14 +143,27 @@ public sealed class CraftOrderServiceTests : IDisposable
 
 	#region Helper Methods
 
+	[Fact]
+	public async Task NewOrder_Should_BeAnnounced_InTheGuildChannel_WhenConfigured()
+	{
+		_guild.Required.OrdersChannelId = "555";
+		await _roster.LinkCharacterAsync("10", "demandeur", "Nayra");
+
+		await _orders.CreateFromDiscordAsync("10", "demandeur", "Thorgal", "Lingot de thorium", 5, null);
+
+		Assert.Equal(["555"], _notifier.AnnounceChannels);
+	}
+
 	private sealed class RecordingNotifier : ICraftOrderNotifier
 	{
 		public List<string?> NewOrderRecipients { get; } = [];
 		public List<string?> StatusRecipients { get; } = [];
+		public List<string?> AnnounceChannels { get; } = [];
 
-		public Task NotifyNewOrderAsync(CraftOrder order, string? crafterDiscordId)
+		public Task NotifyNewOrderAsync(CraftOrder order, string? crafterDiscordId, string? announceChannelId = null)
 		{
 			NewOrderRecipients.Add(crafterDiscordId);
+			AnnounceChannels.Add(announceChannelId);
 			return Task.CompletedTask;
 		}
 

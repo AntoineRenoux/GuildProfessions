@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GuildProfessions.Server.Discord;
 
+[RequireRegisteredGuild]
+[CommandContextType(InteractionContextType.Guild)]
 [Group("metier", "Annuaire des métiers de la guilde")]
 public sealed class MetierModule(RosterService roster, AppDbContext db) : InteractionModuleBase<SocketInteractionContext>
 {

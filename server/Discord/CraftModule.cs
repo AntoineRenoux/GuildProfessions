@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GuildProfessions.Server.Discord;
 
+[RequireRegisteredGuild]
+[CommandContextType(InteractionContextType.Guild)]
 [Group("craft", "Commandes de craft entre membres")]
 public sealed class CraftModule(CraftOrderService orders, AppDbContext db) : InteractionModuleBase<SocketInteractionContext>
 {

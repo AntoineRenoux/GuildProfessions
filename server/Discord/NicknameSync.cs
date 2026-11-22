@@ -15,11 +15,11 @@ public enum NicknameOutcome
 }
 
 /// <summary>
-/// Aligne le pseudo d'un membre sur le nom de son personnage principal, sur
-/// chaque serveur configuré. Un bot ne peut toucher ni l'avatar ni la bio d'un
-/// utilisateur : le pseudo de serveur est la seule prise possible.
+/// Aligne le pseudo d'un membre sur le nom de son personnage principal, sur le
+/// serveur Discord de sa guilde, si l'admin l'a activé dans /setup. Un bot ne
+/// peut toucher ni l'avatar ni la bio : le pseudo de serveur est la seule prise.
 /// </summary>
-public sealed partial class NicknameSync(DiscordSocketClient client, IConfiguration config, ILogger<NicknameSync> logger)
+public sealed partial class NicknameSync(DiscordSocketClient client, ILogger<NicknameSync> logger)
 {
 	private const int MaxNicknameLength = 32;
 
@@ -32,49 +32,48 @@ public sealed partial class NicknameSync(DiscordSocketClient client, IConfigurat
 		return cleaned.Length <= MaxNicknameLength ? cleaned : cleaned[..MaxNicknameLength].TrimEnd();
 	}
 
-	public async Task<List<NicknameOutcome>> SyncAsync(string discordId, string characterName)
+	public async Task<List<NicknameOutcome>> SyncAsync(Data.Guild guild, string discordId, string characterName)
 	{
 		var outcomes = new List<NicknameOutcome>();
-		if (!ulong.TryParse(discordId, out var userId) || client.ConnectionState != ConnectionState.Connected)
+		if (!guild.SyncNicknames || !ulong.TryParse(guild.DiscordServerId, out var serverId) ||
+			!ulong.TryParse(discordId, out var userId) || client.ConnectionState != ConnectionState.Connected)
 		{
 			return outcomes;
 		}
 		var nickname = For(characterName);
 
-		foreach (var guildId in DiscordGuildIds.Parse(config))
+		try
 		{
-			try
-			{
-				var member = await client.Rest.GetGuildUserAsync(guildId, userId);
-				if (member is null)
-				{
-					outcomes.Add(NicknameOutcome.NotMember);
-					continue;
-				}
-				if (member.Nickname == nickname)
-				{
-					outcomes.Add(NicknameOutcome.Unchanged);
-					continue;
-				}
-				await member.ModifyAsync(properties => properties.Nickname = nickname);
-				outcomes.Add(NicknameOutcome.Updated);
-			}
-			catch (HttpException exception) when (exception.HttpCode == System.Net.HttpStatusCode.NotFound
-				|| exception.DiscordCode == DiscordErrorCode.UnknownMember)
+			var member = await client.Rest.GetGuildUserAsync(serverId, userId);
+			if (member is null)
 			{
 				outcomes.Add(NicknameOutcome.NotMember);
 			}
-			catch (HttpException exception) when (exception.HttpCode == System.Net.HttpStatusCode.Forbidden
-				|| exception.DiscordCode == DiscordErrorCode.MissingPermissions)
+			else if (member.Nickname == nickname)
 			{
-				// Propriétaire du serveur, ou rôle du bot placé sous celui du membre.
-				outcomes.Add(NicknameOutcome.Forbidden);
+				outcomes.Add(NicknameOutcome.Unchanged);
 			}
-			catch (Exception exception)
+			else
 			{
-				logger.LogWarning(exception, "Pseudo de {UserId} non modifiable sur le serveur {GuildId}.", userId, guildId);
-				outcomes.Add(NicknameOutcome.Failed);
+				await member.ModifyAsync(properties => properties.Nickname = nickname);
+				outcomes.Add(NicknameOutcome.Updated);
 			}
+		}
+		catch (HttpException exception) when (exception.HttpCode == System.Net.HttpStatusCode.NotFound
+			|| exception.DiscordCode == DiscordErrorCode.UnknownMember)
+		{
+			outcomes.Add(NicknameOutcome.NotMember);
+		}
+		catch (HttpException exception) when (exception.HttpCode == System.Net.HttpStatusCode.Forbidden
+			|| exception.DiscordCode == DiscordErrorCode.MissingPermissions)
+		{
+			// Propriétaire du serveur, ou rôle du bot placé sous celui du membre.
+			outcomes.Add(NicknameOutcome.Forbidden);
+		}
+		catch (Exception exception)
+		{
+			logger.LogWarning(exception, "Pseudo de {UserId} non modifiable sur le serveur {GuildId}.", userId, serverId);
+			outcomes.Add(NicknameOutcome.Failed);
 		}
 		return outcomes;
 	}
