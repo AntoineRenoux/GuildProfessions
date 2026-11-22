@@ -12,8 +12,10 @@ public sealed record OperationResult(bool Success, string Message);
 /// (personnage, métier), la donnée scannée par l'addon prime sur la donnée
 /// déclarée via Discord — sauf la note, toujours éditable via Discord.
 /// </summary>
-public sealed class RosterService(AppDbContext db, GuildContext guildContext)
+public sealed class RosterService(AppDbContext db, GuildContext guildContext, BotLocalizer? localizer = null)
 {
+	private readonly BotLocalizer L = localizer ?? new BotLocalizer();
+
 
 	// ---- Membres & liaison ------------------------------------------------
 
@@ -44,7 +46,7 @@ public sealed class RosterService(AppDbContext db, GuildContext guildContext)
 		}
 		else if (character.MemberId is not null && character.MemberId != member.Id)
 		{
-			return new OperationResult(false, $"**{characterName}** est déjà lié à un autre compte Discord.");
+			return new OperationResult(false, L.T($"**{characterName}** est déjà lié à un autre compte Discord.", $"**{characterName}** is already linked to another Discord account."));
 		}
 		character.MemberId = member.Id;
 		if (member.MainCharacterId is null)
@@ -53,7 +55,7 @@ public sealed class RosterService(AppDbContext db, GuildContext guildContext)
 			member.MainCharacter = character;
 		}
 		await SaveWithVersionBumpAsync(ct);
-		return new OperationResult(true, $"**{characterName}** est maintenant lié à ton compte Discord.");
+		return new OperationResult(true, L.T($"**{characterName}** est maintenant lié à ton compte Discord.", $"**{characterName}** is now linked to your Discord account."));
 	}
 
 	public async Task<OperationResult> SetMainCharacterAsync(string discordId, string characterName, CancellationToken ct = default)
@@ -63,15 +65,15 @@ public sealed class RosterService(AppDbContext db, GuildContext guildContext)
 		var character = await db.Characters.SingleOrDefaultAsync(c => c.Name.ToLower() == lowered, ct);
 		if (character is null)
 		{
-			return new OperationResult(false, $"Personnage **{characterName}** inconnu de l'annuaire.");
+			return new OperationResult(false, L.T($"Personnage **{characterName}** inconnu de l'annuaire.", $"No character named **{characterName}** in the directory."));
 		}
 		if (member is null || character.MemberId != member.Id)
 		{
-			return new OperationResult(false, $"**{character.Name}** n'est pas lié à ton compte. Fais d'abord `/link personnage:{character.Name}`.");
+			return new OperationResult(false, L.T($"**{character.Name}** n'est pas lié à ton compte. Fais d'abord `/gkeep lier personnage:{character.Name}`.", $"**{character.Name}** is not linked to your account. Run `/gkeep link character:{character.Name}` first."));
 		}
 		member.MainCharacterId = character.Id;
 		await db.SaveChangesAsync(ct);
-		return new OperationResult(true, $"**{character.Name}** est maintenant ton personnage principal.");
+		return new OperationResult(true, L.T($"**{character.Name}** est maintenant ton personnage principal.", $"**{character.Name}** is now your main character."));
 	}
 
 	/// <summary>Nom du personnage principal d'un membre, null s'il n'en a pas.</summary>
@@ -122,7 +124,7 @@ public sealed class RosterService(AppDbContext db, GuildContext guildContext)
 		}
 		else if (character.MemberId is not null && character.MemberId != member.Id)
 		{
-			return new OperationResult(false, $"**{characterName}** appartient à un autre membre — seul lui peut le modifier.");
+			return new OperationResult(false, L.T($"**{characterName}** appartient à un autre membre : seul lui peut le modifier.", $"**{characterName}** belongs to another member: only they can change it."));
 		}
 
 		var profession = character.Professions.SingleOrDefault(p => p.Name == professionName);
@@ -137,8 +139,11 @@ public sealed class RosterService(AppDbContext db, GuildContext guildContext)
 		{
 			// La donnée scannée prime : Discord ne peut mettre à jour que la note.
 			profession.Note = note ?? profession.Note;
-			message = $"**{characterName}** — {professionName} est déjà scanné en jeu ({profession.SkillLevel}/{profession.MaxSkill}) : " +
-				"le niveau déclaré est ignoré" + (note is null ? "." : ", la note a été mise à jour.");
+			message = L.T(
+				$"**{characterName}** · {professionName} est déjà relevé en jeu ({profession.SkillLevel}/{profession.MaxSkill}) : " +
+					"le niveau déclaré est ignoré" + (note is null ? "." : ", la note a été mise à jour."),
+				$"**{characterName}** · {professionName} is already scanned in game ({profession.SkillLevel}/{profession.MaxSkill}): " +
+					"the declared level is ignored" + (note is null ? "." : ", the note was updated."));
 		}
 		else
 		{
@@ -146,7 +151,7 @@ public sealed class RosterService(AppDbContext db, GuildContext guildContext)
 			profession.MaxSkill = max;
 			profession.Note = note ?? profession.Note;
 			profession.UpdatedUtc = DateTime.UtcNow;
-			message = $"**{characterName}** — {professionName} {level}/{max} enregistré.";
+			message = L.T($"**{characterName}** · {professionName} {level}/{max} enregistré.", $"**{characterName}** · {professionName} {level}/{max} saved.");
 		}
 
 		await SaveWithVersionBumpAsync(ct);
@@ -161,20 +166,20 @@ public sealed class RosterService(AppDbContext db, GuildContext guildContext)
 			.SingleOrDefaultAsync(c => c.Name == characterName, ct);
 		if (character is null)
 		{
-			return new OperationResult(false, $"Personnage **{characterName}** inconnu.");
+			return new OperationResult(false, L.T($"Personnage **{characterName}** inconnu.", $"Unknown character **{characterName}**."));
 		}
 		if (character.MemberId is not null && character.MemberId != member?.Id)
 		{
-			return new OperationResult(false, $"**{characterName}** appartient à un autre membre.");
+			return new OperationResult(false, L.T($"**{characterName}** appartient à un autre membre.", $"**{characterName}** belongs to another member."));
 		}
 		var profession = character.Professions.SingleOrDefault(p => p.Name == professionName);
 		if (profession is null)
 		{
-			return new OperationResult(false, $"**{characterName}** n'a pas {professionName} d'enregistré.");
+			return new OperationResult(false, L.T($"**{characterName}** n'a pas {professionName} d'enregistré.", $"**{characterName}** has no {professionName} recorded."));
 		}
 		db.Professions.Remove(profession);
 		await SaveWithVersionBumpAsync(ct);
-		return new OperationResult(true, $"**{characterName}** — {professionName} retiré.");
+		return new OperationResult(true, L.T($"**{characterName}** · {professionName} retiré.", $"**{characterName}** · {professionName} removed."));
 	}
 
 	// ---- Upload compagnon -----------------------------------------------------
@@ -200,7 +205,7 @@ public sealed class RosterService(AppDbContext db, GuildContext guildContext)
 			}
 			else if (member is not null && character.MemberId is not null && character.MemberId != member.Id)
 			{
-				warnings.Add($"{uploaded.Name} est lié à un autre membre : upload ignoré pour ce personnage.");
+				warnings.Add(L.T($"{uploaded.Name} est lié à un autre membre : envoi ignoré pour ce personnage.", $"{uploaded.Name} is linked to another member: upload ignored for this character."));
 				continue;
 			}
 			else if (member is not null)

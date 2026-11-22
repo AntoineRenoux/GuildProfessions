@@ -143,6 +143,9 @@ public sealed class DiscordBotService(
 				{
 					scope.ServiceProvider.GetRequiredService<GuildContext>().Use(guild);
 				}
+				// Réponses dans la langue de l'utilisateur (repli : langue du serveur).
+				scope.ServiceProvider.GetRequiredService<BotLocalizer>().Language =
+					BotLocalizer.FromLocale(interaction.UserLocale ?? interaction.GuildLocale);
 				var context = new SocketInteractionContext(client, interaction);
 				await interactions.ExecuteCommandAsync(context, scope.ServiceProvider);
 			}

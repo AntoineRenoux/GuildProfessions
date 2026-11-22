@@ -49,7 +49,7 @@ public sealed class GuildDirectory(AppDbContext db)
 		string.IsNullOrWhiteSpace(slug) ? null : await db.Guilds.SingleOrDefaultAsync(g => g.Slug == slug, ct);
 
 	public async Task<Guild> CreateAsync(string name, string? discordServerId, string? createdByDiscordId,
-		bool syncNicknames, string? ordersChannelId, CancellationToken ct = default)
+		bool syncNicknames, string? ordersChannelId, string locale = "fr", CancellationToken ct = default)
 	{
 		var guild = new Guild
 		{
@@ -60,6 +60,7 @@ public sealed class GuildDirectory(AppDbContext db)
 			InviteCode = NewInviteCode(),
 			SyncNicknames = syncNicknames,
 			OrdersChannelId = ordersChannelId,
+			Locale = locale,
 			CreatedUtc = DateTime.UtcNow,
 			CreatedByDiscordId = createdByDiscordId,
 		};

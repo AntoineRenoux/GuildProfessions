@@ -34,7 +34,7 @@ public static class Endpoints
 		});
 
 		app.MapPost("/api/v1/upload", async (HttpRequest request, UploadPayload payload, GuildDirectory guilds,
-			GuildContext guildContext, UploadIngestion ingestion, CancellationToken ct) =>
+			GuildContext guildContext, BotLocalizer localizer, UploadIngestion ingestion, CancellationToken ct) =>
 		{
 			// Deux modes : token personnel (un membre, donc sa guilde) ou token
 			// de guilde partagé (compagnon zéro-config, member = null).
@@ -59,6 +59,7 @@ public static class Endpoints
 				}
 			}
 			guildContext.Use(guild);
+			localizer.Language = BotLocalizer.FromLocale(guild.Locale);
 			return Results.Ok(await ingestion.IngestAsync(member, payload, ct));
 		});
 	}

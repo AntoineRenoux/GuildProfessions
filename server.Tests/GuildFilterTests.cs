@@ -20,7 +20,7 @@ public sealed class GuildFilterTests
 		var result = GuildFilter.Apply(payload, "Les Copains");
 
 		Assert.Equal(["Asdubral"], result.Payload.Characters.Select(c => c.Name));
-		Assert.Single(result.Warnings);
+		Assert.Equal("Autre Guilde", Assert.Single(result.Rejected).Guild);
 		Assert.Equal(["Reroll"], result.Departed);
 	}
 
@@ -32,7 +32,7 @@ public sealed class GuildFilterTests
 		var result = GuildFilter.Apply(payload, "Les Copains");
 
 		Assert.Single(result.Payload.Characters);
-		Assert.Empty(result.Warnings);
+		Assert.Empty(result.Rejected);
 	}
 
 	[Fact]

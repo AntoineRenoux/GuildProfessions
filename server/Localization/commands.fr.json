@@ -1,0 +1,105 @@
+{
+	"gkeep-setup": {
+		"name": "gkeep-setup",
+		"description": "Créer la guilde Guildkeep de ce serveur, ou la gérer"
+	},
+	"gkeep": {
+		"name": "gkeep",
+		"description": "Guildkeep : les métiers, artisans et commandes de ta guilde",
+		"help": {
+			"name": "aide",
+			"description": "Ce que fait Guildkeep et comment s'en servir"
+		},
+		"link": {
+			"name": "lier",
+			"description": "Lier un de tes personnages à ton compte Discord",
+			"character": { "name": "personnage", "description": "Nom du personnage en jeu" }
+		},
+		"main": {
+			"name": "principal",
+			"description": "Choisir ton personnage principal (ton pseudo, si la guilde l'a activé)",
+			"character": { "name": "personnage", "description": "Un de tes personnages liés" }
+		},
+		"token": {
+			"name": "token",
+			"description": "Ton token personnel pour l'app compagnon (facultatif)"
+		},
+		"export": {
+			"name": "exporter",
+			"description": "Obtenir la chaîne des données de la guilde à coller en jeu (/gp, Importer)"
+		},
+		"import": {
+			"name": "importer",
+			"description": "Envoyer la chaîne exportée en jeu (/gp, Exporter)"
+		},
+		"profession": {
+			"name": "metier",
+			"description": "Qui sait fabriquer quoi dans la guilde",
+			"who": {
+				"name": "qui",
+				"description": "Qui peut le fabriquer ? Par métier, niveau ou recette",
+				"recipe": { "name": "recette", "description": "Texte à chercher dans les recettes connues" },
+				"profession": { "name": "metier", "description": "Le métier" },
+				"min_level": { "name": "niveau_min", "description": "Niveau de compétence minimal" }
+			},
+			"recipes": {
+				"name": "recettes",
+				"description": "Les recettes connues d'un personnage",
+				"character": { "name": "personnage", "description": "Le personnage" },
+				"profession": { "name": "metier", "description": "Seulement ce métier" },
+				"search": { "name": "recherche", "description": "Filtrer les recettes par texte" }
+			},
+			"list": {
+				"name": "liste",
+				"description": "Tout l'annuaire des métiers de la guilde",
+				"profession": { "name": "metier", "description": "Seulement ce métier" }
+			},
+			"set": {
+				"name": "definir",
+				"description": "Déclarer ou mettre à jour un métier d'un de tes personnages",
+				"character": { "name": "personnage", "description": "Nom du personnage en jeu" },
+				"profession": { "name": "metier", "description": "Le métier" },
+				"level": { "name": "niveau", "description": "Niveau de compétence actuel" },
+				"note": { "name": "note", "description": "Note libre (disponibilités, conditions...)" }
+			},
+			"remove": {
+				"name": "retirer",
+				"description": "Retirer un métier d'un de tes personnages",
+				"character": { "name": "personnage", "description": "Nom du personnage en jeu" },
+				"profession": { "name": "metier", "description": "Le métier à retirer" }
+			}
+		},
+		"order": {
+			"name": "commande",
+			"description": "Commandes de craft entre membres",
+			"new": {
+				"name": "nouvelle",
+				"description": "Commander un craft à un artisan",
+				"crafter": { "name": "artisan", "description": "Le personnage artisan" },
+				"item": { "name": "objet", "description": "L'objet ou la recette voulus" },
+				"quantity": { "name": "quantite", "description": "Quantité" },
+				"note": { "name": "note", "description": "Précisions (matériaux fournis, délai...)" }
+			},
+			"list": {
+				"name": "liste",
+				"description": "Les commandes en cours",
+				"filter": { "name": "filtre", "description": "Seulement les commandes qui me concernent" }
+			},
+			"accept": {
+				"name": "accepter",
+				"description": "Accepter une commande (artisan)",
+				"id": { "name": "numero", "description": "La commande" }
+			},
+			"done": {
+				"name": "terminer",
+				"description": "Marquer une commande comme terminée (artisan)",
+				"id": { "name": "numero", "description": "La commande" }
+			},
+			"cancel": {
+				"name": "annuler",
+				"description": "Annuler une commande (artisan ou demandeur)",
+				"id": { "name": "numero", "description": "La commande" }
+			}
+		}
+	}
+}

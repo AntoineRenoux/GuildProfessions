@@ -16,7 +16,8 @@ public static class RecipeListFormatter
 	// Marge sous les 6000 caractères pour le titre, la description et le pied de l'embed.
 	private const int EmbedBudget = 5200;
 
-	public static RecipeListLayout Layout(IEnumerable<(string Profession, IReadOnlyList<string> Recipes)> professions)
+	public static RecipeListLayout Layout(IEnumerable<(string Profession, IReadOnlyList<string> Recipes)> professions,
+		string continued = "suite")
 	{
 		var fields = new List<RecipeField>();
 		var used = 0;
@@ -36,7 +37,7 @@ public static class RecipeListFormatter
 				{
 					return true;
 				}
-				var fieldTitle = part == 0 ? title : $"{profession} (suite)";
+				var fieldTitle = part == 0 ? title : $"{profession} ({continued})";
 				var body = string.Join("\n", chunk);
 				if (fields.Count >= MaxFields || used + fieldTitle.Length + body.Length > EmbedBudget)
 				{

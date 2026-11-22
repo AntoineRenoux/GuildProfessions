@@ -8,18 +8,24 @@ namespace GuildProfessions.Server.Services;
 public interface ICraftOrderNotifier
 {
 	/// <param name="announceChannelId">Salon Discord où annoncer la commande (option de la guilde).</param>
-	Task NotifyNewOrderAsync(CraftOrder order, string? crafterDiscordId, string? announceChannelId = null);
-	Task NotifyStatusChangedAsync(CraftOrder order, string? requesterDiscordId);
+	Task NotifyNewOrderAsync(CraftOrder order, string? crafterDiscordId, string? announceChannelId = null, BotLanguage language = BotLanguage.French);
+	Task NotifyStatusChangedAsync(CraftOrder order, string? requesterDiscordId, BotLanguage language = BotLanguage.French);
 }
 
 public sealed class NullCraftOrderNotifier : ICraftOrderNotifier
 {
-	public Task NotifyNewOrderAsync(CraftOrder order, string? crafterDiscordId, string? announceChannelId = null) => Task.CompletedTask;
-	public Task NotifyStatusChangedAsync(CraftOrder order, string? requesterDiscordId) => Task.CompletedTask;
+	public Task NotifyNewOrderAsync(CraftOrder order, string? crafterDiscordId, string? announceChannelId = null, BotLanguage language = BotLanguage.French) => Task.CompletedTask;
+	public Task NotifyStatusChangedAsync(CraftOrder order, string? requesterDiscordId, BotLanguage language = BotLanguage.French) => Task.CompletedTask;
 }
 
-public sealed class CraftOrderService(AppDbContext db, RosterService roster, ICraftOrderNotifier notifier, GuildContext? guildContext = null)
+public sealed class CraftOrderService(AppDbContext db, RosterService roster, ICraftOrderNotifier notifier,
+	GuildContext? guildContext = null, BotLocalizer? localizer = null)
 {
+	private readonly BotLocalizer L = localizer ?? new BotLocalizer();
+
+	// Messages privés et annonces : dans la langue de la guilde (celle du destinataire est inconnue).
+	private BotLanguage GuildLanguage => BotLocalizer.FromLocale(guildContext?.Guild?.Locale);
+
 	// Transitions permises : Open -> Accepted -> Done ; annulation tant que non terminé.
 	private static readonly Dictionary<CraftOrderStatus, CraftOrderStatus[]> AllowedTransitions = new()
 	{
@@ -55,8 +61,8 @@ public sealed class CraftOrderService(AppDbContext db, RosterService roster, ICr
 		db.CraftOrders.Add(order);
 		await roster.BumpVersionAndSaveAsync(ct);
 
-		await notifier.NotifyNewOrderAsync(order, await FindDiscordIdAsync(crafterCharacter, ct), guildContext?.Guild?.OrdersChannelId);
-		return new OperationResult(true, $"Commande **#{order.Id}** créée : {order.Quantity}× {item} chez **{crafterCharacter}**.");
+		await notifier.NotifyNewOrderAsync(order, await FindDiscordIdAsync(crafterCharacter, ct), guildContext?.Guild?.OrdersChannelId, GuildLanguage);
+		return new OperationResult(true, L.T($"Commande **#{order.Id}** créée : {order.Quantity}× {item} chez **{crafterCharacter}**.", $"Order **#{order.Id}** created: {order.Quantity}× {item} from **{crafterCharacter}**."));
 	}
 
 	public async Task<OperationResult> UpdateStatusFromDiscordAsync(
@@ -65,7 +71,7 @@ public sealed class CraftOrderService(AppDbContext db, RosterService roster, ICr
 		var order = await db.CraftOrders.SingleOrDefaultAsync(o => o.Id == orderId, ct);
 		if (order is null)
 		{
-			return new OperationResult(false, $"Commande #{orderId} introuvable.");
+			return new OperationResult(false, L.T($"Commande #{orderId} introuvable.", $"Order #{orderId} not found."));
 		}
 
 		var memberCharacters = await MemberCharacterNamesAsync(discordId, ct);
@@ -81,19 +87,19 @@ public sealed class CraftOrderService(AppDbContext db, RosterService roster, ICr
 		};
 		if (!allowed)
 		{
-			return new OperationResult(false, $"Seul l'artisan{(newStatus == CraftOrderStatus.Cancelled ? " ou le demandeur" : "")} peut faire ça sur la #{orderId}.");
+			return new OperationResult(false, L.T($"Seul l'artisan{(newStatus == CraftOrderStatus.Cancelled ? " ou le demandeur" : "")} peut faire ça sur la #{orderId}.", $"Only the crafter{(newStatus == CraftOrderStatus.Cancelled ? " or the requester" : "")} can do this on #{orderId}."));
 		}
 		if (!AllowedTransitions[order.Status].Contains(newStatus))
 		{
-			return new OperationResult(false, $"La commande #{orderId} est déjà « {Label(order.Status)} ».");
+			return new OperationResult(false, L.T($"La commande #{orderId} est déjà « {Label(order.Status, L)} ».", $"Order #{orderId} is already \"{Label(order.Status, L)}\"."));
 		}
 
 		order.Status = newStatus;
 		order.UpdatedUtc = DateTime.UtcNow;
 		await roster.BumpVersionAndSaveAsync(ct);
 
-		await notifier.NotifyStatusChangedAsync(order, await FindDiscordIdAsync(order.RequesterCharacter, ct));
-		return new OperationResult(true, $"Commande **#{order.Id}** ({order.Item}) → {Label(newStatus)}.");
+		await notifier.NotifyStatusChangedAsync(order, await FindDiscordIdAsync(order.RequesterCharacter, ct), GuildLanguage);
+		return new OperationResult(true, L.T($"Commande **#{order.Id}** ({order.Item}) : {Label(newStatus, L)}.", $"Order **#{order.Id}** ({order.Item}): {Label(newStatus, L)}."));
 	}
 
 	/// <summary>
@@ -121,7 +127,7 @@ public sealed class CraftOrderService(AppDbContext db, RosterService roster, ICr
 			}
 			if (!memberCharacters.Contains(uploaded.Requester))
 			{
-				warnings.Add($"Commande de {uploaded.Requester} ignorée : personnage non lié à ce compte.");
+				warnings.Add(L.T($"Commande de {uploaded.Requester} ignorée : personnage non lié à ce compte.", $"Order from {uploaded.Requester} ignored: character not linked to this account."));
 				continue;
 			}
 			var order = new CraftOrder
@@ -140,7 +146,7 @@ public sealed class CraftOrderService(AppDbContext db, RosterService roster, ICr
 			db.CraftOrders.Add(order);
 			changed = true;
 			await db.SaveChangesAsync(ct);
-			await notifier.NotifyNewOrderAsync(order, await FindDiscordIdAsync(order.CrafterCharacter, ct), guildContext?.Guild?.OrdersChannelId);
+			await notifier.NotifyNewOrderAsync(order, await FindDiscordIdAsync(order.CrafterCharacter, ct), guildContext?.Guild?.OrdersChannelId, GuildLanguage);
 		}
 
 		foreach (var action in payload.OrderActions ?? [])
@@ -167,14 +173,14 @@ public sealed class CraftOrderService(AppDbContext db, RosterService roster, ICr
 			};
 			if (!permitted)
 			{
-				warnings.Add($"Action « {action.Status} » sur #{order.Id} ignorée : personnages non liés à ce compte.");
+				warnings.Add(L.T($"Action « {action.Status} » sur #{order.Id} ignorée : personnages non liés à ce compte.", $"Action \"{action.Status}\" on #{order.Id} ignored: characters not linked to this account."));
 				continue;
 			}
 			order.Status = newStatus;
 			order.UpdatedUtc = DateTime.UtcNow;
 			changed = true;
 			await db.SaveChangesAsync(ct);
-			await notifier.NotifyStatusChangedAsync(order, await FindDiscordIdAsync(order.RequesterCharacter, ct));
+			await notifier.NotifyStatusChangedAsync(order, await FindDiscordIdAsync(order.RequesterCharacter, ct), GuildLanguage);
 		}
 
 		if (changed)
@@ -184,14 +190,18 @@ public sealed class CraftOrderService(AppDbContext db, RosterService roster, ICr
 		return warnings;
 	}
 
-	public static string Label(CraftOrderStatus status) => status switch
+	public static string Label(CraftOrderStatus status, BotLocalizer? localizer = null)
 	{
-		CraftOrderStatus.Open => "ouverte",
-		CraftOrderStatus.Accepted => "acceptée",
-		CraftOrderStatus.Done => "terminée",
-		CraftOrderStatus.Cancelled => "annulée",
-		_ => status.ToString(),
-	};
+		var l = localizer ?? new BotLocalizer();
+		return status switch
+		{
+			CraftOrderStatus.Open => l.T("ouverte", "open"),
+			CraftOrderStatus.Accepted => l.T("acceptée", "accepted"),
+			CraftOrderStatus.Done => l.T("terminée", "done"),
+			CraftOrderStatus.Cancelled => l.T("annulée", "cancelled"),
+			_ => status.ToString(),
+		};
+	}
 
 	private async Task<HashSet<string>> MemberCharacterNamesAsync(string discordId, CancellationToken ct)
 	{

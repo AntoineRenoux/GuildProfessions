@@ -160,14 +160,14 @@ public sealed class CraftOrderServiceTests : IDisposable
 		public List<string?> StatusRecipients { get; } = [];
 		public List<string?> AnnounceChannels { get; } = [];
 
-		public Task NotifyNewOrderAsync(CraftOrder order, string? crafterDiscordId, string? announceChannelId = null)
+		public Task NotifyNewOrderAsync(CraftOrder order, string? crafterDiscordId, string? announceChannelId = null, BotLanguage language = BotLanguage.French)
 		{
 			NewOrderRecipients.Add(crafterDiscordId);
 			AnnounceChannels.Add(announceChannelId);
 			return Task.CompletedTask;
 		}
 
-		public Task NotifyStatusChangedAsync(CraftOrder order, string? requesterDiscordId)
+		public Task NotifyStatusChangedAsync(CraftOrder order, string? requesterDiscordId, BotLanguage language = BotLanguage.French)
 		{
 			StatusRecipients.Add(requesterDiscordId);
 			return Task.CompletedTask;

@@ -17,4 +17,7 @@
 		</PackageReference>
 	</ItemGroup>
 
+	<ItemGroup>
+		<None Update="Localization\*.json" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
 </Project>

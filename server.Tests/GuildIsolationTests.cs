@@ -37,7 +37,7 @@ public sealed class GuildIsolationTests : IDisposable
 		context.Use(guild);
 		var db = new AppDbContext(_options, context);
 		var roster = new RosterService(db, context);
-		return (db, roster, new CraftOrderService(db, roster, new NullNotifier()));
+		return (db, roster, new CraftOrderService(db, roster, new NullCraftOrderNotifier()));
 	}
 
 	private static UploadPayload Upload(string character, string guild, params int[] recipes) => new(
@@ -138,7 +138,7 @@ public sealed class GuildIsolationTests : IDisposable
 		context.Use(_guildA);
 		using var db = new AppDbContext(_options, context);
 		var roster = new RosterService(db, context);
-		var ingestion = new UploadIngestion(roster, new CraftOrderService(db, roster, new NullNotifier()), context);
+		var ingestion = new UploadIngestion(roster, new CraftOrderService(db, roster, new NullCraftOrderNotifier()), context);
 		var result = await ingestion.IngestAsync(null, new UploadPayload([], DepartedCharacters: ["Mira Solen"]));
 
 		Assert.Empty(await db.Characters.ToListAsync());
@@ -197,10 +197,4 @@ public sealed class GuildIsolationTests : IDisposable
 	[InlineData("!!!", "guilde")]
 	public void Slugify_Should_ProduceReadableIds(string name, string expected) =>
 		Assert.Equal(expected, GuildDirectory.Slugify(name));
-
-	private sealed class NullNotifier : ICraftOrderNotifier
-	{
-		public Task NotifyNewOrderAsync(CraftOrder order, string? crafterDiscordId, string? announceChannelId = null) => Task.CompletedTask;
-		public Task NotifyStatusChangedAsync(CraftOrder order, string? requesterDiscordId) => Task.CompletedTask;
-	}
 }

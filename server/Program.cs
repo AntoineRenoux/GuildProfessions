@@ -17,6 +17,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Guilde courante d'un traitement (requête HTTP ou interaction Discord).
 builder.Services.AddScoped<GuildContext>();
+builder.Services.AddScoped<BotLocalizer>();
 builder.Services.AddScoped<GuildDirectory>();
 builder.Services.AddScoped<RosterService>();
 builder.Services.AddScoped<ExportBuilder>();
@@ -39,6 +40,8 @@ builder.Services.AddSingleton(provider =>
 		// lieu d'être avalées par le fire-and-forget interne de RunMode.Async.
 		DefaultRunMode = RunMode.Sync,
 		ThrowOnError = true,
+		// Noms et descriptions des commandes en français (anglais par défaut, dans le code).
+		LocalizationManager = new JsonLocalizationManager(Path.Combine(AppContext.BaseDirectory, "Localization"), "commands"),
 	}));
 builder.Services.AddHostedService<DiscordBotService>();
 

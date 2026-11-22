@@ -12,11 +12,13 @@ namespace GuildProfessions.Server.Services;
 /// </summary>
 public static class GuildFilter
 {
-	public sealed record Result(UploadPayload Payload, List<string> Warnings, List<string> Departed);
+	public sealed record Rejection(string Character, string Guild);
+
+	public sealed record Result(UploadPayload Payload, List<Rejection> Rejected, List<string> Departed);
 
 	public static Result Apply(UploadPayload payload, string guildName)
 	{
-		var warnings = new List<string>();
+		var rejected = new List<Rejection>();
 		var departed = new List<string>();
 		var kept = payload.Characters.Where(character =>
 		{
@@ -24,7 +26,7 @@ public static class GuildFilter
 			{
 				return true;
 			}
-			warnings.Add($"{character.Name} ignoré : guilde « {character.Guild} » au lieu de « {guildName} ».");
+			rejected.Add(new Rejection(character.Name, character.Guild));
 			departed.Add(character.Name);
 			return false;
 		}).ToList();
@@ -38,7 +40,7 @@ public static class GuildFilter
 			}
 		}
 
-		return new Result(payload with { Characters = kept, DepartedCharacters = null }, warnings, departed);
+		return new Result(payload with { Characters = kept, DepartedCharacters = null }, rejected, departed);
 	}
 
 	public static bool SameGuild(string a, string b) =>

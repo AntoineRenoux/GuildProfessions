@@ -79,20 +79,24 @@ public sealed partial class NicknameSync(DiscordSocketClient client, ILogger<Nic
 	}
 
 	/// <summary>Phrase à ajouter à la réponse d'une commande, vide si rien à dire.</summary>
-	public static string Describe(IReadOnlyCollection<NicknameOutcome> outcomes, string characterName)
+	public static string Describe(IReadOnlyCollection<NicknameOutcome> outcomes, string characterName, Services.BotLocalizer l)
 	{
 		if (outcomes.Contains(NicknameOutcome.Updated))
 		{
-			return $"\nTon pseudo sur le serveur est maintenant **{For(characterName)}**.";
+			return l.T($"\nTon pseudo sur le serveur est maintenant **{For(characterName)}**.",
+				$"\nYour server nickname is now **{For(characterName)}**.");
 		}
 		if (outcomes.Contains(NicknameOutcome.Forbidden))
 		{
-			return "\nJe n'ai pas pu changer ton pseudo : Discord ne me laisse pas renommer le propriétaire du serveur, " +
-				"ni un membre dont le rôle est au-dessus du mien.";
+			return l.T("\nJe n'ai pas pu changer ton pseudo : Discord ne me laisse pas renommer le propriétaire du serveur, " +
+					"ni un membre dont le rôle est au-dessus du mien.",
+				"\nI couldn't change your nickname: Discord doesn't let me rename the server owner, " +
+					"or a member whose role is above mine.");
 		}
 		if (outcomes.Contains(NicknameOutcome.Failed))
 		{
-			return "\nJe n'ai pas pu changer ton pseudo pour le moment (erreur Discord), réessaie plus tard.";
+			return l.T("\nJe n'ai pas pu changer ton pseudo pour le moment (erreur Discord), réessaie plus tard.",
+				"\nI couldn't change your nickname right now (Discord error), try again later.");
 		}
 		return "";
 	}

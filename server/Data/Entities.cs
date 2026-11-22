@@ -39,6 +39,9 @@ public sealed class Guild
 	/// <summary>Salon où annoncer les nouvelles commandes de craft (optionnel).</summary>
 	public string? OrdersChannelId { get; set; }
 
+	/// <summary>Langue de la guilde (« fr » ou « en ») : messages privés et réponses hors interaction.</summary>
+	public string Locale { get; set; } = "fr";
+
 	/// <summary>Compteur de version de l'export de cette guilde.</summary>
 	public long DataVersion { get; set; }
 
