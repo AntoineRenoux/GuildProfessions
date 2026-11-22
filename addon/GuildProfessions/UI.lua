@@ -284,7 +284,7 @@ end
 
 local FILTER_WIDTH = 190
 local ROW_HEIGHT = 26
-local COL = { icon = 6, name = 32, prof = 200, level = 326, recipes = 452, source = 520 }
+local COL = { icon = 6, name = 32, prof = 200, level = 326, recipes = 444, source = 532 }
 
 local professionsList
 local profButtonPool = {}
@@ -432,9 +432,24 @@ local function SetupProfessionRow(row)
 	row.bar.text = Label(row.bar, nil, "GameFontHighlightSmall")
 	row.bar.text:SetPoint("CENTER")
 
-	row.recipes = Label(row, nil, "GameFontHighlightSmall")
-	row.recipes:SetPoint("LEFT", COL.recipes, 0)
-	row.recipes:SetWidth(COL.source - COL.recipes - 6)
+	-- Bouton explicite : la ligne entière est cliquable, mais rien ne le
+	-- montrait. « Voir (12) » rend l'action et le nombre visibles.
+	row.recipesButton = CreateFrame("Button", nil, row, "UIPanelButtonTemplate")
+	row.recipesButton:SetSize(COL.source - COL.recipes - 10, 20)
+	row.recipesButton:SetPoint("LEFT", COL.recipes - 2, 0)
+	row.recipesButton:SetNormalFontObject("GameFontNormalSmall")
+	row.recipesButton:SetHighlightFontObject("GameFontHighlightSmall")
+	row.recipesButton:SetScript("OnClick", function(self)
+		local entry = self:GetParent().entry
+		GP.OpenRecipesDialog(entry.char, entry.prof)
+	end)
+	row.recipesButton:SetScript("OnEnter", function(self)
+		ProfessionRowTooltip(self:GetParent())
+	end)
+	row.recipesButton:SetScript("OnLeave", GameTooltip_Hide)
+
+	row.recipesNone = Label(row, Paint(COLOR.muted, "aucune"), "GameFontHighlightSmall")
+	row.recipesNone:SetPoint("LEFT", COL.recipes + 4, 0)
 
 	row.source = Label(row, nil, "GameFontHighlightSmall")
 	row.source:SetPoint("LEFT", COL.source, 0)
@@ -469,10 +484,11 @@ local function UpdateProfessionRow(row, entry)
 	row.bar:SetStatusBarColor(unpack(level >= max and COLOR.barMax or COLOR.bar))
 	row.bar.text:SetText(level .. " / " .. max)
 
-	if entry.recipeCount > 0 then
-		row.recipes:SetText(Paint(COLOR.gold, entry.recipeCount))
-	else
-		row.recipes:SetText(Paint(COLOR.muted, "—"))
+	local hasRecipes = entry.recipeCount > 0
+	row.recipesButton:SetShown(hasRecipes)
+	row.recipesNone:SetShown(not hasRecipes)
+	if hasRecipes then
+		row.recipesButton:SetText(("Voir (%d)"):format(entry.recipeCount))
 	end
 
 	if entry.matched then
@@ -676,7 +692,13 @@ local function BuildProfessionsTab(frame, parent)
 
 	professionsList = CreateScrollList(listArea, ROW_HEIGHT, SetupProfessionRow, UpdateProfessionRow)
 	professionsList:SetPoint("TOPLEFT", headerBar, "BOTTOMLEFT", 0, -4)
-	professionsList:SetPoint("BOTTOMRIGHT", listArea, "BOTTOMRIGHT")
+	professionsList:SetPoint("BOTTOMRIGHT", listArea, "BOTTOMRIGHT", 0, 20)
+
+	local listHint = Label(listArea, "Clique sur « Voir » (ou sur la ligne) pour la liste des recettes d'un artisan, puis « Commander ».",
+		"GameFontHighlightSmall", COLOR.muted)
+	listHint:SetPoint("BOTTOMLEFT", 4, 2)
+	listHint:SetPoint("BOTTOMRIGHT", 0, 2)
+	listHint:SetWordWrap(false)
 
 	frame.emptyText = Label(listArea, nil, "GameFontNormal")
 	frame.emptyText:SetPoint("CENTER", professionsList, "CENTER", 0, 10)
@@ -1519,7 +1541,7 @@ local function UpdateOrderRow(row, data)
 	row.statusIcon:SetShown(display.icon ~= nil)
 	local pending = order.pendingSync and Paint(COLOR.muted, "  · synchro au prochain /reload") or ""
 	row.line1:SetText(("%d× %s   %s%s"):format(order.qty, order.item, Paint(display.color, display.label), pending))
-	local parts = { ("%s → %s"):format(Who(order.requester, me), Who(order.crafter, me)) }
+	local parts = { ("%s » %s"):format(Who(order.requester, me), Who(order.crafter, me)) }
 	parts[#parts + 1] = order.id and ("#" .. order.id) or "locale"
 	if order.createdAt then
 		parts[#parts + 1] = order.createdAt
@@ -1624,7 +1646,7 @@ local function BuildOrdersTab(frame, parent)
 	ordersList:SetPoint("TOPLEFT", toolbar, "BOTTOMLEFT", -4, -8)
 	ordersList:SetPoint("BOTTOMRIGHT", parent, "BOTTOMRIGHT", -22, 4)
 
-	frame.ordersEmptyText = Label(parent, "Aucune commande ici.\nPour commander : onglet Métiers → clic sur un artisan → « Commander » face à la recette.",
+	frame.ordersEmptyText = Label(parent, "Aucune commande ici.\nPour commander : onglet Métiers, « Voir » sur un artisan, puis « Commander » face à la recette.",
 		"GameFontHighlight", COLOR.muted)
 	frame.ordersEmptyText:SetPoint("CENTER", ordersList, "CENTER")
 	frame.ordersEmptyText:SetJustifyH("CENTER")
