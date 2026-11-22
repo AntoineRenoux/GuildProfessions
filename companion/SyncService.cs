@@ -17,6 +17,8 @@ public sealed class SyncService : IDisposable
 	private readonly List<FileSystemWatcher> _watchers = [];
 	private SyncState _state;
 	private DateTime _lastUploadTrigger = DateTime.MinValue;
+	// Une synchro à la fois : le poll et l'envoi déclenché par WoW peuvent se croiser.
+	private readonly SemaphoreSlim _syncGate = new(1, 1);
 
 	public SyncService(CompanionConfig config, GuildStore guilds, string stateDirectory)
 	{
@@ -111,12 +113,14 @@ public sealed class SyncService : IDisposable
 
 	// ---- Up-sync : SavedVariables -> serveur, guilde par guilde -------------------
 
-	public async Task UpSyncAsync(string reason, CancellationToken ct)
+	/// <summary>Envoie les SavedVariables modifiées ; true si au moins un envoi a eu lieu.</summary>
+	public async Task<bool> UpSyncAsync(string reason, CancellationToken ct)
 	{
+		var sent = false;
 		var guilds = _guilds.Load();
 		if (guilds.Count == 0)
 		{
-			return;
+			return false;
 		}
 		foreach (var file in SavedVariablesFiles())
 		{
@@ -143,12 +147,13 @@ public sealed class SyncService : IDisposable
 			}
 			foreach (var upload in uploads)
 			{
-				await UploadAsync(file, upload, reason, ct);
+				sent |= await UploadAsync(file, upload, reason, ct);
 			}
 		}
+		return sent;
 	}
 
-	private async Task UploadAsync(string file, UploadSplitter.GuildUpload upload, string reason, CancellationToken ct)
+	private async Task<bool> UploadAsync(string file, UploadSplitter.GuildUpload upload, string reason, CancellationToken ct)
 	{
 		var guild = upload.Guild;
 		try
@@ -158,7 +163,7 @@ public sealed class SyncService : IDisposable
 			var stateKey = $"{file}|{guild.Token}";
 			if (_state.UploadHashes.GetValueOrDefault(stateKey) == hash)
 			{
-				return;
+				return false;
 			}
 
 			using var request = new HttpRequestMessage(HttpMethod.Post, ApiUri(guild, "api/v1/upload"));
@@ -182,10 +187,12 @@ public sealed class SyncService : IDisposable
 			{
 				Log($"  ⚠ {warning}");
 			}
+			return true;
 		}
 		catch (Exception exception) when (exception is not OperationCanceledException)
 		{
 			Log($"Up-sync en échec vers « {Display(guild)} » : {exception.Message}");
+			return false;
 		}
 	}
 
@@ -210,14 +217,34 @@ public sealed class SyncService : IDisposable
 	public async Task RunAsync(CancellationToken ct)
 	{
 		StartWatchers(ct);
-		await UpSyncAsync("démarrage", ct);
-		await DownSyncAsync(ct);
+		await SyncAsync("démarrage", alwaysDown: true, ct);
 
 		using var timer = new PeriodicTimer(TimeSpan.FromMinutes(Math.Max(1, _config.PollMinutes)));
 		while (await timer.WaitForNextTickAsync(ct))
 		{
-			await DownSyncAsync(ct);
-			await UpSyncAsync("poll périodique", ct);
+			await SyncAsync("poll périodique", alwaysDown: true, ct);
+		}
+	}
+
+	/// <summary>
+	/// Envoie d'abord ce que l'addon a relevé, puis rapatrie les données de la guilde :
+	/// juste après un envoi, le Data.lua reflète déjà ce qui vient d'être relevé
+	/// (au lieu d'attendre le poll suivant, jusqu'à 10 min plus tard).
+	/// </summary>
+	private async Task SyncAsync(string reason, bool alwaysDown, CancellationToken ct)
+	{
+		await _syncGate.WaitAsync(ct);
+		try
+		{
+			var sent = await UpSyncAsync(reason, ct);
+			if (sent || alwaysDown)
+			{
+				await DownSyncAsync(ct);
+			}
+		}
+		finally
+		{
+			_syncGate.Release();
 		}
 	}
 
@@ -262,7 +289,7 @@ public sealed class SyncService : IDisposable
 		_ = Task.Run(async () =>
 		{
 			await Task.Delay(TimeSpan.FromSeconds(3), ct);
-			await UpSyncAsync("fichier modifié", ct);
+			await SyncAsync("fichier modifié", alwaysDown: false, ct);
 		}, ct);
 	}
 
