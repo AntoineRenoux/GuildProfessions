@@ -49,4 +49,6 @@ scripts/package-companion.sh --deploy
 
 Commiter, puis lancer cette commande. La version vaut `1.0.<nombre de commits>`. Le script publie l'addon, l'exécutable du compagnon `GuildkeepCompanion` (mise à jour automatique) et les packs modèles, que le serveur personnalise pour chaque guilde. Les compagnons installés se mettent à jour au démarrage ou sous 6 h, addon compris.
 
+CurseForge : `scripts/package-companion.sh --deploy --curseforge` publie aussi l'addon sur CurseForge (saveur WoW: Forever, version de jeu 1.60.1). Le jeton d'API et l'identifiant du projet se lisent dans `~/.config/guildkeep/curseforge-token` et `curseforge-project-id` (ou les variables `CURSEFORGE_TOKEN` et `CURSEFORGE_PROJECT_ID`), jamais dans le dépôt. Textes de la fiche : [`docs/curseforge.md`](docs/curseforge.md). Si l'appli CurseForge remplace le dossier de l'addon, le compagnon réécrit `Data.lua` à la synchro suivante.
+
 Mac : le compagnon n'est pas notarisé, macOS demande une autorisation au premier lancement (expliquée dans le pack et sur le site).

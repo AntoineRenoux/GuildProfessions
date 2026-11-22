@@ -1,11 +1,13 @@
 ## Interface: 16001
 ## Title: Guildkeep
-## Notes: Guildkeep: your guild's crafter directory and craft orders, synced with Discord.
-## Notes-frFR: Guildkeep : l'annuaire des artisans et les commandes de craft de ta guilde, synchronisés avec Discord.
+## Notes: Guildkeep: guild management for WoW: Forever. Crafters, craft orders and members, in game and on Discord.
+## Notes-frFR: Guildkeep : la gestion de ta guilde WoW: Forever. Artisans, commandes de craft et membres, en jeu et sur Discord.
 ## Author: Antoine
 ## Version: 0.1.0
 ## IconTexture: Interface\Icons\INV_Misc_Gear_01
 ## SavedVariables: GuildkeepDB
+## X-Website: https://guildkeep.warpvault.com
+## X-Category: Guild
 
 Data.lua
 Core.lua
