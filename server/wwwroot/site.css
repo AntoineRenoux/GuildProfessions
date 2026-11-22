@@ -372,6 +372,8 @@ html[lang="fr"] [lang="en"]:not(html), html[lang="en"] [lang="fr"]:not(html) { d
 .prose { grid-column: 1 / span 8; display: grid; gap: 48px; }
 .prose section h2 { font-size: 1.6rem; margin-bottom: 14px; }
 .prose ul { padding-left: 1.2em; display: grid; gap: 8px; }
+.prose section > h2 + * { margin-top: 0; }
+.prose section > * + * { margin-top: 12px; }
 .notice { grid-column: 1 / span 8; background: linear-gradient(180deg, rgba(16, 18, 40, 0.9), rgba(6, 8, 20, 0.9)); box-shadow: 0 0 0 1px #000, 0 0 0 2px #6d6f78; border-radius: 5px; padding: 24px; }
 .notice b { color: var(--ui-gold); }
 
