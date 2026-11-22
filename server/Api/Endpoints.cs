@@ -22,11 +22,11 @@ public static class Endpoints
 	{
 		app.MapGet("/healthz", () => Results.Ok(new { status = "ok" }));
 
-		// Manifestes de version (écrits à côté des zips) : publics, ils ne contiennent
-		// que versions, URLs et empreintes. Deux lignées séparées :
-		// - companion/manifest : l'ancienne version GuildProfessions de FORMER HOPE,
-		//   figée en 1.0.38 (ses compagnons ne doivent jamais recevoir Guildkeep) ;
-		// - guildkeep/manifest : Guildkeep, publié par scripts/package-companion.sh.
+		// Manifestes de version (écrits à côté des zips par scripts/package-companion.sh) :
+		// publics, ils ne contiennent que versions, URLs et empreintes. Une seule lignée :
+		// - guildkeep/manifest : lu par les compagnons Guildkeep ;
+		// - companion/manifest : le pont pour les installations d'avant le renommage
+		//   (exécutable sous l'ancien nom, sans entrée addon), qui passent à Guildkeep.
 		app.MapGet("/api/v1/companion/manifest", (IWebHostEnvironment env) => Manifest(env, "companion-manifest.json"));
 		app.MapGet("/api/v1/guildkeep/manifest", (IWebHostEnvironment env) => Manifest(env, "guildkeep-manifest.json"));
 

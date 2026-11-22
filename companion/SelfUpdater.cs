@@ -22,7 +22,9 @@ public sealed record AddonAsset(string Version, string Url, string Sha256);
 /// </summary>
 public sealed class SelfUpdater(CompanionConfig config, string baseDirectory)
 {
-	private const string ExeBaseName = "Guildkeep";
+	// Nom actuel, puis ancien nom (GuildProfessions) : une installation d'avant le
+	// renommage garde son fichier et continue de se mettre à jour.
+	private static readonly string[] ExeBaseNames = ["Guildkeep", "GuildProfessionsCompanion"];
 	// Code de sortie qui demande à systemd (Restart=on-failure) de relancer le binaire neuf.
 	private const int RestartExitCode = 75;
 
@@ -60,7 +62,7 @@ public sealed class SelfUpdater(CompanionConfig config, string baseDirectory)
 	private static string? PublishedExePath()
 	{
 		var path = Environment.ProcessPath;
-		return path is not null && Path.GetFileNameWithoutExtension(path) == ExeBaseName ? path : null;
+		return path is not null && ExeBaseNames.Contains(Path.GetFileNameWithoutExtension(path)) ? path : null;
 	}
 
 	public static void CleanupPreviousVersion()
@@ -118,7 +120,7 @@ public sealed class SelfUpdater(CompanionConfig config, string baseDirectory)
 			using (var zip = new ZipArchive(new MemoryStream(zipBytes)))
 			{
 				var entry = zip.Entries.FirstOrDefault(e =>
-					Path.GetFileNameWithoutExtension(e.Name) == ExeBaseName && !e.Name.EndsWith(".pdb"));
+					ExeBaseNames.Contains(Path.GetFileNameWithoutExtension(e.Name)) && !e.Name.EndsWith(".pdb"));
 				if (entry is null)
 				{
 					SyncService.Log("Mise à jour annulée : exécutable introuvable dans l'archive.");

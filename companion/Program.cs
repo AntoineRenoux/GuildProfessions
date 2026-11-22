@@ -70,7 +70,9 @@ AutoStart.Sync(config.AutoStart);
 // Pack tout-en-un : l'addon est installé (ou mis à jour) avant la première
 // synchro, qui écrira ensuite son Data.lua.
 AddonInstaller? addonInstaller = null;
-if (config.InstallAddon)
+// Une installation d'avant le renommage (addon GuildProfessions présent) passe à
+// Guildkeep même si son config.json ne demandait pas l'installation de l'addon.
+if (config.InstallAddon || AddonInstaller.HasLegacyAddon(config.WowPath))
 {
 	addonInstaller = new AddonInstaller(config);
 	await addonInstaller.EnsureLatestAsync(CancellationToken.None);

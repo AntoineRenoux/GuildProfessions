@@ -7,7 +7,11 @@
 #   le personnalise à chaque téléchargement (/api/v1/pack/{code}/{système}) en
 #   y mettant le config.json de la guilde : aucun token n'est empaqueté ici.
 # - guildkeep-manifest.json : versions et SHA-256, consulté par les compagnons
-#   installés pour se mettre à jour seuls (exécutable et addon).
+#   installés pour se mettre à jour seuls (exécutable et addon) ;
+# - Guildkeep-legacy-{système}.zip + companion-manifest.json : le pont pour les
+#   installations d'avant le renommage (exécutable GuildProfessionsCompanion,
+#   ancien manifeste). Même version : elles passent à Guildkeep, qui installe
+#   alors l'addon Guildkeep, reprend ses données et retire l'ancien addon.
 #
 # Usage : scripts/package-companion.sh [--deploy]
 #   --deploy : envoie zips + manifeste sur le VPS → mise à jour auto des compagnons.
@@ -45,6 +49,7 @@ ADDON_SHA=$(sha256sum "$OUT/Guildkeep-addon.zip" | cut -d' ' -f1)
 echo "  → $OUT/Guildkeep-addon.zip (v$VERSION)"
 
 ASSETS=""
+LEGACY_ASSETS=""
 for RID in win-x64 linux-x64 osx-x64 osx-arm64; do
 	echo "— publication $RID (v$VERSION)..."
 	dotnet publish companion -c Release -r "$RID" --self-contained \
@@ -59,6 +64,19 @@ for RID in win-x64 linux-x64 osx-x64 osx-arm64; do
 	ASSETS="$ASSETS${ASSETS:+,}
 		\"$RID\": { \"url\": \"$SITE_URL/downloads/$ZIP\", \"sha256\": \"$SHA\" }"
 	echo "  → $OUT/$ZIP"
+
+	# Pont : le même exécutable sous l'ancien nom, que l'ancien compagnon sait reconnaître.
+	LEGACY_DIR="$OUT/legacy-$RID"
+	mkdir -p "$LEGACY_DIR"
+	for EXE in "$OUT/$RID"/Guildkeep*; do
+		cp "$EXE" "$LEGACY_DIR/$(basename "$EXE" | sed 's/^Guildkeep/GuildProfessionsCompanion/')"
+	done
+	LEGACY_ZIP="Guildkeep-legacy-$RID.zip"
+	(cd "$LEGACY_DIR" && zip -qr "../$LEGACY_ZIP" .)
+	rm -rf "$LEGACY_DIR"
+	LEGACY_SHA=$(sha256sum "$OUT/$LEGACY_ZIP" | cut -d' ' -f1)
+	LEGACY_ASSETS="$LEGACY_ASSETS${LEGACY_ASSETS:+,}
+		\"$RID\": { \"url\": \"$SITE_URL/downloads/$LEGACY_ZIP\", \"sha256\": \"$LEGACY_SHA\" }"
 
 	# Pack modèle : exécutable + config.json sans guilde (remplacé par le serveur).
 	BUNDLE_DIR="$OUT/bundle-$RID/Guildkeep"
@@ -152,15 +170,25 @@ cat > "$OUT/guildkeep-manifest.json" <<EOF
 EOF
 echo "  → $OUT/guildkeep-manifest.json (v$VERSION)"
 
+# Ancien manifeste : pas d'entrée addon (l'ancien installeur ne sait installer que
+# le dossier GuildProfessions) ; le compagnon mis à jour installe Guildkeep lui-même.
+cat > "$OUT/companion-manifest.json" <<EOF
+{
+	"version": "$VERSION",
+	"publishedUtc": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+	"assets": {$LEGACY_ASSETS
+	}
+}
+EOF
+echo "  → $OUT/companion-manifest.json (pont, v$VERSION)"
+
 if $DEPLOY; then
 	echo "— envoi sur le VPS..."
 	ssh "$VPS" "mkdir -p /opt/guildprofessions/downloads"
-	# Manifeste propre à Guildkeep : companion-manifest.json reste celui de
-	# l'ancienne version FORMER HOPE (1.0.38), qu'il ne faut jamais écraser.
-	# Zips d'abord, manifeste en dernier : un compagnon ne voit jamais une
+	# Zips d'abord, manifestes en dernier : un compagnon ne voit jamais une
 	# version annoncée dont le zip n'est pas encore en ligne.
 	scp -q "$OUT"/*.zip "$VPS:/opt/guildprofessions/downloads/"
-	scp -q "$OUT/guildkeep-manifest.json" "$VPS:/opt/guildprofessions/downloads/"
+	scp -q "$OUT/guildkeep-manifest.json" "$OUT/companion-manifest.json" "$VPS:/opt/guildprofessions/downloads/"
 	echo "Publié : les compagnons installés passeront en v$VERSION au démarrage ou sous 6 h."
 else
 	echo "Terminé (non publié). Relance avec --deploy pour mettre à jour les compagnons."

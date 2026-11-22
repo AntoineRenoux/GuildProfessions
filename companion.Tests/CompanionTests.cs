@@ -312,6 +312,27 @@ public sealed class WowLocatorTests
 public sealed class LegacyAddonTests
 {
 	[Fact]
+	public void MigrateSavedVariables_Should_CopyOldDataUnderTheNewName_Once()
+	{
+		var wow = Path.Combine(Path.GetTempPath(), "gk-sv-" + Guid.NewGuid().ToString("N"));
+		var sv = Path.Combine(wow, "WTF", "Account", "MALEKITHE", "SavedVariables");
+		Directory.CreateDirectory(sv);
+		File.WriteAllText(Path.Combine(sv, "GuildProfessions.lua"), "GuildProfessionsDB = { [\"characters\"] = {} }");
+		try
+		{
+			Assert.Equal(1, AddonInstaller.MigrateSavedVariables(wow));
+			Assert.Equal("GuildkeepDB = { [\"characters\"] = {} }", File.ReadAllText(Path.Combine(sv, "Guildkeep.lua")));
+			Assert.True(File.Exists(Path.Combine(sv, "GuildProfessions.lua")));
+			// Données Guildkeep déjà présentes : jamais écrasées.
+			Assert.Equal(0, AddonInstaller.MigrateSavedVariables(wow));
+		}
+		finally
+		{
+			Directory.Delete(wow, recursive: true);
+		}
+	}
+
+	[Fact]
 	public void RemoveLegacyAddon_Should_DeleteTheOldGuildProfessionsFolder_Only()
 	{
 		var addOns = Path.Combine(Path.GetTempPath(), "gk-legacy-" + Guid.NewGuid().ToString("N"));
