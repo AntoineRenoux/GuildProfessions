@@ -14,7 +14,9 @@ namespace GuildProfessions.Companion;
 /// </summary>
 public sealed partial class AddonInstaller(CompanionConfig config)
 {
-	public const string AddonFolder = "GuildProfessions";
+	public const string AddonFolder = "Guildkeep";
+	/// <summary>Ancien nom de l'addon : retiré à l'installation, sinon deux addons répondraient en jeu.</summary>
+	public const string LegacyAddonFolder = "GuildProfessions";
 	private const string DataFile = "Data.lua";
 
 	private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
@@ -83,6 +85,19 @@ public sealed partial class AddonInstaller(CompanionConfig config)
 		return written.Count;
 	}
 
+	/// <summary>Retire l'addon sous son ancien nom (GuildProfessions), remplacé par Guildkeep.</summary>
+	public static bool RemoveLegacyAddon(string addOnsDirectory)
+	{
+		var legacy = Path.Combine(addOnsDirectory, LegacyAddonFolder);
+		if (!Directory.Exists(legacy))
+		{
+			return false;
+		}
+		Directory.Delete(legacy, recursive: true);
+		SyncService.Log($"Ancien addon {LegacyAddonFolder} retiré : il est remplacé par {AddonFolder}.");
+		return true;
+	}
+
 	public async Task EnsureLatestAsync(CancellationToken ct)
 	{
 		try
@@ -117,6 +132,7 @@ public sealed partial class AddonInstaller(CompanionConfig config)
 				return;
 			}
 			var count = InstallFromZip(zipBytes, AddOnsDirectory);
+			RemoveLegacyAddon(AddOnsDirectory);
 			SyncService.Log($"Addon v{addon.Version} installé ({count} fichiers). En jeu : /reload, ou relance WoW s'il était fermé.");
 		}
 		catch (Exception exception) when (exception is not OperationCanceledException)

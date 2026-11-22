@@ -23,13 +23,13 @@ GP.OnMainFrameVisibilityChanged = UpdateChecked
 
 local function ShowTooltip(self)
 	GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-	GameTooltip:SetText("GuildProfessions", 1, 1, 1)
+	GameTooltip:SetText("Guildkeep", 1, 1, 1)
 	GameTooltip:AddLine("Métiers, équipement et commandes de craft de la guilde.", nil, nil, nil, true)
 	local count = GP.CountOrdersToHandle and GP.CountOrdersToHandle() or 0
 	if count > 0 then
 		GameTooltip:AddLine(("%d commande%s à traiter"):format(count, count > 1 and "s" or ""), 1, 0.82, 0)
 	end
-	GameTooltip:AddLine("Aussi : /gp", 0.62, 0.62, 0.62)
+	GameTooltip:AddLine("Aussi : /gkeep", 0.62, 0.62, 0.62)
 	GameTooltip:Show()
 end
 
@@ -138,12 +138,12 @@ end
 
 local function AttachToCommunities()
 	local frame = CommunitiesFrame
-	if not frame or frame.GuildProfessionsTab then
+	if not frame or frame.GuildkeepTab then
 		return
 	end
-	local tab = CreateSideTab(frame, "GuildProfessionsCommunitiesTab")
+	local tab = CreateSideTab(frame, "GuildkeepCommunitiesTab")
 	tab:Hide()
-	frame.GuildProfessionsTab = tab
+	frame.GuildkeepTab = tab
 
 	local elapsed = LAYOUT_INTERVAL
 	frame:HookScript("OnShow", function()
@@ -167,12 +167,12 @@ end
 
 local function AttachToGuildFrame()
 	local frame = GuildFrame
-	if not frame or frame.GuildProfessionsTab then
+	if not frame or frame.GuildkeepTab then
 		return
 	end
-	local tab = CreateSideTab(frame, "GuildProfessionsGuildFrameTab")
+	local tab = CreateSideTab(frame, "GuildkeepGuildFrameTab")
 	tab:SetPoint("TOPLEFT", frame, "TOPRIGHT", 0, -48)
-	frame.GuildProfessionsTab = tab
+	frame.GuildkeepTab = tab
 end
 
 local function TryAttach()
@@ -180,15 +180,15 @@ local function TryAttach()
 	AttachToGuildFrame()
 end
 
--- Diagnostic en jeu : /gp debug
+-- Diagnostic en jeu : /gkeep debug
 function GP.DebugGuildTab()
 	local frame = CommunitiesFrame
-	print("|cff33ff99GuildProfessions|r — diagnostic de l'onglet de guilde")
+	print("|cff33ff99Guildkeep|r — diagnostic de l'onglet de guilde")
 	if not frame then
 		print("  CommunitiesFrame absente (fenêtre de guilde jamais ouverte ?)")
 		return
 	end
-	local tab = frame.GuildProfessionsTab
+	local tab = frame.GuildkeepTab
 	print(("  fenêtre %s, guilde sélectionnée : %s"):format(frame:IsShown() and "ouverte" or "fermée", tostring(IsGuildSelected(frame))))
 	local detected = {}
 	for _, child in ipairs(FindSideTabs(frame, tab)) do

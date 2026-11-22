@@ -1,20 +1,22 @@
 #!/usr/bin/env bash
-# Empaquette le compagnon pour distribution aux guildeux : exécutable autonome
-# + config.json pré-rempli (URL de prod + token de guilde lu sur le VPS).
-# Le joueur n'a AUCUNE configuration : dézipper, double-cliquer.
-#
-# Produit aussi companion-manifest.json (version + SHA-256 de chaque zip), que
-# les compagnons déjà installés consultent pour se mettre à jour tout seuls.
+# Empaquette Guildkeep pour distribution :
+# - Guildkeep-addon.zip : l'addon seul (installation manuelle) ;
+# - Guildkeep-{système}.zip : l'exécutable du compagnon, pour sa mise à jour
+#   automatique (les compagnons installés n'en prennent que l'exécutable) ;
+# - Guildkeep-AllInOne-{système}.zip : le pack modèle, sans guilde. Le serveur
+#   le personnalise à chaque téléchargement (/api/v1/pack/{code}/{système}) en
+#   y mettant le config.json de la guilde : aucun token n'est empaqueté ici.
+# - companion-manifest.json : versions et SHA-256, consulté par les compagnons
+#   installés pour se mettre à jour seuls (exécutable et addon).
 #
 # Usage : scripts/package-companion.sh [--deploy]
 #   --deploy : envoie zips + manifeste sur le VPS → mise à jour auto des compagnons.
-# Prérequis : SDK .NET 10 (DOTNET_ROOT), accès SSH au VPS (ou GP_GUILD_TOKEN).
+# Prérequis : SDK .NET 10 (DOTNET_ROOT), accès SSH au VPS pour --deploy.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
-API_URL="${GP_API_URL:-https://gp.warpvault.com}"
-SITE_URL="${GP_SITE_URL:-https://formerhopesupport.warpvault.com}"
+SITE_URL="${GP_SITE_URL:-https://gp.warpvault.com}"
 VPS="${GP_VPS:-root@195.200.15.142}"
 DEPLOY=false
 [ "${1:-}" = "--deploy" ] && DEPLOY=true
@@ -26,30 +28,21 @@ if [ -n "$(git status --porcelain -- companion addon)" ]; then
 	exit 1
 fi
 
-if [ -z "${GP_GUILD_TOKEN:-}" ]; then
-	echo "Lecture du token de guilde sur le VPS ($VPS)..."
-	GP_GUILD_TOKEN=$(ssh "$VPS" "grep '^API_GUILD_TOKEN=' /opt/guildprofessions/.env | cut -d= -f2")
-fi
-if [ -z "$GP_GUILD_TOKEN" ]; then
-	echo "Token de guilde introuvable (définis GP_GUILD_TOKEN)." >&2
-	exit 1
-fi
-
 OUT=publish/companion-dist
 rm -rf "$OUT"
 mkdir -p "$OUT"
 
 # Zip de l'addon (le dossier à la racine, règle CurseForge/manuelle), avec la
-# version inscrite dans le .toc : c'est elle que le pack tout-en-un compare.
+# version inscrite dans le .toc : c'est elle que le compagnon compare.
 STAGE=$(mktemp -d)
-cp -r addon/GuildProfessions "$STAGE/"
+cp -r addon/Guildkeep "$STAGE/"
 # -i.bak : syntaxe acceptée par le sed GNU (Linux) comme par celui de macOS.
-sed -i.bak "s/^## Version:.*/## Version: $VERSION/" "$STAGE/GuildProfessions/GuildProfessions.toc"
-rm -f "$STAGE/GuildProfessions/GuildProfessions.toc.bak"
-(cd "$STAGE" && zip -qr "$OLDPWD/$OUT/GuildProfessions-addon.zip" GuildProfessions)
+sed -i.bak "s/^## Version:.*/## Version: $VERSION/" "$STAGE/Guildkeep/Guildkeep.toc"
+rm -f "$STAGE/Guildkeep/Guildkeep.toc.bak"
+(cd "$STAGE" && zip -qr "$OLDPWD/$OUT/Guildkeep-addon.zip" Guildkeep)
 rm -rf "$STAGE"
-ADDON_SHA=$(sha256sum "$OUT/GuildProfessions-addon.zip" | cut -d' ' -f1)
-echo "  → $OUT/GuildProfessions-addon.zip (v$VERSION)"
+ADDON_SHA=$(sha256sum "$OUT/Guildkeep-addon.zip" | cut -d' ' -f1)
+echo "  → $OUT/Guildkeep-addon.zip (v$VERSION)"
 
 ASSETS=""
 for RID in win-x64 linux-x64 osx-x64 osx-arm64; do
@@ -57,35 +50,25 @@ for RID in win-x64 linux-x64 osx-x64 osx-arm64; do
 	dotnet publish companion -c Release -r "$RID" --self-contained \
 		-p:PublishSingleFile=true -p:PublishTrimmed=false -p:Version="$VERSION" \
 		-o "$OUT/$RID" --nologo -v quiet
-	cat > "$OUT/$RID/config.json" <<EOF
-{
-	"apiBaseUrl": "$API_URL",
-	"guildToken": "$GP_GUILD_TOKEN",
-	"uploadToken": "",
-	"wowPath": "",
-	"pollMinutes": 10,
-	"autoStart": true,
-	"autoUpdate": true
-}
-EOF
 	rm -f "$OUT/$RID"/*.pdb
-	ZIP="GuildProfessionsCompanion-$RID.zip"
-	(cd "$OUT" && zip -qr "$ZIP" "$RID")
+
+	# Mise à jour automatique : l'exécutable seul.
+	ZIP="Guildkeep-$RID.zip"
+	(cd "$OUT/$RID" && zip -qr "../$ZIP" Guildkeep*)
 	SHA=$(sha256sum "$OUT/$ZIP" | cut -d' ' -f1)
 	ASSETS="$ASSETS${ASSETS:+,}
 		\"$RID\": { \"url\": \"$SITE_URL/downloads/$ZIP\", \"sha256\": \"$SHA\" }"
 	echo "  → $OUT/$ZIP"
 
-	# Pack tout-en-un : le même exécutable, réglé pour installer l'addon et le
-	# tenir à jour. Ses mises à jour suivent le zip compagnon ci-dessus (seul
-	# l'exécutable est remplacé, la config du pack est conservée).
-	BUNDLE_DIR="$OUT/bundle-$RID/GuildProfessions"
+	# Pack modèle : exécutable + config.json sans guilde (remplacé par le serveur).
+	BUNDLE_DIR="$OUT/bundle-$RID/Guildkeep"
 	mkdir -p "$BUNDLE_DIR"
-	cp "$OUT/$RID"/GuildProfessionsCompanion* "$BUNDLE_DIR/"
+	cp "$OUT/$RID"/Guildkeep* "$BUNDLE_DIR/"
 	cat > "$BUNDLE_DIR/config.json" <<EOF
 {
-	"apiBaseUrl": "$API_URL",
-	"guildToken": "$GP_GUILD_TOKEN",
+	"apiBaseUrl": "$SITE_URL",
+	"guildName": "",
+	"guildToken": "",
 	"uploadToken": "",
 	"wowPath": "",
 	"pollMinutes": 10,
@@ -94,39 +77,68 @@ EOF
 	"installAddon": true
 }
 EOF
-	# Le démarrage automatique n'existe que sous Windows (clé Run).
-	if [ "$RID" = "win-x64" ]; then
-		STARTUP="Il se lance ensuite tout seul au démarrage de Windows."
-	else
-		STARTUP="Laisse-le tourner pendant que tu joues (lancement : chmod +x GuildProfessionsCompanion && ./GuildProfessionsCompanion)."
-	fi
-	# Mac : l'exécutable n'est pas notarisé, Gatekeeper le bloque au premier lancement.
-	GATEKEEPER=""
-	case "$RID" in osx-*) GATEKEEPER="
-Mac — la première fois, macOS refuse de l'ouvrir (app non notarisée par Apple).
+	case "$RID" in
+		win-x64)
+			START_FR="Il se lance ensuite tout seul au démarrage de Windows."
+			START_EN="It then starts by itself with Windows."
+			MAC_FR=""
+			MAC_EN="" ;;
+		osx-*)
+			START_FR="Laisse-le tourner pendant que tu joues."
+			START_EN="Leave it running while you play."
+			MAC_FR="
+Mac : la première fois, macOS refuse de l'ouvrir (app non notarisée par Apple).
 Autorise-le une seule fois, au choix :
   - lance-le, puis Réglages Système → Confidentialité et sécurité,
     tout en bas : « Ouvrir quand même » ;
-  - ou dans le Terminal : xattr -dr com.apple.quarantine ~/Downloads/GuildProfessions
+  - ou dans le Terminal : xattr -dr com.apple.quarantine ~/Downloads/Guildkeep
     (adapte le chemin si tu as dézippé ailleurs).
-Lancement ensuite : cd ~/Downloads/GuildProfessions && ./GuildProfessionsCompanion
-" ;; esac
-	cat > "$BUNDLE_DIR/LISEZMOI.txt" <<EOF
-GuildProfessions — pack tout-en-un (FORMER HOPE)
-$GATEKEEPER
-1. Lance GuildProfessionsCompanion.
-2. C'est tout : il trouve World of Warcraft, installe l'addon GuildProfessions,
-   synchronise tes métiers avec la guilde, et tient l'addon et lui-même à jour.
-   $STARTUP
+Lancement : cd ~/Downloads/Guildkeep && ./Guildkeep
+"
+			MAC_EN="
+Mac: the first time, macOS refuses to open it (app not notarized by Apple).
+Allow it once, either way:
+  - run it, then System Settings → Privacy & Security,
+    at the bottom: \"Open Anyway\";
+  - or in Terminal: xattr -dr com.apple.quarantine ~/Downloads/Guildkeep
+    (adjust the path if you unzipped elsewhere).
+Run: cd ~/Downloads/Guildkeep && ./Guildkeep
+" ;;
+		*)
+			START_FR="Laisse-le tourner pendant que tu joues (chmod +x Guildkeep && ./Guildkeep)."
+			START_EN="Leave it running while you play (chmod +x Guildkeep && ./Guildkeep)."
+			MAC_FR=""
+			MAC_EN="" ;;
+	esac
+	cat > "$BUNDLE_DIR/LISEZMOI-README.txt" <<EOF
+Guildkeep — pack de ta guilde / your guild's pack
+$MAC_FR
+1. Lance Guildkeep.
+2. C'est tout : il trouve World of Warcraft, installe l'addon Guildkeep,
+   synchronise tes métiers avec ta guilde, et tient l'addon et lui-même à jour.
+   $START_FR
+   Personnages dans plusieurs guildes ? Lance aussi le pack de chacune : un seul
+   Guildkeep les synchronise toutes.
 
-En jeu : /gp. Si WoW était ouvert pendant l'installation : /reload.
-Aide : $SITE_URL — ou ping Zesso sur Discord.
-Il ne te demandera jamais de mot de passe ni d'e-mail.
+En jeu : /gkeep, ou l'onglet Guildkeep dans la fenêtre de guilde.
+Sur Discord : /gkeep aide. Il ne te demandera jamais de mot de passe ni d'e-mail.
+
+---
+$MAC_EN
+1. Run Guildkeep.
+2. That's it: it finds World of Warcraft, installs the Guildkeep addon, syncs
+   your professions with your guild, and keeps the addon and itself up to date.
+   $START_EN
+   Characters in several guilds? Run each guild's pack too: a single Guildkeep
+   syncs them all.
+
+In game: /gkeep, or the Guildkeep tab in the guild window.
+On Discord: /gkeep help. It will never ask for a password or an email.
 EOF
-	BUNDLE_ZIP="GuildProfessions-AllInOne-$RID.zip"
-	(cd "$OUT/bundle-$RID" && zip -qr "../$BUNDLE_ZIP" GuildProfessions)
+	TEMPLATE="Guildkeep-AllInOne-$RID.zip"
+	(cd "$OUT/bundle-$RID" && zip -qr "../$TEMPLATE" Guildkeep)
 	rm -rf "$OUT/bundle-$RID"
-	echo "  → $OUT/$BUNDLE_ZIP"
+	echo "  → $OUT/$TEMPLATE (modèle, personnalisé par le serveur)"
 done
 
 cat > "$OUT/companion-manifest.json" <<EOF
@@ -135,7 +147,7 @@ cat > "$OUT/companion-manifest.json" <<EOF
 	"publishedUtc": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
 	"assets": {$ASSETS
 	},
-	"addon": { "version": "$VERSION", "url": "$SITE_URL/downloads/GuildProfessions-addon.zip", "sha256": "$ADDON_SHA" }
+	"addon": { "version": "$VERSION", "url": "$SITE_URL/downloads/Guildkeep-addon.zip", "sha256": "$ADDON_SHA" }
 }
 EOF
 echo "  → $OUT/companion-manifest.json (v$VERSION)"

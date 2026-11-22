@@ -26,11 +26,11 @@
 		},
 		"export": {
 			"name": "exporter",
-			"description": "Obtenir la chaîne des données de la guilde à coller en jeu (/gp, Importer)"
+			"description": "Obtenir la chaîne des données de la guilde à coller en jeu (/gkeep, Importer)"
 		},
 		"import": {
 			"name": "importer",
-			"description": "Envoyer la chaîne exportée en jeu (/gp, Exporter)"
+			"description": "Envoyer la chaîne exportée en jeu (/gkeep, Exporter)"
 		},
 		"profession": {
 			"name": "metier",

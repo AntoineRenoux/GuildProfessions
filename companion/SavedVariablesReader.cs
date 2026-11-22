@@ -3,14 +3,14 @@ using GuildProfessions.Companion.Lua;
 namespace GuildProfessions.Companion;
 
 /// <summary>
-/// Traduit le fichier SavedVariables de l'addon (GuildProfessionsDB) en
+/// Traduit le fichier SavedVariables de l'addon (GuildkeepDB) en
 /// payload d'upload pour le serveur.
 /// </summary>
 public static class SavedVariablesReader
 {
 	public static UploadPayload? BuildPayload(string luaContent)
 	{
-		var db = LuaParser.ParseSavedVariable(luaContent, "GuildProfessionsDB");
+		var db = LuaParser.ParseSavedVariable(luaContent, "GuildkeepDB");
 		var charactersTable = db.GetTable("characters");
 		var orders = ReadOrders(db.GetTable("orders"));
 		var orderActions = ReadOrderActions(db.GetTable("orderActions"));
@@ -100,7 +100,7 @@ public static class SavedVariablesReader
 			: new UploadPayload(characters, orders, orderActions);
 	}
 
-	// GuildProfessionsDB.orders : [localId] = { requester, crafter, item, qty, note, createdAt }
+	// GuildkeepDB.orders : [localId] = { requester, crafter, item, qty, note, createdAt }
 	private static List<UploadOrder>? ReadOrders(LuaTable? ordersTable)
 	{
 		if (ordersTable is null || ordersTable.Map.Count == 0)
@@ -126,7 +126,7 @@ public static class SavedVariablesReader
 		return orders.Count == 0 ? null : orders;
 	}
 
-	// GuildProfessionsDB.orderActions : [cléServeurOuLocale] = { status = "accepted"|"done"|"cancelled" }
+	// GuildkeepDB.orderActions : [cléServeurOuLocale] = { status = "accepted"|"done"|"cancelled" }
 	private static List<UploadOrderAction>? ReadOrderActions(LuaTable? actionsTable)
 	{
 		if (actionsTable is null || actionsTable.Map.Count == 0)

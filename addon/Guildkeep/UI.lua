@@ -787,7 +787,7 @@ local function RefreshRecipesDialog()
 end
 
 local function CreateRecipesDialog()
-	local dialog = CreateWindow("GuildProfessionsRecipesDialog", 400, 520, "DIALOG")
+	local dialog = CreateWindow("GuildkeepRecipesDialog", 400, 520, "DIALOG")
 	local inset = dialog.Inset
 
 	dialog.subtitle = Label(dialog, nil, "GameFontHighlightSmall", COLOR.muted)
@@ -1100,7 +1100,7 @@ RefreshOrderTree = function()
 end
 
 local function CreateOrderDialog()
-	local dialog = CreateWindow("GuildProfessionsOrderDialog", 460, 470, "FULLSCREEN_DIALOG")
+	local dialog = CreateWindow("GuildkeepOrderDialog", 460, 470, "FULLSCREEN_DIALOG")
 	local inset = dialog.Inset
 
 	dialog.itemText = Label(dialog, nil, "GameFontHighlight", COLOR.gold)
@@ -1172,7 +1172,7 @@ local function CreateOrderDialog()
 		GP.CreateOrder(dialog.crafter, dialog.item, qty, nil)
 		dialog:Hide()
 		PlaySound(SOUNDKIT.IG_QUEST_LIST_COMPLETE or SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-		print(("|cff33ff99GuildProfessions|r — commande de %d× %s envoyée à %s. Synchronisée au prochain /reload ou déco.")
+		print(("|cff33ff99Guildkeep|r — commande de %d× %s envoyée à %s. Synchronisée au prochain /reload ou déco.")
 			:format(qty, dialog.item, dialog.crafter))
 	end
 	dialog.qtyBox:SetScript("OnEnterPressed", Submit)
@@ -1231,7 +1231,7 @@ end)
 local textDialog
 
 local function CreateTextDialog()
-	local dialog = CreateWindow("GuildProfessionsTextDialog", 540, 360, "DIALOG")
+	local dialog = CreateWindow("GuildkeepTextDialog", 540, 360, "DIALOG")
 	SetWindowPortrait(dialog, GP.ICON)
 	local inset = dialog.Inset
 
@@ -1763,7 +1763,7 @@ end
 
 -- Commandes qui attendent une action du joueur (pastille d'onglet, infobulle).
 function GP.CountOrdersToHandle()
-	if not GuildProfessionsDB then
+	if not GuildkeepDB then
 		return 0
 	end
 	local me, count = GP.GetPlayerFullName(), 0
@@ -1775,7 +1775,7 @@ function GP.CountOrdersToHandle()
 	return count
 end
 
-StaticPopupDialogs["GUILDPROFESSIONS_CANCEL_ORDER"] = {
+StaticPopupDialogs["GUILDKEEP_CANCEL_ORDER"] = {
 	text = "Annuler la commande « %s » ?",
 	button1 = YES or "Oui",
 	button2 = NO or "Non",
@@ -1856,7 +1856,7 @@ local function UpdateOrderRow(row, data)
 	local label2, handler2
 	if (isCrafter or isRequester) and IsActiveOrder(order) then
 		label2, handler2 = CANCEL or "Annuler", function()
-			StaticPopup_Show("GUILDPROFESSIONS_CANCEL_ORDER", order.item, nil, order)
+			StaticPopup_Show("GUILDKEEP_CANCEL_ORDER", order.item, nil, order)
 		end
 	end
 	ConfigureOrderButton(row.button1, label1, handler1)
@@ -1988,9 +1988,9 @@ local function SelectTab(index)
 end
 
 local function CreateMainFrame()
-	local frame = CreateWindow("GuildProfessionsFrame", 900, 580)
+	local frame = CreateWindow("GuildkeepFrame", 900, 580)
 	mainFrame = frame
-	SetWindowTitle(frame, "GuildProfessions")
+	SetWindowTitle(frame, "Guildkeep")
 	SetWindowPortrait(frame, GP.ICON)
 
 	local guildLine = Label(frame, nil, "GameFontHighlightSmall", COLOR.muted)
@@ -2019,7 +2019,7 @@ local function CreateMainFrame()
 	-- Onglets natifs sous la fenêtre
 	frame.Tabs = {}
 	for i, label in ipairs(TABS) do
-		local tab = CreateFrame("Button", "GuildProfessionsFrameTab" .. i, frame, "PanelTabButtonTemplate")
+		local tab = CreateFrame("Button", "GuildkeepFrameTab" .. i, frame, "PanelTabButtonTemplate")
 		tab:SetID(i)
 		tab:SetText(label)
 		if i == 1 then

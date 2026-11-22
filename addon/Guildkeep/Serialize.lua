@@ -59,7 +59,7 @@ function GP.DecodeString(text)
 	end
 	text = (text or ""):gsub("%s+", "")
 	if text:sub(1, #PREFIX) ~= PREFIX then
-		return nil, "ce n'est pas une chaîne GuildProfessions (préfixe GP1! absent)"
+		return nil, "ce n'est pas une chaîne Guildkeep (préfixe GP1! absent)"
 	end
 	local ok, result = pcall(function()
 		local compressed = C_EncodingUtil.DecodeBase64(text:sub(#PREFIX + 1))
@@ -79,7 +79,7 @@ end
 -- (UploadPayload côté serveur, clés camelCase).
 function GP.BuildExportPayload()
 	local characters = {}
-	for name, char in pairs(GuildProfessionsDB.characters) do
+	for name, char in pairs(GuildkeepDB.characters) do
 		local professions = {}
 		for profName, prof in pairs(char.professions or {}) do
 			local recipes
@@ -111,7 +111,7 @@ function GP.BuildExportPayload()
 	end
 
 	local orders
-	for localId, order in pairs(GuildProfessionsDB.orders) do
+	for localId, order in pairs(GuildkeepDB.orders) do
 		orders = orders or {}
 		orders[#orders + 1] = {
 			clientId = localId,
@@ -125,7 +125,7 @@ function GP.BuildExportPayload()
 	end
 
 	local orderActions
-	for key, action in pairs(GuildProfessionsDB.orderActions) do
+	for key, action in pairs(GuildkeepDB.orderActions) do
 		orderActions = orderActions or {}
 		local serverId = tonumber(key)
 		if serverId then
@@ -158,7 +158,7 @@ function GP.ImportString(text)
 		return false, "chaîne sans guilde, et ce personnage n'est dans aucune guilde"
 	end
 	data.importedAt = date("%Y-%m-%d %H:%M")
-	GuildProfessionsDB.importedByGuild[strtrim(guild):lower()] = data
+	GuildkeepDB.importedByGuild[strtrim(guild):lower()] = data
 	GP.RefreshUI()
 	return true
 end

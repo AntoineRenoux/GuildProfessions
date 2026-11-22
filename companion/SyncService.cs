@@ -40,7 +40,7 @@ public sealed class SyncService : IDisposable
 		}
 		foreach (var accountDir in Directory.EnumerateDirectories(accountRoot))
 		{
-			var file = Path.Combine(accountDir, "SavedVariables", "GuildProfessions.lua");
+			var file = Path.Combine(accountDir, "SavedVariables", "Guildkeep.lua");
 			if (File.Exists(file))
 			{
 				yield return file;
@@ -236,7 +236,7 @@ public sealed class SyncService : IDisposable
 			{
 				continue;
 			}
-			var watcher = new FileSystemWatcher(savedVariablesDir, "GuildProfessions.lua")
+			var watcher = new FileSystemWatcher(savedVariablesDir, "Guildkeep.lua")
 			{
 				NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.Size,
 				EnableRaisingEvents = true,

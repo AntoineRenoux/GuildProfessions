@@ -1,6 +1,6 @@
 local _, GP = ...
 
--- Scanne le personnage local vers GuildProfessionsDB. Les SavedVariables ne
+-- Scanne le personnage local vers GuildkeepDB. Les SavedVariables ne
 -- sont écrites sur disque qu'au logout//reload : c'est là que le compagnon
 -- les lit et les uploade.
 
@@ -26,8 +26,8 @@ local function GateEligibility()
 		return true
 	end
 	local name = GP.GetPlayerFullName()
-	if GuildProfessionsDB.characters and GuildProfessionsDB.characters[name] then
-		GuildProfessionsDB.characters[name] = nil
+	if GuildkeepDB.characters and GuildkeepDB.characters[name] then
+		GuildkeepDB.characters[name] = nil
 		GP.RefreshUI()
 	end
 	return false

@@ -1,0 +1,16 @@
+## Interface: 16001
+## Title: Guildkeep
+## Notes: Guildkeep: your guild's crafter directory and craft orders, synced with Discord.
+## Notes-frFR: Guildkeep : l'annuaire des artisans et les commandes de craft de ta guilde, synchronisés avec Discord.
+## Author: Antoine
+## Version: 0.1.0
+## IconTexture: Interface\Icons\INV_Misc_Gear_01
+## SavedVariables: GuildkeepDB
+
+Data.lua
+Core.lua
+Serialize.lua
+Scanner.lua
+Comm.lua
+UI.lua
+GuildTab.lua

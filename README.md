@@ -1,85 +1,52 @@
-# GuildProfessions
+# Guildkeep
 
-Annuaire des métiers de guilde pour **WoW: Forever**, alimenté par Discord et synchronisé en jeu.
-
-Trois composants :
+L'annuaire des artisans et les commandes de craft d'une guilde **WoW: Forever**, en jeu et sur Discord.
+Ouvert à toutes les guildes : un administrateur de serveur Discord crée la sienne en deux minutes.
 
 | Composant | Rôle |
 |---|---|
-| [`addon/GuildProfessions/`](addon/GuildProfessions/) | Addon Lua (TOC 16001) : fenêtre native à trois onglets — Métiers (filtres niveau/patron, tri par colonne), Membres (feuille de personnage + rendu 3D) et Commandes — ouverte par `/gp` ou par un onglet ajouté à la fenêtre de guilde |
-| [`server/`](server/) | Bot Discord (Discord.Net) + API HTTP (ASP.NET minimal) + SQLite, déployé sur VPS |
-| [`companion/`](companion/) | App compagnon .NET sur le PC du joueur : écrit `Data.lua` (serveur → jeu) et uploade les `SavedVariables` (jeu → serveur) |
+| [`addon/Guildkeep/`](addon/Guildkeep/) | Addon Lua (TOC 16001) : fenêtre native à trois onglets (Métiers, Membres, Commandes), ouverte par `/gkeep` ou par l'onglet ajouté à la fenêtre de guilde. Choisit les données de la guilde du personnage connecté. |
+| [`server/`](server/) | Bot Discord (Discord.Net) + API HTTP (ASP.NET minimal) + SQLite, partagés par toutes les guildes, déployés sur VPS |
+| [`companion/`](companion/) | Compagnon .NET sur le PC du joueur : écrit `Data.lua` (serveur → jeu), envoie les `SavedVariables` (jeu → serveur), installe et met à jour l'addon |
 
-Un addon WoW n'a accès ni au réseau ni au disque : le compagnon fait le pont, sur le modèle de GatherMate2 et du WeakAuras Companion. Les notifications temps réel entre joueurs connectés passent par les addon messages (canal guilde).
+Un addon WoW n'a accès ni au réseau ni au disque : le compagnon fait le pont, sur le modèle de GatherMate2 et du WeakAuras Companion.
 
-**Toute la conception est dans [PLAN.md](PLAN.md)** : architecture, modèle de données, commandes du bot, contrats d'API, scanners de l'addon, ordre de réalisation et stratégie de vérification.
+## Parcours d'une guilde
 
-## Démarrage rapide (cible)
+1. Un administrateur invite le bot sur son serveur Discord et lance **`/gkeep-setup`** (réservé au droit « Gérer le serveur ») : nom exact de la guilde en jeu, deux options (renommage des pseudos, salon des annonces), récapitulatif, création.
+2. Il partage le **lien d'installation** donné par le bot : chaque joueur y télécharge le pack de la guilde, déjà configuré (`/api/v1/pack/{code}/{système}`).
+3. Le joueur lance `Guildkeep` : addon installé, synchronisation automatique. Personnages dans plusieurs guildes : il lance le pack de chacune, un seul compagnon les synchronise toutes.
+4. Sur Discord, tout est sous **`/gkeep`** (`/gkeep help`), en français ou en anglais selon la langue de chacun.
 
-- **Joueur** : installer l'addon dans `Interface/AddOns/`, lancer le compagnon avec son token (`/token` sur Discord), `/gp` en jeu.
-- **Serveur (VPS)** : `cp .env.example .env`, remplir les tokens, puis `docker compose up -d --build`.
+## Isolation des guildes
 
-## Dev local (serveur)
+Une seule base : chaque donnée porte l'identifiant de sa guilde, et `AppDbContext` filtre toutes les lectures sur la guilde courante (fermé par défaut) et estampille toutes les écritures. La guilde courante vient du token pour l'API, du serveur Discord pour le bot. Tests dédiés : `server.Tests/GuildIsolationTests.cs`.
+
+## Dev local
 
 ```bash
-# SDK .NET 10 requis (installé dans ~/.dotnet10 sur le poste principal)
-export DOTNET_ROOT=$HOME/.dotnet10 PATH=$HOME/.dotnet10:$PATH
-dotnet test GuildProfessions.slnx          # tests de la règle de fusion
+# SDK .NET 10 requis
+dotnet test GuildProfessions.slnx
 dotnet run --project server                # API sur http://localhost:5000, bot off sans Discord:Token
 dotnet dotnet-ef migrations add <Nom> --project server/GuildProfessions.Server.csproj
 ```
 
-L'API répond sur `GET /healthz`, `GET /api/v1/export` (header `X-Guild-Token`) et `POST /api/v1/upload` (header `X-Upload-Token`, délivré par la commande Discord `/token`).
+Pour essayer le bot : un bot de test dans `server/appsettings.Local.json` (gitignoré, modèle : `appsettings.Local.json.example`), avec `Discord:GuildIds` = l'ID du serveur de test (commandes enregistrées immédiatement).
 
-## Configurer le bot : test puis prod
+## Production (VPS)
 
-Le bot enregistre ses commandes sur les serveurs listés dans `Discord:GuildIds`
-(IDs séparés par des virgules). Le passage test → prod consiste à **ajouter**
-l'ID du serveur de guilde, sans rien changer d'autre :
+`cp .env.example .env`, remplir, puis `docker compose up -d --build`. En production `DISCORD_GUILD_IDS` reste vide : commandes globales, disponibles sur tout serveur qui invite le bot.
 
-| Environnement | Où configurer | Exemple |
-|---|---|---|
-| Test local (`dotnet run`) | `server/appsettings.Local.json` (gitignoré, modèle : `appsettings.Local.json.example`) | `"GuildIds": "111111111111111111"` |
-| VPS (docker compose) | `.env` | `DISCORD_GUILD_IDS=111111111111111111,222222222222222222` |
-
-Création du bot (une fois) : [discord.com/developers/applications](https://discord.com/developers/applications)
-→ New Application → onglet **Bot** → Reset Token (= `Discord:Token`). Invitation sur un serveur :
+Création du bot (une fois) : [discord.com/developers/applications](https://discord.com/developers/applications) → New Application → onglet **Bot** → Reset Token (= `DISCORD_TOKEN`), et cocher **Public Bot**. Lien d'invitation :
 `https://discord.com/oauth2/authorize?client_id=<APPLICATION_ID>&scope=bot+applications.commands&permissions=134268928`
-(134268928 = envoyer des messages, intégrer des liens, joindre des fichiers + gérer les pseudos).
-Pour que le bot renomme les membres avec leur personnage principal, son rôle doit être placé **au-dessus**
-des leurs dans les paramètres du serveur. Discord interdit de renommer le propriétaire du serveur.
+(envoyer des messages, intégrer des liens, joindre des fichiers, gérer les pseudos). Au-delà de 100 serveurs, Discord exige la vérification du bot.
 
-## Distribuer le compagnon (zéro config pour les joueurs)
+## Publier une version
 
 ```bash
 scripts/package-companion.sh --deploy
 ```
 
-**Publier une nouvelle version** = commiter, puis lancer cette commande. La version vaut
-`1.0.<nombre de commits>` ; le script refuse de packager du code non commité. `--deploy`
-envoie les zips sur le VPS puis, en dernier, `companion-manifest.json` (version + SHA-256
-de chaque zip). Les compagnons installés consultent ce manifeste au démarrage puis toutes
-les 6 h, et se mettent à jour seuls : téléchargement, vérification de l'empreinte,
-remplacement de l'exécutable, redémarrage — `config.json` n'est jamais touché.
-Désactivable par joueur avec `"autoUpdate": false`.
+Commiter, puis lancer cette commande. La version vaut `1.0.<nombre de commits>`. Le script publie l'addon, l'exécutable du compagnon (mise à jour automatique) et les packs modèles, que le serveur personnalise pour chaque guilde. Les compagnons installés se mettent à jour au démarrage ou sous 6 h, addon compris.
 
-Le script publie les exécutables autonomes win-x64 et linux-x64 et glisse à côté un
-`config.json` **pré-rempli** (URL de prod `https://gp.warpvault.com` + token de guilde lu
-sur le VPS). Résultat : deux zips dans `publish/companion-dist/`. Côté joueur : **dézipper,
-lancer `GuildProfessionsCompanion`, c'est tout** — chemin WoW auto-détecté (Windows et
-Steam/Proton), aucun compte, aucun token à saisir. L'upload passe par le token de guilde
-partagé ; un `uploadToken` personnel (`/token` sur Discord) reste possible mais optionnel.
-
-Le compagnon tourne en tâche de fond : il écrit `Data.lua` quand les données serveur
-changent (puis `/reload` en jeu) et uploade les SavedVariables à chaque déconnexion//reload.
-L'API de prod est servie en HTTPS par le Caddy du VPS (bloc dans `/opt/entracte/deploy/Caddyfile`).
-
-## État d'avancement
-
-- [x] Étape 0 — dépôt, structure, plan fondateur
-- [x] Étape 1 — addon, onglet Métiers sur données mock *(code livré — à valider en jeu sur le client Forever)*
-- [x] Étape 2 — serveur (bot + API + SQLite) *(7 tests verts + smoke test curl — à connecter à un vrai bot Discord)*
-- [x] Étape 3 — compagnon (down-sync + up-sync) *(boucle E2E validée en local : SavedVariables → upload → export → Data.lua)*
-- [x] Étape 4 — commandes de craft *(E2E validé : commande en jeu → serveur → Data.lua ; toasts addon message à valider à deux comptes)*
-- [x] Étape 4bis — canal manuel sans compagnon : chaînes d'import/export (`/export-addon`, `/import`, boutons Importer/Exporter dans `/gp`) *(codec à valider en jeu : C_EncodingUtil sur Forever)*
-- [x] Étape 5 — onglet Membres / armurerie *(scan équipement + rendu 3D DressUpModel — à valider en jeu)*
+Mac : le compagnon n'est pas notarisé, macOS demande une autorisation au premier lancement (expliquée dans le pack et sur le site).

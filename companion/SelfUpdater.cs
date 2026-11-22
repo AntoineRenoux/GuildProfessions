@@ -22,7 +22,7 @@ public sealed record AddonAsset(string Version, string Url, string Sha256);
 /// </summary>
 public sealed class SelfUpdater(CompanionConfig config, string baseDirectory)
 {
-	private const string ExeBaseName = "GuildProfessionsCompanion";
+	private const string ExeBaseName = "Guildkeep";
 	// Code de sortie qui demande à systemd (Restart=on-failure) de relancer le binaire neuf.
 	private const int RestartExitCode = 75;
 

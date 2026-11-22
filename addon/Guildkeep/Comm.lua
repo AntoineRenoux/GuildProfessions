@@ -36,7 +36,7 @@ local STATUS_LABELS = {
 }
 
 local function Toast(text)
-	print("|cff33ff99GuildProfessions|r — " .. text)
+	print("|cff33ff99Guildkeep|r — " .. text)
 	if RaidNotice_AddMessage and RaidWarningFrame then
 		pcall(RaidNotice_AddMessage, RaidWarningFrame, text, ChatTypeInfo["RAID_WARNING"])
 	end
@@ -49,7 +49,7 @@ local function OnMessage(message, sender)
 	local kind, a, b, c, d = strsplit("\t", message)
 	if kind == "NEW" and a == PlayerName() then
 		-- a=crafter, b=requester, c=item, d=qty
-		Toast(("Nouvelle commande de %s : %s× %s — /gp pour la voir."):format(b or sender, d or "1", c or "?"))
+		Toast(("Nouvelle commande de %s : %s× %s — /gkeep pour la voir."):format(b or sender, d or "1", c or "?"))
 		GP.RefreshUI()
 	elseif kind == "UPD" and a == PlayerName() then
 		-- a=requester, b=item, c=status, d=auteur

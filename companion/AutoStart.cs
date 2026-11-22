@@ -11,7 +11,7 @@ namespace GuildProfessions.Companion;
 public static class AutoStart
 {
 	private const string RunKeyPath = @"Software\Microsoft\Windows\CurrentVersion\Run";
-	private const string ValueName = "GuildProfessionsCompanion";
+	private const string ValueName = "Guildkeep";
 
 	public static void Sync(bool enabled)
 	{

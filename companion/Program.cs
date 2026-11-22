@@ -9,7 +9,7 @@ if (args.Contains("--background"))
 	AutoStart.HideConsoleWindow();
 }
 
-SyncService.Log($"GuildProfessions Companion v{SelfUpdater.CurrentVersion.ToString(3)} — pont entre le serveur de guilde et l'addon.");
+SyncService.Log($"Guildkeep v{SelfUpdater.CurrentVersion.ToString(3)} : le pont entre ta guilde et l'addon.");
 SelfUpdater.CleanupPreviousVersion();
 
 var config = CompanionConfig.LoadOrCreate(configPath);

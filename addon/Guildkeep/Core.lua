@@ -9,18 +9,18 @@ local function GuildKey(name)
 end
 
 local function InitDB()
-	GuildProfessionsDB = GuildProfessionsDB or {}
-	GuildProfessionsDB.characters = GuildProfessionsDB.characters or {}
-	GuildProfessionsDB.orders = GuildProfessionsDB.orders or {}
-	GuildProfessionsDB.orderActions = GuildProfessionsDB.orderActions or {}
-	GuildProfessionsDB.importedByGuild = GuildProfessionsDB.importedByGuild or {}
+	GuildkeepDB = GuildkeepDB or {}
+	GuildkeepDB.characters = GuildkeepDB.characters or {}
+	GuildkeepDB.orders = GuildkeepDB.orders or {}
+	GuildkeepDB.orderActions = GuildkeepDB.orderActions or {}
+	GuildkeepDB.importedByGuild = GuildkeepDB.importedByGuild or {}
 	-- Ancienne version : un seul import, rangé désormais sous sa guilde.
-	local legacy = GuildProfessionsDB.importedServerData
+	local legacy = GuildkeepDB.importedServerData
 	if legacy then
 		if legacy.guildName then
-			GuildProfessionsDB.importedByGuild[GuildKey(legacy.guildName)] = legacy
+			GuildkeepDB.importedByGuild[GuildKey(legacy.guildName)] = legacy
 		end
-		GuildProfessionsDB.importedServerData = nil
+		GuildkeepDB.importedServerData = nil
 	end
 end
 
@@ -38,15 +38,15 @@ local function PruneSyncedOrders()
 			byId[tostring(order.id)] = order
 		end
 	end
-	for localId in pairs(GuildProfessionsDB.orders) do
+	for localId in pairs(GuildkeepDB.orders) do
 		if byClientId[localId] then
-			GuildProfessionsDB.orders[localId] = nil
+			GuildkeepDB.orders[localId] = nil
 		end
 	end
-	for key, action in pairs(GuildProfessionsDB.orderActions) do
+	for key, action in pairs(GuildkeepDB.orderActions) do
 		local serverOrder = byId[key] or byClientId[key]
 		if serverOrder and serverOrder.status == action.status then
-			GuildProfessionsDB.orderActions[key] = nil
+			GuildkeepDB.orderActions[key] = nil
 		end
 	end
 end
@@ -65,15 +65,15 @@ end
 
 function GP.GetLocalCharacter()
 	local name = GP.GetPlayerFullName()
-	GuildProfessionsDB.characters[name] = GuildProfessionsDB.characters[name] or {}
-	return GuildProfessionsDB.characters[name]
+	GuildkeepDB.characters[name] = GuildkeepDB.characters[name] or {}
+	return GuildkeepDB.characters[name]
 end
 
 -- Migration : les versions précédentes de l'addon indexaient par prénom seul.
 function GP.MigrateLegacyCharacterKey()
 	local firstName = UnitName("player")
 	local fullName = GP.GetPlayerFullName()
-	local characters = GuildProfessionsDB.characters
+	local characters = GuildkeepDB.characters
 	if firstName and fullName and firstName ~= fullName and characters[firstName] then
 		characters[fullName] = characters[fullName] or characters[firstName]
 		characters[firstName] = nil
@@ -87,7 +87,7 @@ end
 local EMPTY = { characters = {} }
 
 local function FileSections()
-	local file = GuildProfessions_ServerData
+	local file = Guildkeep_ServerData
 	if type(file) ~= "table" then
 		return {}
 	end
@@ -102,7 +102,7 @@ function GP.AllServerSections()
 	for _, section in ipairs(FileSections()) do
 		sections[#sections + 1] = section
 	end
-	for _, section in pairs(GuildProfessionsDB and GuildProfessionsDB.importedByGuild or {}) do
+	for _, section in pairs(GuildkeepDB and GuildkeepDB.importedByGuild or {}) do
 		sections[#sections + 1] = section
 	end
 	return sections
@@ -123,7 +123,7 @@ function GP.GetServerData()
 			break
 		end
 	end
-	local imported = GuildProfessionsDB and GuildProfessionsDB.importedByGuild and GuildProfessionsDB.importedByGuild[guild]
+	local imported = GuildkeepDB and GuildkeepDB.importedByGuild and GuildkeepDB.importedByGuild[guild]
 	if imported and (not fromFile or (imported.version or 0) >= (fromFile.version or 0) or fromFile.mock) then
 		return imported
 	end
@@ -138,7 +138,7 @@ end
 -- Un personnage local appartient-il à la guilde affichée ? Les rerolls du
 -- compte qui sont dans une autre guilde n'apparaissent pas dans son annuaire.
 function GP.IsInCurrentGuild(characterName)
-	local char = GuildProfessionsDB and GuildProfessionsDB.characters[characterName]
+	local char = GuildkeepDB and GuildkeepDB.characters[characterName]
 	if not char or not char.guild then
 		return characterName == GP.GetPlayerFullName()
 	end
@@ -195,7 +195,7 @@ function GP.GetRoster()
 	for _, char in ipairs(GP.GetServerData().characters or {}) do
 		upsert(char)
 	end
-	for name, char in pairs(GuildProfessionsDB.characters) do
+	for name, char in pairs(GuildkeepDB.characters) do
 		if GP.IsInCurrentGuild(name) then
 			upsert({
 			name = name, classFile = char.classFile, level = char.level,
@@ -235,9 +235,9 @@ function GP.GetRecipeName(spellId)
 		recipeNameCache[spellId] = name
 		-- Persisté dans les SavedVariables : le compagnon s'en sert pour
 		-- envoyer les noms au serveur (recherche de recette via Discord).
-		if GuildProfessionsDB then
-			GuildProfessionsDB.recipeNames = GuildProfessionsDB.recipeNames or {}
-			GuildProfessionsDB.recipeNames[spellId] = name
+		if GuildkeepDB then
+			GuildkeepDB.recipeNames = GuildkeepDB.recipeNames or {}
+			GuildkeepDB.recipeNames[spellId] = name
 		end
 	end
 	return name
@@ -274,7 +274,7 @@ function GP.CreateOrder(crafter, item, qty, note)
 		note = note ~= "" and note or nil,
 		createdAt = date("%Y-%m-%d %H:%M"),
 	}
-	GuildProfessionsDB.orders[localId] = order
+	GuildkeepDB.orders[localId] = order
 	GP.Comm.SendNewOrder(order)
 	GP.RefreshUI()
 	return localId
@@ -285,7 +285,7 @@ end
 -- décidés en jeu par-dessus.
 function GP.GetOrders()
 	local merged = {}
-	local actions = GuildProfessionsDB.orderActions
+	local actions = GuildkeepDB.orderActions
 	for _, order in ipairs(GP.GetServerData().orders or {}) do
 		local key = tostring(order.id)
 		local action = actions[key] or (order.clientId and actions[order.clientId])
@@ -303,7 +303,7 @@ function GP.GetOrders()
 			createdAt = order.createdUtc,
 		}
 	end
-	for localId, order in pairs(GuildProfessionsDB.orders) do
+	for localId, order in pairs(GuildkeepDB.orders) do
 		-- Commande passée par un reroll d'une autre guilde : pas ici.
 		if GP.IsInCurrentGuild(order.requester) then
 			local action = actions[localId]
@@ -327,7 +327,7 @@ function GP.GetOrders()
 end
 
 function GP.SetOrderStatus(order, status)
-	GuildProfessionsDB.orderActions[order.key] = { status = status, at = date("%Y-%m-%d %H:%M") }
+	GuildkeepDB.orderActions[order.key] = { status = status, at = date("%Y-%m-%d %H:%M") }
 	GP.Comm.SendStatus(order, status)
 	GP.RefreshUI()
 end
@@ -345,14 +345,14 @@ frame:SetScript("OnEvent", function(self, event, arg1)
 		PruneSyncedOrders()
 		self:UnregisterEvent("ADDON_LOADED")
 		local server = GP.GetServerData()
-		print(("|cff33ff99GuildProfessions|r v%s chargé — /gp pour ouvrir%s"):format(
+		print(("|cff33ff99Guildkeep|r v%s chargé — /gkeep pour ouvrir%s"):format(
 			GP.VERSION, server.mock and " |cffffcc00(données de démonstration)|r" or ""))
 	end
 end)
 
-SLASH_GUILDPROFESSIONS1 = "/gp"
-SLASH_GUILDPROFESSIONS2 = "/guildprofessions"
-SlashCmdList.GUILDPROFESSIONS = function(msg)
+SLASH_GUILDKEEP1 = "/gkeep"
+SLASH_GUILDKEEP2 = "/gp"
+SlashCmdList.GUILDKEEP = function(msg)
 	if strtrim(msg or ""):lower() == "debug" and GP.DebugGuildTab then
 		GP.DebugGuildTab()
 		return

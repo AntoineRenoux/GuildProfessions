@@ -51,8 +51,8 @@ public sealed class GkeepModule(RosterService roster, NicknameSync nicknames, Gu
 				"`/gkeep commande nouvelle` commande à un artisan · `/gkeep commande liste` les commandes en cours · `accepter`, `terminer`, `annuler` pour les faire avancer",
 				"`/gkeep order new` orders from a crafter · `/gkeep order list` shows open orders · `accept`, `done`, `cancel` move them along"))
 			.AddField(l.T("En jeu", "In game"), l.T(
-				"Installe le pack de la guilde depuis le lien donné par un administrateur : l'addon s'ouvre avec `/gp` ou par l'onglet dans la fenêtre de guilde.",
-				"Install your guild's pack from the link an admin shares: open the addon with `/gp` or from the tab in the guild window."));
+				"Installe le pack de la guilde depuis le lien donné par un administrateur : l'addon s'ouvre avec `/gkeep` ou par l'onglet dans la fenêtre de guilde.",
+				"Install your guild's pack from the link an admin shares: open the addon with `/gkeep` or from the tab in the guild window."));
 		await RespondAsync(embed: embed.Build(), ephemeral: true);
 	}
 
@@ -108,7 +108,7 @@ public sealed class GkeepModule(RosterService roster, NicknameSync nicknames, Gu
 
 	// ---- Canal manuel, sans app compagnon -----------------------------------------------
 
-	[SlashCommand("export", "Get the guild data string to paste in game (/gp, Import)")]
+	[SlashCommand("export", "Get the guild data string to paste in game (/gkeep, Import)")]
 	[RequireRegisteredGuild]
 	public async Task ExportAsync()
 	{
@@ -119,12 +119,12 @@ public sealed class GkeepModule(RosterService roster, NicknameSync nicknames, Gu
 		using var stream = new MemoryStream(Encoding.UTF8.GetBytes(encoded));
 		await FollowupWithFileAsync(new FileAttachment(stream, "guildkeep-import.txt"), l.T(
 			$"Données de la guilde (version {export.Version}, {export.Characters.Count} personnages). " +
-				"Ouvre le fichier, copie tout, puis en jeu : `/gp` → **Importer**.",
+				"Ouvre le fichier, copie tout, puis en jeu : `/gkeep` → **Importer**.",
 			$"Guild data (version {export.Version}, {export.Characters.Count} characters). " +
-				"Open the file, copy everything, then in game: `/gp` → **Import**."), ephemeral: true);
+				"Open the file, copy everything, then in game: `/gkeep` → **Import**."), ephemeral: true);
 	}
 
-	[SlashCommand("import", "Send the string exported in game (/gp, Export)")]
+	[SlashCommand("import", "Send the string exported in game (/gkeep, Export)")]
 	[RequireRegisteredGuild]
 	public async Task ImportAsync() =>
 		await RespondWithModalAsync<ImportModal>("gk_import_modal", modifyModal: modal =>

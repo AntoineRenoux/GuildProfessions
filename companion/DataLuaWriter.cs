@@ -15,7 +15,7 @@ public static class DataLuaWriter
 		var builder = new StringBuilder();
 		builder.AppendLine("-- Fichier généré par l'app compagnon Guildkeep.");
 		builder.AppendLine("-- Ne pas éditer : écrasé à chaque synchronisation.");
-		builder.AppendLine("GuildProfessions_ServerData = {");
+		builder.AppendLine("Guildkeep_ServerData = {");
 		builder.AppendLine("\tguilds = {");
 		foreach (var export in exports)
 		{

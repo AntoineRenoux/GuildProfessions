@@ -8,7 +8,7 @@ public sealed class LuaParserTests
 {
 	// Forme exacte émise par le client WoW à la déconnexion.
 	private const string SampleSavedVariables = """
-		GuildProfessionsDB = {
+		GuildkeepDB = {
 			["characters"] = {
 				["Elaria"] = {
 					["classFile"] = "MAGE",
@@ -62,7 +62,7 @@ public sealed class LuaParserTests
 	[Fact]
 	public void ParseSavedVariable_Should_ReadNestedTablesKeysAndEscapes()
 	{
-		var db = LuaParser.ParseSavedVariable(SampleSavedVariables, "GuildProfessionsDB");
+		var db = LuaParser.ParseSavedVariable(SampleSavedVariables, "GuildkeepDB");
 
 		var elaria = db.GetTable("characters")!.GetTable("Elaria")!;
 		Assert.Equal("MAGE", elaria.GetString("classFile"));
@@ -111,7 +111,7 @@ public sealed class LuaParserTests
 	[Fact]
 	public void BuildPayload_Should_ReturnNull_WhenNoCharacters()
 	{
-		Assert.Null(SavedVariablesReader.BuildPayload("GuildProfessionsDB = { [\"characters\"] = {} }"));
+		Assert.Null(SavedVariablesReader.BuildPayload("GuildkeepDB = { [\"characters\"] = {} }"));
 	}
 }
 
@@ -144,14 +144,14 @@ public sealed class AddonInstallerTests : IDisposable
 	[Fact]
 	public void InstallFromZip_Should_InstallFiles_AndNeverTouchDataLua()
 	{
-		var addon = Path.Combine(_addOns, "GuildProfessions");
+		var addon = Path.Combine(_addOns, "Guildkeep");
 		Directory.CreateDirectory(addon);
 		File.WriteAllText(Path.Combine(addon, "Data.lua"), "-- données réelles de la guilde");
 
 		var count = AddonInstaller.InstallFromZip(Zip(
-			("GuildProfessions/GuildProfessions.toc", "## Interface: 16001\n## Version: 1.0.31\n"),
-			("GuildProfessions/Core.lua", "-- code"),
-			("GuildProfessions/Data.lua", "-- version vide du zip")), _addOns);
+			("Guildkeep/Guildkeep.toc", "## Interface: 16001\n## Version: 1.0.31\n"),
+			("Guildkeep/Core.lua", "-- code"),
+			("Guildkeep/Data.lua", "-- version vide du zip")), _addOns);
 
 		Assert.Equal(2, count);
 		Assert.Equal("-- données réelles de la guilde", File.ReadAllText(Path.Combine(addon, "Data.lua")));
@@ -161,11 +161,11 @@ public sealed class AddonInstallerTests : IDisposable
 	[Fact]
 	public void InstallFromZip_Should_RemoveFilesNoLongerShipped()
 	{
-		var addon = Path.Combine(_addOns, "GuildProfessions");
+		var addon = Path.Combine(_addOns, "Guildkeep");
 		Directory.CreateDirectory(addon);
 		File.WriteAllText(Path.Combine(addon, "Ancien.lua"), "-- retiré dans la nouvelle version");
 
-		AddonInstaller.InstallFromZip(Zip(("GuildProfessions/Core.lua", "-- code")), _addOns);
+		AddonInstaller.InstallFromZip(Zip(("Guildkeep/Core.lua", "-- code")), _addOns);
 
 		Assert.False(File.Exists(Path.Combine(addon, "Ancien.lua")));
 		Assert.True(File.Exists(Path.Combine(addon, "Core.lua")));
@@ -175,7 +175,7 @@ public sealed class AddonInstallerTests : IDisposable
 	public void InstallFromZip_Should_IgnoreEntriesEscapingTheAddonFolder()
 	{
 		AddonInstaller.InstallFromZip(Zip(
-			("GuildProfessions/../../evil.txt", "zip-slip"),
+			("Guildkeep/../../evil.txt", "zip-slip"),
 			("AutreAddon/Core.lua", "-- pas à nous")), _addOns);
 
 		Assert.False(File.Exists(Path.Combine(_addOns, "..", "evil.txt")));
@@ -309,6 +309,28 @@ public sealed class WowLocatorTests
 	}
 }
 
+public sealed class LegacyAddonTests
+{
+	[Fact]
+	public void RemoveLegacyAddon_Should_DeleteTheOldGuildProfessionsFolder_Only()
+	{
+		var addOns = Path.Combine(Path.GetTempPath(), "gk-legacy-" + Guid.NewGuid().ToString("N"));
+		Directory.CreateDirectory(Path.Combine(addOns, "GuildProfessions"));
+		Directory.CreateDirectory(Path.Combine(addOns, "Guildkeep"));
+		try
+		{
+			Assert.True(AddonInstaller.RemoveLegacyAddon(addOns));
+			Assert.False(Directory.Exists(Path.Combine(addOns, "GuildProfessions")));
+			Assert.True(Directory.Exists(Path.Combine(addOns, "Guildkeep")));
+			Assert.False(AddonInstaller.RemoveLegacyAddon(addOns));
+		}
+		finally
+		{
+			Directory.Delete(addOns, recursive: true);
+		}
+	}
+}
+
 public sealed class DataLuaWriterTests
 {
 	[Fact]
@@ -335,7 +357,7 @@ public sealed class DataLuaWriterTests
 		var expected = """
 			-- Fichier généré par l'app compagnon Guildkeep.
 			-- Ne pas éditer : écrasé à chaque synchronisation.
-			GuildProfessions_ServerData = {
+			Guildkeep_ServerData = {
 				guilds = {
 					{
 						version = 42,
@@ -376,7 +398,7 @@ public sealed class DataLuaWriterTests
 
 		Assert.Equal(expected, lua);
 		// Le fichier reste lisible par le parseur Lua du compagnon.
-		Assert.NotNull(LuaParser.ParseSavedVariable(lua, "GuildProfessions_ServerData").GetTable("guilds"));
+		Assert.NotNull(LuaParser.ParseSavedVariable(lua, "Guildkeep_ServerData").GetTable("guilds"));
 	}
 }
 
