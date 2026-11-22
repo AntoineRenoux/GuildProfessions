@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Guildkeep · qui sait le fabriquer dans ta guilde</title>
-<meta name="description" content="Guildkeep tient l'annuaire des artisans de ta guilde WoW: Forever, en jeu et sur Discord : qui sait fabriquer quoi, à quel niveau, et quoi lui envoyer. Gratuit, sans compte.">
+<title>Guildkeep · la gestion de ta guilde WoW: Forever</title>
+<meta name="description" content="Guildkeep gère ta guilde WoW: Forever, en jeu et sur Discord : artisans et commandes de craft, membres et leur équipement, et bientôt les raids. Gratuit, sans compte.">
 <link rel="preload" href="/fonts/cinzel-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/alegreya-sans-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/site.css?v=4">
+<link rel="stylesheet" href="/site.css?v=5">
 <script>document.documentElement.classList.add('js');try{var l=localStorage.getItem('gk-lang')||((navigator.language||'fr').toLowerCase().indexOf('fr')===0?'fr':'en');document.documentElement.lang=l}catch(e){}</script>
 </head>
 <body>
@@ -29,28 +29,33 @@
 
 <main>
 
-<!-- Hero : la question, et les commandes de l'annuaire posées dessus. -->
+<!-- Hero : la guilde tenue en ordre, et la fenêtre de Guildkeep sur une guilde d'exemple. -->
 <section class="hero" aria-labelledby="titre">
 	<div class="hero-core">
 		<h1 id="titre" class="lines">
-			<span class="line"><span data-line style="--i:0"><span lang="fr">Qui sait</span><span lang="en">Who can</span></span></span>
-			<span class="line"><span data-line style="--i:1"><span lang="fr">le faire ?</span><span lang="en">craft it?</span></span></span>
+			<span class="line"><span data-line style="--i:0"><span lang="fr">Ta guilde,</span><span lang="en">Your guild,</span></span></span>
+			<span class="line"><span data-line style="--i:1"><span lang="fr">bien tenue</span><span lang="en">well kept</span></span></span>
 		</h1>
 		<div class="rule" data-rise style="--i:0" aria-hidden="true"><i></i></div>
 
 		<p class="hero-lead" data-rise style="--i:0">
-			<span lang="fr">Guildkeep tient l'annuaire des artisans de ta guilde WoW: Forever, en jeu et sur Discord. Gratuit, sans compte.</span>
-			<span lang="en">Guildkeep keeps your WoW: Forever guild's crafter directory, in game and on Discord. Free, no account.</span>
+			<span lang="fr">Guildkeep gère ta guilde WoW: Forever, en jeu et sur Discord : ses artisans et leurs commandes, ses membres et leur équipement, et bientôt ses raids. Gratuit, sans compte.</span>
+			<span lang="en">Guildkeep runs your WoW: Forever guild, in game and on Discord: its crafters and their orders, its members and their gear, and soon its raids. Free, no account.</span>
 		</p>
 		<div class="hero-actions" data-rise style="--i:1">
 			<a class="button invite-link" href="#mise-en-place"><span lang="fr">Ajouter à Discord</span><span lang="en">Add to Discord</span></a>
 			<a class="button is-quiet" href="#rejoindre"><span lang="fr">J'ai un lien de ma guilde</span><span lang="en">I have my guild's link</span></a>
 		</div>
 
-		<!-- Le tableau des métiers : la recherche « qui sait le faire ? » de l'addon, sur une guilde d'exemple. -->
+		<!-- La fenêtre de Guildkeep sur une guilde d'exemple : un onglet par pan de la vie de guilde. -->
 		<div class="board" data-rise style="--i:2">
 			<div class="board-head"><b>Guildkeep</b><span>&lt;La Garde d'Ambre&gt;</span><small><span lang="fr">guilde d'exemple</span><span lang="en">sample guild</span></small></div>
-			<div class="board-body">
+			<div class="board-tabs" role="tablist" aria-label="Guildkeep">
+				<button type="button" role="tab" id="bt-crafts" aria-controls="bp-crafts" aria-selected="true"><span lang="fr">Métiers</span><span lang="en">Professions</span></button>
+				<button type="button" role="tab" id="bt-members" aria-controls="bp-members" aria-selected="false"><span lang="fr">Membres</span><span lang="en">Members</span></button>
+				<button type="button" role="tab" id="bt-raids" aria-controls="bp-raids" aria-selected="false"><span lang="fr">Raids</span><span lang="en">Raids</span> <small><span lang="fr">bientôt</span><span lang="en">soon</span></small></button>
+			</div>
+			<div class="board-body" role="tabpanel" id="bp-crafts" aria-labelledby="bt-crafts">
 				<div class="board-pick">
 					<p class="board-label" id="prof-label"><span lang="fr">Métier</span><span lang="en">Profession</span></p>
 					<div class="slots" id="slots" role="radiogroup" aria-labelledby="prof-label"></div>
@@ -73,6 +78,42 @@
 						<li><span class="who q-epic">Hilde Marteau</span><span class="lvl nums">262</span><i class="meter"><i style="width:87%"></i></i><span class="c-note">armes surtout</span></li>
 					</ul>
 					<p class="tooltip-cmd"><span lang="fr">Sur Discord :</span><span lang="en">On Discord:</span> <code id="answer-cmd">/gkeep metier qui metier:Forge niveau_min:225</code></p>
+				</div>
+			</div>
+			<div class="board-body board-members" role="tabpanel" id="bp-members" aria-labelledby="bt-members" hidden>
+				<div>
+					<p class="board-label"><span lang="fr">54 membres · 3 en ligne</span><span lang="en">54 members · 3 online</span></p>
+					<ul class="members">
+						<li><span class="m-on" title="en ligne"></span><span class="m-name" style="color:#C69B6D">Bragg Ferrefond</span><span class="m-class"><span lang="fr">Niveau 60 · Guerrier</span><span lang="en">Level 60 · Warrior</span></span><span class="m-profs"><span class="m-prof"><svg aria-hidden="true"><use href="#i-forge"/></svg><span class="nums">300</span></span><span class="m-prof"><svg aria-hidden="true"><use href="#i-cuisine"/></svg><span class="nums">285</span></span></span></li>
+						<li><span class="m-on" title="en ligne"></span><span class="m-name" style="color:#3FC7EB">Ysolde Brume</span><span class="m-class"><span lang="fr">Niveau 60 · Mage</span><span lang="en">Level 60 · Mage</span></span><span class="m-profs"><span class="m-prof"><svg aria-hidden="true"><use href="#i-couture"/></svg><span class="nums">300</span></span><span class="m-prof"><svg aria-hidden="true"><use href="#i-enchantement"/></svg><span class="nums">212</span></span></span></li>
+						<li><span class="m-off"></span><span class="m-name" style="color:#AAD372">Sorcha Tanne</span><span class="m-class"><span lang="fr">Niveau 60 · Chasseresse</span><span lang="en">Level 60 · Hunter</span></span><span class="m-profs"><span class="m-prof"><svg aria-hidden="true"><use href="#i-cuir"/></svg><span class="nums">300</span></span><span class="m-prof"><svg aria-hidden="true"><use href="#i-depecage"/></svg><span class="nums">300</span></span></span></li>
+						<li><span class="m-on" title="en ligne"></span><span class="m-name" style="color:#3FC7EB">Maël Corvin</span><span class="m-class"><span lang="fr">Niveau 60 · Mage</span><span lang="en">Level 60 · Mage</span></span><span class="m-profs"><span class="m-prof"><svg aria-hidden="true"><use href="#i-alchimie"/></svg><span class="nums">300</span></span><span class="m-prof"><svg aria-hidden="true"><use href="#i-herboristerie"/></svg><span class="nums">240</span></span></span></li>
+						<li><span class="m-off"></span><span class="m-name" style="color:#FFF468">Tamsin Rouage</span><span class="m-class"><span lang="fr">Niveau 58 · Voleuse</span><span lang="en">Level 58 · Rogue</span></span><span class="m-profs"><span class="m-prof"><svg aria-hidden="true"><use href="#i-ingenierie"/></svg><span class="nums">300</span></span><span class="m-prof"><svg aria-hidden="true"><use href="#i-minage"/></svg><span class="nums">275</span></span></span></li>
+						<li><span class="m-off"></span><span class="m-name" style="color:#FFFFFF">Aurèle Vesper</span><span class="m-class"><span lang="fr">Niveau 60 · Prêtre</span><span lang="en">Level 60 · Priest</span></span><span class="m-profs"><span class="m-prof"><svg aria-hidden="true"><use href="#i-enchantement"/></svg><span class="nums">300</span></span><span class="m-prof"><svg aria-hidden="true"><use href="#i-couture"/></svg><span class="nums">250</span></span></span></li>
+					</ul>
+				</div>
+				<div class="tooltip">
+					<p class="tooltip-title"><span lang="fr">Fiche de Maël Corvin</span><span lang="en">Maël Corvin's sheet</span></p>
+					<p class="tooltip-sub"><span lang="fr">Équipement relevé à sa dernière déconnexion</span><span lang="en">Gear scanned at their last logout</span></p>
+					<ul class="gear">
+						<li class="q-epic"><span lang="fr">Couronne de la Voûte céleste</span><span lang="en">Crown of the Starry Vault</span></li>
+						<li class="q-rare"><span lang="fr">Robe d'étoffe runique</span><span lang="en">Runecloth Robe</span></li>
+						<li class="q-epic"><span lang="fr">Bâton des marées de mana</span><span lang="en">Staff of Mana Tides</span></li>
+						<li class="q-uncommon"><span lang="fr">Bottes de l'astromancien</span><span lang="en">Astromancer's Boots</span></li>
+					</ul>
+					<p class="tooltip-cmd"><span lang="fr">Discord : lié à</span><span lang="en">Discord: linked to</span> <code>@mael</code> · <span lang="fr">personnage principal</span><span lang="en">main character</span></p>
+				</div>
+			</div>
+			<div class="board-body board-raids" role="tabpanel" id="bp-raids" aria-labelledby="bt-raids" hidden>
+				<div class="tooltip">
+					<p class="tooltip-title"><span lang="fr">Raids · en préparation</span><span lang="en">Raids · in the works</span></p>
+					<p class="tooltip-sub"><span lang="fr">Le prochain pan de Guildkeep, pas encore disponible.</span><span lang="en">Guildkeep's next part, not available yet.</span></p>
+					<ul class="plans">
+						<li><b><span lang="fr">Inscriptions</span><span lang="en">Sign-ups</span></b><span><span lang="fr">Depuis le jeu ou depuis Discord, avec le personnage et le rôle.</span><span lang="en">From the game or from Discord, with the character and the role.</span></span></li>
+						<li><b><span lang="fr">Composition</span><span lang="en">Roster</span></b><span><span lang="fr">Tanks, soigneurs et dégâts, d'un coup d'œil, par l'officier qui organise.</span><span lang="en">Tanks, healers and damage at a glance, for the officer running it.</span></span></li>
+						<li><b><span lang="fr">Présence</span><span lang="en">Attendance</span></b><span><span lang="fr">Qui était là, raid après raid.</span><span lang="en">Who showed up, raid after raid.</span></span></li>
+					</ul>
+					<p class="tooltip-cmd"><span lang="fr">Les données qu'elles enregistreront seront décrites dans la <a href="/confidentialite.html">confidentialité</a> avant leur mise en service.</span><span lang="en">The data they will store will be described in the <a href="/confidentialite.html">privacy</a> page before they go live.</span></p>
 				</div>
 			</div>
 		</div>
@@ -307,6 +348,10 @@
 				<div class="answer-text"><span lang="fr">Oui, entièrement, pour toutes les guildes. Pas de compte à créer, pas de version payante.</span><span lang="en">Yes, fully, for every guild. No account to create, no paid tier.</span></div>
 			</details>
 			<details name="faq">
+				<summary><span><span lang="fr">Et les raids ?</span><span lang="en">What about raids?</span></span><i class="plus" aria-hidden="true"></i></summary>
+				<div class="answer-text"><span lang="fr">C'est le prochain chantier : inscriptions depuis le jeu ou Discord, composition par rôle, présence. Ce n'est pas encore disponible ; aujourd'hui Guildkeep gère les artisans, les commandes de craft et les membres.</span><span lang="en">It's the next piece of work: sign-ups from the game or Discord, roster by role, attendance. It isn't available yet; today Guildkeep handles crafters, craft orders and members.</span></div>
+			</details>
+			<details name="faq">
 				<summary><span><span lang="fr">Faut-il donner un mot de passe ?</span><span lang="en">Do I give a password?</span></span><i class="plus" aria-hidden="true"></i></summary>
 				<div class="answer-text"><span lang="fr">Jamais. Ni mot de passe, ni e-mail, ni compte Battle.net. Le compagnon lit les fichiers que WoW écrit pour l'addon, et rien d'autre.</span><span lang="en">Never. No password, no email, no Battle.net account. The companion reads the files WoW writes for the addon, nothing else.</span></div>
 			</details>
@@ -364,6 +409,6 @@
 	<span class="credit"><span lang="fr">World of Warcraft est une marque de Blizzard Entertainment ; Guildkeep n'y est pas affilié.</span><span lang="en">World of Warcraft is a trademark of Blizzard Entertainment; Guildkeep is not affiliated.</span></span>
 </footer>
 
-<script src="/site.js?v=4" defer></script>
+<script src="/site.js?v=5" defer></script>
 </body>
 </html>

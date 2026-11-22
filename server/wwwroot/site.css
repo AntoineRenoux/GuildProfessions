@@ -132,7 +132,7 @@ html[lang="fr"] [lang="en"]:not(html), html[lang="en"] [lang="fr"]:not(html) { d
 .hero::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(38% 45% at 6% 92%, rgba(255, 128, 40, 0.30), transparent 70%), radial-gradient(38% 45% at 94% 92%, rgba(255, 128, 40, 0.30), transparent 70%), radial-gradient(70% 55% at 50% 30%, rgba(90, 60, 30, 0.35), transparent 75%); }
 .hero::after { content: ""; position: absolute; inset: auto 0 0; height: 30%; pointer-events: none; background: linear-gradient(transparent, var(--bg)); }
 .hero { position: relative; min-height: 100svh; display: grid; grid-template-rows: 1fr auto; padding: 120px var(--margin) 56px; overflow: clip; }
-.hero-core { position: relative; align-self: center; justify-self: center; width: min(100%, 1180px); text-align: center; }
+.hero-core { position: relative; z-index: 1; align-self: center; justify-self: center; width: min(100%, 1180px); text-align: center; }
 .hero h1 { font-size: var(--step-display); line-height: 1.02; letter-spacing: 0.02em; }
 .hero .rule { margin: 28px auto 0; }
 .lines .line { display: block; overflow: hidden; padding-bottom: 0.08em; margin-bottom: -0.08em; }
@@ -166,7 +166,7 @@ html[lang="fr"] [lang="en"]:not(html), html[lang="en"] [lang="fr"]:not(html) { d
 .tooltip { background: linear-gradient(180deg, rgba(14, 16, 38, 0.97), rgba(5, 6, 18, 0.97)); border-radius: 5px; box-shadow: 0 0 0 1px #000, 0 0 0 2px #7a7c86, inset 0 0 0 1px rgba(255, 255, 255, 0.07); padding: 16px 18px; align-self: start; }
 .tooltip-head { display: flex; gap: 14px; align-items: center; }
 .tooltip-icon { width: 52px; height: 52px; flex: none; padding: 6px; border-radius: 4px; background: radial-gradient(circle at 50% 35%, #3b2c18, #120d07 75%); box-shadow: 0 0 0 1px #000, 0 0 0 2px var(--gold-lo); }
-.tooltip-title { font-size: 1.5rem; line-height: 1.1; background: none; color: #fff; filter: none; }
+.tooltip-title { font-family: var(--font-display); font-weight: 700; font-size: 1.5rem; line-height: 1.1; background: none; color: #fff; filter: none; }
 .tooltip-sub { color: var(--q-uncommon); font-size: 0.95rem; margin-top: 2px; }
 .crafters { list-style: none; padding: 0; margin: 14px 0 0; display: grid; gap: 10px; }
 .crafters li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; align-items: baseline; }
@@ -179,6 +179,30 @@ html[lang="fr"] [lang="en"]:not(html), html[lang="en"] [lang="fr"]:not(html) { d
 .tooltip-cmd code { color: #c9cdfb; font-family: var(--font); font-weight: 500; overflow-wrap: anywhere; }
 .q-common { color: var(--q-common); } .q-uncommon { color: var(--q-uncommon); } .q-rare { color: #3d9bff; } .q-epic { color: #b86dff; } .q-legend { color: var(--q-legend); }
 .band .faces svg { width: 38px; height: 38px; padding: 5px; margin-left: -6px; border-radius: 4px; background: radial-gradient(circle at 50% 35%, #3b2c18, #120d07 75%); box-shadow: 0 0 0 1px #000, 0 0 0 2px #3d3020; }
+/* Onglets de la fenêtre (Métiers, Membres, Raids), comme les onglets de l'addon. */
+.board-tabs { display: flex; gap: 6px; padding: 12px 18px 0; border-bottom: 1px solid var(--gold-lo); }
+.board-tabs button { min-height: 40px; padding: 0 16px; border-radius: 4px 4px 0 0; background: linear-gradient(180deg, #221b12, #120e09); box-shadow: 0 0 0 1px #000, inset 0 1px 0 rgba(255, 230, 170, 0.08); font-family: var(--font-display); font-weight: 700; font-size: 0.95rem; color: var(--muted); transition: color var(--t-hover) ease, filter var(--t-hover) ease; }
+.board-tabs button small { font-family: var(--font); font-weight: 500; font-size: 0.75rem; color: var(--q-uncommon); margin-left: 4px; }
+.board-tabs button[aria-selected="true"] { color: var(--ui-gold); background: linear-gradient(180deg, #3a2c14, #1c150b); box-shadow: 0 0 0 1px #000, 0 0 0 2px var(--gold-lo), inset 0 1px 0 rgba(255, 230, 170, 0.2); }
+@media (hover: hover) and (pointer: fine) { .board-tabs button:hover { filter: brightness(1.25); } }
+.board-body[hidden] { display: none !important; }
+.members { list-style: none; padding: 0; margin: 0; display: grid; gap: 2px; }
+.members li { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; grid-template-areas: "dot name profs" "dot class profs"; column-gap: 12px; align-items: center; padding: 8px 10px; border-radius: 3px; }
+.members li:nth-child(odd) { background: rgba(255, 255, 255, 0.03); }
+.m-on, .m-off { grid-area: dot; width: 8px; height: 8px; border-radius: 50%; }
+.m-on { background: var(--q-uncommon); box-shadow: 0 0 6px var(--q-uncommon); }
+.m-off { background: #4a4234; }
+.m-name { grid-area: name; font-weight: 700; font-size: 1.02rem; }
+.m-class { grid-area: class; color: var(--muted); font-size: 0.85rem; }
+.m-profs { grid-area: profs; display: flex; gap: 10px; }
+.m-prof { display: inline-flex; align-items: center; gap: 4px; font-size: 0.85rem; color: #fff; }
+.m-prof svg { width: 26px; height: 26px; padding: 3px; border-radius: 3px; background: radial-gradient(circle at 50% 35%, #3b2c18, #120d07 75%); box-shadow: 0 0 0 1px #000, 0 0 0 2px #3d3020; }
+.gear { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 6px; font-weight: 700; }
+.plans { list-style: none; padding: 0; margin: 14px 0 0; display: grid; gap: 12px; }
+.plans b { display: block; color: #fff; font-size: 1.05rem; }
+.plans span span { color: #d8cfb6; }
+.board-raids { grid-template-columns: minmax(0, 560px); justify-content: center; }
+.tooltip-cmd a { color: var(--gold-hi); }
 /* Objet : une infobulle d'objet épique (pages rejoindre et confidentialité). */
 .item-card.page-art { background: linear-gradient(180deg, rgba(14, 16, 38, 0.97), rgba(5, 6, 18, 0.97)); box-shadow: 0 0 0 1px #000, 0 0 0 2px #7a7c86, inset 0 0 0 1px rgba(255, 255, 255, 0.07); border-radius: 5px; padding: 18px 20px; display: grid; gap: 6px; font-size: 1rem; }
 .item-head { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
@@ -416,6 +440,10 @@ html[lang="fr"] [lang="en"]:not(html), html[lang="en"] [lang="fr"]:not(html) { d
 }
 
 @media (max-width: 720px) {
+	.board-tabs { padding: 10px 10px 0; gap: 4px; }
+	.board-tabs button { flex: 1; padding: 0 6px; font-size: 0.82rem; }
+	.board-tabs button small { display: block; margin: 0; }
+	.members li { grid-template-columns: 10px minmax(0, 1fr); grid-template-areas: "dot name" "dot class" ". profs"; row-gap: 4px; }
 	.board { margin-top: 32px; }
 	.board-body { grid-template-columns: 1fr; padding: 14px; gap: 20px; }
 	.board-head small { display: none; }

@@ -83,6 +83,16 @@
 		document.addEventListener('gk:lang', fillSlots);
 	}
 
+	// ---- Fenêtre d'exemple : onglets Métiers / Membres / Raids ---------------------------------
+	const boardTabs = [...document.querySelectorAll('.board-tabs [role="tab"]')];
+	boardTabs.forEach((tab) => tab.addEventListener('click', () => {
+		boardTabs.forEach((t) => {
+			const on = t === tab;
+			t.setAttribute('aria-selected', String(on));
+			document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+		});
+	}));
+
 	// ---- Vitrine : seul le fragment centré est éclairé -------------------------------------------
 	const track = document.getElementById('track');
 	if (track) {
