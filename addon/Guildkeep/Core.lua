@@ -353,8 +353,13 @@ end)
 SLASH_GUILDKEEP1 = "/gkeep"
 SLASH_GUILDKEEP2 = "/gp"
 SlashCmdList.GUILDKEEP = function(msg)
-	if strtrim(msg or ""):lower() == "debug" and GP.DebugGuildTab then
-		GP.DebugGuildTab()
+	if strtrim(msg or ""):lower() == "debug" then
+		if GP.DebugGuildTab then
+			GP.DebugGuildTab()
+		end
+		if GP.DebugRecipeScan then
+			GP.DebugRecipeScan()
+		end
 		return
 	end
 	GP.ToggleMainFrame()

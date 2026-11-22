@@ -489,6 +489,9 @@ local function UpdateProfessionRow(row, entry)
 	row.recipesNone:SetShown(not hasRecipes)
 	if hasRecipes then
 		row.recipesButton:SetText(("Voir (%d)"):format(entry.recipeCount))
+	else
+		-- Jamais relevées (fenêtre du métier pas encore ouverte) ≠ métier sans recettes.
+		row.recipesNone:SetText(Paint(COLOR.muted, prof.recipes == nil and "à relever" or "aucune"))
 	end
 
 	if entry.matched then
