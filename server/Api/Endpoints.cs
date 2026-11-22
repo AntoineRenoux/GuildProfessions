@@ -22,13 +22,9 @@ public static class Endpoints
 	{
 		app.MapGet("/healthz", () => Results.Ok(new { status = "ok" }));
 
-		// Manifestes de version (écrits à côté des zips par scripts/package-companion.sh) :
-		// publics, ils ne contiennent que versions, URLs et empreintes. Une seule lignée :
-		// - guildkeep/manifest : lu par les compagnons Guildkeep ;
-		// - companion/manifest : le pont pour les installations d'avant le renommage
-		//   (exécutable sous l'ancien nom, sans entrée addon), qui passent à Guildkeep.
+		// Manifeste de version du compagnon (écrit à côté des zips par
+		// scripts/package-companion.sh) : public, il ne contient que versions, URLs et empreintes.
 		app.MapGet("/api/v1/companion/manifest", (IWebHostEnvironment env) => Manifest(env, "companion-manifest.json"));
-		app.MapGet("/api/v1/guildkeep/manifest", (IWebHostEnvironment env) => Manifest(env, "guildkeep-manifest.json"));
 
 		// Infos publiques du site : lien d'invitation du bot (identifiant d'application
 		// en config, sinon celui du bot connecté).

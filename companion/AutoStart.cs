@@ -11,9 +11,7 @@ namespace GuildProfessions.Companion;
 public static class AutoStart
 {
 	private const string RunKeyPath = @"Software\Microsoft\Windows\CurrentVersion\Run";
-	private const string ValueName = "Guildkeep";
-	// Entrée d'avant le renommage : retirée, sinon Windows lancerait le compagnon deux fois.
-	private const string LegacyValueName = "GuildProfessionsCompanion";
+	private const string ValueName = "GuildkeepCompanion";
 
 	public static void Sync(bool enabled)
 	{
@@ -27,10 +25,6 @@ public static class AutoStart
 			if (runKey is null)
 			{
 				return;
-			}
-			if (runKey.GetValue(LegacyValueName) is not null)
-			{
-				runKey.DeleteValue(LegacyValueName, throwOnMissingValue: false);
 			}
 			if (enabled && Environment.ProcessPath is { } exePath)
 			{

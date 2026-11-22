@@ -15,8 +15,6 @@ namespace GuildProfessions.Companion;
 public sealed partial class AddonInstaller(CompanionConfig config)
 {
 	public const string AddonFolder = "Guildkeep";
-	/// <summary>Ancien nom de l'addon : retiré à l'installation, sinon deux addons répondraient en jeu.</summary>
-	public const string LegacyAddonFolder = "GuildProfessions";
 	private const string DataFile = "Data.lua";
 
 	private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
@@ -85,48 +83,6 @@ public sealed partial class AddonInstaller(CompanionConfig config)
 		return written.Count;
 	}
 
-	public static bool HasLegacyAddon(string wowPath) =>
-		Directory.Exists(Path.Combine(wowPath, "Interface", "AddOns", LegacyAddonFolder));
-
-	/// <summary>
-	/// Reprend les données de l'ancien addon : chaque SavedVariables GuildProfessions.lua
-	/// devient Guildkeep.lua (variable renommée), s'il n'existe pas encore. L'ancien
-	/// fichier est laissé en place.
-	/// </summary>
-	public static int MigrateSavedVariables(string wowPath)
-	{
-		var accounts = Path.Combine(wowPath, "WTF", "Account");
-		if (!Directory.Exists(accounts))
-		{
-			return 0;
-		}
-		var migrated = 0;
-		foreach (var account in Directory.EnumerateDirectories(accounts))
-		{
-			var legacy = Path.Combine(account, "SavedVariables", "GuildProfessions.lua");
-			var current = Path.Combine(account, "SavedVariables", "Guildkeep.lua");
-			if (File.Exists(legacy) && !File.Exists(current))
-			{
-				File.WriteAllText(current, File.ReadAllText(legacy).Replace("GuildProfessionsDB", "GuildkeepDB"));
-				migrated++;
-			}
-		}
-		return migrated;
-	}
-
-	/// <summary>Retire l'addon sous son ancien nom (GuildProfessions), remplacé par Guildkeep.</summary>
-	public static bool RemoveLegacyAddon(string addOnsDirectory)
-	{
-		var legacy = Path.Combine(addOnsDirectory, LegacyAddonFolder);
-		if (!Directory.Exists(legacy))
-		{
-			return false;
-		}
-		Directory.Delete(legacy, recursive: true);
-		SyncService.Log($"Ancien addon {LegacyAddonFolder} retiré : il est remplacé par {AddonFolder}.");
-		return true;
-	}
-
 	public async Task EnsureLatestAsync(CancellationToken ct)
 	{
 		try
@@ -137,7 +93,7 @@ public sealed partial class AddonInstaller(CompanionConfig config)
 			}
 			using var http = new HttpClient { Timeout = TimeSpan.FromMinutes(2) };
 			var manifest = await http.GetFromJsonAsync<CompanionManifest>(
-				$"{config.ApiBaseUrl.TrimEnd('/')}/api/v1/guildkeep/manifest", JsonOptions, ct);
+				$"{config.ApiBaseUrl.TrimEnd('/')}/api/v1/companion/manifest", JsonOptions, ct);
 			var addon = manifest?.Addon;
 			if (addon is null)
 			{
@@ -161,11 +117,6 @@ public sealed partial class AddonInstaller(CompanionConfig config)
 				return;
 			}
 			var count = InstallFromZip(zipBytes, AddOnsDirectory);
-			if (MigrateSavedVariables(config.WowPath) is > 0 and var accounts)
-			{
-				SyncService.Log($"Données de l'ancien addon reprises ({accounts} compte(s)).");
-			}
-			RemoveLegacyAddon(AddOnsDirectory);
 			SyncService.Log($"Addon v{addon.Version} installé ({count} fichiers). En jeu : /reload, ou relance WoW s'il était fermé.");
 		}
 		catch (Exception exception) when (exception is not OperationCanceledException)

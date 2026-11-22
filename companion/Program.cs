@@ -9,7 +9,7 @@ if (args.Contains("--background"))
 	AutoStart.HideConsoleWindow();
 }
 
-SyncService.Log($"Guildkeep v{SelfUpdater.CurrentVersion.ToString(3)} : le pont entre ta guilde et l'addon.");
+SyncService.Log($"Guildkeep Companion v{SelfUpdater.CurrentVersion.ToString(3)} : le pont entre ta guilde et l'addon.");
 SelfUpdater.CleanupPreviousVersion();
 
 var config = CompanionConfig.LoadOrCreate(configPath);
@@ -70,9 +70,7 @@ AutoStart.Sync(config.AutoStart);
 // Pack tout-en-un : l'addon est installé (ou mis à jour) avant la première
 // synchro, qui écrira ensuite son Data.lua.
 AddonInstaller? addonInstaller = null;
-// Une installation d'avant le renommage (addon GuildProfessions présent) passe à
-// Guildkeep même si son config.json ne demandait pas l'installation de l'addon.
-if (config.InstallAddon || AddonInstaller.HasLegacyAddon(config.WowPath))
+if (config.InstallAddon)
 {
 	addonInstaller = new AddonInstaller(config);
 	await addonInstaller.EnsureLatestAsync(CancellationToken.None);

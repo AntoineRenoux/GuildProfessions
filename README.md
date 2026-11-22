@@ -15,7 +15,7 @@ Un addon WoW n'a accès ni au réseau ni au disque : le compagnon fait le pont, 
 
 1. Un administrateur invite le bot sur son serveur Discord et lance **`/gkeep-setup`** (réservé au droit « Gérer le serveur ») : nom exact de la guilde en jeu, deux options (renommage des pseudos, salon des annonces), récapitulatif, création.
 2. Il partage le **lien d'installation** donné par le bot : chaque joueur y télécharge le pack de la guilde, déjà configuré (`/api/v1/pack/{code}/{système}`).
-3. Le joueur lance `Guildkeep` : addon installé, synchronisation automatique. Personnages dans plusieurs guildes : il lance le pack de chacune, un seul compagnon les synchronise toutes.
+3. Le joueur lance `GuildkeepCompanion` : addon installé, synchronisation automatique. Personnages dans plusieurs guildes : il lance le pack de chacune, un seul compagnon les synchronise toutes.
 4. Sur Discord, tout est sous **`/gkeep`** (`/gkeep help`), en français ou en anglais selon la langue de chacun.
 
 ## Isolation des guildes
@@ -47,6 +47,6 @@ Création du bot (une fois) : [discord.com/developers/applications](https://disc
 scripts/package-companion.sh --deploy
 ```
 
-Commiter, puis lancer cette commande. La version vaut `1.0.<nombre de commits>`. Le script publie l'addon, l'exécutable du compagnon (mise à jour automatique) et les packs modèles, que le serveur personnalise pour chaque guilde. Les compagnons installés se mettent à jour au démarrage ou sous 6 h, addon compris.
+Commiter, puis lancer cette commande. La version vaut `1.0.<nombre de commits>`. Le script publie l'addon, l'exécutable du compagnon `GuildkeepCompanion` (mise à jour automatique) et les packs modèles, que le serveur personnalise pour chaque guilde. Les compagnons installés se mettent à jour au démarrage ou sous 6 h, addon compris.
 
 Mac : le compagnon n'est pas notarisé, macOS demande une autorisation au premier lancement (expliquée dans le pack et sur le site).

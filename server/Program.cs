@@ -52,8 +52,6 @@ using (var scope = app.Services.CreateScope())
 {
 	var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 	db.Database.Migrate();
-	await LegacyGuildBootstrap.RunAsync(db, app.Configuration,
-		scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("LegacyGuildBootstrap"));
 }
 
 // Landing page (wwwroot) + téléchargements (volume /app/wwwroot/downloads sur le VPS).

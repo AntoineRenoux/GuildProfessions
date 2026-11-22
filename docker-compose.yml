@@ -10,10 +10,6 @@ services:
       Discord__GuildIds: ${DISCORD_GUILD_IDS:-}
       Api__PublicUrl: ${API_PUBLIC_URL:-}
       Site__BaseUrl: ${SITE_BASE_URL:-}
-      # Reprise de la guilde d'avant Guildkeep (facultatif).
-      Api__GuildToken: ${API_GUILD_TOKEN:-}
-      Guild__Name: ${GUILD_NAME:-}
-      Guild__DiscordServerId: ${GUILD_DISCORD_SERVER_ID:-}
     volumes:
       - ./data:/data
       # Zips addon + compagnon servis par la landing page (/downloads/...).
