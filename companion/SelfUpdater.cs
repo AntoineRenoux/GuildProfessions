@@ -16,7 +16,7 @@ public sealed record AddonAsset(string Version, string Url, string Sha256);
 
 /// <summary>
 /// Mise à jour automatique : compare la version embarquée au manifeste publié
-/// par le serveur (GET /api/v1/companion/manifest), télécharge le zip de la
+/// par le serveur (GET /api/v1/guildkeep/manifest), télécharge le zip de la
 /// plateforme, vérifie son SHA-256, remplace l'exécutable puis redémarre.
 /// config.json et l'état de synchro ne sont jamais touchés.
 /// </summary>
@@ -93,7 +93,7 @@ public sealed class SelfUpdater(CompanionConfig config, string baseDirectory)
 		try
 		{
 			using var http = new HttpClient { Timeout = TimeSpan.FromMinutes(5) };
-			var manifestUrl = $"{config.ApiBaseUrl.TrimEnd('/')}/api/v1/companion/manifest";
+			var manifestUrl = $"{config.ApiBaseUrl.TrimEnd('/')}/api/v1/guildkeep/manifest";
 			var manifest = await http.GetFromJsonAsync<CompanionManifest>(manifestUrl, JsonOptions, ct);
 			if (manifest is null || !IsNewer(manifest.Version, CurrentVersion))
 			{

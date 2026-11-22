@@ -108,7 +108,7 @@ public sealed partial class AddonInstaller(CompanionConfig config)
 			}
 			using var http = new HttpClient { Timeout = TimeSpan.FromMinutes(2) };
 			var manifest = await http.GetFromJsonAsync<CompanionManifest>(
-				$"{config.ApiBaseUrl.TrimEnd('/')}/api/v1/companion/manifest", JsonOptions, ct);
+				$"{config.ApiBaseUrl.TrimEnd('/')}/api/v1/guildkeep/manifest", JsonOptions, ct);
 			var addon = manifest?.Addon;
 			if (addon is null)
 			{

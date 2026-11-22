@@ -6,7 +6,7 @@
 # - Guildkeep-AllInOne-{système}.zip : le pack modèle, sans guilde. Le serveur
 #   le personnalise à chaque téléchargement (/api/v1/pack/{code}/{système}) en
 #   y mettant le config.json de la guilde : aucun token n'est empaqueté ici.
-# - companion-manifest.json : versions et SHA-256, consulté par les compagnons
+# - guildkeep-manifest.json : versions et SHA-256, consulté par les compagnons
 #   installés pour se mettre à jour seuls (exécutable et addon).
 #
 # Usage : scripts/package-companion.sh [--deploy]
@@ -141,7 +141,7 @@ EOF
 	echo "  → $OUT/$TEMPLATE (modèle, personnalisé par le serveur)"
 done
 
-cat > "$OUT/companion-manifest.json" <<EOF
+cat > "$OUT/guildkeep-manifest.json" <<EOF
 {
 	"version": "$VERSION",
 	"publishedUtc": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
@@ -150,15 +150,17 @@ cat > "$OUT/companion-manifest.json" <<EOF
 	"addon": { "version": "$VERSION", "url": "$SITE_URL/downloads/Guildkeep-addon.zip", "sha256": "$ADDON_SHA" }
 }
 EOF
-echo "  → $OUT/companion-manifest.json (v$VERSION)"
+echo "  → $OUT/guildkeep-manifest.json (v$VERSION)"
 
 if $DEPLOY; then
 	echo "— envoi sur le VPS..."
 	ssh "$VPS" "mkdir -p /opt/guildprofessions/downloads"
+	# Manifeste propre à Guildkeep : companion-manifest.json reste celui de
+	# l'ancienne version FORMER HOPE (1.0.38), qu'il ne faut jamais écraser.
 	# Zips d'abord, manifeste en dernier : un compagnon ne voit jamais une
 	# version annoncée dont le zip n'est pas encore en ligne.
 	scp -q "$OUT"/*.zip "$VPS:/opt/guildprofessions/downloads/"
-	scp -q "$OUT/companion-manifest.json" "$VPS:/opt/guildprofessions/downloads/"
+	scp -q "$OUT/guildkeep-manifest.json" "$VPS:/opt/guildprofessions/downloads/"
 	echo "Publié : les compagnons installés passeront en v$VERSION au démarrage ou sous 6 h."
 else
 	echo "Terminé (non publié). Relance avec --deploy pour mettre à jour les compagnons."

@@ -9,6 +9,12 @@ public static class Endpoints
 	// Envoyer des messages, intégrer des liens, joindre des fichiers, gérer les pseudos.
 	private const long InvitePermissions = 134268928;
 
+	private static IResult Manifest(IWebHostEnvironment env, string file)
+	{
+		var path = Path.Combine(env.WebRootPath ?? "wwwroot", "downloads", file);
+		return File.Exists(path) ? Results.File(path, "application/json") : Results.NotFound();
+	}
+
 	private static IResult JoinPage(IWebHostEnvironment env) =>
 		Results.File(Path.Combine(env.WebRootPath ?? "wwwroot", "rejoindre.html"), "text/html; charset=utf-8");
 
@@ -16,15 +22,13 @@ public static class Endpoints
 	{
 		app.MapGet("/healthz", () => Results.Ok(new { status = "ok" }));
 
-		// Manifeste de version du compagnon (écrit par scripts/package-companion.sh
-		// à côté des zips) : public, il ne contient que versions, URLs et empreintes.
-		app.MapGet("/api/v1/companion/manifest", (IWebHostEnvironment env) =>
-		{
-			var path = Path.Combine(env.WebRootPath ?? "wwwroot", "downloads", "companion-manifest.json");
-			return File.Exists(path)
-				? Results.File(path, "application/json")
-				: Results.NotFound();
-		});
+		// Manifestes de version (écrits à côté des zips) : publics, ils ne contiennent
+		// que versions, URLs et empreintes. Deux lignées séparées :
+		// - companion/manifest : l'ancienne version GuildProfessions de FORMER HOPE,
+		//   figée en 1.0.38 (ses compagnons ne doivent jamais recevoir Guildkeep) ;
+		// - guildkeep/manifest : Guildkeep, publié par scripts/package-companion.sh.
+		app.MapGet("/api/v1/companion/manifest", (IWebHostEnvironment env) => Manifest(env, "companion-manifest.json"));
+		app.MapGet("/api/v1/guildkeep/manifest", (IWebHostEnvironment env) => Manifest(env, "guildkeep-manifest.json"));
 
 		// Infos publiques du site : lien d'invitation du bot (identifiant d'application
 		// en config, sinon celui du bot connecté).
