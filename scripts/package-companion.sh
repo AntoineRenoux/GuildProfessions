@@ -43,7 +43,9 @@ mkdir -p "$OUT"
 # version inscrite dans le .toc : c'est elle que le pack tout-en-un compare.
 STAGE=$(mktemp -d)
 cp -r addon/GuildProfessions "$STAGE/"
-sed -i "s/^## Version:.*/## Version: $VERSION/" "$STAGE/GuildProfessions/GuildProfessions.toc"
+# -i.bak : syntaxe acceptée par le sed GNU (Linux) comme par celui de macOS.
+sed -i.bak "s/^## Version:.*/## Version: $VERSION/" "$STAGE/GuildProfessions/GuildProfessions.toc"
+rm -f "$STAGE/GuildProfessions/GuildProfessions.toc.bak"
 (cd "$STAGE" && zip -qr "$OLDPWD/$OUT/GuildProfessions-addon.zip" GuildProfessions)
 rm -rf "$STAGE"
 ADDON_SHA=$(sha256sum "$OUT/GuildProfessions-addon.zip" | cut -d' ' -f1)
