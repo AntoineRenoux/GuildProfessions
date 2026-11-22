@@ -43,12 +43,13 @@ local function ScanProfessions()
 	local prof1, prof2, arch, fishing, cooking, firstAid = GetProfessions()
 	local seen = {}
 	for _, index in pairs({ prof1, prof2, arch, fishing, cooking, firstAid }) do
-		local name, _, level, max = GetProfessionInfo(index)
+		local name, icon, level, max = GetProfessionInfo(index)
 		if name then
 			seen[name] = true
 			local prof = char.professions[name] or {}
 			prof.level = level
 			prof.max = max
+			prof.icon = icon
 			prof.scannedAt = Now()
 			char.professions[name] = prof
 		end

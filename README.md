@@ -6,7 +6,7 @@ Trois composants :
 
 | Composant | Rôle |
 |---|---|
-| [`addon/GuildProfessions/`](addon/GuildProfessions/) | Addon Lua (TOC 16001) : fenêtre « Guilde+ » à deux onglets — Métiers (filtres niveau/patron, commandes de craft) et Membres (rendu 3D de l'équipement) |
+| [`addon/GuildProfessions/`](addon/GuildProfessions/) | Addon Lua (TOC 16001) : fenêtre native à trois onglets — Métiers (filtres niveau/patron, tri par colonne), Membres (feuille de personnage + rendu 3D) et Commandes — ouverte par `/gp` ou par un onglet ajouté à la fenêtre de guilde |
 | [`server/`](server/) | Bot Discord (Discord.Net) + API HTTP (ASP.NET minimal) + SQLite, déployé sur VPS |
 | [`companion/`](companion/) | App compagnon .NET sur le PC du joueur : écrit `Data.lua` (serveur → jeu) et uploade les `SavedVariables` (jeu → serveur) |
 

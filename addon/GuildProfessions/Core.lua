@@ -85,7 +85,7 @@ local function LocalProfessionsToList(map)
 	local list = {}
 	for name, p in pairs(map or {}) do
 		list[#list + 1] = {
-			name = name, level = p.level, max = p.max, note = p.note,
+			name = name, level = p.level, max = p.max, note = p.note, icon = p.icon,
 			recipes = p.recipes, source = "addon", scannedAt = p.scannedAt,
 		}
 	end

@@ -3,6 +3,7 @@
 ## Notes: Annuaire des métiers de la guilde — synchronisé via Discord et l'app compagnon.
 ## Author: Antoine
 ## Version: 0.1.0
+## IconTexture: Interface\Icons\INV_Misc_Gear_01
 ## SavedVariables: GuildProfessionsDB
 
 Data.lua
@@ -11,3 +12,4 @@ Serialize.lua
 Scanner.lua
 Comm.lua
 UI.lua
+GuildTab.lua
