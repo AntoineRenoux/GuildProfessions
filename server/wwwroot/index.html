@@ -682,7 +682,14 @@
 			<div class="panel" id="panel-mac" role="tabpanel" aria-labelledby="tab-mac">
 				<div class="aio-note">
 					<p class="mode-title">Pack tout-en-un</p>
-					<p>Dézippe <code>GuildProfessions-AllInOne-osx-arm64.zip</code> (ou <code>osx-x64</code> sur un Mac Intel), ouvre le Terminal dans le dossier puis lance <code>chmod +x GuildProfessionsCompanion &amp;&amp; ./GuildProfessionsCompanion</code>. Il installe l'addon dans <code>/Applications/World of Warcraft</code> et se met à jour tout seul. Laisse-le tourner pendant que tu joues ; si macOS bloque l'ouverture, voir l'étape 3.</p>
+					<p>Dézippe <code>GuildProfessions-AllInOne-osx-arm64.zip</code> (ou <code>osx-x64</code> sur un Mac Intel). Le compagnon n'est pas notarisé par Apple : <strong>macOS refuse de l'ouvrir la première fois</strong>. Autorise-le une seule fois, au choix :</p>
+					<ul>
+						<li>lance-le, laisse le refus s'afficher, puis <strong>Réglages Système → Confidentialité et sécurité</strong>, tout en bas : <strong>Ouvrir quand même</strong> ;</li>
+						<li>ou, dans le Terminal : <code>xattr -dr com.apple.quarantine ~/Downloads/GuildProfessions</code> (adapte le chemin si tu as dézippé ailleurs).</li>
+					</ul>
+					<p>Puis, dans le Terminal :</p>
+					<pre><code>cd ~/Downloads/GuildProfessions && ./GuildProfessionsCompanion</code></pre>
+					<p>Il installe l'addon dans <code>/Applications/World of Warcraft</code> et se met à jour tout seul. Sur Mac il ne démarre pas avec la session : laisse-le tourner pendant que tu joues.</p>
 				</div>
 				<p class="mode-title">À la carte</p>
 				<ol class="steps">
@@ -698,7 +705,9 @@
 					</li>
 					<li>
 						<h4>macOS bloque l'application ?</h4>
-						<p>Gatekeeper méfie-toi des apps non signées : fais un <strong>clic droit → Ouvrir</strong> sur l'exécutable (ou Réglages Système → Confidentialité et sécurité → <strong>Ouvrir quand même</strong>). Une seule fois.</p>
+						<p>Normal : le compagnon n'est pas notarisé par Apple. Après un premier essai refusé, va dans Réglages Système → Confidentialité et sécurité et clique sur <strong>Ouvrir quand même</strong>, tout en bas. Ou retire le marqueur de téléchargement dans le Terminal :</p>
+						<pre><code>xattr -dr com.apple.quarantine ~/Downloads/osx-arm64</code></pre>
+						<p>(le zip se dézippe en <code>osx-arm64</code>, ou <code>osx-x64</code> sur Intel ; adapte le chemin s'il est ailleurs). Une seule fois : les mises à jour automatiques ne redemandent rien.</p>
 					</li>
 					<li>
 						<h4>Scanne tes recettes</h4>

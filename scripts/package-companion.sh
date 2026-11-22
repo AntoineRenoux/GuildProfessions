@@ -100,9 +100,20 @@ EOF
 	else
 		STARTUP="Laisse-le tourner pendant que tu joues (lancement : chmod +x GuildProfessionsCompanion && ./GuildProfessionsCompanion)."
 	fi
+	# Mac : l'exécutable n'est pas notarisé, Gatekeeper le bloque au premier lancement.
+	GATEKEEPER=""
+	case "$RID" in osx-*) GATEKEEPER="
+Mac — la première fois, macOS refuse de l'ouvrir (app non notarisée par Apple).
+Autorise-le une seule fois, au choix :
+  - lance-le, puis Réglages Système → Confidentialité et sécurité,
+    tout en bas : « Ouvrir quand même » ;
+  - ou dans le Terminal : xattr -dr com.apple.quarantine ~/Downloads/GuildProfessions
+    (adapte le chemin si tu as dézippé ailleurs).
+Lancement ensuite : cd ~/Downloads/GuildProfessions && ./GuildProfessionsCompanion
+" ;; esac
 	cat > "$BUNDLE_DIR/LISEZMOI.txt" <<EOF
 GuildProfessions — pack tout-en-un (FORMER HOPE)
-
+$GATEKEEPER
 1. Lance GuildProfessionsCompanion.
 2. C'est tout : il trouve World of Warcraft, installe l'addon GuildProfessions,
    synchronise tes métiers avec la guilde, et tient l'addon et lui-même à jour.
