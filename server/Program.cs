@@ -34,16 +34,7 @@ builder.Services.AddSingleton(new DiscordSocketClient(new DiscordSocketConfig
 	LogLevel = Discord.LogSeverity.Debug,
 }));
 builder.Services.AddSingleton(provider =>
-	new InteractionService(provider.GetRequiredService<DiscordSocketClient>(), new InteractionServiceConfig
-	{
-		LogLevel = Discord.LogSeverity.Debug,
-		// Exécution inline : les exceptions remontent dans notre await au
-		// lieu d'être avalées par le fire-and-forget interne de RunMode.Async.
-		DefaultRunMode = RunMode.Sync,
-		ThrowOnError = true,
-		// Noms et descriptions des commandes en français (anglais par défaut, dans le code).
-		LocalizationManager = new JsonLocalizationManager(Path.Combine(AppContext.BaseDirectory, "Localization"), "commands"),
-	}));
+	new InteractionService(provider.GetRequiredService<DiscordSocketClient>(), GuildProfessions.Server.Discord.BotInteractionConfig.Create()));
 builder.Services.AddHostedService<DiscordBotService>();
 
 var app = builder.Build();
