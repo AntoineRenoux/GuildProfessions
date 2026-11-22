@@ -16,7 +16,7 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
-SITE_URL="${GP_SITE_URL:-https://gp.warpvault.com}"
+SITE_URL="${GP_SITE_URL:-https://guildkeep.warpvault.com}"
 VPS="${GP_VPS:-root@195.200.15.142}"
 DEPLOY=false
 [ "${1:-}" = "--deploy" ] && DEPLOY=true

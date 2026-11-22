@@ -1,15 +1,15 @@
-# Copie de référence de /opt/infra/proxy/sites/guildprofessions.caddy sur le VPS
-# (Caddy partagé proxy-caddy-1, projet /opt/infra/proxy, importé par son Caddyfile ;
-# même fichier dans le dépôt Orga/infra, proxy/sites/).
-#
-# Appliquer une modification :
-#   scp deploy/guildprofessions.caddy root@195.200.15.142:/opt/infra/proxy/sites/
-#   ssh root@195.200.15.142 'docker exec proxy-caddy-1 caddy validate --config /etc/caddy/Caddyfile \
-#     && docker exec proxy-caddy-1 caddy reload --config /etc/caddy/Caddyfile'
-#
-# Guildkeep : API, bot, packs et nouveau site (en attendant guildkeep.warpvault.com).
-gp.warpvault.com {
+# Guildkeep : site, API, bot et packs.
+guildkeep.warpvault.com {
+	# L'ancienne page FORMER HOPE n'est servie que sur son propre domaine.
+	@formerhope path /formerhope /formerhope/*
+	respond @formerhope 404
 	reverse_proxy guildprofessions-server-1:8080
+}
+
+# Ancienne adresse de Guildkeep : redirigée vers la nouvelle (308 : garde la
+# méthode, les envois POST du compagnon suivent).
+gp.warpvault.com {
+	redir https://guildkeep.warpvault.com{uri} 308
 }
 
 # Ancienne page FORMER HOPE (version GuildProfessions 1.0.38), servie telle quelle

@@ -4,7 +4,7 @@ namespace GuildProfessions.Companion;
 
 public sealed class CompanionConfig
 {
-	public string ApiBaseUrl { get; set; } = "https://gp.warpvault.com";
+	public string ApiBaseUrl { get; set; } = "https://guildkeep.warpvault.com";
 	/// <summary>Guilde du pack (nom en jeu + token) : ajoutée à la liste des guildes du poste au lancement.</summary>
 	public string GuildName { get; set; } = "";
 	public string GuildToken { get; set; } = "";

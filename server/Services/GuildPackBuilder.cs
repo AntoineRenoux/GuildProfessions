@@ -22,7 +22,7 @@ public sealed class GuildPackBuilder(IWebHostEnvironment env, IConfiguration con
 
 	public const string TemplatePrefix = "Guildkeep-AllInOne-";
 
-	public string ApiBaseUrl => (config["Api:PublicUrl"] is { Length: > 0 } url ? url : "https://gp.warpvault.com").TrimEnd('/');
+	public string ApiBaseUrl => (config["Api:PublicUrl"] is { Length: > 0 } url ? url : "https://guildkeep.warpvault.com").TrimEnd('/');
 
 	public string? TemplatePath(string platform)
 	{
