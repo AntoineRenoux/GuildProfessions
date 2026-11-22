@@ -281,6 +281,10 @@ end)
 
 SLASH_GUILDPROFESSIONS1 = "/gp"
 SLASH_GUILDPROFESSIONS2 = "/guildprofessions"
-SlashCmdList.GUILDPROFESSIONS = function()
+SlashCmdList.GUILDPROFESSIONS = function(msg)
+	if strtrim(msg or ""):lower() == "debug" and GP.DebugGuildTab then
+		GP.DebugGuildTab()
+		return
+	end
 	GP.ToggleMainFrame()
 end
