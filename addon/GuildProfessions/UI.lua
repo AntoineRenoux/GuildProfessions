@@ -732,7 +732,8 @@ local function SetupRecipeRow(row)
 	row.orderButton:SetPoint("RIGHT", -4, 0)
 	row.orderButton:SetText("Commander")
 	row.orderButton:SetScript("OnClick", function(self)
-		GP.OpenOrderDialog(recipesDialog.crafterName, self:GetParent().data.name, self:GetParent().data.icon)
+		local data = self:GetParent().data
+		GP.OpenOrderDialog(recipesDialog.crafterName, data.name, data.icon, data.id)
 	end)
 	row.text = Label(row, nil, "GameFontHighlight")
 	row.text:SetPoint("LEFT", row.icon, "RIGHT", 6, 0)
@@ -841,53 +842,325 @@ function GP.OpenRecipesDialog(char, prof)
 	dialog:Show()
 end
 
--- Dialogue « Commander » ------------------------------------------------------------------
+-- Dialogue « Commander » + composants à fournir -------------------------------------------
+--
+-- Quand A commande à B, A voit ce qu'il doit envoyer : les composants directs
+-- de la recette, multipliés par la quantité, avec ce qu'il a déjà dans ses
+-- sacs. Un composant lui-même fabricable dans la guilde porte un [+] : le
+-- déplier montre ses propres composants (et qui sait le fabriquer). Replié
+-- par défaut : la liste reste celle de « quoi envoyer ».
 
 local orderDialog
+local schematicCache = {}
+local producerIndex = {}
+local expandedPaths = {}
+local MAX_TREE_DEPTH = 4
+local TREE_ROW_HEIGHT = 22
+local TREE_INDENT = 16
+
+-- Composants obligatoires d'une recette (API Mainline, valable pour une
+-- recette que le joueur ne connaît pas). nil si le client ne la décrit pas.
+local function GetSchematic(recipeID)
+	local cached = schematicCache[recipeID]
+	if cached ~= nil then
+		return cached or nil
+	end
+	local result = false
+	if C_TradeSkillUI and C_TradeSkillUI.GetRecipeSchematic then
+		local ok, schematic = pcall(C_TradeSkillUI.GetRecipeSchematic, recipeID, false)
+		if ok and schematic then
+			local reagents = {}
+			for _, slot in ipairs(schematic.reagentSlotSchematics or {}) do
+				local first = slot.reagents and slot.reagents[1]
+				if slot.required ~= false and first and first.itemID then
+					reagents[#reagents + 1] = { itemID = first.itemID, quantity = slot.quantityRequired or 1 }
+				end
+			end
+			result = {
+				outputItemID = schematic.outputItemID,
+				yield = math.max(1, schematic.quantityMin or 1),
+				reagents = reagents,
+			}
+		end
+	end
+	schematicCache[recipeID] = result
+	return result or nil
+end
+
+-- Objet → recette de la guilde qui le produit, et qui sait la faire.
+local function BuildProducerIndex()
+	wipe(producerIndex)
+	for _, char in ipairs(GP.GetRoster()) do
+		for _, prof in ipairs(char.professions or {}) do
+			for _, recipeID in ipairs(prof.recipes or {}) do
+				local schematic = GetSchematic(recipeID)
+				local itemID = schematic and schematic.outputItemID
+				if itemID then
+					local entry = producerIndex[itemID]
+					if not entry then
+						entry = { recipeID = recipeID, crafters = {}, seen = {} }
+						producerIndex[itemID] = entry
+					end
+					if not entry.seen[char.name] then
+						entry.seen[char.name] = true
+						entry.crafters[#entry.crafters + 1] = char.name
+					end
+				end
+			end
+		end
+	end
+end
+
+local function ItemCount(itemID)
+	if C_Item and C_Item.GetItemCount then
+		local ok, count = pcall(C_Item.GetItemCount, itemID, true)
+		if ok then
+			return count or 0
+		end
+	end
+	return GetItemCount and GetItemCount(itemID, true) or 0
+end
+
+local RefreshOrderTree
+
+-- Nom et icône ; un objet pas encore en cache rafraîchit l'arbre à son arrivée.
+local function ItemNameAndIcon(itemID)
+	local name = C_Item and C_Item.GetItemNameByID and C_Item.GetItemNameByID(itemID)
+	local icon = C_Item and C_Item.GetItemIconByID and C_Item.GetItemIconByID(itemID)
+	if not name and Item and Item.CreateFromItemID then
+		Item:CreateFromItemID(itemID):ContinueOnItemLoad(function()
+			if orderDialog and orderDialog:IsShown() and not orderDialog.refreshQueued then
+				orderDialog.refreshQueued = true
+				C_Timer.After(0.1, function()
+					orderDialog.refreshQueued = false
+					RefreshOrderTree()
+				end)
+			end
+		end)
+	end
+	return name or "Chargement...", icon or "Interface\\Icons\\INV_Misc_QuestionMark"
+end
+
+-- Aplatit l'arbre en lignes visibles (seuls les nœuds dépliés descendent).
+local function AddTreeRows(out, itemID, quantity, depth, path, ancestry)
+	local producer = producerIndex[itemID]
+	if depth >= MAX_TREE_DEPTH or ancestry[itemID] then
+		producer = nil -- garde-fou : profondeur et recettes circulaires
+	end
+	local node = { itemID = itemID, quantity = quantity, depth = depth, path = path, producer = producer }
+	out[#out + 1] = node
+	if producer and expandedPaths[path] then
+		local schematic = GetSchematic(producer.recipeID)
+		if schematic then
+			local crafts = math.ceil(quantity / schematic.yield)
+			ancestry[itemID] = true
+			for _, reagent in ipairs(schematic.reagents) do
+				AddTreeRows(out, reagent.itemID, reagent.quantity * crafts, depth + 1, path .. ">" .. reagent.itemID, ancestry)
+			end
+			ancestry[itemID] = nil
+		end
+	end
+end
+
+local function TreeRowTooltip(row)
+	local node = row.node
+	GameTooltip:SetOwner(row, "ANCHOR_RIGHT")
+	if not pcall(GameTooltip.SetItemByID, GameTooltip, node.itemID) then
+		GameTooltip:SetText(row.name:GetText())
+	end
+	GameTooltip:AddLine(" ")
+	if node.producer then
+		GameTooltip:AddLine("Fabricable dans la guilde par : " .. table.concat(node.producer.crafters, ", "), unpack(COLOR.positive))
+		GameTooltip:AddLine(expandedPaths[node.path] and "Clic : masquer ses composants" or "Clic : voir ses composants", unpack(COLOR.gold))
+	end
+	GameTooltip:AddLine("Maj+clic : lien dans le chat", unpack(COLOR.muted))
+	GameTooltip:Show()
+end
+
+local function SetupTreeRow(row)
+	AddRowBackground(row)
+	row:RegisterForClicks("LeftButtonUp")
+
+	row.toggle = row:CreateTexture(nil, "ARTWORK")
+	row.toggle:SetSize(14, 14)
+
+	row.icon = row:CreateTexture(nil, "ARTWORK")
+	row.icon:SetSize(18, 18)
+	row.icon:SetPoint("LEFT", row.toggle, "RIGHT", 4, 0)
+	row.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+
+	row.have = Label(row, nil, "GameFontHighlightSmall")
+	row.have:SetPoint("RIGHT", -6, 0)
+	row.have:SetWidth(70)
+	row.have:SetJustifyH("RIGHT")
+
+	row.need = Label(row, nil, "GameFontHighlight")
+	row.need:SetPoint("RIGHT", row.have, "LEFT", -6, 0)
+	row.need:SetWidth(56)
+	row.need:SetJustifyH("RIGHT")
+
+	row.name = Label(row, nil, "GameFontHighlight")
+	row.name:SetPoint("LEFT", row.icon, "RIGHT", 6, 0)
+	row.name:SetPoint("RIGHT", row.need, "LEFT", -6, 0)
+	row.name:SetWordWrap(false)
+
+	row:SetScript("OnEnter", TreeRowTooltip)
+	row:SetScript("OnLeave", GameTooltip_Hide)
+	row:SetScript("OnClick", function(self)
+		local node = self.node
+		if IsModifiedClick("CHATLINK") then
+			local _, link = (C_Item and C_Item.GetItemInfo or GetItemInfo)(node.itemID)
+			if link then
+				ChatEdit_InsertLink(link)
+			end
+			return
+		end
+		if node.producer then
+			expandedPaths[node.path] = not expandedPaths[node.path] or nil
+			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+			RefreshOrderTree()
+			if self:IsMouseOver() then
+				TreeRowTooltip(self)
+			end
+		end
+	end)
+end
+
+local function UpdateTreeRow(row, node)
+	row.node = node
+	row.stripe:SetShown(node.index % 2 == 0)
+	row.toggle:ClearAllPoints()
+	row.toggle:SetPoint("LEFT", 6 + node.depth * TREE_INDENT, 0)
+	if node.producer then
+		row.toggle:SetTexture(expandedPaths[node.path] and "Interface\\Buttons\\UI-MinusButton-Up" or "Interface\\Buttons\\UI-PlusButton-Up")
+		row.toggle:SetAlpha(1)
+	else
+		row.toggle:SetTexture(nil)
+	end
+	local name, icon = ItemNameAndIcon(node.itemID)
+	row.icon:SetTexture(icon)
+	row.name:SetText(name)
+	-- Sous-composants en retrait et plus discrets : ils ne sont pas à envoyer.
+	row.name:SetTextColor(unpack(node.depth == 0 and COLOR.text or { 0.8, 0.8, 0.8 }))
+	row.need:SetText("×" .. node.quantity)
+	local have = ItemCount(node.itemID)
+	if node.depth == 0 then
+		local enough = have >= node.quantity
+		local mark = enough and "|TInterface\\RaidFrame\\ReadyCheck-Ready:12|t " or "|TInterface\\RaidFrame\\ReadyCheck-NotReady:12|t "
+		row.have:SetText(mark .. Paint(enough and COLOR.positive or COLOR.negative, tostring(have)))
+	else
+		row.have:SetText(Paint(COLOR.muted, tostring(have)))
+	end
+end
+
+RefreshOrderTree = function()
+	local dialog = orderDialog
+	if not dialog or not dialog:IsShown() then
+		return
+	end
+	local schematic = dialog.recipeID and GetSchematic(dialog.recipeID)
+	local available = schematic ~= nil and #schematic.reagents > 0
+	dialog.treeArea:SetShown(available)
+	dialog.unavailable:SetShown(not available)
+	if not available then
+		dialog.yieldText:SetText("")
+		return
+	end
+
+	local qty = math.max(1, tonumber(dialog.qtyBox:GetText()) or 1)
+	local crafts = math.ceil(qty / schematic.yield)
+	dialog.yieldText:SetText(schematic.yield > 1
+		and Paint(COLOR.muted, ("%d par fabrication, soit %d fabrication%s"):format(schematic.yield, crafts, crafts > 1 and "s" or ""))
+		or "")
+
+	local rows = {}
+	local ancestry = { [schematic.outputItemID or 0] = true }
+	for _, reagent in ipairs(schematic.reagents) do
+		AddTreeRows(rows, reagent.itemID, reagent.quantity * crafts, 0, tostring(reagent.itemID), ancestry)
+	end
+	local missing, direct, craftable = 0, 0, false
+	for i, node in ipairs(rows) do
+		node.index = i
+		if node.depth == 0 then
+			direct = direct + 1
+			if ItemCount(node.itemID) < node.quantity then
+				missing = missing + 1
+			end
+			craftable = craftable or node.producer ~= nil
+		end
+	end
+	dialog.treeList:GPSetItems(rows)
+	dialog.legend:SetShown(craftable)
+
+	if missing == 0 then
+		dialog.summary:SetText(Paint(COLOR.positive, "Tu as tous les composants dans tes sacs ou ta banque."))
+	else
+		dialog.summary:SetText(Paint(COLOR.negative, ("Il te manque %d composant%s sur %d."):format(missing, missing > 1 and "s" or "", direct)))
+	end
+end
 
 local function CreateOrderDialog()
-	local dialog = CreateFrame("Frame", "GuildProfessionsOrderDialog", UIParent, "BackdropTemplate")
-	dialog:SetSize(340, 180)
-	dialog:SetPoint("CENTER")
-	dialog:SetFrameStrata("FULLSCREEN_DIALOG")
-	dialog:SetToplevel(true)
-	dialog:EnableMouse(true)
-	dialog:SetMovable(true)
-	dialog:SetClampedToScreen(true)
-	dialog:RegisterForDrag("LeftButton")
-	dialog:SetScript("OnDragStart", dialog.StartMoving)
-	dialog:SetScript("OnDragStop", dialog.StopMovingOrSizing)
-	dialog:SetBackdrop({
-		bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-		edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-		tile = true, tileSize = 32, edgeSize = 32,
-		insets = { left = 11, right = 12, top = 12, bottom = 11 },
-	})
-	tinsert(UISpecialFrames, "GuildProfessionsOrderDialog")
+	local dialog = CreateWindow("GuildProfessionsOrderDialog", 460, 470, "FULLSCREEN_DIALOG")
+	local inset = dialog.Inset
 
-	dialog.title = Label(dialog, nil, "GameFontNormal")
-	dialog.title:SetPoint("TOP", 0, -18)
-	dialog.title:SetJustifyH("CENTER")
-
-	-- La recette vient de la ligne cliquée : affichée, pas éditable.
-	dialog.icon = dialog:CreateTexture(nil, "ARTWORK")
-	dialog.icon:SetSize(30, 30)
-	dialog.icon:SetPoint("TOPLEFT", 26, -44)
 	dialog.itemText = Label(dialog, nil, "GameFontHighlight", COLOR.gold)
-	dialog.itemText:SetPoint("LEFT", dialog.icon, "RIGHT", 8, 0)
-	dialog.itemText:SetPoint("RIGHT", -24, 0)
+	dialog.itemText:SetPoint("TOPLEFT", 66, -34)
+	dialog.itemText:SetPoint("RIGHT", -12, 0)
+	dialog.itemText:SetWordWrap(false)
 
-	local qtyLabel = Label(dialog, "Quantité", "GameFontHighlight")
-	qtyLabel:SetPoint("TOPLEFT", dialog.icon, "BOTTOMLEFT", 0, -16)
-	dialog.qtyBox = CreateFrame("EditBox", nil, dialog, "InputBoxTemplate")
-	dialog.qtyBox:SetSize(50, 20)
+	local qtyLabel = Label(inset, "Quantité", "GameFontNormal")
+	qtyLabel:SetPoint("TOPLEFT", 12, -14)
+	dialog.qtyBox = CreateFrame("EditBox", nil, inset, "InputBoxTemplate")
+	dialog.qtyBox:SetSize(46, 20)
 	dialog.qtyBox:SetPoint("LEFT", qtyLabel, "RIGHT", 14, 0)
 	dialog.qtyBox:SetAutoFocus(false)
 	dialog.qtyBox:SetNumeric(true)
 	dialog.qtyBox:SetMaxLetters(3)
 	dialog.qtyBox:SetJustifyH("CENTER")
-	local qtyHint = Label(dialog, "Entrée pour envoyer", "GameFontHighlightSmall", COLOR.muted)
-	qtyHint:SetPoint("LEFT", dialog.qtyBox, "RIGHT", 10, 0)
+	dialog.qtyBox:SetScript("OnTextChanged", function()
+		RefreshOrderTree()
+	end)
+	dialog.yieldText = Label(inset, nil, "GameFontHighlightSmall")
+	dialog.yieldText:SetPoint("LEFT", dialog.qtyBox, "RIGHT", 10, 0)
+
+	-- Zone des composants
+	local treeArea = CreateFrame("Frame", nil, inset)
+	treeArea:SetPoint("TOPLEFT", 4, -44)
+	treeArea:SetPoint("BOTTOMRIGHT", -4, 4)
+	dialog.treeArea = treeArea
+
+	dialog.componentsTitle = Label(treeArea, nil, "GameFontNormal")
+	dialog.componentsTitle:SetPoint("TOPLEFT", 8, -2)
+
+	local headerName = Label(treeArea, "Composant", "GameFontNormalSmall")
+	headerName:SetPoint("TOPLEFT", 8, -24)
+	local headerHave = Label(treeArea, "Tu as", "GameFontNormalSmall")
+	headerHave:SetPoint("TOPRIGHT", -24, -24)
+	local headerNeed = Label(treeArea, "Quantité", "GameFontNormalSmall")
+	headerNeed:SetPoint("TOPRIGHT", -100, -24)
+	local divider = treeArea:CreateTexture(nil, "ARTWORK")
+	divider:SetColorTexture(1, 0.82, 0, 0.25)
+	divider:SetHeight(1)
+	divider:SetPoint("TOPLEFT", 4, -40)
+	divider:SetPoint("TOPRIGHT", -4, -40)
+
+	dialog.treeList = CreateScrollList(treeArea, TREE_ROW_HEIGHT, SetupTreeRow, UpdateTreeRow)
+	dialog.treeList:SetPoint("TOPLEFT", 0, -44)
+	dialog.treeList:SetPoint("BOTTOMRIGHT", -18, 44)
+
+	dialog.legend = Label(treeArea, nil, "GameFontHighlightSmall", COLOR.muted)
+	dialog.legend:SetPoint("BOTTOMLEFT", 8, 26)
+	dialog.legend:SetPoint("RIGHT", -8, 0)
+	dialog.legend:SetText("|TInterface\\Buttons\\UI-PlusButton-Up:14|t fabricable dans la guilde : clique pour voir ses propres composants")
+
+	dialog.summary = Label(treeArea, nil, "GameFontHighlight")
+	dialog.summary:SetPoint("BOTTOMLEFT", 8, 6)
+	dialog.summary:SetPoint("RIGHT", -8, 0)
+
+	dialog.unavailable = Label(inset, "Le client ne décrit pas les composants de cette recette.\nDemande-les directement à l'artisan.",
+		"GameFontHighlight", COLOR.muted)
+	dialog.unavailable:SetPoint("TOP", 0, -80)
+	dialog.unavailable:SetJustifyH("CENTER")
 
 	local function Submit()
 		local qty = tonumber(dialog.qtyBox:GetText()) or 0
@@ -905,33 +1178,53 @@ local function CreateOrderDialog()
 	dialog.qtyBox:SetScript("OnEnterPressed", Submit)
 	dialog.qtyBox:SetScript("OnEscapePressed", function() dialog:Hide() end)
 
+	local cancel = CreateFrame("Button", nil, dialog, "UIPanelButtonTemplate")
+	cancel:SetSize(110, 22)
+	cancel:SetPoint("BOTTOMRIGHT", -6, 4)
+	cancel:SetText(CANCEL or "Annuler")
+	cancel:SetScript("OnClick", function() dialog:Hide() end)
+
 	local accept = CreateFrame("Button", nil, dialog, "UIPanelButtonTemplate")
-	accept:SetSize(130, 24)
-	accept:SetPoint("BOTTOMRIGHT", dialog, "BOTTOM", -6, 18)
+	accept:SetSize(130, 22)
+	accept:SetPoint("RIGHT", cancel, "LEFT", -4, 0)
 	accept:SetText("Commander")
 	accept:SetScript("OnClick", Submit)
 
-	local cancel = CreateFrame("Button", nil, dialog, "UIPanelButtonTemplate")
-	cancel:SetSize(130, 24)
-	cancel:SetPoint("BOTTOMLEFT", dialog, "BOTTOM", 6, 18)
-	cancel:SetText(CANCEL or "Annuler")
-	cancel:SetScript("OnClick", function() dialog:Hide() end)
+	local hint = Label(dialog, "Entrée pour envoyer", "GameFontHighlightSmall", COLOR.muted)
+	hint:SetPoint("BOTTOMLEFT", 10, 9)
 
 	return dialog
 end
 
-function GP.OpenOrderDialog(crafter, item, icon)
+function GP.OpenOrderDialog(crafter, item, icon, recipeID)
 	orderDialog = orderDialog or CreateOrderDialog()
-	orderDialog.crafter = crafter
-	orderDialog.item = item
-	orderDialog.title:SetText("Commande à " .. crafter)
-	orderDialog.icon:SetTexture(icon or "Interface\\Icons\\INV_Misc_QuestionMark")
-	orderDialog.itemText:SetText(item)
-	orderDialog.qtyBox:SetText("1")
-	orderDialog:Show()
-	orderDialog.qtyBox:SetFocus()
-	orderDialog.qtyBox:HighlightText()
+	local dialog = orderDialog
+	dialog.crafter = crafter
+	dialog.item = item
+	dialog.recipeID = recipeID
+	wipe(expandedPaths)
+	BuildProducerIndex()
+	SetWindowTitle(dialog, "Commande à " .. crafter)
+	SetWindowPortrait(dialog, icon or "Interface\\Icons\\INV_Misc_QuestionMark")
+	dialog.itemText:SetText(item)
+	dialog.componentsTitle:SetText("Composants à envoyer à " .. crafter)
+	if recipesDialog and recipesDialog:IsShown() then
+		dialog:ClearAllPoints()
+		dialog:SetPoint("TOPLEFT", recipesDialog, "TOPRIGHT", 4, 0)
+	end
+	dialog:Show()
+	dialog.qtyBox:SetText("1")
+	dialog.qtyBox:SetFocus()
+	dialog.qtyBox:HighlightText()
+	RefreshOrderTree()
 end
+
+-- Sacs modifiés pendant que la fenêtre est ouverte : colonne « Tu as » à jour.
+local bagWatcher = CreateFrame("Frame")
+bagWatcher:RegisterEvent("BAG_UPDATE_DELAYED")
+bagWatcher:SetScript("OnEvent", function()
+	RefreshOrderTree()
+end)
 
 -- Fenêtres Importer / Exporter ------------------------------------------------------------
 
