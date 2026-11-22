@@ -17,10 +17,11 @@ public sealed class GuildFilterTests
 			Character("Reroll", "Autre Guilde"),
 		]);
 
-		var (filtered, warnings) = GuildFilter.Apply(payload, "Les Copains");
+		var result = GuildFilter.Apply(payload, "Les Copains");
 
-		Assert.Equal(["Asdubral"], filtered.Characters.Select(c => c.Name));
-		Assert.Single(warnings);
+		Assert.Equal(["Asdubral"], result.Payload.Characters.Select(c => c.Name));
+		Assert.Single(result.Warnings);
+		Assert.Equal(["Reroll"], result.Departed);
 	}
 
 	[Fact]
@@ -28,21 +29,30 @@ public sealed class GuildFilterTests
 	{
 		var payload = new UploadPayload([Character("Asdubral", "  les copains ")]);
 
-		var (filtered, warnings) = GuildFilter.Apply(payload, "Les Copains");
+		var result = GuildFilter.Apply(payload, "Les Copains");
 
-		Assert.Single(filtered.Characters);
-		Assert.Empty(warnings);
+		Assert.Single(result.Payload.Characters);
+		Assert.Empty(result.Warnings);
 	}
 
 	[Fact]
-	public void Apply_Should_KeepAll_WhenNoGuildConfigured_OrNoGuildInfo()
+	public void Apply_Should_KeepCharacterWithoutGuildInfo()
 	{
-		var payload = new UploadPayload([Character("SansInfo", null), Character("Autre", "X")]);
+		var result = GuildFilter.Apply(new UploadPayload([Character("SansInfo", null)]), "Les Copains");
 
-		var (noConfig, _) = GuildFilter.Apply(payload, "");
-		var (withConfig, _) = GuildFilter.Apply(new UploadPayload([Character("SansInfo", null)]), "Les Copains");
+		Assert.Single(result.Payload.Characters); // vieil addon sans info de guilde : toléré
+		Assert.Empty(result.Departed);
+	}
 
-		Assert.Equal(2, noConfig.Characters.Count);
-		Assert.Single(withConfig.Characters); // vieil addon sans info de guilde : toléré
+	[Fact]
+	public void Apply_Should_ListDepartedCharacters_FromCompanion_ButNeverAKeptOne()
+	{
+		var payload = new UploadPayload([Character("Asdubral", "Les Copains")],
+			DepartedCharacters: ["Mira", "Asdubral"]);
+
+		var result = GuildFilter.Apply(payload, "Les Copains");
+
+		Assert.Equal(["Mira"], result.Departed);
+		Assert.Null(result.Payload.DepartedCharacters);
 	}
 }

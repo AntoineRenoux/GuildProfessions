@@ -126,6 +126,78 @@ public sealed class GuildIsolationTests : IDisposable
 		Assert.Empty(await db.Characters.ToListAsync());
 	}
 
+	[Fact]
+	public async Task Ingestion_Should_RemoveCharacter_ThatMovedToAnotherGuild()
+	{
+		var a = For(_guildA);
+		await a.Roster.ApplyUploadAsync(null, Upload("Mira Solen", "FORMER HOPE"));
+		await a.Roster.LinkCharacterAsync("42", "anto", "Mira Solen");
+
+		// Le compagnon signale que Mira est maintenant relevée dans une autre guilde.
+		var context = new GuildContext();
+		context.Use(_guildA);
+		using var db = new AppDbContext(_options, context);
+		var roster = new RosterService(db, context);
+		var ingestion = new UploadIngestion(roster, new CraftOrderService(db, roster, new NullNotifier()), context);
+		var result = await ingestion.IngestAsync(null, new UploadPayload([], DepartedCharacters: ["Mira Solen"]));
+
+		Assert.Empty(await db.Characters.ToListAsync());
+		Assert.Null(await roster.GetMainCharacterNameAsync("42"));
+		Assert.Contains(result.Warnings, w => w.Contains("autre guilde"));
+	}
+
+	[Fact]
+	public async Task Directory_Should_FindGuild_ByEachSecret_AndMakeSlugsUnique()
+	{
+		using var db = new AppDbContext(_options);
+		var directory = new GuildDirectory(db);
+		var created = await directory.CreateAsync("Former Hope", "123", "42", false, null);
+
+		Assert.Equal("former-hope-2", created.Slug); // « former-hope » existe déjà
+		Assert.Equal(created.Id, (await directory.FindByApiTokenAsync(created.ApiToken))!.Id);
+		Assert.Equal(created.Id, (await directory.FindByInviteCodeAsync(created.InviteCode))!.Id);
+		Assert.Equal(created.Id, (await directory.FindByDiscordServerAsync(123))!.Id);
+		Assert.Null(await directory.FindByApiTokenAsync(""));
+
+		var oldToken = created.ApiToken;
+		await directory.RegenerateSecretsAsync(created);
+		Assert.Null(await directory.FindByApiTokenAsync(oldToken));
+	}
+
+	[Fact]
+	public async Task Directory_Should_FindGuild_FromPersonalUploadToken()
+	{
+		var token = await For(_guildB).Roster.GetOrCreateUploadTokenAsync("42", "anto");
+
+		using var db = new AppDbContext(_options);
+		var found = await new GuildDirectory(db).FindByUploadTokenAsync(token);
+
+		Assert.Equal(_guildB.Id, found!.Value.Guild.Id);
+	}
+
+	[Fact]
+	public async Task DeletingGuild_Should_RemoveAllItsData()
+	{
+		await For(_guildA).Roster.ApplyUploadAsync(null, Upload("Aldrin Lupercal", "FORMER HOPE", 101));
+		await For(_guildB).Roster.ApplyUploadAsync(null, Upload("Mira Solen", "Les Autres", 102));
+
+		using (var db = new AppDbContext(_options))
+		{
+			await new GuildDirectory(db).DeleteAsync(await db.Guilds.SingleAsync(g => g.Id == _guildA.Id));
+		}
+
+		using var system = new AppDbContext(_options);
+		Assert.Equal(["Mira Solen"], await system.Characters.IgnoreQueryFilters().Select(c => c.Name).ToListAsync());
+		Assert.Equal(1, await system.Recipes.IgnoreQueryFilters().CountAsync());
+	}
+
+	[Theory]
+	[InlineData("FORMER HOPE", "former-hope")]
+	[InlineData("  Les Épées d'Argent ", "les-epees-d-argent")]
+	[InlineData("!!!", "guilde")]
+	public void Slugify_Should_ProduceReadableIds(string name, string expected) =>
+		Assert.Equal(expected, GuildDirectory.Slugify(name));
+
 	private sealed class NullNotifier : ICraftOrderNotifier
 	{
 		public Task NotifyNewOrderAsync(CraftOrder order, string? crafterDiscordId) => Task.CompletedTask;

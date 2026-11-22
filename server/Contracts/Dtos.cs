@@ -47,7 +47,9 @@ public sealed record ExportProfessionDto(
 public sealed record UploadPayload(
 	List<UploadCharacter> Characters,
 	List<UploadOrder>? Orders = null,
-	List<UploadOrderAction>? OrderActions = null);
+	List<UploadOrderAction>? OrderActions = null,
+	// Personnages du joueur désormais relevés dans une autre guilde : à retirer de celle-ci.
+	List<string>? DepartedCharacters = null);
 
 /// <summary>Commande de craft créée en jeu (id client = clé de déduplication).</summary>
 public sealed record UploadOrder(

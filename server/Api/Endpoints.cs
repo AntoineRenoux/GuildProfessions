@@ -1,7 +1,6 @@
 using GuildProfessions.Server.Contracts;
 using GuildProfessions.Server.Data;
 using GuildProfessions.Server.Services;
-using Microsoft.EntityFrameworkCore;
 
 namespace GuildProfessions.Server.Api;
 
@@ -21,44 +20,46 @@ public static class Endpoints
 				: Results.NotFound();
 		});
 
-		app.MapGet("/api/v1/export", async (HttpRequest request, ExportBuilder exportBuilder, IConfiguration config, CancellationToken ct) =>
+		// Le token de guilde désigne la guilde : l'export ne contient que ses données.
+		app.MapGet("/api/v1/export", async (HttpRequest request, GuildDirectory guilds, GuildContext guildContext,
+			ExportBuilder exportBuilder, CancellationToken ct) =>
 		{
-			var expected = config["Api:GuildToken"];
-			if (string.IsNullOrEmpty(expected) ||
-				request.Headers["X-Guild-Token"].ToString() != expected)
+			var guild = await guilds.FindByApiTokenAsync(request.Headers["X-Guild-Token"].ToString(), ct);
+			if (guild is null)
 			{
 				return Results.Unauthorized();
 			}
+			guildContext.Use(guild);
 			return Results.Ok(await exportBuilder.BuildAsync(ct));
 		});
 
-		app.MapPost("/api/v1/upload", async (HttpRequest request, UploadPayload payload, AppDbContext db, RosterService roster, CraftOrderService craftOrders, IConfiguration config, CancellationToken ct) =>
+		app.MapPost("/api/v1/upload", async (HttpRequest request, UploadPayload payload, GuildDirectory guilds,
+			GuildContext guildContext, UploadIngestion ingestion, CancellationToken ct) =>
 		{
-			// Deux modes : token personnel (identifie un membre Discord) ou
-			// token de guilde partagé (compagnon zéro-config, member = null).
+			// Deux modes : token personnel (un membre, donc sa guilde) ou token
+			// de guilde partagé (compagnon zéro-config, member = null).
 			Member? member = null;
+			Guild? guild;
 			var uploadToken = request.Headers["X-Upload-Token"].ToString();
 			if (!string.IsNullOrEmpty(uploadToken))
 			{
-				member = await db.Members.SingleOrDefaultAsync(m => m.UploadToken == uploadToken, ct);
-				if (member is null)
+				var personal = await guilds.FindByUploadTokenAsync(uploadToken, ct);
+				if (personal is null)
 				{
 					return Results.Unauthorized();
 				}
+				(guild, member) = personal.Value;
 			}
 			else
 			{
-				var expected = config["Api:GuildToken"];
-				if (string.IsNullOrEmpty(expected) ||
-					request.Headers["X-Guild-Token"].ToString() != expected)
+				guild = await guilds.FindByApiTokenAsync(request.Headers["X-Guild-Token"].ToString(), ct);
+				if (guild is null)
 				{
 					return Results.Unauthorized();
 				}
 			}
-			var (filtered, guildWarnings) = GuildFilter.Apply(payload, config["Guild:Name"]);
-			var result = await roster.ApplyUploadAsync(member, filtered, ct);
-			var orderWarnings = await craftOrders.ApplyUploadAsync(member, filtered, ct);
-			return Results.Ok(result with { Warnings = [.. guildWarnings, .. result.Warnings, .. orderWarnings] });
+			guildContext.Use(guild);
+			return Results.Ok(await ingestion.IngestAsync(member, payload, ct));
 		});
 	}
 }

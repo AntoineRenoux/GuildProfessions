@@ -17,9 +17,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Guilde courante d'un traitement (requête HTTP ou interaction Discord).
 builder.Services.AddScoped<GuildContext>();
+builder.Services.AddScoped<GuildDirectory>();
 builder.Services.AddScoped<RosterService>();
 builder.Services.AddScoped<ExportBuilder>();
 builder.Services.AddScoped<CraftOrderService>();
+builder.Services.AddScoped<UploadIngestion>();
 builder.Services.AddSingleton<ICraftOrderNotifier, DiscordCraftOrderNotifier>();
 builder.Services.AddSingleton<NicknameSync>();
 
@@ -45,6 +47,8 @@ using (var scope = app.Services.CreateScope())
 {
 	var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 	db.Database.Migrate();
+	await LegacyGuildBootstrap.RunAsync(db, app.Configuration,
+		scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("LegacyGuildBootstrap"));
 }
 
 // Landing page (wwwroot) + téléchargements (volume /app/wwwroot/downloads sur le VPS).

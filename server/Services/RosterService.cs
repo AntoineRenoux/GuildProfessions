@@ -259,6 +259,31 @@ public sealed class RosterService(AppDbContext db, GuildContext guildContext)
 		return new UploadResult(true, version, warnings);
 	}
 
+	/// <summary>
+	/// Retire de l'annuaire les personnages partis dans une autre guilde
+	/// (relevé en jeu). Les commandes, qui portent des noms en clair, restent.
+	/// </summary>
+	public async Task<int> RemoveDepartedCharactersAsync(IReadOnlyCollection<string> names, CancellationToken ct = default)
+	{
+		if (names.Count == 0)
+		{
+			return 0;
+		}
+		var characters = await db.Characters.Where(c => names.Contains(c.Name)).ToListAsync(ct);
+		if (characters.Count == 0)
+		{
+			return 0;
+		}
+		var ids = characters.Select(c => c.Id).ToList();
+		foreach (var member in await db.Members.Where(m => m.MainCharacterId != null && ids.Contains(m.MainCharacterId.Value)).ToListAsync(ct))
+		{
+			member.MainCharacterId = null;
+		}
+		db.Characters.RemoveRange(characters);
+		await SaveWithVersionBumpAsync(ct);
+		return characters.Count;
+	}
+
 	// ---- Version de l'export -------------------------------------------------
 
 	public async Task<long> GetDataVersionAsync(CancellationToken ct = default) =>
