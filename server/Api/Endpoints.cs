@@ -6,6 +6,12 @@ namespace GuildProfessions.Server.Api;
 
 public static class Endpoints
 {
+	// Envoyer des messages, intégrer des liens, joindre des fichiers, gérer les pseudos.
+	private const long InvitePermissions = 134268928;
+
+	private static IResult JoinPage(IWebHostEnvironment env) =>
+		Results.File(Path.Combine(env.WebRootPath ?? "wwwroot", "rejoindre.html"), "text/html; charset=utf-8");
+
 	public static void MapApiEndpoints(this WebApplication app)
 	{
 		app.MapGet("/healthz", () => Results.Ok(new { status = "ok" }));
@@ -19,6 +25,22 @@ public static class Endpoints
 				? Results.File(path, "application/json")
 				: Results.NotFound();
 		});
+
+		// Infos publiques du site : lien d'invitation du bot (identifiant d'application
+		// en config, sinon celui du bot connecté).
+		app.MapGet("/api/v1/site", (IConfiguration config, global::Discord.WebSocket.DiscordSocketClient client) =>
+		{
+			var applicationId = config["Discord:ApplicationId"] is { Length: > 0 } id ? id : client.CurrentUser?.Id.ToString();
+			return Results.Ok(new
+			{
+				inviteUrl = applicationId is null ? null :
+					$"https://discord.com/oauth2/authorize?client_id={applicationId}&scope=bot+applications.commands&permissions={InvitePermissions}",
+			});
+		});
+
+		// Page d'installation d'une guilde : une seule page statique, qui lit le code dans l'adresse.
+		app.MapGet("/rejoindre/{code}", (IWebHostEnvironment env) => JoinPage(env));
+		app.MapGet("/join/{code}", (IWebHostEnvironment env) => JoinPage(env));
 
 		// Lien d'installation d'une guilde (/rejoindre/{code}) : de quoi afficher la page.
 		app.MapGet("/api/v1/join/{code}", async (string code, GuildDirectory guilds, GuildPackBuilder packs, CancellationToken ct) =>

@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guildkeep · confidentialité</title>
+<meta name="description" content="Ce que Guildkeep enregistre, qui le voit, et comment tout effacer.">
+<link rel="preload" href="/fonts/schibsted-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/site.css">
+<script>document.documentElement.classList.add('js');try{var l=localStorage.getItem('gk-lang')||((navigator.language||'fr').toLowerCase().indexOf('fr')===0?'fr':'en');document.documentElement.lang=l}catch(e){}</script>
+</head>
+<body>
+
+<header class="topbar">
+	<a class="wordmark" href="/">Guildkeep</a>
+	<nav aria-label="Navigation">
+		<a href="/#questions"><span lang="fr">Aide</span><span lang="en">Help</span></a>
+		<div class="lang-switch" role="group" aria-label="Langue / Language">
+			<button type="button" data-set-lang="fr" aria-pressed="true">FR</button>
+			<button type="button" data-set-lang="en" aria-pressed="false">EN</button>
+		</div>
+	</nav>
+</header>
+
+<main class="page">
+	<div class="page-grid">
+		<figure class="page-art" data-rise style="--i:2">
+			<img src="/img/metiers/enchantement.jpg" width="470" height="600" alt="Gravure : l'astronome, Ständebuch de Jost Amman, 1568" loading="lazy">
+			<figcaption><span lang="fr">L'astronome, Ständebuch, 1568.</span><span lang="en">The astronomer, Ständebuch, 1568.</span></figcaption>
+		</figure>
+		<div class="page-main">
+		<h1 class="lines">
+			<span class="line"><span data-line style="--i:0"><span lang="fr">Ce que Guildkeep</span><span lang="en">What Guildkeep</span></span></span>
+			<span class="line"><span data-line style="--i:1"><span lang="fr">garde, et pourquoi</span><span lang="en">keeps, and why</span></span></span>
+		</h1>
+		<p class="lead" data-rise style="--i:0"><span lang="fr">Le strict nécessaire pour dire qui sait fabriquer quoi dans ta guilde. Rien n'est vendu, rien n'est partagé avec une autre guilde.</span><span lang="en">Only what it takes to tell who can craft what in your guild. Nothing is sold, nothing is shared with another guild.</span></p>
+
+		<div class="prose">
+			<section>
+				<h2><span lang="fr">Ce qui est enregistré</span><span lang="en">What is stored</span></h2>
+				<ul>
+					<li><span lang="fr">Pour chaque personnage relevé par l'addon : nom, classe, race, niveau, métiers et leur niveau, recettes connues, équipement porté.</span><span lang="en">For each character the addon scans: name, class, race, level, professions and their level, known recipes, gear worn.</span></li>
+					<li><span lang="fr">Les commandes de craft : qui commande quoi à qui, la quantité, la note, le statut.</span><span lang="en">Craft orders: who orders what from whom, the quantity, the note, the status.</span></li>
+					<li><span lang="fr">Pour les membres qui utilisent le bot : leur identifiant et leur pseudo Discord, et les personnages qu'ils ont liés.</span><span lang="en">For members who use the bot: their Discord ID and username, and the characters they linked.</span></li>
+					<li><span lang="fr">Pour la guilde : son nom en jeu, l'identifiant de son serveur Discord et les options choisies par l'administrateur.</span><span lang="en">For the guild: its in-game name, its Discord server ID and the options its admin chose.</span></li>
+				</ul>
+			</section>
+			<section>
+				<h2><span lang="fr">Ce qui ne l'est jamais</span><span lang="en">What never is</span></h2>
+				<ul>
+					<li><span lang="fr">Ni mot de passe, ni e-mail, ni compte Battle.net : il n'y a aucun champ pour ça.</span><span lang="en">No password, no email, no Battle.net account: there is no field for them.</span></li>
+					<li><span lang="fr">Le compagnon ne lit que les fichiers que WoW écrit pour l'addon Guildkeep, et n'écrit que les siens.</span><span lang="en">The companion only reads the files WoW writes for the Guildkeep addon, and only writes its own.</span></li>
+					<li><span lang="fr">Un personnage hors guilde n'est ni relevé ni envoyé, et un personnage d'une autre guilde ne part qu'à sa propre guilde.</span><span lang="en">A character outside a guild is neither scanned nor sent, and a character from another guild only goes to its own guild.</span></li>
+					<li><span lang="fr">Le site ne pose aucun cookie ni traceur et ne charge rien chez des tiers : la police et les images sont hébergées ici. Seul ton choix de langue est retenu, dans ton navigateur.</span><span lang="en">The site sets no cookie or tracker and loads nothing from third parties: the font and images are hosted here. Only your language choice is kept, in your browser.</span></li>
+				</ul>
+			</section>
+			<section>
+				<h2><span lang="fr">Qui le voit</span><span lang="en">Who sees it</span></h2>
+				<p><span lang="fr">Les membres de ta guilde, par l'addon et le bot. Chaque guilde est isolée des autres. Le lien d'installation de la guilde donne accès à son annuaire : s'il fuite, l'administrateur en crée un nouveau avec <code>/gkeep-setup</code>, et l'ancien cesse de fonctionner.</span><span lang="en">Your guild's members, through the addon and the bot. Each guild is isolated from the others. The guild's install link grants access to its directory: if it leaks, the admin creates a new one with <code>/gkeep-setup</code>, and the old one stops working.</span></p>
+			</section>
+			<section>
+				<h2><span lang="fr">Tout effacer</span><span lang="en">Erasing everything</span></h2>
+				<p><span lang="fr">L'administrateur lance <code>/gkeep-setup</code>, puis « Supprimer la guilde » : tout est effacé aussitôt. Si le bot est simplement retiré du serveur, les données de la guilde sont effacées au bout de 30 jours. Un membre peut retirer un métier avec <code>/gkeep metier retirer</code> ; un personnage relevé dans une autre guilde quitte l'annuaire de la tienne.</span><span lang="en">The admin runs <code>/gkeep-setup</code>, then "Delete the guild": everything is erased at once. If the bot is simply removed from the server, the guild's data is erased after 30 days. A member can remove a profession with <code>/gkeep profession remove</code>; a character scanned in another guild leaves yours.</span></p>
+			</section>
+			<section>
+				<h2><span lang="fr">Vérifiable</span><span lang="en">Verifiable</span></h2>
+				<p><span lang="fr">Tout le code de Guildkeep est public : <a href="https://github.com/AntoineRenoux/GuildProfessions" rel="noopener">github.com/AntoineRenoux/GuildProfessions</a>.</span><span lang="en">All of Guildkeep's code is public: <a href="https://github.com/AntoineRenoux/GuildProfessions" rel="noopener">github.com/AntoineRenoux/GuildProfessions</a>.</span></p>
+			</section>
+		</div>
+		</div>
+	</div>
+</main>
+
+<footer class="foot">
+	<span><span lang="fr">Outil de guilde pour WoW: Forever</span><span lang="en">Guild tool for WoW: Forever</span></span>
+	<nav aria-label="Pied de page / Footer">
+		<a href="/"><span lang="fr">Accueil</span><span lang="en">Home</span></a>
+		<a href="/#questions"><span lang="fr">Aide</span><span lang="en">Help</span></a>
+	</nav>
+	<span class="end">2026</span>
+	<span class="credit"><span lang="fr">Gravure : Jost Amman, Das Ständebuch, 1568, domaine public, via Wikimedia Commons.</span><span lang="en">Woodcut: Jost Amman, Das Ständebuch, 1568, public domain, via Wikimedia Commons.</span></span>
+</footer>
+
+<script src="/site.js" defer></script>
+</body>
+</html>

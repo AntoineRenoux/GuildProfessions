@@ -24,3 +24,10 @@ config.json
 # OS
 .DS_Store
 Thumbs.db
+
+# Config locale de Claude Code (aperçu du site)
+.claude/
+.taste-skill/
+
+# Packs publiés (servis par le VPS, jamais commités)
+server/wwwroot/downloads/

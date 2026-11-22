@@ -2,946 +2,378 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>GuildProfessions — FORMER HOPE</title>
-<meta name="description" content="L'annuaire des métiers de la guilde FORMER HOPE sur WoW: Forever — addon en jeu, bot Discord et app compagnon.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-	:root {
-		--bg: #0b0d12;
-		--surface: #141824;
-		--surface-2: #1b2130;
-		--border: #2a3245;
-		--text: #e9ecf3;
-		--text-2: #a7b0c3;
-		--gold: #f0c050;
-		--gold-strong: #ffd46a;
-		--green: #4ade80;
-		--blue: #7aa5ff;
-		--radius: 14px;
-		--font-display: "Cinzel", "Georgia", serif;
-		--font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-	}
-	* { box-sizing: border-box; }
-	[hidden] { display: none !important; }
-	html { scroll-behavior: smooth; }
-	@media (prefers-reduced-motion: reduce) {
-		html { scroll-behavior: auto; }
-		*, *::before, *::after { animation: none !important; transition: none !important; }
-	}
-	body {
-		margin: 0;
-		background: var(--bg);
-		color: var(--text);
-		font-family: var(--font-body);
-		font-size: 16px;
-		line-height: 1.6;
-	}
-	a { color: var(--gold); }
-	a:focus-visible, button:focus-visible, summary:focus-visible {
-		outline: 3px solid var(--gold);
-		outline-offset: 3px;
-		border-radius: 6px;
-	}
-	.wrap { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
-
-	/* ---- Nav ---- */
-	header.nav {
-		position: sticky; top: 0; z-index: 50;
-		background: rgba(11, 13, 18, 0.85);
-		backdrop-filter: blur(10px);
-		border-bottom: 1px solid var(--border);
-	}
-	.nav-inner { display: flex; align-items: center; gap: 24px; min-height: 64px; }
-	.brand { font-family: var(--font-display); font-weight: 800; font-size: 18px; letter-spacing: 0.04em; color: var(--text); text-decoration: none; display: flex; align-items: center; gap: 10px; }
-	.brand .sigil { color: var(--gold); }
-	.nav-links { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
-	.nav-links a {
-		color: var(--text-2); text-decoration: none; font-weight: 500; font-size: 14px;
-		padding: 10px 12px; border-radius: 8px; min-height: 44px; display: inline-flex; align-items: center;
-	}
-	.nav-links a:hover { color: var(--text); background: var(--surface-2); }
-	.nav-toggle {
-		display: none; margin-left: auto; cursor: pointer;
-		width: 44px; height: 44px; border-radius: 10px;
-		background: var(--surface); border: 1px solid var(--border); color: var(--text);
-		align-items: center; justify-content: center;
-	}
-	.nav-toggle .icon-close { display: none; }
-	header.nav.open .nav-toggle .icon-open { display: none; }
-	header.nav.open .nav-toggle .icon-close { display: block; }
-	/* Les ancres ne doivent pas atterrir sous le menu collé en haut. */
-	section[id] { scroll-margin-top: 72px; }
-
-	@media (max-width: 760px) {
-		.nav-toggle { display: inline-flex; }
-		.nav-links {
-			display: none;
-			position: absolute; top: 100%; left: 0; right: 0;
-			flex-direction: column; gap: 0;
-			background: rgba(11, 13, 18, 0.97); backdrop-filter: blur(10px);
-			border-bottom: 1px solid var(--border);
-			padding: 8px 20px 14px;
-		}
-		header.nav.open .nav-links { display: flex; }
-		.nav-links a { font-size: 16px; padding: 12px 8px; border-bottom: 1px solid var(--border); border-radius: 0; }
-		.nav-links a:last-child { border-bottom: none; }
-	}
-
-	/* ---- Hero ---- */
-	.hero { position: relative; padding: 88px 0 72px; text-align: center; overflow: hidden; }
-	.hero::before {
-		content: ""; position: absolute; inset: 0; pointer-events: none;
-		background:
-			radial-gradient(600px 280px at 50% -40px, rgba(240, 192, 80, 0.16), transparent 70%),
-			radial-gradient(900px 400px at 50% 110%, rgba(122, 165, 255, 0.07), transparent 70%);
-	}
-	.kicker {
-		display: inline-flex; align-items: center; gap: 8px;
-		font-size: 13px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
-		color: var(--gold); border: 1px solid var(--border); background: var(--surface);
-		padding: 8px 14px; border-radius: 999px;
-	}
-	h1 {
-		font-family: var(--font-display); font-weight: 800;
-		font-size: clamp(34px, 6vw, 58px); line-height: 1.12;
-		margin: 22px 0 14px; letter-spacing: 0.01em;
-	}
-	h1 .gold { color: var(--gold-strong); }
-	.lede { max-width: 640px; margin: 0 auto 32px; color: var(--text-2); font-size: 18px; }
-	.cta-row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-	.btn {
-		display: inline-flex; align-items: center; gap: 10px; cursor: pointer;
-		font: 600 16px var(--font-body); text-decoration: none;
-		padding: 14px 24px; min-height: 48px; border-radius: 10px; border: 1px solid transparent;
-	}
-	.btn-gold { background: linear-gradient(180deg, var(--gold-strong), #d9a63a); color: #231a05; }
-	.btn-gold:hover { filter: brightness(1.06); }
-	.btn-ghost { background: var(--surface); border-color: var(--border); color: var(--text); }
-	.btn-ghost:hover { background: var(--surface-2); }
-	.btn svg { flex: none; }
-
-	/* ---- Sections ---- */
-	section { padding: 72px 0; }
-	section + section { border-top: 1px solid var(--border); }
-	h2 {
-		font-family: var(--font-display); font-weight: 800; font-size: clamp(26px, 4vw, 36px);
-		margin: 0 0 10px; text-align: center;
-	}
-	.sub { text-align: center; color: var(--text-2); max-width: 640px; margin: 0 auto 44px; }
-
-	/* ---- Tryptique ---- */
-	.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-	.card {
-		background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-		padding: 28px 24px;
-	}
-	.card .icon {
-		width: 48px; height: 48px; border-radius: 12px; display: grid; place-items: center;
-		background: var(--surface-2); border: 1px solid var(--border); color: var(--gold); margin-bottom: 16px;
-	}
-	.card h3 { margin: 0 0 8px; font-size: 19px; }
-	.card p { margin: 0; color: var(--text-2); font-size: 15px; }
-	.flow {
-		margin-top: 36px; padding: 20px 24px; border: 1px dashed var(--border); border-radius: var(--radius);
-		text-align: center; color: var(--text-2); font-size: 14px; background: rgba(20, 24, 36, 0.5);
-	}
-	.flow strong { color: var(--gold); font-weight: 600; }
-
-	/* ---- Schéma canal manuel ---- */
-	.manual { margin-top: 28px; }
-	.manual h3 { text-align: center; font-size: 18px; margin: 0 0 20px; }
-	.pipe-row {
-		background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-		padding: 18px 20px; margin-bottom: 14px;
-	}
-	.pipe-title { font-size: 14px; color: var(--text-2); margin-bottom: 14px; }
-	.pipe-title code { margin-right: 8px; }
-	.pipe { display: flex; align-items: stretch; gap: 10px; flex-wrap: wrap; }
-	.chip {
-		flex: 1 1 150px; min-width: 150px;
-		display: flex; align-items: center; gap: 10px;
-		background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;
-		padding: 12px 14px; font-size: 13.5px; line-height: 1.35;
-	}
-	.chip svg { flex: none; color: var(--gold); }
-	.chip b { display: block; font-size: 13.5px; color: var(--text); }
-	.chip small { color: var(--text-2); font-size: 12px; }
-	.arrow {
-		flex: 0 0 auto; align-self: center;
-		display: flex; flex-direction: column; align-items: center; gap: 2px;
-		color: var(--gold); font-size: 11px; white-space: nowrap;
-	}
-	.arrow small { color: var(--text-2); }
-	@media (max-width: 720px) {
-		.pipe { flex-direction: column; }
-		.chip { min-width: 0; }
-		.arrow svg { transform: rotate(90deg); }
-	}
-
-	/* ---- Downloads ---- */
-	.dl-step { max-width: 980px; margin: 0 auto 40px; }
-	.dl-step-title {
-		display: flex; align-items: center; gap: 14px;
-		font-family: var(--font-body); font-size: 19px; font-weight: 700; margin: 0 0 6px;
-	}
-	.step-badge {
-		flex: none; width: 36px; height: 36px; border-radius: 50%;
-		display: grid; place-items: center;
-		background: linear-gradient(180deg, var(--gold-strong), #d9a63a); color: #231a05;
-		font-weight: 800; font-size: 17px;
-	}
-	.dl-step-hint { margin: 0 0 18px 50px; color: var(--text-2); font-size: 14.5px; }
-	.dl-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; }
-	.dl-grid.single { grid-template-columns: minmax(250px, 560px); }
-	.dl {
-		display: flex; flex-direction: column; gap: 6px;
-		background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-		padding: 22px; text-decoration: none; color: var(--text);
-	}
-	.dl:hover { border-color: var(--gold); background: var(--surface-2); }
-	.dl .os { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; color: var(--text); }
-	.dl .os svg { color: var(--gold); flex: none; }
-	.dl .meta { color: var(--text-2); font-size: 13px; }
-	.dl .get { margin-top: 10px; color: var(--gold); font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 6px; }
-	.note {
-		margin-top: 22px; padding: 14px 18px; border-left: 3px solid var(--gold);
-		background: var(--surface); border-radius: 0 10px 10px 0; color: var(--text-2); font-size: 14px;
-	}
-	.note strong { color: var(--text); }
-
-	/* ---- Tabs installation ---- */
-	.tabs { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 28px; }
-	.tab {
-		font: 600 15px var(--font-body); color: var(--text-2); background: var(--surface);
-		border: 1px solid var(--border); border-radius: 10px; padding: 12px 22px; min-height: 48px; cursor: pointer;
-		display: inline-flex; align-items: center; gap: 8px;
-	}
-	.tab[aria-selected="true"] { color: #231a05; background: linear-gradient(180deg, var(--gold-strong), #d9a63a); border-color: transparent; }
-	.tab:not([aria-selected="true"]):hover { background: var(--surface-2); color: var(--text); }
-	.panel { display: none; }
-	.panel.active { display: block; }
-	.steps { counter-reset: step; max-width: 780px; margin: 0 auto; padding: 0; list-style: none; }
-	.steps li {
-		counter-increment: step; position: relative;
-		background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-		padding: 18px 20px 18px 66px; margin-bottom: 12px;
-	}
-	.steps li::before {
-		content: counter(step);
-		position: absolute; left: 18px; top: 16px;
-		width: 32px; height: 32px; border-radius: 50%;
-		display: grid; place-items: center;
-		background: var(--surface-2); border: 1px solid var(--gold); color: var(--gold);
-		font-weight: 700; font-size: 14px;
-	}
-	.steps h4 { margin: 0 0 4px; font-size: 16px; }
-	.steps p { margin: 0; color: var(--text-2); font-size: 14.5px; }
-	code {
-		font-family: ui-monospace, "Cascadia Code", Menlo, monospace; font-size: 13.5px;
-		background: #0e1119; border: 1px solid var(--border); border-radius: 6px; padding: 2px 7px; color: var(--gold-strong);
-		overflow-wrap: anywhere;
-	}
-	pre {
-		background: #0e1119; border: 1px solid var(--border); border-radius: 10px;
-		padding: 14px 16px; overflow-x: auto; font-size: 13.5px; line-height: 1.5;
-	}
-	pre code { background: none; border: none; padding: 0; }
-
-	/* ---- Commandes Discord ---- */
-	.cmds { max-width: 780px; margin: 0 auto; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-	.cmd { display: flex; gap: 18px; padding: 15px 20px; background: var(--surface); align-items: baseline; flex-wrap: wrap; }
-	.cmd + .cmd { border-top: 1px solid var(--border); }
-	.cmd code { flex: none; min-width: 210px; }
-	.cmd span { color: var(--text-2); font-size: 14.5px; }
-
-	/* ---- FAQ ---- */
-	.faq { max-width: 780px; margin: 0 auto; }
-	details {
-		background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-		margin-bottom: 12px; overflow: hidden;
-	}
-	summary {
-		cursor: pointer; font-weight: 600; padding: 18px 20px; list-style: none;
-		display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 48px;
-	}
-	summary::-webkit-details-marker { display: none; }
-	summary::after { content: "+"; color: var(--gold); font-size: 22px; font-weight: 400; flex: none; }
-	details[open] summary::after { content: "–"; }
-	details .body { padding: 0 20px 18px; color: var(--text-2); font-size: 15px; }
-
-	footer { border-top: 1px solid var(--border); padding: 36px 0 44px; text-align: center; color: var(--text-2); font-size: 14px; }
-	footer .brand { justify-content: center; margin-bottom: 8px; }
-
-	/* ---- Pack tout-en-un ---- */
-	.aio {
-		position: relative; max-width: 980px; margin: 0 auto 44px;
-		padding: 30px 28px 24px; border-radius: 18px;
-		border: 1px solid rgba(240, 192, 80, 0.55);
-		background:
-			radial-gradient(520px 200px at 0% 0%, rgba(240, 192, 80, 0.13), transparent 70%),
-			var(--surface);
-		box-shadow: 0 0 0 1px rgba(240, 192, 80, 0.08), 0 18px 50px rgba(0, 0, 0, 0.35);
-	}
-	.aio-ribbon {
-		position: absolute; top: -13px; left: 28px;
-		background: linear-gradient(180deg, var(--gold-strong), #d9a63a); color: #231a05;
-		font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase;
-		padding: 5px 12px; border-radius: 999px;
-	}
-	.aio-head { display: flex; gap: 18px; align-items: flex-start; margin-bottom: 18px; }
-	.aio-icon {
-		flex: none; width: 56px; height: 56px; border-radius: 14px; display: grid; place-items: center;
-		background: var(--surface-2); border: 1px solid rgba(240, 192, 80, 0.4); color: var(--gold);
-	}
-	.aio h3 { font-family: var(--font-display); font-size: 24px; margin: 2px 0 6px; }
-	.aio-head p { margin: 0; color: var(--text-2); }
-	.aio-head strong { color: var(--gold-strong); }
-	.aio-list { list-style: none; padding: 0; margin: 0 0 22px; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px 22px; }
-	.aio-list li { display: flex; gap: 10px; align-items: flex-start; font-size: 14.5px; }
-	.aio-list svg { flex: none; color: var(--green); margin-top: 3px; }
-	.aio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
-	.aio-dl {
-		display: flex; align-items: center; gap: 12px; min-height: 56px;
-		padding: 12px 16px; border-radius: 12px; text-decoration: none;
-		background: linear-gradient(180deg, var(--gold-strong), #d9a63a); color: #231a05;
-	}
-	.aio-dl:hover { filter: brightness(1.07); }
-	.aio-dl svg { flex: none; }
-	.aio-dl b { display: block; font-size: 15px; }
-	.aio-dl small { display: block; font-size: 12px; opacity: 0.8; }
-	.aio-foot { margin: 18px 0 0; display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; color: var(--text-2); font-size: 14px; }
-	.aio-foot .version-badge { margin: 0; }
-	.mode-title {
-		max-width: 780px; margin: 0 auto 12px;
-		font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold);
-	}
-	.aio-note {
-		max-width: 780px; margin: 0 auto 26px; padding: 16px 20px; border-radius: var(--radius);
-		border: 1px solid rgba(240, 192, 80, 0.55); background: var(--surface);
-	}
-	.aio-note .mode-title { margin: 0 0 6px; }
-	.aio-note p:last-child { margin: 0; color: var(--text-2); font-size: 14.5px; }
-	/* ---- Onglet Admin ---- */
-	.tab-admin { gap: 6px; }
-	.admin-intro { max-width: 780px; margin: 0 auto 26px; color: var(--text-2); }
-	.admin-intro strong { color: var(--text); }
-	.admin-block { max-width: 780px; margin: 0 auto 30px; }
-	.admin-block .steps { max-width: none; }
-	.admin-release {
-		padding: 18px 18px 6px; border-radius: var(--radius);
-		border: 1px solid rgba(240, 192, 80, 0.55); background: rgba(240, 192, 80, 0.05);
-	}
-	.admin-note { margin: 0 0 16px; color: var(--text-2); font-size: 14.5px; }
-	.admin-note strong { color: var(--gold-strong); }
-	.alacarte-divider {
-		max-width: 980px; margin: 0 auto 30px; display: flex; align-items: center; gap: 16px;
-		color: var(--text-2); font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
-	}
-	.alacarte-divider::before, .alacarte-divider::after { content: ""; flex: 1; height: 1px; background: var(--border); }
-
-	.version-badge {
-		display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap;
-		margin: 0 0 18px 50px; padding: 6px 12px; border-radius: 999px;
-		background: var(--surface); border: 1px solid var(--border);
-		font-size: 13px; color: var(--text-2);
-	}
-	.version-badge strong { color: var(--green); font-weight: 700; }
-	.version-badge .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex: none; }
-
-	/* ---- Mobile ---- */
-	@media (max-width: 760px) {
-		section { padding: 48px 0; }
-		.hero { padding: 52px 0 44px; }
-		.lede { font-size: 16.5px; }
-		.sub { margin-bottom: 30px; }
-		.cta-row .btn { flex: 1 1 100%; justify-content: center; }
-		.dl-step-title { font-size: 17px; flex-wrap: wrap; }
-		.dl-step-hint, .version-badge { margin-left: 0; }
-		.steps li { padding: 16px 16px 16px 56px; }
-		.steps li::before { left: 14px; width: 28px; height: 28px; }
-		.aio { padding: 26px 18px 20px; }
-		.aio-head { flex-direction: column; gap: 12px; }
-		.aio h3 { font-size: 21px; }
-		.aio-list { grid-template-columns: 1fr; }
-		.aio-grid { grid-template-columns: 1fr; }
-		.cmd { flex-direction: column; gap: 6px; padding: 14px 16px; }
-		.cmd code { min-width: 0; }
-		.tabs { gap: 6px; }
-		.tab { flex: 1 1 0; justify-content: center; padding: 12px 10px; }
-		.flow { padding: 16px; }
-		.note { padding: 12px 14px; }
-		summary { padding: 16px; }
-		details .body { padding: 0 16px 16px; }
-	}
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guildkeep · qui sait le fabriquer dans ta guilde</title>
+<meta name="description" content="Guildkeep tient l'annuaire des artisans de ta guilde WoW: Forever, en jeu et sur Discord : qui sait fabriquer quoi, à quel niveau, et quoi lui envoyer. Gratuit, sans compte.">
+<link rel="preload" href="/fonts/schibsted-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/site.css">
+<script>document.documentElement.classList.add('js');try{var l=localStorage.getItem('gk-lang')||((navigator.language||'fr').toLowerCase().indexOf('fr')===0?'fr':'en');document.documentElement.lang=l}catch(e){}</script>
 </head>
 <body>
 
-<header class="nav">
-	<div class="wrap nav-inner">
-		<a class="brand" href="#">
-			<svg class="sigil" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l7 4v6c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6z"/><path d="M9 11l2 2 4-4"/></svg>
-			GuildProfessions
-		</a>
-		<button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Ouvrir le menu">
-			<svg class="icon-open" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-			<svg class="icon-close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
-		</button>
-		<nav class="nav-links" id="nav-links" aria-label="Navigation principale">
-			<a href="#fonctionnement">Fonctionnement</a>
-			<a href="#telechargements">Téléchargements</a>
-			<a href="#installation">Installation</a>
-			<a href="#discord">Discord</a>
-			<a href="#faq">FAQ</a>
-		</nav>
-	</div>
+<header class="topbar">
+	<a class="wordmark" href="/">Guildkeep</a>
+	<nav aria-label="Navigation">
+		<a class="hide-phone" href="#jeu"><span lang="fr">L'addon</span><span lang="en">The addon</span></a>
+		<a class="hide-phone" href="#commandes"><span lang="fr">Commandes</span><span lang="en">Commands</span></a>
+		<a class="hide-phone" href="#questions"><span lang="fr">Questions</span><span lang="en">FAQ</span></a>
+		<div class="lang-switch" role="group" aria-label="Langue / Language">
+			<button type="button" data-set-lang="fr" aria-pressed="true">FR</button>
+			<button type="button" data-set-lang="en" aria-pressed="false">EN</button>
+		</div>
+		<a class="button invite-link hide-phone" href="#mise-en-place"><span lang="fr">Ajouter à Discord</span><span lang="en">Add to Discord</span></a>
+	</nav>
 </header>
 
 <main>
-	<section class="hero" aria-labelledby="hero-title">
-		<div class="wrap">
-			<span class="kicker">
-				<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.4 7.2H22l-6 4.6 2.3 7.2-6.3-4.5-6.3 4.5L8 13.8 2 9.2h7.6z"/></svg>
-				FORMER HOPE · WoW: Forever
-			</span>
-			<h1 id="hero-title">Tous les métiers de la guilde,<br><span class="gold">dans ta poche.</span></h1>
-			<p class="lede">
-				Qui peut craft le Flacon des Titans ? Quel enchanteur connaît Croisé ?
-				GuildProfessions répond en jeu comme sur Discord — et se met à jour tout seul.
-			</p>
-			<div class="cta-row">
-				<a class="btn btn-gold" href="#telechargements">
-					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-					Télécharger
-				</a>
-				<a class="btn btn-ghost" href="#installation">Guide d'installation</a>
+
+<!-- Hero : la question, et les commandes de l'annuaire posées dessus. -->
+<section class="hero" aria-labelledby="titre">
+	<div class="hero-core">
+		<h1 id="titre" class="lines">
+			<span class="line"><span data-line style="--i:0"><span lang="fr">Qui sait</span><span lang="en">Who can</span></span></span>
+			<span class="line"><span data-line style="--i:1"><span lang="fr">le faire ?</span><span lang="en">craft it?</span></span></span>
+		</h1>
+
+		<div class="chips-phone">
+			<div class="chip chip-a" data-ui>
+				<label for="chip-prof"><span lang="fr">Métier</span><span lang="en">Profession</span></label>
+				<select id="chip-prof"></select>
+			</div>
+			<div class="chip chip-b" data-ui>
+				<span class="chip-label"><span lang="fr">Niveau minimum</span><span lang="en">Minimum level</span></span>
+				<div class="chip-row">
+					<input id="chip-level" type="range" min="1" max="300" step="1" value="225" aria-label="Niveau minimum / Minimum level">
+					<output id="chip-level-out" for="chip-level" class="nums">225</output>
+				</div>
+			</div>
+			<div class="chip chip-c" data-ui>
+				<span class="chip-label"><span lang="fr">Langue du bot</span><span lang="en">Bot language</span></span>
+				<div class="switch" role="group" aria-label="Langue / Language">
+					<button type="button" data-set-lang="fr" aria-pressed="true">FR</button>
+					<button type="button" data-set-lang="en" aria-pressed="false">EN</button>
+				</div>
 			</div>
 		</div>
-	</section>
 
-	<section id="fonctionnement" aria-labelledby="fonctionnement-title">
-		<div class="wrap">
-			<h2 id="fonctionnement-title">Trois pièces, un annuaire</h2>
-			<p class="sub">Un addon ne peut ni accéder à Internet ni écrire sur ton disque — alors on a construit les ponts, sur le modèle de TSM et de WeakAuras Companion.</p>
-			<div class="grid3">
-				<div class="card">
-					<div class="icon">
-						<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 22h8M12 18v4"/></svg>
-					</div>
-					<h3>L'addon, en jeu</h3>
-					<p>Tape <code>/gp</code> : tous les métiers de la guilde, filtrables par niveau et par recette — clique sur un artisan pour voir toutes ses recettes connues. Il scanne automatiquement tes métiers, tes patrons connus et ton équipement — et permet de passer commande à un artisan en deux clics.</p>
-				</div>
-				<div class="card">
-					<div class="icon">
-						<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><rect x="3" y="17" width="18" height="4" rx="1"/></svg>
-					</div>
-					<h3>Le compagnon, sur ton PC</h3>
-					<p>Un petit programme qui tourne en arrière-plan : il envoie tes scans au serveur de la guilde à chaque déconnexion et récupère les données des autres. Zéro configuration — tu le lances une fois, il s'occupe du reste.</p>
-				</div>
-				<div class="card">
-					<div class="icon">
-						<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8A8.5 8.5 0 0 1 12.5 3a8.38 8.38 0 0 1 8.5 8.5z"/></svg>
-					</div>
-					<h3>Le bot, sur Discord</h3>
-					<p>Hors du jeu, tout reste accessible : <code>/metier who</code> pour trouver un artisan, <code>/craft order</code> pour passer commande (l'artisan reçoit un MP), <code>/metier set</code> pour déclarer un métier à la main.</p>
-				</div>
-			</div>
-			<p class="flow">
-				Tu joues → l'addon scanne → <strong>le compagnon synchronise</strong> → le serveur de la guilde fusionne → <strong>Discord et le jeu affichent la même chose</strong>.
-			</p>
-
-			<div class="manual">
-				<h3>Pas envie du compagnon ? Le canal manuel, en deux commandes</h3>
-
-				<div class="pipe-row">
-					<div class="pipe-title"><code>/import</code> Tes métiers scannés → visibles par toute la guilde</div>
-					<div class="pipe">
-						<div class="chip">
-							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 22h8M12 18v4"/></svg>
-							<span><b>En jeu</b><small><code>/gp</code> → Exporter, puis Ctrl+C</small></span>
-						</div>
-						<div class="arrow" aria-hidden="true">
-							<svg width="34" height="14" viewBox="0 0 34 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7h26M23 2l6 5-6 5"/></svg>
-							<small>chaîne GP1!</small>
-						</div>
-						<div class="chip">
-							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8A8.5 8.5 0 0 1 12.5 3a8.38 8.38 0 0 1 8.5 8.5z"/></svg>
-							<span><b>Sur Discord</b><small><code>/import</code> → coller dans la fenêtre</small></span>
-						</div>
-						<div class="arrow" aria-hidden="true">
-							<svg width="34" height="14" viewBox="0 0 34 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7h26M23 2l6 5-6 5"/></svg>
-						</div>
-						<div class="chip">
-							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l7 4v6c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6z"/><path d="M9 11l2 2 4-4"/></svg>
-							<span><b>Annuaire de la guilde</b><small>tes métiers apparaissent partout</small></span>
-						</div>
-					</div>
-				</div>
-
-				<div class="pipe-row">
-					<div class="pipe-title"><code>/export-addon</code> L'annuaire de la guilde → ton addon en jeu</div>
-					<div class="pipe">
-						<div class="chip">
-							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8A8.5 8.5 0 0 1 12.5 3a8.38 8.38 0 0 1 8.5 8.5z"/></svg>
-							<span><b>Sur Discord</b><small><code>/export-addon</code> → le bot t'envoie un .txt</small></span>
-						</div>
-						<div class="arrow" aria-hidden="true">
-							<svg width="34" height="14" viewBox="0 0 34 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7h26M23 2l6 5-6 5"/></svg>
-							<small>chaîne GP1!</small>
-						</div>
-						<div class="chip">
-							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 22h8M12 18v4"/></svg>
-							<span><b>En jeu</b><small><code>/gp</code> → Importer → coller</small></span>
-						</div>
-						<div class="arrow" aria-hidden="true">
-							<svg width="34" height="14" viewBox="0 0 34 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7h26M23 2l6 5-6 5"/></svg>
-						</div>
-						<div class="chip">
-							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3h18v14H3zM3 13l5-4 4 3 4-5 5 4"/></svg>
-							<span><b>Ton addon à jour</b><small>tout le roster dans <code>/gp</code></small></span>
-						</div>
-					</div>
-				</div>
-
-				<p class="pipe-title" style="text-align: center; margin: 4px 0 0;">Avec le compagnon, ces deux trajets sont automatiques — ces commandes sont le plan B sans installation.</p>
-			</div>
+		<p class="hero-lead" data-rise style="--i:0">
+			<span lang="fr">Guildkeep tient l'annuaire des artisans de ta guilde WoW: Forever, en jeu et sur Discord. Gratuit, sans compte.</span>
+			<span lang="en">Guildkeep keeps your WoW: Forever guild's crafter directory, in game and on Discord. Free, no account.</span>
+		</p>
+		<div class="hero-actions" data-rise style="--i:1">
+			<a class="button invite-link" href="#mise-en-place"><span lang="fr">Ajouter à Discord</span><span lang="en">Add to Discord</span></a>
+			<a class="button is-quiet" href="#rejoindre"><span lang="fr">J'ai un lien de ma guilde</span><span lang="en">I have my guild's link</span></a>
 		</div>
-	</section>
 
-	<section id="telechargements" aria-labelledby="dl-title">
-		<div class="wrap">
-			<h2 id="dl-title">Téléchargements</h2>
-			<p class="sub">Deux façons de s'équiper : le <strong style="color: var(--text)">pack tout-en-un</strong>, un seul téléchargement et plus rien à faire — ou les deux pièces <strong style="color: var(--text)">à la carte</strong>.</p>
-
-			<div class="aio">
-				<span class="aio-ribbon">Recommandé</span>
-				<div class="aio-head">
-					<div class="aio-icon" aria-hidden="true">
-						<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>
+		<!-- La réponse du bot, recalculée par les trois commandes ci-dessus. -->
+		<div class="answer" data-rise style="--i:2" aria-live="polite">
+			<figure class="answer-plate">
+				<img id="answer-img" src="/img/metiers/forge.jpg" width="470" height="602" alt="Gravure : le forgeron, Ständebuch de Jost Amman, 1568">
+				<span class="plate-name" id="answer-plate-name" hidden></span>
+			</figure>
+			<div class="discord" data-ui>
+				<div class="who"><span class="avatar">G</span><span class="name">Guildkeep</span><span class="tag">BOT</span>
+					<span class="muted" id="answer-cmd"></span></div>
+				<div class="embed" id="answer-embed">
+					<h4 id="answer-title"><span lang="fr">Qui peut le fabriquer ?</span><span lang="en">Who can craft it?</span></h4>
+					<div id="answer-rows">
+						<div class="field"><b>Bragg Ferrefond · Forge 300/300</b><span lang="fr">dispo le soir, fournir les barres</span><span lang="en">evenings, bring the bars</span></div>
 					</div>
-					<div>
-						<h3>Pack tout-en-un</h3>
-						<p>La version <strong>all inclusive</strong> : l'addon <em>et</em> le compagnon dans un seul téléchargement. Tu lances le programme une fois, il s'occupe de tout — y compris d'installer l'addon dans WoW à ta place.</p>
-					</div>
-				</div>
-				<ul class="aio-list">
-					<li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Trouve ton dossier World of Warcraft tout seul</li>
-					<li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Installe l'addon dans <code>Interface/AddOns</code> — aucun dossier à copier</li>
-					<li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Synchronise tes métiers avec la guilde, en arrière-plan</li>
-					<li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Met à jour l'addon <em>et</em> lui-même automatiquement — tu n'auras plus jamais rien à re-télécharger</li>
-				</ul>
-				<div class="aio-grid">
-					<a class="aio-dl" href="/downloads/GuildProfessions-AllInOne-win-x64.zip">
-						<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 5.5l7.5-1v7H3zm8.5-1.2L21 3v8.5h-9.5zM3 12.5h7.5v7L3 18.5zm8.5 0H21V21l-9.5-1.3z"/></svg>
-						<span><b>Windows</b><small>win-x64</small></span>
-					</a>
-					<a class="aio-dl" href="/downloads/GuildProfessions-AllInOne-osx-arm64.zip">
-						<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.7 12.9c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.8-3.5.8s-1.9-.8-3.1-.8c-1.6 0-3.1.9-3.9 2.4-1.7 2.9-.4 7.2 1.2 9.5.8 1.1 1.7 2.4 3 2.4 1.2 0 1.7-.8 3.1-.8s1.9.8 3.1.8c1.3 0 2.1-1.2 2.9-2.3.9-1.3 1.3-2.6 1.3-2.7-.1 0-2.6-1-2.7-4zM14.4 5.3c.6-.8 1.1-1.9 1-3-.9 0-2.1.6-2.7 1.4-.6.7-1.2 1.9-1 3 1.1.1 2.1-.6 2.7-1.4z"/></svg>
-						<span><b>Mac — Apple Silicon</b><small>M1 à M4</small></span>
-					</a>
-					<a class="aio-dl" href="/downloads/GuildProfessions-AllInOne-osx-x64.zip">
-						<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.7 12.9c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.8-3.5.8s-1.9-.8-3.1-.8c-1.6 0-3.1.9-3.9 2.4-1.7 2.9-.4 7.2 1.2 9.5.8 1.1 1.7 2.4 3 2.4 1.2 0 1.7-.8 3.1-.8s1.9.8 3.1.8c1.3 0 2.1-1.2 2.9-2.3.9-1.3 1.3-2.6 1.3-2.7-.1 0-2.6-1-2.7-4zM14.4 5.3c.6-.8 1.1-1.9 1-3-.9 0-2.1.6-2.7 1.4-.6.7-1.2 1.9-1 3 1.1.1 2.1-.6 2.7-1.4z"/></svg>
-						<span><b>Mac — Intel</b><small>avant 2021</small></span>
-					</a>
-					<a class="aio-dl" href="/downloads/GuildProfessions-AllInOne-linux-x64.zip">
-						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h.01M15 9h.01M8 15c1 1.5 2.3 2 4 2s3-.5 4-2"/></svg>
-						<span><b>Linux</b><small>Steam/Proton, Lutris</small></span>
-					</a>
-				</div>
-				<p class="aio-foot">
-					<span class="version-badge aio-version" hidden>
-						<span class="dot" aria-hidden="true"></span>
-						<span>Version actuelle <strong class="companion-version-number"></strong></span>
-						<span class="companion-version-date"></span>
-					</span>
-					<span>Dézippe où tu veux, lance <code>GuildProfessionsCompanion</code>, c'est fini. <a href="#installation">Détails par système</a>.</span>
-				</p>
-			</div>
-
-			<div class="alacarte-divider"><span>ou à la carte</span></div>
-
-			<div class="dl-step">
-				<h3 class="dl-step-title"><span class="step-badge" aria-hidden="true">1</span> L'addon <span style="color: var(--gold); font-weight: 600;">— obligatoire</span></h3>
-				<p class="dl-step-hint">Le même fichier pour tout le monde, quel que soit ton système.</p>
-				<div class="dl-grid single">
-				<a class="dl" href="/downloads/GuildProfessions-addon.zip">
-					<span class="os">
-						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l7 4v6c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6z"/></svg>
-						GuildProfessions (addon)
-					</span>
-					<span class="meta">GuildProfessions-addon.zip · à placer dans Interface/AddOns — guide ci-dessous</span>
-					<span class="get">Télécharger
-						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-					</span>
-				</a>
+					<div class="footer"><span lang="fr">Exemple : guilde fictive « La Garde d'Ambre »</span><span lang="en">Example: fictional guild "La Garde d'Ambre"</span></div>
 				</div>
 			</div>
-
-			<div class="dl-step">
-				<h3 class="dl-step-title"><span class="step-badge" aria-hidden="true">2</span> Le compagnon <span style="color: var(--gold); font-weight: 600;">— choisis ton système</span></h3>
-				<p class="dl-step-hint">C'est lui qui rend tout automatique. Un seul zip à prendre, celui de ta machine.</p>
-				<p class="version-badge" hidden>
-					<span class="dot" aria-hidden="true"></span>
-					<span>Version actuelle <strong class="companion-version-number"></strong></span>
-					<span class="companion-version-date"></span>
-					<span>· se met à jour tout seul</span>
-				</p>
-				<div class="dl-grid">
-				<a class="dl" href="/downloads/GuildProfessionsCompanion-win-x64.zip">
-					<span class="os">
-						<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 5.5l7.5-1v7H3zm8.5-1.2L21 3v8.5h-9.5zM3 12.5h7.5v7L3 18.5zm8.5 0H21V21l-9.5-1.3z"/></svg>
-						Windows
-					</span>
-					<span class="meta">win-x64 · exécutable autonome, se lance au démarrage du PC</span>
-					<span class="get">Télécharger
-						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-					</span>
-				</a>
-				<a class="dl" href="/downloads/GuildProfessionsCompanion-osx-arm64.zip">
-					<span class="os">
-						<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.7 12.9c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.8-3.5.8s-1.9-.8-3.1-.8c-1.6 0-3.1.9-3.9 2.4-1.7 2.9-.4 7.2 1.2 9.5.8 1.1 1.7 2.4 3 2.4 1.2 0 1.7-.8 3.1-.8s1.9.8 3.1.8c1.3 0 2.1-1.2 2.9-2.3.9-1.3 1.3-2.6 1.3-2.7-.1 0-2.6-1-2.7-4zM14.4 5.3c.6-.8 1.1-1.9 1-3-.9 0-2.1.6-2.7 1.4-.6.7-1.2 1.9-1 3 1.1.1 2.1-.6 2.7-1.4z"/></svg>
-						Mac — Apple Silicon
-					</span>
-					<span class="meta">osx-arm64 · Mac M1 à M4 (2021 et après)</span>
-					<span class="get">Télécharger
-						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-					</span>
-				</a>
-				<a class="dl" href="/downloads/GuildProfessionsCompanion-osx-x64.zip">
-					<span class="os">
-						<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.7 12.9c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.8-3.5.8s-1.9-.8-3.1-.8c-1.6 0-3.1.9-3.9 2.4-1.7 2.9-.4 7.2 1.2 9.5.8 1.1 1.7 2.4 3 2.4 1.2 0 1.7-.8 3.1-.8s1.9.8 3.1.8c1.3 0 2.1-1.2 2.9-2.3.9-1.3 1.3-2.6 1.3-2.7-.1 0-2.6-1-2.7-4zM14.4 5.3c.6-.8 1.1-1.9 1-3-.9 0-2.1.6-2.7 1.4-.6.7-1.2 1.9-1 3 1.1.1 2.1-.6 2.7-1.4z"/></svg>
-						Mac — Intel
-					</span>
-					<span class="meta">osx-x64 · Mac d'avant 2021</span>
-					<span class="get">Télécharger
-						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-					</span>
-				</a>
-				<a class="dl" href="/downloads/GuildProfessionsCompanion-linux-x64.zip">
-					<span class="os">
-						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h.01M15 9h.01M8 15c1 1.5 2.3 2 4 2s3-.5 4-2"/></svg>
-						Linux
-					</span>
-					<span class="meta">linux-x64 · Steam/Proton et Lutris détectés automatiquement</span>
-					<span class="get">Télécharger
-						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-					</span>
-				</a>
-				</div>
-			</div>
-			<p class="note"><strong>Le compagnon est sûr</strong> — il fonctionne exactement comme l'app TradeSkillMaster ou le WeakAuras Companion : il lit les fichiers de données que WoW écrit, et dépose un fichier de données pour l'addon. Rien d'autre. <strong>Il ne te demandera jamais de mot de passe ni d'adresse e-mail</strong> — il n'y a aucun champ pour ça, ni compte à créer. Et tout le code est vérifiable : <a href="https://github.com/AntoineRenoux/GuildProfessions" rel="noopener">le projet est open source sur GitHub</a>.</p>
-		</div>
-	</section>
-
-	<section id="installation" aria-labelledby="install-title">
-		<div class="wrap">
-			<h2 id="install-title">Installation</h2>
-			<p class="sub">Choisis ton système — deux étapes, cinq minutes, et c'est pour toujours.</p>
-
-			<div class="tabs" role="tablist" aria-label="Guide d'installation">
-				<button class="tab" role="tab" id="tab-win" aria-selected="true" aria-controls="panel-win">Windows</button>
-				<button class="tab" role="tab" id="tab-mac" aria-selected="false" aria-controls="panel-mac">Mac</button>
-				<button class="tab" role="tab" id="tab-linux" aria-selected="false" aria-controls="panel-linux">Linux</button>
-				<button class="tab tab-admin" role="tab" id="tab-admin" aria-selected="false" aria-controls="panel-admin">
-					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-					Admin
-				</button>
-			</div>
-
-			<div class="panel active" id="panel-win" role="tabpanel" aria-labelledby="tab-win">
-				<div class="aio-note">
-					<p class="mode-title">Pack tout-en-un</p>
-					<p>Dézippe <code>GuildProfessions-AllInOne-win-x64.zip</code> où tu veux et double-clique sur <code>GuildProfessionsCompanion.exe</code>. Il installe l'addon dans WoW, s'inscrit au démarrage de Windows et se met à jour tout seul. Si Windows affiche « Windows a protégé votre PC », voir l'étape 3 ci-dessous.</p>
-				</div>
-				<p class="mode-title">À la carte</p>
-				<ol class="steps">
-					<li>
-						<h4>Installe l'addon</h4>
-						<p>Dézippe <code>GuildProfessions-addon.zip</code> et place le dossier <code>GuildProfessions</code> dans
-						<code>C:\Program Files (x86)\World of Warcraft\_forever_\Interface\AddOns\</code>
-						(adapte le début du chemin si WoW est installé ailleurs ; pendant la bêta, le dossier s'appelle <code>_classic_beta_</code> au lieu de <code>_forever_</code>). Au prochain lancement du jeu, vérifie qu'il apparaît dans la liste des addons, puis tape <code>/gp</code> en jeu.</p>
-					</li>
-					<li>
-						<h4>Lance le compagnon</h4>
-						<p>Dézippe <code>GuildProfessionsCompanion-win-x64.zip</code> où tu veux (ex. <code>Documents\GuildProfessions\</code>) et double-clique sur <code>GuildProfessionsCompanion.exe</code>. Il trouve ton WoW tout seul, se connecte au serveur de la guilde, et s'inscrit au démarrage de Windows — tu n'auras plus jamais à y penser.</p>
-					</li>
-					<li>
-						<h4>« Windows a protégé votre PC » ?</h4>
-						<p>Normal au premier lancement (l'exe n'est pas signé — la signature coûte un rein). Clique sur <strong>Informations complémentaires</strong> puis <strong>Exécuter quand même</strong>. Une seule fois.</p>
-					</li>
-					<li>
-						<h4>Scanne tes recettes</h4>
-						<p>En jeu, ouvre chaque fenêtre de métier une fois (Alchimie, Forge…) : l'addon enregistre tes patrons connus. Ils partent au serveur à ta prochaine déconnexion.</p>
-					</li>
-				</ol>
-			</div>
-
-			<div class="panel" id="panel-mac" role="tabpanel" aria-labelledby="tab-mac">
-				<div class="aio-note">
-					<p class="mode-title">Pack tout-en-un</p>
-					<p>Dézippe <code>GuildProfessions-AllInOne-osx-arm64.zip</code> (ou <code>osx-x64</code> sur un Mac Intel). Le compagnon n'est pas notarisé par Apple : <strong>macOS refuse de l'ouvrir la première fois</strong>. Autorise-le une seule fois, au choix :</p>
-					<ul>
-						<li>lance-le, laisse le refus s'afficher, puis <strong>Réglages Système → Confidentialité et sécurité</strong>, tout en bas : <strong>Ouvrir quand même</strong> ;</li>
-						<li>ou, dans le Terminal : <code>xattr -dr com.apple.quarantine ~/Downloads/GuildProfessions</code> (adapte le chemin si tu as dézippé ailleurs).</li>
-					</ul>
-					<p>Puis, dans le Terminal :</p>
-					<pre><code>cd ~/Downloads/GuildProfessions && ./GuildProfessionsCompanion</code></pre>
-					<p>Il installe l'addon dans <code>/Applications/World of Warcraft</code> et se met à jour tout seul. Sur Mac il ne démarre pas avec la session : laisse-le tourner pendant que tu joues.</p>
-				</div>
-				<p class="mode-title">À la carte</p>
-				<ol class="steps">
-					<li>
-						<h4>Installe l'addon</h4>
-						<p>Dézippe <code>GuildProfessions-addon.zip</code> et place le dossier <code>GuildProfessions</code> dans
-						<code>/Applications/World of Warcraft/_forever_/Interface/AddOns/</code>. Lance le jeu, vérifie la liste des addons, puis <code>/gp</code>.</p>
-					</li>
-					<li>
-						<h4>Lance le compagnon</h4>
-						<p>Dézippe <code>GuildProfessionsCompanion-osx-arm64.zip</code> (ou la version Intel sur les Mac d'avant 2021). Ouvre le Terminal dans le dossier dézippé et lance :</p>
-						<pre><code>chmod +x GuildProfessionsCompanion && ./GuildProfessionsCompanion</code></pre>
-					</li>
-					<li>
-						<h4>macOS bloque l'application ?</h4>
-						<p>Normal : le compagnon n'est pas notarisé par Apple. Après un premier essai refusé, va dans Réglages Système → Confidentialité et sécurité et clique sur <strong>Ouvrir quand même</strong>, tout en bas. Ou retire le marqueur de téléchargement dans le Terminal :</p>
-						<pre><code>xattr -dr com.apple.quarantine ~/Downloads/osx-arm64</code></pre>
-						<p>(le zip se dézippe en <code>osx-arm64</code>, ou <code>osx-x64</code> sur Intel ; adapte le chemin s'il est ailleurs). Une seule fois : les mises à jour automatiques ne redemandent rien.</p>
-					</li>
-					<li>
-						<h4>Scanne tes recettes</h4>
-						<p>En jeu, ouvre chaque fenêtre de métier une fois : l'addon enregistre tes patrons connus, le compagnon les envoie à ta prochaine déconnexion.</p>
-					</li>
-				</ol>
-			</div>
-
-			<div class="panel" id="panel-linux" role="tabpanel" aria-labelledby="tab-linux">
-				<div class="aio-note">
-					<p class="mode-title">Pack tout-en-un</p>
-					<p>Dézippe <code>GuildProfessions-AllInOne-linux-x64.zip</code>, puis <code>chmod +x GuildProfessionsCompanion &amp;&amp; ./GuildProfessionsCompanion</code>. Il trouve WoW sous Steam/Proton ou Lutris, installe l'addon et se met à jour tout seul. Laisse-le tourner pendant que tu joues (terminal, tmux ou service systemd utilisateur).</p>
-				</div>
-				<p class="mode-title">À la carte</p>
-				<ol class="steps">
-					<li>
-						<h4>Installe l'addon</h4>
-						<p>Dézippe et place le dossier <code>GuildProfessions</code> dans le <code>Interface/AddOns/</code> de ta branche WoW. Sous Steam/Proton, c'est typiquement :</p>
-						<pre><code>~/.local/share/Steam/steamapps/compatdata/&lt;ID&gt;/pfx/drive_c/Program Files (x86)/World of Warcraft/_forever_/Interface/AddOns/</code></pre>
-					</li>
-					<li>
-						<h4>Lance le compagnon</h4>
-						<p>Dézippe <code>GuildProfessionsCompanion-linux-x64.zip</code>, puis :</p>
-						<pre><code>chmod +x GuildProfessionsCompanion && ./GuildProfessionsCompanion</code></pre>
-						<p>Il détecte automatiquement les installations Steam/Proton et Lutris. Laisse-le tourner pendant que tu joues (un terminal, tmux, ou un service systemd user si tu es du genre soigné).</p>
-					</li>
-					<li>
-						<h4>Scanne tes recettes</h4>
-						<p>En jeu, ouvre chaque fenêtre de métier une fois : l'addon enregistre tes patrons connus, le compagnon les envoie à ta prochaine déconnexion ou à ton prochain <code>/reload</code>.</p>
-					</li>
-				</ol>
-			</div>
-
-			<div class="panel" id="panel-admin" role="tabpanel" aria-labelledby="tab-admin">
-				<p class="admin-intro">Pour les officiers qui administrent l'outil — les joueurs n'ont rien à lire ici. Tout se règle une fois ; la case <strong>« À la sortie officielle »</strong> est à repasser le jour où WoW: Forever quitte la bêta.</p>
-
-				<div class="admin-block">
-					<p class="mode-title">Serveur Discord de la guilde</p>
-					<ol class="steps">
-						<li>
-							<h4>Inviter le bot avec toutes ses permissions</h4>
-							<p>Avec ce lien (il ajoute le compte du bot <em>et</em> ses commandes) :</p>
-							<pre><code>https://discord.com/oauth2/authorize?client_id=1557379698617491596&amp;scope=bot+applications.commands&amp;permissions=134268928</code></pre>
-							<p>Permissions demandées : envoyer des messages, intégrer des liens, joindre des fichiers, gérer les pseudos. Vérifie ensuite que le bot apparaît bien dans la <strong>liste des membres</strong> : un lien d'installation qui n'ajoute que les commandes laisse le bot absent, et les messages privés et les pseudos ne marchent pas.</p>
-						</li>
-						<li>
-							<h4>Placer le rôle du bot au-dessus des membres</h4>
-							<p>Paramètres du serveur → Rôles : glisse le rôle du bot <strong>au-dessus</strong> des rôles des joueurs. Sinon il ne peut pas les renommer avec leur personnage principal. Discord interdit dans tous les cas de renommer le propriétaire du serveur.</p>
-						</li>
-						<li>
-							<h4>Déclarer le serveur auprès du bot</h4>
-							<p>Ajoute l'identifiant du serveur (clic droit sur son nom → Copier l'identifiant ; mode développeur requis) à <code>DISCORD_GUILD_IDS</code> dans la configuration du serveur, voir plus bas. Les commandes y apparaissent dès le redémarrage du bot.</p>
-						</li>
-					</ol>
-				</div>
-
-				<div class="admin-block">
-					<p class="mode-title">Serveur de la guilde (VPS)</p>
-					<ol class="steps">
-						<li>
-							<h4>Le fichier <code>.env</code></h4>
-							<p>Dans <code>/opt/guildprofessions/.env</code> (jamais versionné) :</p>
-							<pre><code>DISCORD_TOKEN=…            # portail développeur Discord → Bot → Reset Token
-DISCORD_GUILD_IDS=…,…      # serveurs où activer les commandes, séparés par des virgules
-API_GUILD_TOKEN=…          # token partagé des compagnons (openssl rand -hex 24)
-GUILD_NAME=FORMER HOPE     # nom exact de la guilde en jeu (rejet des rerolls)</code></pre>
-							<p>Puis <code>docker compose up -d</code> dans le même dossier. Changer <code>API_GUILD_TOKEN</code> déconnecte tous les compagnons distribués : il faut alors republier les zips.</p>
-						</li>
-						<li>
-							<h4>Publier une nouvelle version</h4>
-							<p>Après un commit, depuis le dépôt :</p>
-							<pre><code>scripts/package-companion.sh --deploy</code></pre>
-							<p>Les compagnons installés et l'addon des joueurs du pack tout-en-un se mettent à jour seuls (au démarrage, ou sous 6 h). Les joueurs « à la carte » doivent re-télécharger le zip de l'addon.</p>
-						</li>
-					</ol>
-				</div>
-
-				<div class="admin-block admin-release">
-					<p class="mode-title">À la sortie officielle de WoW: Forever</p>
-					<p class="admin-note">Tous les tests ont été faits sur la <strong>bêta</strong>, installée dans le dossier <code>_classic_beta_</code>. Le dossier, le code produit et le numéro d'interface de la version finale ne sont pas connus d'avance : à vérifier le jour J.</p>
-					<ol class="steps">
-						<li>
-							<h4>Numéro d'interface de l'addon</h4>
-							<p>En jeu sur la version finale, tape :</p>
-							<pre><code>/dump select(4, GetBuildInfo())</code></pre>
-							<p>Si le résultat n'est pas <code>16001</code>, remplace la ligne <code>## Interface: 16001</code> dans <code>addon/GuildProfessions/GuildProfessions.toc</code>, commite puis publie (étape précédente). Sans ça, le jeu marque l'addon « périmé » et le désactive. En attendant, les joueurs peuvent cocher <strong>Charger les addons périmés</strong> dans la liste des addons.</p>
-						</li>
-						<li>
-							<h4>Dossier du jeu : rien à faire, en principe</h4>
-							<p>Le compagnon ne se fie pas au nom du dossier. Il lit les métadonnées du launcher Blizzard et retient la branche dont le client est en <strong>1.60 ou plus</strong> (Classic Era est en 1.15). Si la version finale et la bêta sont installées toutes les deux, il préfère la version finale. Si un joueur voit « Impossible de localiser World of Warcraft », il renseigne <code>wowPath</code> dans le <code>config.json</code> du compagnon : le dossier de la branche, celui qui contient <code>Interface</code> et <code>WTF</code>.</p>
-						</li>
-						<li>
-							<h4>Repartir d'un annuaire propre</h4>
-							<p>Les personnages de la bêta n'existeront pas sur les royaumes définitifs. Vide la base avant d'ouvrir l'outil à la guilde (arrêt du conteneur, suppression de <code>data/guildprofessions.db</code>, redémarrage : le schéma se recrée tout seul). Vérifie aussi que <code>GUILD_NAME</code> correspond au nom de la guilde recréée en jeu.</p>
-						</li>
-						<li>
-							<h4>Mettre à jour ce guide</h4>
-							<p>Les chemins d'installation des onglets Windows / Mac / Linux supposent un dossier <code>_forever_</code> : remplace-le par le vrai nom de dossier s'il diffère.</p>
-						</li>
-					</ol>
-				</div>
-
-				<div class="admin-block">
-					<p class="mode-title">Vérifier que tout tourne</p>
-					<ol class="steps">
-						<li>
-							<h4>Trois contrôles rapides</h4>
-							<p><a href="https://gp.warpvault.com/healthz">gp.warpvault.com/healthz</a> doit répondre <code>{"status":"ok"}</code> ; <code>/metier list</code> sur Discord doit répondre ; la version du compagnon affichée dans Téléchargements doit être la dernière publiée.</p>
-						</li>
-					</ol>
-				</div>
-			</div>
-
-			<p class="note"><strong>Pas envie d'installer le compagnon ?</strong> L'addon seul suffit, en mode manuel : sur Discord, <code>/export-addon</code> te donne une chaîne à coller en jeu (<code>/gp</code> → Importer), et le bouton <strong>Exporter</strong> en jeu te donne la chaîne à coller dans <code>/import</code> sur Discord. Même résultat, juste un copier-coller de temps en temps.</p>
-		</div>
-	</section>
-
-	<section id="discord" aria-labelledby="discord-title">
-		<div class="wrap">
-			<h2 id="discord-title">Les commandes Discord</h2>
-			<p class="sub">Tout l'annuaire, sans lancer le jeu.</p>
-			<div class="cmds">
-				<div class="cmd"><code>/metier list</code><span>Tous les métiers de la guilde (✓ = scanné en jeu, donc exact).</span></div>
-				<div class="cmd"><code>/metier who</code><span>Qui peut craft ? Filtre par métier, niveau minimum, ou nom de recette.</span></div>
-				<div class="cmd"><code>/metier recettes</code><span>Toutes les recettes connues d'un personnage, filtrables par métier ou par texte.</span></div>
-				<div class="cmd"><code>/metier set</code><span>Déclarer un métier à la main (si tu ne passes pas par l'addon).</span></div>
-				<div class="cmd"><code>/craft order</code><span>Passer commande à un artisan — il reçoit un message privé du bot.</span></div>
-				<div class="cmd"><code>/craft list</code><span>Les commandes en cours ; <code>/craft accept</code>, <code>done</code>, <code>cancel</code> pour la suite.</span></div>
-				<div class="cmd"><code>/link</code><span>Lier tes personnages à ton compte Discord : notifications de commandes, et ton pseudo sur le serveur devient le nom de ton personnage.</span></div>
-				<div class="cmd"><code>/main</code><span>Choisir lequel de tes personnages liés donne son nom à ton pseudo.</span></div>
-				<div class="cmd"><code>/export-addon</code><span>La chaîne d'import pour l'addon — le canal manuel, sans compagnon.</span></div>
-				<div class="cmd"><code>/import</code><span>Coller la chaîne exportée depuis le jeu (<code>/gp</code> → Exporter).</span></div>
-			</div>
-		</div>
-	</section>
-
-	<section id="faq" aria-labelledby="faq-title">
-		<div class="wrap">
-			<h2 id="faq-title">Questions fréquentes</h2>
-			<p class="sub">Les trucs qu'on nous demande avant d'installer.</p>
-			<div class="faq">
-				<details>
-					<summary>Le compagnon, c'est pas louche un exe inconnu ?</summary>
-					<div class="body">Légitime comme question. Le compagnon fait exactement ce que font l'app TradeSkillMaster, le WeakAuras Companion ou l'uploader Warcraft Logs : lire les fichiers de données que WoW écrit sur ton disque (tes métiers scannés) et déposer un fichier de données pour l'addon. Il ne lit rien d'autre et ne touche pas au jeu en mémoire. <strong>Il ne te demandera jamais de mot de passe, d'e-mail ni aucune information de compte</strong> — si quelque chose te le demande, ce n'est pas le compagnon. Le code complet (addon, compagnon, serveur) est <a href="https://github.com/AntoineRenoux/GuildProfessions" rel="noopener">public sur GitHub</a>, vérifiable par n'importe qui. Et si tu préfères t'en passer : le mode manuel par copier-coller fait la même chose.</div>
-				</details>
-				<details>
-					<summary>Mes rerolls vont apparaître dans l'annuaire ?</summary>
-					<div class="body">Non. L'addon vérifie que ton personnage est dans FORMER HOPE avant de scanner quoi que ce soit — un perso hors guilde n'est jamais enregistré ni envoyé, et le serveur fait la même vérification de son côté. Tes rerolls restent tes affaires.</div>
-				</details>
-				<details>
-					<summary>Mes recettes n'apparaissent pas ?</summary>
-					<div class="body">Il faut ouvrir la fenêtre du métier une fois (l'API du jeu ne donne les recettes qu'à ce moment-là). Ensuite, les données partent au serveur à ta prochaine déconnexion ou à un <code>/reload</code> — c'est le moment où WoW écrit ses fichiers. Si ça traîne, vérifie que le compagnon tourne.</div>
-				</details>
-				<details>
-					<summary>Les données des autres ne sont pas à jour en jeu ?</summary>
-					<div class="body">La fraîcheur de ce que tu vois en jeu = le dernier passage du compagnon (il vérifie toutes les 10 minutes et au lancement). Après une mise à jour des données, fais un <code>/reload</code> en jeu pour recharger. Le bandeau en bas de <code>/gp</code> affiche la date des données.</div>
-				</details>
-				<details>
-					<summary>Comment passer une commande de craft ?</summary>
-					<div class="body">En jeu : onglet Métiers de <code>/gp</code>, clique sur la ligne de l'artisan pour ouvrir ses recettes, puis <strong>Commander</strong> en face de celle que tu veux — il ne reste qu'à indiquer la quantité. Sur Discord : <code>/craft order</code>. Dans les deux cas l'artisan est prévenu (toast en jeu s'il est connecté, MP Discord sinon), et le suivi se fait dans l'onglet Commandes ou via <code>/craft list</code>.</div>
-				</details>
-				<details>
-					<summary>Je change de PC / je réinstalle WoW, je perds quoi ?</summary>
-					<div class="body">Rien d'important : tout l'annuaire vit sur le serveur de la guilde. Réinstalle l'addon + le compagnon, reconnecte-toi une fois avec chaque perso, et tout se resynchronise.</div>
-				</details>
-			</div>
-		</div>
-	</section>
-</main>
-
-<footer>
-	<div class="wrap">
-		<div class="brand">
-			<svg class="sigil" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l7 4v6c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6z"/><path d="M9 11l2 2 4-4"/></svg>
-			GuildProfessions
-		</div>
-		Fait avec soin pour <strong>FORMER HOPE</strong> · WoW: Forever · Un souci ? Ping Zesso sur Discord.
-		<div style="margin-top: 12px;">
-			<a href="https://github.com/AntoineRenoux/GuildProfessions" rel="noopener" style="display: inline-flex; align-items: center; gap: 8px; color: var(--text-2); text-decoration: none; border: 1px solid var(--border); border-radius: 10px; padding: 10px 16px; min-height: 44px;">
-				<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55 0-.27-.01-1.17-.02-2.12-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.72-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.78 0c2.2-1.49 3.16-1.18 3.16-1.18.63 1.59.24 2.76.12 3.05.74.8 1.18 1.83 1.18 3.09 0 4.42-2.69 5.39-5.26 5.68.41.35.78 1.05.78 2.12 0 1.53-.01 2.77-.01 3.15 0 .3.2.67.8.55A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
-				Code source sur GitHub
-			</a>
 		</div>
 	</div>
+</section>
+
+<!-- Vitrine : Guildkeep là où ta guilde se trouve. -->
+<section class="showcase" id="jeu" aria-labelledby="vitrine-titre">
+	<div class="showcase-head" data-reveal>
+		<h2 id="vitrine-titre"><span lang="fr">En jeu, sur Discord, sur ton PC</span><span lang="en">In game, on Discord, on your PC</span></h2>
+		<p><span lang="fr">Fais défiler : chaque fragment est l'interface réelle, avec des données d'exemple.</span><span lang="en">Scroll through: each piece is the real interface, with sample data.</span></p>
+	</div>
+	<div class="track" id="track" tabindex="0" aria-label="Fragments de Guildkeep / Guildkeep fragments">
+
+		<article class="slide">
+			<div class="frag wow" data-ui>
+				<div class="wow-title"><b>Guildkeep</b><small>&lt;La Garde d'Ambre&gt; · <span lang="fr">annuaire des métiers</span><span lang="en">profession directory</span></small></div>
+				<div style="padding:8px 0">
+					<div class="wow-row"><span class="wow-ico">F</span><span>Bragg Ferrefond <span class="soft">· <span lang="fr">Forge</span><span lang="en">Blacksmithing</span></span></span><span class="wow-button"><span lang="fr">Voir (41)</span><span lang="en">View (41)</span></span></div>
+					<div class="wow-row is-on"><span class="wow-ico">C</span><span>Ysolde Brume <span class="soft">· <span lang="fr">Couture</span><span lang="en">Tailoring</span></span></span><span class="wow-button"><span lang="fr">Voir (63)</span><span lang="en">View (63)</span></span></div>
+					<div class="wow-row"><span class="wow-ico">A</span><span>Maël Corvin <span class="soft">· <span lang="fr">Alchimie</span><span lang="en">Alchemy</span></span></span><span class="wow-button"><span lang="fr">Voir (38)</span><span lang="en">View (38)</span></span></div>
+					<div class="wow-row"><span class="wow-ico">I</span><span>Tamsin Rouage <span class="soft">· <span lang="fr">Ingénierie</span><span lang="en">Engineering</span></span></span><span class="wow-button"><span lang="fr">Voir (27)</span><span lang="en">View (27)</span></span></div>
+				</div>
+				<div class="wow-tabs"><span class="is-on"><span lang="fr">Métiers</span><span lang="en">Professions</span></span><span><span lang="fr">Membres</span><span lang="en">Members</span></span><span><span lang="fr">Commandes (2)</span><span lang="en">Orders (2)</span></span></div>
+			</div>
+			<div class="slide-note"><h3><span lang="fr">L'annuaire, en jeu</span><span lang="en">The directory, in game</span></h3><p><span lang="fr">Un onglet de plus dans la fenêtre de guilde. Chaque artisan, son niveau, ses recettes.</span><span lang="en">One more tab in the guild window. Every crafter, their level, their recipes.</span></p></div>
+		</article>
+
+		<article class="slide">
+			<div class="frag wow" data-ui>
+				<div class="wow-title"><b>Ysolde Brume</b><small><span lang="fr">Couture 300/300 · Artisan</span><span lang="en">Tailoring 300/300 · Artisan</span></small></div>
+				<div style="padding:10px 12px"><div class="wow-search">⌕ robe</div></div>
+				<div class="wow-row"><span class="wow-ico">R</span><span><span lang="fr">Robe de la Voûte céleste</span><span lang="en">Robe of the Starry Vault</span></span><span class="wow-button"><span lang="fr">Commander</span><span lang="en">Order</span></span></div>
+				<div class="wow-row is-on"><span class="wow-ico">R</span><span><span lang="fr">Robe d'étoffe runique</span><span lang="en">Runecloth Robe</span></span><span class="wow-button"><span lang="fr">Commander</span><span lang="en">Order</span></span></div>
+				<div class="wow-row"><span class="wow-ico">R</span><span><span lang="fr">Robe de mage en soie</span><span lang="en">Silk Mage Robe</span></span><span class="wow-button"><span lang="fr">Commander</span><span lang="en">Order</span></span></div>
+				<div style="padding:8px 12px" class="soft"><span lang="fr">3 / 63 · Maj+clic : lien dans le chat</span><span lang="en">3 / 63 · Shift-click: link in chat</span></div>
+			</div>
+			<div class="slide-note"><h3><span lang="fr">Ses recettes, cherchables</span><span lang="en">Their recipes, searchable</span></h3><p><span lang="fr">Relevées quand l'artisan ouvre son métier. Tu tapes « robe », tu commandes.</span><span lang="en">Scanned when the crafter opens their profession. Type "robe", place the order.</span></p></div>
+		</article>
+
+		<article class="slide">
+			<div class="frag wow" data-ui>
+				<div class="wow-title"><b><span lang="fr">Commande à Ysolde Brume</span><span lang="en">Order from Ysolde Brume</span></b></div>
+				<div style="padding:10px 12px" class="gold"><span lang="fr">Robe d'étoffe runique</span><span lang="en">Runecloth Robe</span> · <span class="soft"><span lang="fr">Quantité</span><span lang="en">Quantity</span> 2</span></div>
+				<div style="padding:0 12px 6px" class="soft"><span lang="fr">Composants à envoyer</span><span lang="en">Reagents to send</span></div>
+				<div class="wow-row"><span class="wow-ico">+</span><span><span lang="fr">Rouleau d'étoffe runique</span><span lang="en">Bolt of Runecloth</span> ×8</span><span class="ok">8</span></div>
+				<div class="wow-row" style="padding-left:40px"><span class="wow-ico">·</span><span><span lang="fr">Étoffe runique</span><span lang="en">Runecloth</span> ×32</span><span class="soft">12</span></div>
+				<div class="wow-row"><span class="wow-ico">·</span><span><span lang="fr">Teinture noire</span><span lang="en">Black Dye</span> ×4</span><span class="bad">1</span></div>
+				<div class="wow-row"><span class="wow-ico">·</span><span><span lang="fr">Fil runique</span><span lang="en">Rune Thread</span> ×2</span><span class="ok">2</span></div>
+				<div style="padding:10px 12px" class="bad"><span lang="fr">Il te manque 1 composant sur 3.</span><span lang="en">You are missing 1 reagent out of 3.</span></div>
+			</div>
+			<div class="slide-note"><h3><span lang="fr">Quoi lui envoyer</span><span lang="en">What to send them</span></h3><p><span lang="fr">Les composants de la recette, ce que tu as déjà, et ceux qu'un autre membre sait fabriquer.</span><span lang="en">The recipe's reagents, what you already hold, and those another member can craft.</span></p></div>
+		</article>
+
+		<article class="slide">
+			<div class="frag discord" data-ui>
+				<div class="who"><span class="avatar">G</span><span class="name">Guildkeep</span><span class="tag">BOT</span><span class="muted"><span lang="fr">message privé</span><span lang="en">direct message</span></span></div>
+				<div class="embed amber">
+					<span lang="fr">Nouvelle commande <b>#12</b> pour <b>Ysolde Brume</b> : 2× <b>Robe d'étoffe runique</b>, demandée par Maël Corvin.</span>
+					<span lang="en">New order <b>#12</b> for <b>Ysolde Brume</b>: 2× <b>Runecloth Robe</b>, requested by Maël Corvin.</span>
+					<div class="footer"><span lang="fr">/gkeep commande accepter numero:12</span><span lang="en">/gkeep order accept id:12</span></div>
+				</div>
+			</div>
+			<div class="slide-note"><h3><span lang="fr">Prévenu, même hors jeu</span><span lang="en">Notified, even offline</span></h3><p><span lang="fr">L'artisan reçoit la commande en message privé et l'accepte d'une commande.</span><span lang="en">The crafter gets the order by direct message and accepts it in one command.</span></p></div>
+		</article>
+
+		<article class="slide">
+			<div class="frag wow" data-ui>
+				<div class="wow-title"><b>Maël Corvin</b><small><span lang="fr">Niveau 60 · Mage · en ligne</span><span lang="en">Level 60 · Mage · online</span></small></div>
+				<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:12px">
+					<span class="wow-ico" style="width:auto;height:44px;border:1px solid #a335ee">T</span><span class="wow-ico" style="width:auto;height:44px;border:1px solid #0070dd">C</span><span class="wow-ico" style="width:auto;height:44px;border:1px solid #a335ee">É</span><span class="wow-ico" style="width:auto;height:44px;border:1px solid #1eff00">D</span> <!-- taste-skill-ignore : fragment data-ui -->
+					<span class="wow-ico" style="width:auto;height:44px;border:1px solid #a335ee">T</span><span class="wow-ico" style="width:auto;height:44px;border:1px solid #0070dd">P</span><span class="wow-ico" style="width:auto;height:44px;border:1px solid #a335ee">M</span><span class="wow-ico" style="width:auto;height:44px;border:1px solid #ff8000">B</span> <!-- taste-skill-ignore : fragment data-ui -->
+				</div>
+				<div style="padding:0 12px 12px" class="soft"><span lang="fr">Alchimie 300 · Herboristerie 286 · glisser pour tourner</span><span lang="en">Alchemy 300 · Herbalism 286 · drag to rotate</span></div>
+			</div>
+			<div class="slide-note"><h3><span lang="fr">L'armurerie des membres</span><span lang="en">Members' armory</span></h3><p><span lang="fr">L'équipement relevé de chacun, en feuille de personnage, et qui est en ligne.</span><span lang="en">Each member's scanned gear as a character sheet, and who is online.</span></p></div>
+		</article>
+
+		<article class="slide">
+			<div class="frag console" data-ui><span class="t">[21:04:12]</span> Guildkeep v1.0.42
+<span class="t">[21:04:12]</span> <span lang="fr">Guilde « La Garde d'Ambre » ajoutée à ce poste.</span><span lang="en">Guild "La Garde d'Ambre" added to this machine.</span>
+<span class="t">[21:04:13]</span> <span lang="fr">Addon v1.0.42 installé (8 fichiers).</span><span lang="en">Addon v1.0.42 installed (8 files).</span>
+<span class="t">[21:04:14]</span> <span class="k">Down-sync</span> : Data.lua <span lang="fr">écrit</span><span lang="en">written</span> (La Garde d'Ambre : 54)
+<span class="t">[22:41:03]</span> <span class="k">Up-sync</span> <span lang="fr">(fichier modifié) : 2 personnage(s).</span><span lang="en">(file changed): 2 character(s).</span></div>
+			<div class="slide-note"><h3><span lang="fr">Le pont, sur ton PC</span><span lang="en">The bridge, on your PC</span></h3><p><span lang="fr">Un addon n'a pas accès au réseau : Guildkeep fait le lien, tout seul, à chaque déconnexion.</span><span lang="en">An addon can't reach the network: Guildkeep bridges it, by itself, at every logout.</span></p></div>
+		</article>
+	</div>
+	<div class="track-nav">
+		<button type="button" data-track="-1" aria-label="Précédent / Previous">←</button>
+		<button type="button" data-track="1" aria-label="Suivant / Next">→</button>
+	</div>
+</section>
+
+<!-- La planche : la fenêtre de l'addon, annotée. -->
+<section class="section wrap" aria-labelledby="planche-titre">
+	<div class="plate" id="plate">
+		<h2 id="planche-titre" data-reveal><span lang="fr">Une fenêtre, tout l'atelier</span><span lang="en">One window, the whole workshop</span></h2>
+
+		<div class="plate-panel" data-reveal>
+			<div class="wow" data-ui>
+				<div class="wow-title" data-part="title"><b>Guildkeep</b><small>&lt;La Garde d'Ambre&gt;</small></div>
+				<div style="padding:12px;display:grid;gap:12px;background:rgba(0,0,0,0.25)">
+					<div data-part="search"><div class="soft" style="font-size:12px;margin-bottom:4px"><span lang="fr">Recherche de patron</span><span lang="en">Recipe search</span></div><div class="wow-search">⌕ <span lang="fr">flacon</span><span lang="en">flask</span></div></div>
+					<div data-part="level"><div class="soft" style="font-size:12px;margin-bottom:4px"><span lang="fr">Niveau minimum</span><span lang="en">Minimum level</span></div><div class="wow-search" style="width:64px;justify-content:center">250</div></div>
+					<div data-part="filters" style="display:grid;gap:2px">
+						<div class="wow-row is-on" style="padding:4px 8px"><span class="wow-ico">A</span><span class="gold"><span lang="fr">Alchimie</span><span lang="en">Alchemy</span></span><span class="soft">7</span></div>
+						<div class="wow-row" style="padding:4px 8px"><span class="wow-ico">F</span><span><span lang="fr">Forge</span><span lang="en">Blacksmithing</span></span><span class="soft">9</span></div>
+						<div class="wow-row" style="padding:4px 8px"><span class="wow-ico">C</span><span><span lang="fr">Couture</span><span lang="en">Tailoring</span></span><span class="soft">6</span></div>
+						<div class="wow-row" style="padding:4px 8px"><span class="wow-ico">E</span><span><span lang="fr">Enchantement</span><span lang="en">Enchanting</span></span><span class="soft">4</span></div>
+					</div>
+				</div>
+				<div data-part="rows">
+					<div class="wow-row"><span class="wow-ico ok">●</span><span>Maël Corvin<br><span class="soft" style="font-size:12px"><span lang="fr">Flacon des Titans</span><span lang="en">Flask of the Titans</span></span></span><div class="bar max" style="width:84px"><i style="width:100%"></i><span>300 / 300</span></div></div>
+					<div class="wow-row"><span class="wow-ico soft">●</span><span>Elwin Sauge<br><span class="soft" style="font-size:12px"><span lang="fr">Flacon de sagesse distillée</span><span lang="en">Flask of Distilled Wisdom</span></span></span><div class="bar" style="width:84px"><i style="width:88%"></i><span>265 / 300</span></div></div>
+				</div>
+				<div data-part="view" style="padding:10px 12px;display:flex;justify-content:space-between;align-items:center"><span class="soft"><span lang="fr">Recettes</span><span lang="en">Recipes</span></span><span class="wow-button"><span lang="fr">Voir (38)</span><span lang="en">View (38)</span></span></div>
+				<div data-part="banner" style="padding:8px 12px;border-top:1px solid #3a2f1c;display:flex;justify-content:space-between;gap:8px"><span class="soft" style="font-size:12px"><span lang="fr">Données du 22/11 à 21:04</span><span lang="en">Data from 11/22, 9:04 pm</span></span><span class="wow-button"><span lang="fr">Exporter</span><span lang="en">Export</span></span></div> <!-- taste-skill-ignore : fragment data-ui -->
+				<div class="wow-tabs" data-part="tabs"><span class="is-on"><span lang="fr">Métiers</span><span lang="en">Professions</span></span><span><span lang="fr">Membres</span><span lang="en">Members</span></span><span><span lang="fr">Commandes (2)</span><span lang="en">Orders (2)</span></span></div>
+			</div>
+		</div>
+
+		<div class="notes notes-left">
+			<div class="note" data-for="search" data-reveal><button type="button"><b><span lang="fr">Cherche une recette</span><span lang="en">Search a recipe</span></b><span><span lang="fr">Tape un bout de nom : seuls les artisans qui la connaissent restent.</span><span lang="en">Type part of a name: only crafters who know it remain.</span></span></button></div>
+			<div class="note" data-for="level" data-reveal><button type="button"><b><span lang="fr">Fixe un niveau</span><span lang="en">Set a level</span></b><span><span lang="fr">Écarte ceux qui n'ont pas encore le rang pour ta pièce.</span><span lang="en">Leave out those without the rank your item needs.</span></span></button></div>
+			<div class="note" data-for="filters" data-reveal><button type="button"><b><span lang="fr">Choisis un métier</span><span lang="en">Pick a profession</span></b><span><span lang="fr">Avec le nombre d'artisans de la guilde pour chacun.</span><span lang="en">With the guild's number of crafters for each.</span></span></button></div>
+		</div>
+		<div class="notes notes-right">
+			<div class="note" data-for="rows" data-reveal><button type="button"><b><span lang="fr">Lis la réponse</span><span lang="en">Read the answer</span></b><span><span lang="fr">Qui est en ligne, son niveau, la recette trouvée.</span><span lang="en">Who is online, their level, the recipe found.</span></span></button></div>
+			<div class="note" data-for="view" data-reveal><button type="button"><b><span lang="fr">Ouvre ses recettes</span><span lang="en">Open their recipes</span></b><span><span lang="fr">« Voir » liste tout ce qu'il sait faire, et « Commander » à côté.</span><span lang="en">"View" lists everything they can make, with "Order" beside it.</span></span></button></div>
+			<div class="note" data-for="tabs" data-reveal><button type="button"><b><span lang="fr">Suis tes commandes</span><span lang="en">Track your orders</span></b><span><span lang="fr">Reçues ou passées, avec ce qu'il reste à faire.</span><span lang="en">Received or placed, with what is left to do.</span></span></button></div>
+		</div>
+	</div>
+</section>
+
+<!-- Mise en place : trois échanges, pour l'administrateur. -->
+<section class="section wrap" id="mise-en-place" aria-labelledby="setup-titre">
+	<div class="setup">
+		<div class="setup-col">
+			<h2 id="setup-titre" data-reveal><span lang="fr">Ta guilde, prête en deux minutes</span><span lang="en">Your guild, ready in two minutes</span></h2>
+
+			<div class="exchange" data-reveal>
+				<p><span lang="fr">D'abord, invite le bot sur ton serveur.</span><span lang="en">First, invite the bot to your server.</span></p>
+				<div class="call">
+					<a class="button invite-link" href="#mise-en-place"><span lang="fr">Ajouter Guildkeep à Discord</span><span lang="en">Add Guildkeep to Discord</span></a>
+					<p class="copy" style="color:var(--muted);font-size:0.9375rem"><span lang="fr">Il demande d'envoyer des messages et des liens, et de gérer les pseudos (si tu l'actives).</span><span lang="en">It asks to send messages and links, and to manage nicknames (if you turn that on).</span></p>
+				</div>
+				<div class="response discord" data-ui>
+					<div class="who"><span class="avatar">G</span><span class="name">Guildkeep</span><span class="tag">BOT</span><span class="muted"><span lang="fr">a rejoint le serveur.</span><span lang="en">joined the server.</span></span></div>
+				</div>
+			</div>
+
+			<div class="exchange" data-reveal>
+				<p><span lang="fr">Puis lance l'assistant, réservé aux admins.</span><span lang="en">Then run the wizard, admins only.</span></p>
+				<div class="call discord-input" data-ui>/gkeep-setup<span class="caret"></span></div>
+				<div class="response discord" data-ui>
+					<div class="embed gold" style="margin-left:0">
+						<h4><span lang="fr">Guildkeep · Étape 1 sur 3</span><span lang="en">Guildkeep · Step 1 of 3</span></h4>
+						<div class="muted" style="margin-bottom:6px"><span lang="fr">Nom exact de la guilde en jeu</span><span lang="en">Exact in-game guild name</span></div>
+						<div class="d-select"><span>La Garde d'Ambre</span></div>
+						<div style="margin-top:10px;display:flex;gap:8px"><span class="d-button blurple"><span lang="fr">Envoyer</span><span lang="en">Submit</span></span></div> <!-- taste-skill-ignore : fragment data-ui -->
+						<div class="footer"><span lang="fr">Ensuite : renommer les pseudos (non par défaut), salon des annonces, récapitulatif.</span><span lang="en">Next: rename nicknames (off by default), announcement channel, summary.</span></div>
+					</div>
+				</div>
+			</div>
+
+			<div class="exchange is-wide" data-reveal>
+				<p><span lang="fr">Enfin, partage le lien d'installation.</span><span lang="en">Finally, share the install link.</span></p>
+				<div class="call discord-input" data-ui>gp.warpvault.com/rejoindre/k7m2qpxa4h</div>
+				<div class="response discord" data-ui>
+					<div class="embed" style="margin-left:0">
+						<h4><span lang="fr">La Garde d'Ambre est prête</span><span lang="en">La Garde d'Ambre is ready</span></h4>
+						<span lang="fr"><b>Chaque joueur y télécharge le pack de la guilde</b> (addon + Guildkeep), déjà réglé : il le lance, c'est fini. Sur Discord, <span class="cmd">/gkeep aide</span> explique le reste.</span>
+						<span lang="en"><b>Each player downloads the guild pack there</b> (addon + Guildkeep), already set up: they run it, done. On Discord, <span class="cmd">/gkeep help</span> explains the rest.</span>
+						<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><span class="d-button blurple"><span lang="fr">Annoncer dans ce salon</span><span lang="en">Announce in this channel</span></span><span class="d-button grey"><span lang="fr">Ouvrir la page</span><span lang="en">Open the page</span></span></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- Tout ce que fait le bot, par thème. -->
+<section class="section wrap" id="commandes" aria-labelledby="cmd-titre">
+	<div class="commands-head" data-reveal>
+		<h2 id="cmd-titre"><span class="soft"><span lang="fr">Sur Discord, tout passe</span><span lang="en">On Discord, it all goes</span></span><span lang="fr">par /gkeep</span><span lang="en">through /gkeep</span></h2>
+		<a class="button invite-link" href="#mise-en-place"><span lang="fr">Ajouter à Discord</span><span lang="en">Add to Discord</span></a>
+	</div>
+	<div class="commands-body" data-reveal>
+		<div class="tabs" role="tablist" aria-label="Thèmes / Topics">
+			<button type="button" role="tab" aria-selected="true" aria-controls="b-metiers" id="t-metiers"><b><span lang="fr">Métiers</span><span lang="en">Professions</span></b><small>5</small></button>
+			<button type="button" role="tab" aria-selected="false" aria-controls="b-commandes" id="t-commandes"><b><span lang="fr">Commandes</span><span lang="en">Orders</span></b><small>5</small></button>
+			<button type="button" role="tab" aria-selected="false" aria-controls="b-compte" id="t-compte"><b><span lang="fr">Compte</span><span lang="en">Account</span></b><small>4</small></button>
+			<button type="button" role="tab" aria-selected="false" aria-controls="b-admin" id="t-admin"><b>Admin</b><small>1</small></button>
+		</div>
+		<div>
+			<div class="bands" role="tabpanel" id="b-metiers" aria-labelledby="t-metiers">
+				<div class="band"><div><code><span lang="fr">/gkeep metier qui</span><span lang="en">/gkeep profession who</span></code><span class="alt"><span lang="en">FR : /gkeep metier qui</span><span lang="fr">EN : /gkeep profession who</span></span></div><p><span lang="fr">Qui peut fabriquer une recette, par métier ou niveau minimum.</span><span lang="en">Who can craft a recipe, by profession or minimum level.</span></p><div class="faces"><img src="/img/metiers/forge.jpg" alt="" width="36" height="36" loading="lazy"><img src="/img/metiers/couture.jpg" alt="" width="36" height="36" loading="lazy"><img src="/img/metiers/alchimie.jpg" alt="" width="36" height="36" loading="lazy"></div></div>
+				<div class="band"><div><code><span lang="fr">/gkeep metier recettes</span><span lang="en">/gkeep profession recipes</span></code><span class="alt"><span lang="en">FR : /gkeep metier recettes</span><span lang="fr">EN : /gkeep profession recipes</span></span></div><p><span lang="fr">Toutes les recettes d'un personnage, filtrables par texte.</span><span lang="en">All of a character's recipes, filterable by text.</span></p><div class="faces"><img src="/img/metiers/enchantement.jpg" alt="" width="36" height="36" loading="lazy"></div></div>
+				<div class="band"><div><code><span lang="fr">/gkeep metier liste</span><span lang="en">/gkeep profession list</span></code><span class="alt"><span lang="en">FR : /gkeep metier liste</span><span lang="fr">EN : /gkeep profession list</span></span></div><p><span lang="fr">L'annuaire entier, ou un seul métier.</span><span lang="en">The whole directory, or one profession.</span></p><div class="faces"><img src="/img/metiers/cuir.jpg" alt="" width="36" height="36" loading="lazy"><img src="/img/metiers/ingenierie.jpg" alt="" width="36" height="36" loading="lazy"></div></div>
+				<div class="band"><div><code><span lang="fr">/gkeep metier definir</span><span lang="en">/gkeep profession set</span></code><span class="alt"><span lang="en">FR : /gkeep metier definir</span><span lang="fr">EN : /gkeep profession set</span></span></div><p><span lang="fr">Déclarer un métier sans l'addon (le relevé en jeu prime).</span><span lang="en">Declare a profession without the addon (the in-game scan wins).</span></p><span class="who"><span lang="fr">toi</span><span lang="en">you</span></span></div>
+				<div class="band"><div><code><span lang="fr">/gkeep metier retirer</span><span lang="en">/gkeep profession remove</span></code><span class="alt"><span lang="en">FR : /gkeep metier retirer</span><span lang="fr">EN : /gkeep profession remove</span></span></div><p><span lang="fr">Retirer un métier d'un de tes personnages.</span><span lang="en">Remove a profession from one of your characters.</span></p><span class="who"><span lang="fr">toi</span><span lang="en">you</span></span></div>
+			</div>
+			<div class="bands" role="tabpanel" id="b-commandes" aria-labelledby="t-commandes" hidden>
+				<div class="band"><div><code><span lang="fr">/gkeep commande nouvelle</span><span lang="en">/gkeep order new</span></code><span class="alt"><span lang="en">FR : /gkeep commande nouvelle</span><span lang="fr">EN : /gkeep order new</span></span></div><p><span lang="fr">Commander à un artisan ; il est prévenu en message privé.</span><span lang="en">Order from a crafter; they get a direct message.</span></p><span class="who"><span lang="fr">tout membre</span><span lang="en">any member</span></span></div>
+				<div class="band"><div><code><span lang="fr">/gkeep commande liste</span><span lang="en">/gkeep order list</span></code><span class="alt"><span lang="en">FR : /gkeep commande liste</span><span lang="fr">EN : /gkeep order list</span></span></div><p><span lang="fr">Les commandes en cours : toutes, les miennes, ou à fabriquer.</span><span lang="en">Open orders: all, mine, or to craft.</span></p><span class="who"><span lang="fr">tout membre</span><span lang="en">any member</span></span></div>
+				<div class="band"><div><code><span lang="fr">/gkeep commande accepter</span><span lang="en">/gkeep order accept</span></code><span class="alt"><span lang="en">FR : /gkeep commande accepter</span><span lang="fr">EN : /gkeep order accept</span></span></div><p><span lang="fr">Le numéro se choisit dans une liste : plus rien à retenir.</span><span lang="en">Pick the order from a list: nothing to remember.</span></p><span class="who"><span lang="fr">l'artisan</span><span lang="en">the crafter</span></span></div>
+				<div class="band"><div><code><span lang="fr">/gkeep commande terminer</span><span lang="en">/gkeep order done</span></code><span class="alt"><span lang="en">FR : /gkeep commande terminer</span><span lang="fr">EN : /gkeep order done</span></span></div><p><span lang="fr">Le demandeur est prévenu que c'est prêt.</span><span lang="en">The requester is told it's ready.</span></p><span class="who"><span lang="fr">l'artisan</span><span lang="en">the crafter</span></span></div>
+				<div class="band"><div><code><span lang="fr">/gkeep commande annuler</span><span lang="en">/gkeep order cancel</span></code><span class="alt"><span lang="en">FR : /gkeep commande annuler</span><span lang="fr">EN : /gkeep order cancel</span></span></div><p><span lang="fr">Tant qu'elle n'est pas terminée.</span><span lang="en">As long as it isn't done.</span></p><span class="who"><span lang="fr">les deux</span><span lang="en">either</span></span></div>
+			</div>
+			<div class="bands" role="tabpanel" id="b-compte" aria-labelledby="t-compte" hidden>
+				<div class="band"><div><code><span lang="fr">/gkeep lier</span><span lang="en">/gkeep link</span></code><span class="alt"><span lang="en">FR : /gkeep lier</span><span lang="fr">EN : /gkeep link</span></span></div><p><span lang="fr">Relier un personnage à ton compte Discord.</span><span lang="en">Tie a character to your Discord account.</span></p><span class="who"><span lang="fr">toi</span><span lang="en">you</span></span></div>
+				<div class="band"><div><code><span lang="fr">/gkeep principal</span><span lang="en">/gkeep main</span></code><span class="alt"><span lang="en">FR : /gkeep principal</span><span lang="fr">EN : /gkeep main</span></span></div><p><span lang="fr">Ton personnage principal, et ton pseudo si la guilde l'a choisi.</span><span lang="en">Your main character, and your nickname if the guild chose so.</span></p><span class="who"><span lang="fr">toi</span><span lang="en">you</span></span></div>
+				<div class="band"><div><code><span lang="fr">/gkeep aide</span><span lang="en">/gkeep help</span></code><span class="alt"><span lang="en">FR : /gkeep aide</span><span lang="fr">EN : /gkeep help</span></span></div><p><span lang="fr">Ce que fait Guildkeep, en deux écrans.</span><span lang="en">What Guildkeep does, in two screens.</span></p><span class="who"><span lang="fr">tout le monde</span><span lang="en">everyone</span></span></div>
+				<div class="band"><div><code><span lang="fr">/gkeep exporter · importer</span><span lang="en">/gkeep export · import</span></code><span class="alt"><span lang="en">FR : /gkeep exporter · importer</span><span lang="fr">EN : /gkeep export · import</span></span></div><p><span lang="fr">Sans le compagnon : échanger les données par copier-coller.</span><span lang="en">Without the companion: swap data by copy and paste.</span></p><span class="who"><span lang="fr">toi</span><span lang="en">you</span></span></div>
+			</div>
+			<div class="bands" role="tabpanel" id="b-admin" aria-labelledby="t-admin" hidden>
+				<div class="band"><div><code>/gkeep-setup</code><span class="alt"><span lang="fr">visible des seuls admins</span><span lang="en">only admins see it</span></span></div><p><span lang="fr">Créer la guilde, puis la gérer : options, nouveau lien si l'ancien a fuité, suppression complète.</span><span lang="en">Create the guild, then manage it: settings, a new link if the old one leaked, full deletion.</span></p><span class="who"><span lang="fr">« Gérer le serveur »</span><span lang="en">"Manage Server"</span></span></div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- Questions -->
+<section class="section field-1" id="questions" aria-labelledby="faq-titre">
+	<div class="wrap faq">
+		<div class="faq-side">
+			<h2 id="faq-titre"><span lang="fr">Tes questions</span><span lang="en">Your questions</span></h2>
+			<figure data-reveal>
+				<img src="/img/metiers/alchimie.jpg" width="909" height="1200" alt="Gravure : l'apothicaire dans son officine, Ständebuch de Jost Amman, 1568" loading="lazy">
+				<figcaption><span lang="fr">L'apothicaire, Ständebuch, 1568 : l'alchimiste de la guilde.</span><span lang="en">The apothecary, Ständebuch, 1568: the guild's alchemist.</span></figcaption>
+			</figure>
+		</div>
+		<div class="faq-list">
+			<details name="faq" open>
+				<summary><span><span lang="fr">C'est gratuit ?</span><span lang="en">Is it free?</span></span><i class="plus" aria-hidden="true"></i></summary>
+				<div class="answer-text"><span lang="fr">Oui, entièrement, pour toutes les guildes. Pas de compte à créer, pas de version payante.</span><span lang="en">Yes, fully, for every guild. No account to create, no paid tier.</span></div>
+			</details>
+			<details name="faq">
+				<summary><span><span lang="fr">Faut-il donner un mot de passe ?</span><span lang="en">Do I give a password?</span></span><i class="plus" aria-hidden="true"></i></summary>
+				<div class="answer-text"><span lang="fr">Jamais. Ni mot de passe, ni e-mail, ni compte Battle.net. Le compagnon lit les fichiers que WoW écrit pour l'addon, et rien d'autre.</span><span lang="en">Never. No password, no email, no Battle.net account. The companion reads the files WoW writes for the addon, nothing else.</span></div>
+			</details>
+			<details name="faq">
+				<summary><span><span lang="fr">J'ai des personnages dans deux guildes.</span><span lang="en">My characters are in two guilds.</span></span><i class="plus" aria-hidden="true"></i></summary>
+				<div class="answer-text"><span lang="fr">Lance le pack de chaque guilde une fois. Un seul Guildkeep les synchronise toutes, et chaque personnage ne voit et n'envoie que les données de sa propre guilde.</span><span lang="en">Run each guild's pack once. A single Guildkeep syncs them all, and each character only sees and sends its own guild's data.</span></div>
+			</details>
+			<details name="faq">
+				<summary><span><span lang="fr">macOS refuse d'ouvrir Guildkeep.</span><span lang="en">macOS won't open Guildkeep.</span></span><i class="plus" aria-hidden="true"></i></summary>
+				<div class="answer-text"><span lang="fr">Il n'est pas notarisé par Apple. La première fois : Réglages Système, Confidentialité et sécurité, « Ouvrir quand même ». Ou dans le Terminal : <code>xattr -dr com.apple.quarantine ~/Downloads/Guildkeep</code>.</span><span lang="en">It isn't notarized by Apple. The first time: System Settings, Privacy &amp; Security, "Open Anyway". Or in Terminal: <code>xattr -dr com.apple.quarantine ~/Downloads/Guildkeep</code>.</span></div>
+			</details>
+			<details name="faq">
+				<summary><span><span lang="fr">Qui voit les données de ma guilde ?</span><span lang="en">Who sees my guild's data?</span></span><i class="plus" aria-hidden="true"></i></summary>
+				<div class="answer-text"><span lang="fr">Les membres de ta guilde, et personne d'autre : chaque guilde est isolée. Le lien d'installation donne accès à l'annuaire, garde-le sur ton serveur. <a href="/confidentialite.html">Le détail</a>.</span><span lang="en">Your guild's members, and nobody else: each guild is isolated. The install link grants access to the directory, keep it on your server. <a href="/confidentialite.html">Details</a>.</span></div>
+			</details>
+			<details name="faq">
+				<summary><span><span lang="fr">Le lien a fuité hors de la guilde.</span><span lang="en">The link leaked outside the guild.</span></span><i class="plus" aria-hidden="true"></i></summary>
+				<div class="answer-text"><span lang="fr"><code>/gkeep-setup</code>, puis « Nouveau lien d'installation » : l'ancien cesse aussitôt de fonctionner. Chaque joueur retélécharge le pack.</span><span lang="en"><code>/gkeep-setup</code>, then "New install link": the old one stops working at once. Each player downloads the pack again.</span></div>
+			</details>
+			<details name="faq">
+				<summary><span><span lang="fr">Comment tout effacer ?</span><span lang="en">How do I erase everything?</span></span><i class="plus" aria-hidden="true"></i></summary>
+				<div class="answer-text"><span lang="fr"><code>/gkeep-setup</code>, puis « Supprimer la guilde » : l'annuaire, les commandes et les liens Discord sont effacés. Si tu retires simplement le bot, tout est effacé au bout de 30 jours.</span><span lang="en"><code>/gkeep-setup</code>, then "Delete the guild": the directory, the orders and the Discord links are erased. If you simply remove the bot, everything is erased after 30 days.</span></div>
+			</details>
+			<details name="faq">
+				<summary><span><span lang="fr">Ça marche sans le compagnon ?</span><span lang="en">Does it work without the companion?</span></span><i class="plus" aria-hidden="true"></i></summary>
+				<div class="answer-text"><span lang="fr">Oui, en plus manuel : <code>/gkeep exporter</code> donne une chaîne à coller dans l'addon, et l'addon en donne une à envoyer avec <code>/gkeep importer</code>.</span><span lang="en">Yes, more by hand: <code>/gkeep export</code> gives a string to paste into the addon, and the addon gives one to send with <code>/gkeep import</code>.</span></div>
+			</details>
+		</div>
+	</div>
+</section>
+
+<!-- La phrase à trou : rejoindre sa guilde avec son code. -->
+<section class="section wrap" id="rejoindre" aria-labelledby="rejoindre-titre">
+	<h2 id="rejoindre-titre" class="sr-only"><span lang="fr">Rejoindre ta guilde</span><span lang="en">Join your guild</span></h2>
+	<form class="close-line" id="join-form" action="/rejoindre/" method="get" novalidate data-reveal>
+		<span lang="fr">Ta guilde t'a donné un code ?</span><span lang="en">Your guild gave you a code?</span>
+		<label for="join-code" class="sr-only"><span lang="fr">Code ou lien de ta guilde</span><span lang="en">Your guild's code or link</span></label>
+		<input id="join-code" name="code" autocomplete="off" spellcheck="false" placeholder="k7m2qpxa4h"><button type="submit"><span lang="fr">Entrer</span><span lang="en">Enter</span></button>
+	</form>
+	<p class="close-note" data-reveal><span lang="fr">C'est la fin du lien partagé par ton administrateur. Tu y télécharges le pack de ta guilde, déjà réglé.</span><span lang="en">It's the end of the link your admin shared. There you download your guild's pack, already set up.</span></p>
+	<p class="close-error" id="join-error" role="alert"></p>
+</section>
+
+</main>
+
+<footer class="foot">
+	<span><span lang="fr">Outil de guilde pour WoW: Forever</span><span lang="en">Guild tool for WoW: Forever</span></span>
+	<nav aria-label="Pied de page / Footer">
+		<a href="https://github.com/AntoineRenoux/GuildProfessions" rel="noopener"><span lang="fr">Code source</span><span lang="en">Source code</span></a>
+		<a href="/confidentialite.html"><span lang="fr">Confidentialité</span><span lang="en">Privacy</span></a>
+		<a href="#questions"><span lang="fr">Aide</span><span lang="en">Help</span></a>
+	</nav>
+	<span class="end">2026</span>
+	<span class="credit"><span lang="fr">Gravures : Jost Amman, Das Ständebuch, 1568, domaine public, via Wikimedia Commons. World of Warcraft est une marque de Blizzard Entertainment ; Guildkeep n'y est pas affilié.</span><span lang="en">Woodcuts: Jost Amman, Das Ständebuch, 1568, public domain, via Wikimedia Commons. World of Warcraft is a trademark of Blizzard Entertainment; Guildkeep is not affiliated.</span></span>
 </footer>
 
-<script>
-	const tabs = document.querySelectorAll('.tab');
-	function selectTab(tab) {
-		tabs.forEach(t => {
-			const selected = t === tab;
-			t.setAttribute('aria-selected', selected);
-			document.getElementById(t.getAttribute('aria-controls')).classList.toggle('active', selected);
-		});
-	}
-	tabs.forEach(tab => {
-		tab.addEventListener('click', () => selectTab(tab));
-		tab.addEventListener('keydown', e => {
-			const list = Array.from(tabs);
-			const index = list.indexOf(tab);
-			if (e.key === 'ArrowRight') { const next = list[(index + 1) % list.length]; next.focus(); selectTab(next); }
-			if (e.key === 'ArrowLeft') { const previous = list[(index - 1 + list.length) % list.length]; previous.focus(); selectTab(previous); }
-		});
-	});
-	// Menu mobile.
-	const header = document.querySelector('header.nav');
-	const toggle = document.querySelector('.nav-toggle');
-	function setMenu(open) {
-		header.classList.toggle('open', open);
-		toggle.setAttribute('aria-expanded', open);
-		toggle.setAttribute('aria-label', open ? 'Fermer le menu' : 'Ouvrir le menu');
-	}
-	toggle.addEventListener('click', () => setMenu(!header.classList.contains('open')));
-	document.querySelectorAll('.nav-links a').forEach(a => a.addEventListener('click', () => setMenu(false)));
-	document.addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
-
-	// Version du compagnon, lue dans le manifeste publié avec les zips.
-	fetch('/api/v1/companion/manifest', { cache: 'no-store' })
-		.then(r => r.ok ? r.json() : null)
-		.then(manifest => {
-			if (!manifest || !manifest.version) return;
-			const published = manifest.publishedUtc
-				? '· publiée le ' + new Date(manifest.publishedUtc).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
-				: '';
-			document.querySelectorAll('.companion-version-number').forEach(el => el.textContent = 'v' + manifest.version);
-			document.querySelectorAll('.companion-version-date').forEach(el => el.textContent = published);
-			document.querySelectorAll('.version-badge').forEach(el => el.hidden = false);
-		})
-		.catch(() => { /* badge simplement non affiché */ });
-
-	// Pré-sélection de l'onglet selon l'OS du visiteur.
-	const ua = navigator.userAgent;
-	if (/Mac/i.test(ua)) selectTab(document.getElementById('tab-mac'));
-	else if (/Linux|X11/i.test(ua) && !/Android/i.test(ua)) selectTab(document.getElementById('tab-linux'));
-</script>
+<script src="/site.js" defer></script>
 </body>
 </html>
