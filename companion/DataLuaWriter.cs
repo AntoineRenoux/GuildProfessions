@@ -10,11 +10,35 @@ namespace GuildProfessions.Companion;
 /// </summary>
 public static class DataLuaWriter
 {
+	private const string SignaturePrefix = "-- guildkeep-sync: ";
+
+	/// <summary>
+	/// Ligne qui identifie le contenu (guildes et versions d'export). Le compagnon
+	/// réécrit Data.lua dès qu'elle ne correspond plus : fichier remplacé par une
+	/// mise à jour de l'addon (CurseForge, zip manuel), effacé ou modifié.
+	/// </summary>
+	public static string Signature(IReadOnlyDictionary<string, long> versions) =>
+		SignaturePrefix + string.Join(";", versions
+			.OrderBy(entry => entry.Key, StringComparer.Ordinal)
+			.Select(entry => $"{entry.Key}={entry.Value.ToString(CultureInfo.InvariantCulture)}"));
+
+	/// <summary>Vrai si le Data.lua existant a été écrit pour exactement ces versions.</summary>
+	public static bool IsCurrent(string path, IReadOnlyDictionary<string, long> versions)
+	{
+		if (!File.Exists(path))
+		{
+			return false;
+		}
+		var expected = Signature(versions);
+		return File.ReadLines(path).Take(5).Any(line => line == expected);
+	}
+
 	public static string Build(IReadOnlyList<ExportDto> exports)
 	{
 		var builder = new StringBuilder();
 		builder.AppendLine("-- Fichier généré par l'app compagnon Guildkeep.");
 		builder.AppendLine("-- Ne pas éditer : écrasé à chaque synchronisation.");
+		builder.AppendLine(Signature(exports.ToDictionary(e => e.GuildName ?? "", e => e.Version)));
 		builder.AppendLine("Guildkeep_ServerData = {");
 		builder.AppendLine("\tguilds = {");
 		foreach (var export in exports)

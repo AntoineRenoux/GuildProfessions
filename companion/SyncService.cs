@@ -94,7 +94,9 @@ public sealed class SyncService : IDisposable
 		}
 
 		var versions = exports.ToDictionary(e => e.GuildName ?? "", e => e.Version);
-		if (File.Exists(AddonDataPath) && SameVersions(versions, _state.GuildVersions))
+		// Le contenu du fichier fait foi, pas la mémoire du compagnon : une mise à jour
+		// de l'addon (CurseForge, zip) remet un Data.lua vide qu'il faut réécrire.
+		if (DataLuaWriter.IsCurrent(AddonDataPath, versions))
 		{
 			Log("Down-sync : rien de nouveau.");
 			return;
@@ -105,9 +107,6 @@ public sealed class SyncService : IDisposable
 		SaveState();
 		Log($"Down-sync : Data.lua écrit ({string.Join(", ", exports.Select(e => $"{e.GuildName} : {e.Characters.Count} personnages"))}). /reload en jeu pour charger.");
 	}
-
-	private static bool SameVersions(Dictionary<string, long> a, Dictionary<string, long> b) =>
-		a.Count == b.Count && a.All(entry => b.TryGetValue(entry.Key, out var version) && version == entry.Value);
 
 	private static string Display(GuildEntry guild) => guild.Name.Length > 0 ? guild.Name : "guilde sans nom";
 

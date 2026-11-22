@@ -335,6 +335,7 @@ public sealed class DataLuaWriterTests
 		var expected = """
 			-- Fichier généré par l'app compagnon Guildkeep.
 			-- Ne pas éditer : écrasé à chaque synchronisation.
+			-- guildkeep-sync: FORMER HOPE=42;Les Autres=3
 			Guildkeep_ServerData = {
 				guilds = {
 					{
@@ -454,4 +455,43 @@ public sealed class MultiGuildTests : IDisposable
 		using var again = SingleInstance.TryAcquire(_directory);
 		Assert.NotNull(again);
 	}
+}
+
+/// <summary>
+/// Une mise à jour de l'addon par CurseForge remplace le dossier, Data.lua compris,
+/// par la version vide du zip : le compagnon doit le réécrire même si les versions
+/// du serveur n'ont pas changé.
+/// </summary>
+public sealed class DataLuaSignatureTests : IDisposable
+{
+	private readonly string _dir = Directory.CreateTempSubdirectory("gk-data-").FullName;
+	private string DataPath => Path.Combine(_dir, "Data.lua");
+
+	public void Dispose() => Directory.Delete(_dir, recursive: true);
+
+	private static ExportDto Export(string guild, long version) =>
+		new(version, new DateTime(2026, 11, 22, 21, 0, 0, DateTimeKind.Utc), [], [], [], guild);
+
+	[Fact]
+	public void Le_fichier_ecrit_par_le_compagnon_est_a_jour()
+	{
+		var exports = new[] { Export("Former Hope", 4), Export("Les Autres", 2) };
+		File.WriteAllText(DataPath, DataLuaWriter.Build(exports));
+
+		Assert.True(DataLuaWriter.IsCurrent(DataPath, new Dictionary<string, long> { ["Les Autres"] = 2, ["Former Hope"] = 4 }));
+		Assert.False(DataLuaWriter.IsCurrent(DataPath, new Dictionary<string, long> { ["Former Hope"] = 5, ["Les Autres"] = 2 }));
+	}
+
+	[Fact]
+	public void Le_Data_lua_vide_livre_avec_l_addon_n_est_jamais_a_jour()
+	{
+		var shipped = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "addon", "Guildkeep", "Data.lua");
+		File.Copy(shipped, DataPath);
+
+		Assert.False(DataLuaWriter.IsCurrent(DataPath, new Dictionary<string, long> { ["Former Hope"] = 4 }));
+	}
+
+	[Fact]
+	public void Un_fichier_absent_n_est_pas_a_jour() =>
+		Assert.False(DataLuaWriter.IsCurrent(DataPath, new Dictionary<string, long> { ["Former Hope"] = 4 }));
 }
