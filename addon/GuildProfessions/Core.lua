@@ -4,23 +4,39 @@ GP.VERSION = "0.1.0"
 
 -- SavedVariables ------------------------------------------------------------
 
+local function GuildKey(name)
+	return name and strtrim(name):lower() or nil
+end
+
 local function InitDB()
 	GuildProfessionsDB = GuildProfessionsDB or {}
 	GuildProfessionsDB.characters = GuildProfessionsDB.characters or {}
 	GuildProfessionsDB.orders = GuildProfessionsDB.orders or {}
 	GuildProfessionsDB.orderActions = GuildProfessionsDB.orderActions or {}
+	GuildProfessionsDB.importedByGuild = GuildProfessionsDB.importedByGuild or {}
+	-- Ancienne version : un seul import, rangé désormais sous sa guilde.
+	local legacy = GuildProfessionsDB.importedServerData
+	if legacy then
+		if legacy.guildName then
+			GuildProfessionsDB.importedByGuild[GuildKey(legacy.guildName)] = legacy
+		end
+		GuildProfessionsDB.importedServerData = nil
+	end
 end
 
 -- Purge les données locales déjà synchronisées : commandes locales reprises
 -- par le serveur (clientId présent dans l'export) et actions déjà appliquées.
+-- Toutes les guildes du fichier : au chargement, la guilde du personnage
+-- n'est pas encore connue.
 local function PruneSyncedOrders()
-	local serverOrders = GP.GetServerData().orders or {}
 	local byClientId, byId = {}, {}
-	for _, order in ipairs(serverOrders) do
-		if order.clientId then
-			byClientId[order.clientId] = order
+	for _, section in ipairs(GP.AllServerSections()) do
+		for _, order in ipairs(section.orders or {}) do
+			if order.clientId then
+				byClientId[order.clientId] = order
+			end
+			byId[tostring(order.id)] = order
 		end
-		byId[tostring(order.id)] = order
 	end
 	for localId in pairs(GuildProfessionsDB.orders) do
 		if byClientId[localId] then
@@ -64,16 +80,69 @@ function GP.MigrateLegacyCharacterKey()
 	end
 end
 
--- Deux sources possibles pour les données serveur : Data.lua (écrit par le
--- compagnon) et une chaîne importée à la main (persistée en SavedVariables).
--- La plus récente gagne, à version égale l'import manuel l'emporte.
+-- Plusieurs guildes : Data.lua (écrit par le compagnon) contient une section
+-- par guilde inscrite sur le poste ; l'addon prend celle de la guilde du
+-- personnage connecté, réévaluée à chaque appel (connexion, /reload,
+-- changement de guilde). Ancien format (une seule guilde) toujours lu.
+local EMPTY = { characters = {} }
+
+local function FileSections()
+	local file = GuildProfessions_ServerData
+	if type(file) ~= "table" then
+		return {}
+	end
+	if file.guilds then
+		return file.guilds
+	end
+	return { file }
+end
+
+function GP.AllServerSections()
+	local sections = {}
+	for _, section in ipairs(FileSections()) do
+		sections[#sections + 1] = section
+	end
+	for _, section in pairs(GuildProfessionsDB and GuildProfessionsDB.importedByGuild or {}) do
+		sections[#sections + 1] = section
+	end
+	return sections
+end
+
+-- Deux sources pour la guilde courante : Data.lua et une chaîne importée à la
+-- main (/gkeep export sur Discord). La plus récente gagne, à version égale
+-- l'import manuel l'emporte.
 function GP.GetServerData()
-	local fromFile = GuildProfessions_ServerData
-	local imported = GuildProfessionsDB and GuildProfessionsDB.importedServerData
+	local guild = GuildKey(GP.GetPlayerGuildName())
+	if not guild then
+		return EMPTY
+	end
+	local fromFile
+	for _, section in ipairs(FileSections()) do
+		if GuildKey(section.guildName) == guild then
+			fromFile = section
+			break
+		end
+	end
+	local imported = GuildProfessionsDB and GuildProfessionsDB.importedByGuild and GuildProfessionsDB.importedByGuild[guild]
 	if imported and (not fromFile or (imported.version or 0) >= (fromFile.version or 0) or fromFile.mock) then
 		return imported
 	end
-	return fromFile or { characters = {} }
+	return fromFile or EMPTY
+end
+
+-- La guilde du personnage utilise-t-elle Guildkeep (données reçues pour elle) ?
+function GP.IsGuildRegistered()
+	return GP.GetServerData() ~= EMPTY
+end
+
+-- Un personnage local appartient-il à la guilde affichée ? Les rerolls du
+-- compte qui sont dans une autre guilde n'apparaissent pas dans son annuaire.
+function GP.IsInCurrentGuild(characterName)
+	local char = GuildProfessionsDB and GuildProfessionsDB.characters[characterName]
+	if not char or not char.guild then
+		return characterName == GP.GetPlayerFullName()
+	end
+	return GuildKey(char.guild) == GuildKey(GP.GetPlayerGuildName())
 end
 
 -- Fusion serveur + scan local ------------------------------------------------
@@ -127,12 +196,14 @@ function GP.GetRoster()
 		upsert(char)
 	end
 	for name, char in pairs(GuildProfessionsDB.characters) do
-		upsert({
+		if GP.IsInCurrentGuild(name) then
+			upsert({
 			name = name, classFile = char.classFile, level = char.level,
 			raceFile = char.raceFile, raceId = char.raceId, gender = char.gender,
 			equipment = char.equipment,
 			professions = LocalProfessionsToList(char.professions),
-		})
+			})
+		end
 	end
 
 	table.sort(roster, function(a, b) return a.name < b.name end)
@@ -181,14 +252,11 @@ function GP.GetPlayerGuildName()
 	return (GetGuildInfo("player"))
 end
 
+-- Tout personnage en guilde est relevé : le compagnon n'envoie ses données
+-- qu'à sa propre guilde, et seulement si elle est inscrite.
 function GP.IsEligibleCharacter()
-	local guild = GP.GetPlayerGuildName()
-	if not guild then
+	if not GP.GetPlayerGuildName() then
 		return false, "hors guilde"
-	end
-	local expected = GP.GetServerData().guildName
-	if expected and expected ~= "" and guild:lower() ~= expected:lower() then
-		return false, ("d'une autre guilde (%s)"):format(guild)
 	end
 	return true
 end
@@ -236,18 +304,21 @@ function GP.GetOrders()
 		}
 	end
 	for localId, order in pairs(GuildProfessionsDB.orders) do
-		local action = actions[localId]
-		merged[#merged + 1] = {
-			key = localId,
-			requester = order.requester,
-			crafter = order.crafter,
-			item = order.item,
-			qty = order.qty or 1,
-			note = order.note,
-			status = action and action.status or "open",
-			pendingSync = true,
-			createdAt = order.createdAt,
-		}
+		-- Commande passée par un reroll d'une autre guilde : pas ici.
+		if GP.IsInCurrentGuild(order.requester) then
+			local action = actions[localId]
+			merged[#merged + 1] = {
+				key = localId,
+				requester = order.requester,
+				crafter = order.crafter,
+				item = order.item,
+				qty = order.qty or 1,
+				note = order.note,
+				status = action and action.status or "open",
+				pendingSync = true,
+				createdAt = order.createdAt,
+			}
+		end
 	end
 	table.sort(merged, function(a, b)
 		return (a.createdAt or "") > (b.createdAt or "")

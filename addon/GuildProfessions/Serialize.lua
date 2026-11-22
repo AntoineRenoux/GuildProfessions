@@ -152,8 +152,13 @@ function GP.ImportString(text)
 	if type(data.characters) ~= "table" then
 		return false, "contenu inattendu (pas de roster dans la chaîne)"
 	end
+	-- Rangé sous la guilde de la chaîne (repli : celle du personnage).
+	local guild = data.guildName or GP.GetPlayerGuildName()
+	if not guild then
+		return false, "chaîne sans guilde, et ce personnage n'est dans aucune guilde"
+	end
 	data.importedAt = date("%Y-%m-%d %H:%M")
-	GuildProfessionsDB.importedServerData = data
+	GuildProfessionsDB.importedByGuild[strtrim(guild):lower()] = data
 	GP.RefreshUI()
 	return true
 end

@@ -1275,7 +1275,7 @@ local function OpenImportDialog()
 	textDialog = textDialog or CreateTextDialog()
 	local dialog = textDialog
 	SetWindowTitle(dialog, "Importer les données de la guilde")
-	dialog.hint:SetText("Colle la chaîne du bot Discord (commande /export-addon), puis Importer.")
+	dialog.hint:SetText("Colle la chaîne du bot Discord (commande /gkeep exporter), puis Importer.")
 	dialog.editBox:SetScript("OnTextChanged", nil)
 	dialog.editBox:SetText("")
 	dialog.status:SetText("")
@@ -1298,7 +1298,7 @@ local function OpenExportDialog()
 	textDialog = textDialog or CreateTextDialog()
 	local dialog = textDialog
 	SetWindowTitle(dialog, "Exporter mes données")
-	dialog.hint:SetText("Ctrl+C pour copier, puis /import sur Discord (ou donne la chaîne à un officier).")
+	dialog.hint:SetText("Ctrl+C pour copier, puis /gkeep importer sur Discord (ou donne la chaîne à un officier).")
 	dialog.actionButton:Hide()
 	local text, err = GP.BuildExportString()
 	if text then
@@ -1951,19 +1951,20 @@ end
 local TABS = { "Métiers", "Membres", "Commandes" }
 
 local function UpdateBanner()
+	local guild = GP.GetPlayerGuildName()
 	local server = GP.GetServerData()
 	local text
-	if server.generatedUtc then
+	if not guild then
+		text = Paint(COLOR.negative, "Ce personnage n'est dans aucune guilde : rien n'est relevé ni partagé.")
+	elseif not GP.IsGuildRegistered() then
+		text = Paint(COLOR.gold, ("« %s » n'utilise pas encore Guildkeep : un administrateur doit lancer /gkeep-setup sur Discord, puis partager le pack."):format(guild))
+	elseif server.generatedUtc then
 		text = "Données du " .. server.generatedUtc
 	else
-		text = Paint(COLOR.gold, "Aucune donnée serveur — lance l'app compagnon ou importe une chaîne.")
+		text = "Données importées le " .. (server.importedAt or "?")
 	end
 	if server.mock then
 		text = text .. " " .. Paint(COLOR.gold, "(démonstration)")
-	end
-	local eligible, reason = GP.IsEligibleCharacter()
-	if not eligible then
-		text = Paint(COLOR.negative, ("Personnage %s : relevés et commandes désactivés."):format(reason)) .. "  " .. text
 	end
 	mainFrame.banner:SetText(text)
 end
@@ -2123,6 +2124,8 @@ end
 -- Présence en ligne : le roster arrive en différé après la demande.
 local events = CreateFrame("Frame")
 events:RegisterEvent("GUILD_ROSTER_UPDATE")
+-- Changement de guilde (ou guilde connue tardivement à la connexion) : autres données.
+events:RegisterEvent("PLAYER_GUILD_UPDATE")
 events:SetScript("OnEvent", function()
 	RebuildGuildOnline()
 	GP.RefreshUI()
