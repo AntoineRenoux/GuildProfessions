@@ -1421,18 +1421,22 @@ end
 local function SetSlotItem(button, slot, link)
 	button.link = link
 	local texture = link and ItemIcon(link) or ("Interface\\Paperdoll\\UI-PaperDoll-Slot-" .. SLOT_EMPTY[slot])
-	if SetItemButtonTexture then
-		SetItemButtonTexture(button, texture)
-	elseif button.icon then
-		button.icon:SetTexture(texture)
-	end
+	button.icon:SetTexture(texture)
 	local function applyQuality(quality)
 		if button.link ~= link then
 			return -- le bouton a été réutilisé entre-temps
 		end
-		if SetItemButtonQuality then
-			SetItemButtonQuality(button, quality, link)
+		-- Liseré à la couleur de qualité de l'objet ; gris sombre si vide ou inconnu.
+		local r, g, b
+		if quality and quality >= 1 then
+			if C_Item and C_Item.GetItemQualityColor then
+				r, g, b = C_Item.GetItemQualityColor(quality)
+			elseif ITEM_QUALITY_COLORS and ITEM_QUALITY_COLORS[quality] then
+				local c = ITEM_QUALITY_COLORS[quality]
+				r, g, b = c.r, c.g, c.b
+			end
 		end
+		button.border:SetColorTexture(r or 0.25, g or 0.22, b or 0.17, 1)
 	end
 	if not link then
 		applyQuality(nil)
@@ -1451,8 +1455,18 @@ local function SetSlotItem(button, slot, link)
 end
 
 local function CreateSlotButton(parent, slot)
-	local button = CreateFrame("Button", nil, parent, "ItemButtonTemplate")
+	-- Dessinée par l'addon : ItemButtonTemplate n'existe pas dans le client WoW: Forever,
+	-- et son absence interrompait la construction de toute la fenêtre.
+	local button = CreateFrame("Button", nil, parent)
 	button:SetSize(SLOT_SIZE, SLOT_SIZE)
+	button.border = button:CreateTexture(nil, "BACKGROUND")
+	button.border:SetAllPoints()
+	button.border:SetColorTexture(0.25, 0.22, 0.17, 1)
+	button.icon = button:CreateTexture(nil, "ARTWORK")
+	button.icon:SetPoint("TOPLEFT", 2, -2)
+	button.icon:SetPoint("BOTTOMRIGHT", -2, 2)
+	button.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+	button:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square", "ADD")
 	button.slot = slot
 	button:RegisterForClicks("LeftButtonUp")
 	button:SetScript("OnEnter", function(self)
@@ -1556,13 +1570,17 @@ local function ShowMemberDetail(member)
 	-- personnalisations (visage...) ne sont pas accessibles aux addons.
 	local model = panel.model
 	local rendered, note = false, nil
-	pcall(model.ClearModel, model)
-	if member.name == GP.GetPlayerFullName() then
+	if not model then
+		-- Modèle 3D indisponible dans ce client : l'équipement s'affiche quand même.
+	elseif member.name == GP.GetPlayerFullName() then
+		pcall(model.ClearModel, model)
 		rendered = pcall(model.SetUnit, model, "player")
 	elseif TargetMatchesMember(member.name) then
+		pcall(model.ClearModel, model)
 		rendered = pcall(model.SetUnit, model, "target")
 		note = "rendu fidèle (cible)"
 	elseif member.raceId and model.SetCustomRace then
+		pcall(model.ClearModel, model)
 		local ok = pcall(model.SetCustomRace, model, member.raceId, (member.gender or 2) - 2)
 		if ok then
 			pcall(model.Undress, model)
@@ -1577,10 +1595,15 @@ local function ShowMemberDetail(member)
 			note = "modèle générique + équipement relevé"
 		end
 	end
-	if rendered then
-		SetModelFacing(model, 0.4)
+	if model then
+		if not rendered then
+			pcall(model.ClearModel, model)
+		end
+		if rendered then
+			SetModelFacing(model, 0.4)
+		end
+		model:SetShown(rendered)
 	end
-	model:SetShown(rendered)
 	panel.modelFallback:SetShown(not rendered)
 	panel.modelNote:SetText(rendered and ((note and (note .. "  ·  ") or "") .. "glisser pour tourner") or "")
 
@@ -1980,9 +2003,11 @@ end
 
 local function SelectTab(index)
 	state.tab = index
-	mainFrame.tabProfessions:SetShown(index == 1)
-	mainFrame.tabMembers:SetShown(index == 2)
-	mainFrame.tabOrders:SetShown(index == 3)
+	for i, key in ipairs({ "tabProfessions", "tabMembers", "tabOrders" }) do
+		if mainFrame[key] then
+			mainFrame[key]:SetShown(index == i)
+		end
+	end
 	PanelTemplates_SetTab(mainFrame, index)
 	GP.RefreshUI()
 end
@@ -2035,18 +2060,23 @@ local function CreateMainFrame()
 	end
 	PanelTemplates_SetNumTabs(frame, #TABS)
 
+	-- Chaque onglet naît masqué et se construit à part : si l'un échoue (API absente
+	-- du client), l'erreur est signalée mais les autres restent utilisables et
+	-- SelectTab n'affiche toujours que l'onglet choisi.
 	local inset = frame.Inset
-	frame.tabProfessions = CreateFrame("Frame", nil, inset)
-	frame.tabProfessions:SetAllPoints()
-	BuildProfessionsTab(frame, frame.tabProfessions)
-
-	frame.tabMembers = CreateFrame("Frame", nil, inset)
-	frame.tabMembers:SetAllPoints()
-	BuildMembersTab(frame, frame.tabMembers)
-
-	frame.tabOrders = CreateFrame("Frame", nil, inset)
-	frame.tabOrders:SetAllPoints()
-	BuildOrdersTab(frame, frame.tabOrders)
+	local function BuildTab(key, build)
+		local tab = CreateFrame("Frame", nil, inset)
+		tab:SetAllPoints()
+		tab:Hide()
+		frame[key] = tab
+		local ok, err = pcall(build, frame, tab)
+		if not ok then
+			geterrorhandler()(err)
+		end
+	end
+	BuildTab("tabProfessions", BuildProfessionsTab)
+	BuildTab("tabMembers", BuildMembersTab)
+	BuildTab("tabOrders", BuildOrdersTab)
 
 	frame:HookScript("OnShow", function()
 		PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN)
