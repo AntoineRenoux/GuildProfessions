@@ -15,6 +15,8 @@ builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, relo
 builder.Services.AddDbContext<AppDbContext>(options =>
 	options.UseSqlite(builder.Configuration.GetConnectionString("Default")));
 
+// Guilde courante d'un traitement (requête HTTP ou interaction Discord).
+builder.Services.AddScoped<GuildContext>();
 builder.Services.AddScoped<RosterService>();
 builder.Services.AddScoped<ExportBuilder>();
 builder.Services.AddScoped<CraftOrderService>();

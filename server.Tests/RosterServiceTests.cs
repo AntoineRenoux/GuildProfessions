@@ -12,6 +12,7 @@ public sealed class RosterServiceTests : IDisposable
 {
 	private readonly SqliteConnection _connection;
 	private readonly AppDbContext _db;
+	private readonly GuildContext _guild = new();
 	private readonly RosterService _roster;
 
 	public RosterServiceTests()
@@ -23,9 +24,10 @@ public sealed class RosterServiceTests : IDisposable
 		var options = new DbContextOptionsBuilder<AppDbContext>()
 			.UseSqlite(_connection)
 			.Options;
-		_db = new AppDbContext(options);
+		_db = new AppDbContext(options, _guild);
 		_db.Database.EnsureCreated();
-		_roster = new RosterService(_db);
+		_guild.Use(TestGuilds.Create(_db, "FORMER HOPE", "former-hope"));
+		_roster = new RosterService(_db, _guild);
 	}
 
 	public void Dispose()
@@ -155,7 +157,7 @@ public sealed class RosterServiceTests : IDisposable
 		]));
 		await _roster.SetProfessionFromDiscordAsync("42", "anto", "Nayra", "Couture", 240, 300, null);
 
-		var export = await new ExportBuilder(_db, _roster, new ConfigurationBuilder().Build()).BuildAsync();
+		var export = await new ExportBuilder(_db, _roster, _guild).BuildAsync();
 
 		Assert.Equal(2, export.Characters.Count);
 		Assert.Equal("Flacon des Titans", export.RecipeNames[17635]);
@@ -175,7 +177,7 @@ public sealed class RosterServiceTests : IDisposable
 		]);
 
 		await _roster.ApplyUploadAsync(member, payload);
-		var export = await new ExportBuilder(_db, _roster, new ConfigurationBuilder().Build()).BuildAsync();
+		var export = await new ExportBuilder(_db, _roster, _guild).BuildAsync();
 
 		var equipment = export.Characters.Single().Equipment!;
 		Assert.Equal(2, equipment.Count);

@@ -11,6 +11,7 @@ public sealed class CraftOrderServiceTests : IDisposable
 {
 	private readonly SqliteConnection _connection;
 	private readonly AppDbContext _db;
+	private readonly GuildContext _guild = new();
 	private readonly RosterService _roster;
 	private readonly CraftOrderService _orders;
 	private readonly RecordingNotifier _notifier = new();
@@ -22,9 +23,10 @@ public sealed class CraftOrderServiceTests : IDisposable
 		var options = new DbContextOptionsBuilder<AppDbContext>()
 			.UseSqlite(_connection)
 			.Options;
-		_db = new AppDbContext(options);
+		_db = new AppDbContext(options, _guild);
 		_db.Database.EnsureCreated();
-		_roster = new RosterService(_db);
+		_guild.Use(TestGuilds.Create(_db, "FORMER HOPE", "former-hope"));
+		_roster = new RosterService(_db, _guild);
 		_orders = new CraftOrderService(_db, _roster, _notifier);
 	}
 

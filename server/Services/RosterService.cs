@@ -12,9 +12,8 @@ public sealed record OperationResult(bool Success, string Message);
 /// (personnage, métier), la donnée scannée par l'addon prime sur la donnée
 /// déclarée via Discord — sauf la note, toujours éditable via Discord.
 /// </summary>
-public sealed class RosterService(AppDbContext db)
+public sealed class RosterService(AppDbContext db, GuildContext guildContext)
 {
-	private const string DataVersionKey = "DataVersion";
 
 	// ---- Membres & liaison ------------------------------------------------
 
@@ -262,29 +261,20 @@ public sealed class RosterService(AppDbContext db)
 
 	// ---- Version de l'export -------------------------------------------------
 
-	public async Task<long> GetDataVersionAsync(CancellationToken ct = default)
-	{
-		var meta = await db.Metas.FindAsync([DataVersionKey], ct);
-		return meta is null ? 0 : long.Parse(meta.Value);
-	}
+	public async Task<long> GetDataVersionAsync(CancellationToken ct = default) =>
+		(await CurrentGuildAsync(ct)).DataVersion;
 
 	public async Task<long> BumpVersionAndSaveAsync(CancellationToken ct = default) => await SaveWithVersionBumpAsync(ct);
 
+	// Version propre à la guilde : le compagnon ne réécrit Data.lua que si elle change.
 	private async Task<long> SaveWithVersionBumpAsync(CancellationToken ct)
 	{
-		var meta = await db.Metas.FindAsync([DataVersionKey], ct);
-		long version;
-		if (meta is null)
-		{
-			version = 1;
-			db.Metas.Add(new Meta { Key = DataVersionKey, Value = "1" });
-		}
-		else
-		{
-			version = long.Parse(meta.Value) + 1;
-			meta.Value = version.ToString();
-		}
+		var guild = await CurrentGuildAsync(ct);
+		guild.DataVersion++;
 		await db.SaveChangesAsync(ct);
-		return version;
+		return guild.DataVersion;
 	}
+
+	private async Task<Guild> CurrentGuildAsync(CancellationToken ct) =>
+		await db.Guilds.SingleAsync(g => g.Id == guildContext.Required.Id, ct);
 }

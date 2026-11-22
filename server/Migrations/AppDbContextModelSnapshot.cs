@@ -15,7 +15,7 @@ namespace GuildProfessions.Server.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "10.0.12");
+            modelBuilder.HasAnnotation("ProductVersion", "10.0.15");
 
             modelBuilder.Entity("GuildProfessions.Server.Data.Character", b =>
                 {
@@ -30,6 +30,9 @@ namespace GuildProfessions.Server.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("Gender")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("GuildId")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime?>("LastSeenUtc")
@@ -58,7 +61,7 @@ namespace GuildProfessions.Server.Migrations
 
                     b.HasIndex("MemberId");
 
-                    b.HasIndex("Name")
+                    b.HasIndex("GuildId", "Name")
                         .IsUnique();
 
                     b.ToTable("Characters");
@@ -79,6 +82,9 @@ namespace GuildProfessions.Server.Migrations
 
                     b.Property<DateTime>("CreatedUtc")
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("GuildId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Item")
                         .IsRequired()
@@ -105,10 +111,70 @@ namespace GuildProfessions.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ClientId")
+                    b.HasIndex("GuildId", "ClientId")
                         .IsUnique();
 
                     b.ToTable("CraftOrders");
+                });
+
+            modelBuilder.Entity("GuildProfessions.Server.Data.Guild", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ApiToken")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("BotRemovedUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CreatedByDiscordId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("DataVersion")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("DiscordServerId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("InviteCode")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OrdersChannelId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("SyncNicknames")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApiToken")
+                        .IsUnique();
+
+                    b.HasIndex("DiscordServerId")
+                        .IsUnique();
+
+                    b.HasIndex("InviteCode")
+                        .IsUnique();
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
+                    b.ToTable("Guilds");
                 });
 
             modelBuilder.Entity("GuildProfessions.Server.Data.Member", b =>
@@ -125,6 +191,9 @@ namespace GuildProfessions.Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("GuildId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int?>("MainCharacterId")
                         .HasColumnType("INTEGER");
 
@@ -133,26 +202,15 @@ namespace GuildProfessions.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DiscordId")
-                        .IsUnique();
-
                     b.HasIndex("MainCharacterId");
 
+                    b.HasIndex("UploadToken")
+                        .IsUnique();
+
+                    b.HasIndex("GuildId", "DiscordId")
+                        .IsUnique();
+
                     b.ToTable("Members");
-                });
-
-            modelBuilder.Entity("GuildProfessions.Server.Data.Meta", b =>
-                {
-                    b.Property<string>("Key")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Key");
-
-                    b.ToTable("Metas");
                 });
 
             modelBuilder.Entity("GuildProfessions.Server.Data.Profession", b =>
@@ -219,6 +277,12 @@ namespace GuildProfessions.Server.Migrations
 
             modelBuilder.Entity("GuildProfessions.Server.Data.Character", b =>
                 {
+                    b.HasOne("GuildProfessions.Server.Data.Guild", null)
+                        .WithMany()
+                        .HasForeignKey("GuildId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("GuildProfessions.Server.Data.Member", "Member")
                         .WithMany("Characters")
                         .HasForeignKey("MemberId")
@@ -227,8 +291,23 @@ namespace GuildProfessions.Server.Migrations
                     b.Navigation("Member");
                 });
 
+            modelBuilder.Entity("GuildProfessions.Server.Data.CraftOrder", b =>
+                {
+                    b.HasOne("GuildProfessions.Server.Data.Guild", null)
+                        .WithMany()
+                        .HasForeignKey("GuildId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("GuildProfessions.Server.Data.Member", b =>
                 {
+                    b.HasOne("GuildProfessions.Server.Data.Guild", null)
+                        .WithMany()
+                        .HasForeignKey("GuildId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("GuildProfessions.Server.Data.Character", "MainCharacter")
                         .WithMany()
                         .HasForeignKey("MainCharacterId")

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GuildProfessions.Server.Services;
 
-public sealed class ExportBuilder(AppDbContext db, RosterService roster, IConfiguration config)
+public sealed class ExportBuilder(AppDbContext db, RosterService roster, GuildContext guildContext)
 {
 	public async Task<ExportDto> BuildAsync(CancellationToken ct = default)
 	{
@@ -66,8 +66,6 @@ public sealed class ExportBuilder(AppDbContext db, RosterService roster, IConfig
 			.ToListAsync(ct);
 
 		var version = await roster.GetDataVersionAsync(ct);
-		var guildName = config["Guild:Name"];
-		return new ExportDto(version, DateTime.UtcNow, recipeNames, exportCharacters, orders,
-			string.IsNullOrWhiteSpace(guildName) ? null : guildName);
+		return new ExportDto(version, DateTime.UtcNow, recipeNames, exportCharacters, orders, guildContext.Required.Name);
 	}
 }
