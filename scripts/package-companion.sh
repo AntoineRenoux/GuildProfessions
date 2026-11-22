@@ -79,8 +79,10 @@ for RID in win-x64 linux-x64 osx-x64 osx-arm64; do
 EOF
 	case "$RID" in
 		win-x64)
-			START_FR="Il se lance ensuite tout seul au démarrage de Windows."
-			START_EN="It then starts by itself with Windows."
+			START_FR="Ensuite, GuildkeepCompanion (pas le jeu) se relance tout seul, en
+   arrière-plan, à chaque démarrage de Windows. Il ne lance jamais WoW."
+			START_EN="After that, GuildkeepCompanion (not the game) restarts by itself, in
+   the background, every time Windows starts. It never launches WoW."
 			MAC_FR=""
 			MAC_EN="" ;;
 		osx-*)
