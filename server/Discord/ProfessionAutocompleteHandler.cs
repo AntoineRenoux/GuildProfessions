@@ -1,8 +1,7 @@
 using Discord;
 using Discord.Interactions;
-using GuildProfessions.Server.Data;
-using GuildProfessions.Server.Services;
-using Microsoft.EntityFrameworkCore;
+using GuildProfessions.Server.Modules.Annuaire.Contracts;
+using GuildProfessions.Server.Shared;
 
 namespace GuildProfessions.Server.Discord;
 
@@ -13,17 +12,10 @@ public sealed class ProfessionAutocompleteHandler : AutocompleteHandler
 		IInteractionContext context, IAutocompleteInteraction autocompleteInteraction,
 		IParameterInfo parameter, IServiceProvider services)
 	{
-		var db = services.GetRequiredService<AppDbContext>();
+		var annuaire = services.GetRequiredService<IAnnuaire>();
 		var language = services.GetRequiredService<BotLocalizer>().Language;
 		var typed = autocompleteInteraction.Data.Current.Value?.ToString() ?? "";
-
-		var inGuild = await db.Professions.AsNoTracking().Select(p => p.Name).Distinct().ToListAsync();
-		var suggestions = inGuild.OrderBy(n => n)
-			.Concat(ProfessionChoices.For(language))
-			.Distinct()
-			.Where(p => p.Contains(typed, StringComparison.OrdinalIgnoreCase))
-			.Take(25)
-			.Select(p => new AutocompleteResult(p, p));
-		return AutocompletionResult.FromSuccess(suggestions);
+		var suggestions = await annuaire.ProfessionSuggestionsAsync(typed, language, 25);
+		return AutocompletionResult.FromSuccess(suggestions.Select(p => new AutocompleteResult(p, p)));
 	}
 }

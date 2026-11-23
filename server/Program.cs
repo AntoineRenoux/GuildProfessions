@@ -1,5 +1,6 @@
 using Discord.Interactions;
 using Discord.WebSocket;
+using GuildProfessions.Server;
 using GuildProfessions.Server.Api;
 using GuildProfessions.Server.Data;
 using GuildProfessions.Server.Discord;
@@ -15,18 +16,9 @@ builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, relo
 builder.Services.AddDbContext<AppDbContext>(options =>
 	options.UseSqlite(builder.Configuration.GetConnectionString("Default")));
 
-// Guilde courante d'un traitement (requête HTTP ou interaction Discord).
-builder.Services.AddScoped<GuildContext>();
-builder.Services.AddScoped<BotLocalizer>();
-builder.Services.AddScoped<GuildDirectory>();
-builder.Services.AddScoped<RosterService>();
-builder.Services.AddScoped<ExportBuilder>();
-builder.Services.AddScoped<CraftOrderService>();
-builder.Services.AddScoped<UploadIngestion>();
-builder.Services.AddSingleton<ICraftOrderNotifier, DiscordCraftOrderNotifier>();
+// Noyau partagé, guildes, orchestrateurs et un enregistrement par module (Modules/{Module}/{Module}Module.cs).
+builder.Services.AddGuildkeep();
 builder.Services.AddSingleton<NicknameSync>();
-builder.Services.AddSingleton<SiteLinks>();
-builder.Services.AddSingleton<GuildPackBuilder>();
 
 builder.Services.AddSingleton(new DiscordSocketClient(new DiscordSocketConfig
 {
@@ -34,15 +26,29 @@ builder.Services.AddSingleton(new DiscordSocketClient(new DiscordSocketConfig
 	LogLevel = Discord.LogSeverity.Debug,
 }));
 builder.Services.AddSingleton(provider =>
-	new InteractionService(provider.GetRequiredService<DiscordSocketClient>(), GuildProfessions.Server.Discord.BotInteractionConfig.Create()));
+	new InteractionService(provider.GetRequiredService<DiscordSocketClient>(), BotInteractionConfig.Create()));
 builder.Services.AddHostedService<DiscordBotService>();
 
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-	var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-	db.Database.Migrate();
+	try
+	{
+		var database = scope.ServiceProvider.GetRequiredService<AppDbContext>().Database;
+		database.Migrate();
+		// Journal WAL (réglage persistant du fichier) : les lectures ne bloquent plus
+		// les écritures, et deux traitements simultanés (envoi, commande Discord)
+		// ne finissent plus en « base verrouillée » au bout du délai d'attente.
+		database.ExecuteSqlRaw("PRAGMA journal_mode=WAL;");
+	}
+	catch (Exception exception)
+	{
+		// Une seule base pour tous les modules : sans son schéma à jour, rien ne peut tourner.
+		// On le dit clairement plutôt que de servir des données incohérentes.
+		app.Logger.LogCritical(exception, "Migration de la base impossible : le serveur ne démarre pas. Restaurer la sauvegarde ou corriger la migration en cause.");
+		throw;
+	}
 }
 
 // Landing page (wwwroot) + téléchargements (volume /app/wwwroot/downloads sur le VPS).

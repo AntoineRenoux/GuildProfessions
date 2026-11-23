@@ -32,8 +32,25 @@ public static class UploadSplitter
 			// Les actions visent un numéro de commande unique sur le serveur, qui
 			// ignore celles des autres guildes : elles partent partout.
 			var actions = payload.OrderActions;
+			// Événements : chacun part à la guilde du personnage qui agit.
+			var events = payload.Events?.Where(e => Mine(e.By)).ToList();
+			var signups = payload.Signups?.Where(s => Mine(s.Character)).ToList();
+			var placements = payload.Placements?.Where(p => Mine(p.By)).ToList();
+			var reserves = payload.Reserves?.Where(r => Mine(r.By)).ToList();
+			var hardReserves = payload.HardReserves?.Where(h => Mine(h.By)).ToList();
+			var duties = payload.Duties?.Where(d => Mine(d.By)).ToList();
+			// Présence et butin : à la guilde du personnage qui a relevé ou corrigé.
+			var raids = payload.Raids?.Where(r => Mine(r.Observer)).ToList();
+			var loot = payload.Loot?.Where(l => Mine(l.Observer)).ToList();
+			var attendanceCorrections = payload.AttendanceCorrections?.Where(c => Mine(c.By)).ToList();
+			var lootCorrections = payload.LootCorrections?.Where(c => Mine(c.By)).ToList();
+			var offers = payload.Offers?.Where(o => Mine(o.Crafter)).ToList();
 
-			if (characters.Count == 0 && orders is not { Count: > 0 } && actions is not { Count: > 0 } && departed.Count == 0)
+			if (characters.Count == 0 && orders is not { Count: > 0 } && actions is not { Count: > 0 } && departed.Count == 0 &&
+				events is not { Count: > 0 } && signups is not { Count: > 0 } && placements is not { Count: > 0 } &&
+				reserves is not { Count: > 0 } && hardReserves is not { Count: > 0 } && duties is not { Count: > 0 } &&
+				raids is not { Count: > 0 } && loot is not { Count: > 0 } && attendanceCorrections is not { Count: > 0 } && lootCorrections is not { Count: > 0 } &&
+				offers is not { Count: > 0 })
 			{
 				continue;
 			}
@@ -41,7 +58,18 @@ public static class UploadSplitter
 				characters,
 				orders is { Count: > 0 } ? orders : null,
 				actions,
-				departed.Count > 0 ? departed : null)));
+				departed.Count > 0 ? departed : null,
+				events is { Count: > 0 } ? events : null,
+				signups is { Count: > 0 } ? signups : null,
+				placements is { Count: > 0 } ? placements : null,
+				reserves is { Count: > 0 } ? reserves : null,
+				hardReserves is { Count: > 0 } ? hardReserves : null,
+				duties is { Count: > 0 } ? duties : null,
+				raids is { Count: > 0 } ? raids : null,
+				loot is { Count: > 0 } ? loot : null,
+				attendanceCorrections is { Count: > 0 } ? attendanceCorrections : null,
+				lootCorrections is { Count: > 0 } ? lootCorrections : null,
+				offers is { Count: > 0 } ? offers : null)));
 		}
 		return uploads;
 	}

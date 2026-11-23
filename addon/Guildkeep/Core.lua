@@ -1,18 +1,43 @@
-local ADDON_NAME, GP = ...
+local _, GP = ...
+
+-- Socle commun : données de base (SavedVariables, données du serveur, roster),
+-- identité du joueur, droits d'officier, temps et noms d'objets ou de recettes.
+-- Aucune fonctionnalité ici : chaque module (Modules.lua) s'appuie sur ce socle
+-- sans jamais appeler un autre module.
 
 GP.VERSION = "0.1.0"
+GP.ICON = "Interface\\Icons\\INV_Misc_Gear_01"
 
--- SavedVariables ------------------------------------------------------------
+-- Messages dans le chat ------------------------------------------------------------
+
+function GP.Chat(text)
+	print("|cff33ff99Guildkeep|r — " .. text)
+end
+
+-- Temps ------------------------------------------------------------------------------
+
+-- Horodatage commun à tous les clients (heure du serveur).
+function GP.Now()
+	return GetServerTime and GetServerTime() or time()
+end
+
+-- Horodatage strictement plus récent que l'état connu : la modification gagne
+-- même si deux changements tombent dans la même seconde.
+function GP.NextAt(previous)
+	return math.max(GP.Now(), (previous or 0) + 1)
+end
+
+-- SavedVariables ---------------------------------------------------------------------
 
 local function GuildKey(name)
 	return name and strtrim(name):lower() or nil
 end
+GP.GuildKey = GuildKey
 
-local function InitDB()
+-- Tables du socle ; chaque module initialise les siennes à son chargement.
+function GP.InitDB()
 	GuildkeepDB = GuildkeepDB or {}
 	GuildkeepDB.characters = GuildkeepDB.characters or {}
-	GuildkeepDB.orders = GuildkeepDB.orders or {}
-	GuildkeepDB.orderActions = GuildkeepDB.orderActions or {}
 	GuildkeepDB.importedByGuild = GuildkeepDB.importedByGuild or {}
 	-- Ancienne version : un seul import, rangé désormais sous sa guilde.
 	local legacy = GuildkeepDB.importedServerData
@@ -24,32 +49,7 @@ local function InitDB()
 	end
 end
 
--- Purge les données locales déjà synchronisées : commandes locales reprises
--- par le serveur (clientId présent dans l'export) et actions déjà appliquées.
--- Toutes les guildes du fichier : au chargement, la guilde du personnage
--- n'est pas encore connue.
-local function PruneSyncedOrders()
-	local byClientId, byId = {}, {}
-	for _, section in ipairs(GP.AllServerSections()) do
-		for _, order in ipairs(section.orders or {}) do
-			if order.clientId then
-				byClientId[order.clientId] = order
-			end
-			byId[tostring(order.id)] = order
-		end
-	end
-	for localId in pairs(GuildkeepDB.orders) do
-		if byClientId[localId] then
-			GuildkeepDB.orders[localId] = nil
-		end
-	end
-	for key, action in pairs(GuildkeepDB.orderActions) do
-		local serverOrder = byId[key] or byClientId[key]
-		if serverOrder and serverOrder.status == action.status then
-			GuildkeepDB.orderActions[key] = nil
-		end
-	end
-end
+-- Identité du joueur -------------------------------------------------------------------
 
 -- Sur WoW: Forever, les personnages ont prénom + nom : UnitName ne rend que
 -- le prénom (non unique !), UnitFullName rend le nom de famille dans le slot
@@ -61,6 +61,11 @@ function GP.GetPlayerFullName()
 		return name .. " " .. surname
 	end
 	return name
+end
+
+-- « Prénom-Nom » (expéditeur d'un message, roster du jeu) → « Prénom Nom ».
+function GP.NormalizeName(name)
+	return name and (name:gsub("%-", " ", 1)) or nil
 end
 
 function GP.GetLocalCharacter()
@@ -79,6 +84,62 @@ function GP.MigrateLegacyCharacterKey()
 		characters[firstName] = nil
 	end
 end
+
+function GP.GetPlayerGuildName()
+	return (GetGuildInfo("player"))
+end
+
+-- Un personnage hors guilde ne doit ni être relevé, ni exporté, ni passer de
+-- commandes : les rerolls ne sont pas listés sans le consentement du joueur.
+-- Tout personnage en guilde est relevé : le compagnon n'envoie ses données
+-- qu'à sa propre guilde, et seulement si elle est inscrite.
+function GP.IsEligibleCharacter()
+	if not GP.GetPlayerGuildName() then
+		return false, "hors guilde"
+	end
+	return true
+end
+
+-- Droits d'officier -----------------------------------------------------------------------
+
+-- Rang dans la guilde d'un membre (0 = maître de guilde), d'après le roster du client.
+local function RosterRank(name)
+	if not GetNumGuildMembers or not GetGuildRosterInfo then
+		return nil
+	end
+	for i = 1, GetNumGuildMembers() do
+		local rosterName, _, rankIndex = GetGuildRosterInfo(i)
+		if rosterName and GP.NormalizeName(rosterName) == name then
+			return rankIndex
+		end
+	end
+end
+
+-- Officier = maître de guilde, rang juste en dessous, ou statut d'officier donné par le jeu.
+local OFFICER_MAX_RANK = 1
+
+function GP.IsOfficer()
+	if IsGuildLeader and IsGuildLeader() then
+		return true
+	end
+	if C_GuildInfo and C_GuildInfo.IsGuildOfficer then
+		local ok, officer = pcall(C_GuildInfo.IsGuildOfficer)
+		if ok and officer then
+			return true
+		end
+	end
+	local rank = RosterRank(GP.GetPlayerFullName())
+	return rank ~= nil and rank <= OFFICER_MAX_RANK
+end
+
+-- Un autre joueur a-t-il le rang d'officier ? Sert à trier ce qu'on reçoit
+-- des joueurs connectés ; le serveur refait toujours le contrôle.
+function GP.IsOfficerName(name)
+	local rank = RosterRank(name)
+	return rank ~= nil and rank <= OFFICER_MAX_RANK
+end
+
+-- Données du serveur -------------------------------------------------------------------------
 
 -- Plusieurs guildes : Data.lua (écrit par le compagnon) contient une section
 -- par guilde inscrite sur le poste ; l'addon prend celle de la guilde du
@@ -145,11 +206,11 @@ function GP.IsInCurrentGuild(characterName)
 	return GuildKey(char.guild) == GuildKey(GP.GetPlayerGuildName())
 end
 
--- Fusion serveur + scan local ------------------------------------------------
+-- Roster : serveur + relevés locaux ------------------------------------------------------------
 -- Le roster affiché = données serveur (tout le monde) écrasées par les données
--- scannées localement (plus fraîches) pour les personnages de ce compte.
+-- relevées localement (plus fraîches) pour les personnages de ce compte.
 
--- Le scan local stocke les métiers en map [nom] = {...} ; l'affichage attend une liste.
+-- Le relevé local stocke les métiers en map [nom] = {...} ; l'affichage attend une liste.
 local function LocalProfessionsToList(map)
 	local list = {}
 	for name, p in pairs(map or {}) do
@@ -198,10 +259,10 @@ function GP.GetRoster()
 	for name, char in pairs(GuildkeepDB.characters) do
 		if GP.IsInCurrentGuild(name) then
 			upsert({
-			name = name, classFile = char.classFile, level = char.level,
-			raceFile = char.raceFile, raceId = char.raceId, gender = char.gender,
-			equipment = char.equipment,
-			professions = LocalProfessionsToList(char.professions),
+				name = name, classFile = char.classFile, level = char.level,
+				raceFile = char.raceFile, raceId = char.raceId, gender = char.gender,
+				equipment = char.equipment,
+				professions = LocalProfessionsToList(char.professions),
 			})
 		end
 	end
@@ -210,7 +271,7 @@ function GP.GetRoster()
 	return roster
 end
 
--- Noms de recettes ------------------------------------------------------------
+-- Noms de recettes ------------------------------------------------------------------------------
 
 local recipeNameCache = {}
 
@@ -243,124 +304,31 @@ function GP.GetRecipeName(spellId)
 	return name
 end
 
--- Éligibilité du personnage ----------------------------------------------------
--- Un personnage hors guilde (ou d'une autre guilde que celle du serveur de
--- données) ne doit ni être scanné, ni exporté, ni passer de commandes : les
--- rerolls ne sont pas listés sans le consentement du joueur.
+-- Objets ------------------------------------------------------------------------------------
 
-function GP.GetPlayerGuildName()
-	return (GetGuildInfo("player"))
-end
-
--- Tout personnage en guilde est relevé : le compagnon n'envoie ses données
--- qu'à sa propre guilde, et seulement si elle est inscrite.
-function GP.IsEligibleCharacter()
-	if not GP.GetPlayerGuildName() then
-		return false, "hors guilde"
+local function GetItemData(itemId)
+	local getter = (C_Item and C_Item.GetItemInfo) or GetItemInfo
+	if not getter then
+		return nil
 	end
-	return true
-end
-
--- Commandes de craft ----------------------------------------------------------
-
-function GP.CreateOrder(crafter, item, qty, note)
-	local requester = GP.GetPlayerFullName()
-	local localId = requester .. "-" .. time() .. "-" .. math.random(1000, 9999)
-	local order = {
-		requester = requester,
-		crafter = crafter,
-		item = item,
-		qty = qty or 1,
-		note = note ~= "" and note or nil,
-		createdAt = date("%Y-%m-%d %H:%M"),
-	}
-	GuildkeepDB.orders[localId] = order
-	GP.Comm.SendNewOrder(order)
-	GP.RefreshUI()
-	return localId
-end
-
--- Liste fusionnée pour l'affichage : commandes du serveur (Data.lua) +
--- commandes locales pas encore synchronisées, avec les changements de statut
--- décidés en jeu par-dessus.
-function GP.GetOrders()
-	local merged = {}
-	local actions = GuildkeepDB.orderActions
-	for _, order in ipairs(GP.GetServerData().orders or {}) do
-		local key = tostring(order.id)
-		local action = actions[key] or (order.clientId and actions[order.clientId])
-		merged[#merged + 1] = {
-			key = key,
-			id = order.id,
-			requester = order.requester,
-			crafter = order.crafter,
-			item = order.item,
-			-- qty vient de Data.lua (compagnon), quantity d'une chaîne importée
-			qty = order.qty or order.quantity or 1,
-			note = order.note,
-			status = action and action.status or order.status,
-			pendingSync = action ~= nil,
-			createdAt = order.createdUtc,
-		}
+	local ok, name, link, quality, _, _, _, _, _, _, icon = pcall(getter, itemId)
+	if ok then
+		return name, link, quality, icon
 	end
-	for localId, order in pairs(GuildkeepDB.orders) do
-		-- Commande passée par un reroll d'une autre guilde : pas ici.
-		if GP.IsInCurrentGuild(order.requester) then
-			local action = actions[localId]
-			merged[#merged + 1] = {
-				key = localId,
-				requester = order.requester,
-				crafter = order.crafter,
-				item = order.item,
-				qty = order.qty or 1,
-				note = order.note,
-				status = action and action.status or "open",
-				pendingSync = true,
-				createdAt = order.createdAt,
-			}
+end
+
+-- Nom, lien, icône d'un objet ; le client peut ne pas l'avoir encore en cache.
+function GP.ItemInfo(itemId, fallbackName)
+	local name, link, _, icon = GetItemData(itemId)
+	if not icon then
+		local instant = (C_Item and C_Item.GetItemInfoInstant) or GetItemInfoInstant
+		if instant then
+			local ok, _, _, _, _, instantIcon = pcall(instant, itemId)
+			icon = ok and instantIcon or nil
 		end
 	end
-	table.sort(merged, function(a, b)
-		return (a.createdAt or "") > (b.createdAt or "")
-	end)
-	return merged
+	return name or fallbackName or ("Objet #" .. itemId), link, icon or "Interface\\Icons\\INV_Misc_QuestionMark"
 end
 
-function GP.SetOrderStatus(order, status)
-	GuildkeepDB.orderActions[order.key] = { status = status, at = date("%Y-%m-%d %H:%M") }
-	GP.Comm.SendStatus(order, status)
-	GP.RefreshUI()
-end
-
--- Point d'extension UI : redéfini par UI.lua, no-op tant qu'elle n'est pas chargée.
+-- Point d'extension de l'interface : redéfini par MainFrame.lua.
 function GP.RefreshUI() end
-
--- Initialisation ----------------------------------------------------------------
-
-local frame = CreateFrame("Frame")
-frame:RegisterEvent("ADDON_LOADED")
-frame:SetScript("OnEvent", function(self, event, arg1)
-	if event == "ADDON_LOADED" and arg1 == ADDON_NAME then
-		InitDB()
-		PruneSyncedOrders()
-		self:UnregisterEvent("ADDON_LOADED")
-		local server = GP.GetServerData()
-		print(("|cff33ff99Guildkeep|r v%s chargé — /gkeep pour ouvrir%s"):format(
-			GP.VERSION, server.mock and " |cffffcc00(données de démonstration)|r" or ""))
-	end
-end)
-
-SLASH_GUILDKEEP1 = "/gkeep"
-SLASH_GUILDKEEP2 = "/gp"
-SlashCmdList.GUILDKEEP = function(msg)
-	if strtrim(msg or ""):lower() == "debug" then
-		if GP.DebugGuildTab then
-			GP.DebugGuildTab()
-		end
-		if GP.DebugRecipeScan then
-			GP.DebugRecipeScan()
-		end
-		return
-	end
-	GP.ToggleMainFrame()
-end

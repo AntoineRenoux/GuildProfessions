@@ -16,21 +16,8 @@ public sealed class GuildDirectory(AppDbContext db)
 	public async Task<Guild?> FindByApiTokenAsync(string? token, CancellationToken ct = default) =>
 		string.IsNullOrWhiteSpace(token) ? null : await db.Guilds.SingleOrDefaultAsync(g => g.ApiToken == token, ct);
 
-	/// <summary>Guilde d'un token personnel (/token sur Discord) : celle du membre qui le possède.</summary>
-	public async Task<(Guild Guild, Member Member)?> FindByUploadTokenAsync(string? token, CancellationToken ct = default)
-	{
-		if (string.IsNullOrWhiteSpace(token))
-		{
-			return null;
-		}
-		var member = await db.Members.IgnoreQueryFilters().SingleOrDefaultAsync(m => m.UploadToken == token, ct);
-		if (member is null)
-		{
-			return null;
-		}
-		var guild = await db.Guilds.SingleAsync(g => g.Id == member.GuildId, ct);
-		return (guild, member);
-	}
+	public async Task<Guild?> FindByIdAsync(int id, CancellationToken ct = default) =>
+		await db.Guilds.SingleOrDefaultAsync(g => g.Id == id, ct);
 
 	public async Task<Guild?> FindByDiscordServerAsync(ulong? serverId, CancellationToken ct = default)
 	{
@@ -44,9 +31,6 @@ public sealed class GuildDirectory(AppDbContext db)
 
 	public async Task<Guild?> FindByInviteCodeAsync(string? code, CancellationToken ct = default) =>
 		string.IsNullOrWhiteSpace(code) ? null : await db.Guilds.SingleOrDefaultAsync(g => g.InviteCode == code, ct);
-
-	public async Task<Guild?> FindBySlugAsync(string? slug, CancellationToken ct = default) =>
-		string.IsNullOrWhiteSpace(slug) ? null : await db.Guilds.SingleOrDefaultAsync(g => g.Slug == slug, ct);
 
 	public async Task<Guild> CreateAsync(string name, string? discordServerId, string? createdByDiscordId,
 		bool syncNicknames, string? ordersChannelId, string locale = "fr", CancellationToken ct = default)
@@ -74,6 +58,27 @@ public sealed class GuildDirectory(AppDbContext db)
 	{
 		guild.ApiToken = NewApiToken();
 		guild.InviteCode = NewInviteCode();
+		await db.SaveChangesAsync(ct);
+	}
+
+	/// <summary>Choix de l'admin : le bot renomme (ou non) les membres avec leur personnage principal.</summary>
+	public async Task SetSyncNicknamesAsync(Guild guild, bool enabled, CancellationToken ct = default)
+	{
+		guild.SyncNicknames = enabled;
+		await db.SaveChangesAsync(ct);
+	}
+
+	/// <summary>Salon d'annonce des nouvelles commandes (null : aucune annonce).</summary>
+	public async Task SetOrdersChannelAsync(Guild guild, string? channelId, CancellationToken ct = default)
+	{
+		guild.OrdersChannelId = channelId;
+		await db.SaveChangesAsync(ct);
+	}
+
+	/// <summary>Bot retiré du serveur (date) ou réinvité (null) : la suppression des données est différée.</summary>
+	public async Task MarkRemovedAsync(Guild guild, DateTime? removedUtc, CancellationToken ct = default)
+	{
+		guild.BotRemovedUtc = removedUtc;
 		await db.SaveChangesAsync(ct);
 	}
 

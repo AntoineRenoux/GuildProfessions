@@ -2,16 +2,26 @@ using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
 using GuildProfessions.Server.Data;
+using GuildProfessions.Server.Modules.Annuaire.Contracts;
 using GuildProfessions.Server.Services;
+using GuildProfessions.Server.Shared;
 using Microsoft.EntityFrameworkCore;
 
 namespace GuildProfessions.Server.Discord;
 
 /// <summary>
-/// Héberge le bot dans le même process que l'API. Sans token configuré, le
-/// bot ne démarre pas mais l'API reste utilisable (tests locaux, CI).
+/// Héberge le bot dans le même process que l'API. Sans token configuré, ou si
+/// Discord refuse la connexion (token révoqué, panne), le bot ne démarre pas
+/// mais l'API reste utilisable : aucune erreur du bot ne remonte à l'hôte.
 /// Un seul bot pour toutes les guildes : chaque interaction est rattachée à la
 /// guilde du serveur Discord d'où elle vient.
+/// Isolation : au chargement comme à la publication, l'unité est la commande
+/// de premier niveau (/gkeep, /gkeep-setup). Les groupes des modules (métier,
+/// commande, événement…) sont imbriqués dans /gkeep : un groupe invalide
+/// ferait tomber tout /gkeep. C'est pourquoi CommandLocalizationTests construit
+/// chaque groupe séparément et nomme celui qui échoue, avant toute mise en
+/// production. À l'exécution, une commande de module qui lève une exception
+/// reçoit une réponse « indisponible » sans toucher aux autres.
 /// </summary>
 public sealed class DiscordBotService(
 	DiscordSocketClient client,
@@ -34,45 +44,102 @@ public sealed class DiscordBotService(
 			return;
 		}
 
-		client.Log += OnLog;
-		interactions.Log += OnLog;
-		client.Ready += OnReadyAsync;
-		client.InteractionCreated += OnInteractionAsync;
-		client.LeftGuild += OnLeftGuildAsync;
-		client.JoinedGuild += OnJoinedGuildAsync;
-		interactions.InteractionExecuted += OnInteractionExecutedAsync;
+		try
+		{
+			client.Log += OnLog;
+			interactions.Log += OnLog;
+			client.Ready += OnReadyAsync;
+			client.InteractionCreated += OnInteractionAsync;
+			client.LeftGuild += OnLeftGuildAsync;
+			client.JoinedGuild += OnJoinedGuildAsync;
+			interactions.InteractionExecuted += OnInteractionExecutedAsync;
 
-		await interactions.AddModulesAsync(typeof(DiscordBotService).Assembly, services);
-		await client.LoginAsync(TokenType.Bot, token);
-		await client.StartAsync();
-		_ = Task.Run(() => PurgeRemovedGuildsLoopAsync(_stopping.Token));
+			await AddInteractionModulesAsync();
+			await client.LoginAsync(TokenType.Bot, token);
+			await client.StartAsync();
+			_ = Task.Run(() => PurgeRemovedGuildsLoopAsync(_stopping.Token));
+		}
+		catch (Exception exception)
+		{
+			logger.LogError(exception, "Démarrage du bot Discord impossible : l'API HTTP continue de tourner sans le bot.");
+		}
+	}
+
+	/// <summary>Modules d'interaction de premier niveau (les groupes de /gkeep sont imbriqués dans le leur).</summary>
+	public static IReadOnlyList<Type> InteractionModuleTypes() =>
+		typeof(DiscordBotService).Assembly.GetTypes()
+			.Where(t => t is { IsNested: false, IsAbstract: false, IsClass: true } && typeof(IInteractionModuleBase).IsAssignableFrom(t))
+			.OrderBy(t => t.FullName, StringComparer.Ordinal)
+			.ToList();
+
+	// Un module invalide est journalisé et laissé de côté : les autres se chargent quand même.
+	private async Task AddInteractionModulesAsync()
+	{
+		foreach (var type in InteractionModuleTypes())
+		{
+			try
+			{
+				await interactions.AddModuleAsync(type, services);
+			}
+			catch (Exception exception)
+			{
+				logger.LogError(exception, "Module Discord {Module} non chargé : ses commandes sont indisponibles.", type.Name);
+			}
+		}
 	}
 
 	public async Task StopAsync(CancellationToken cancellationToken)
 	{
 		await _stopping.CancelAsync();
-		await client.StopAsync();
+		try
+		{
+			await client.StopAsync();
+		}
+		catch (Exception exception)
+		{
+			logger.LogWarning(exception, "Arrêt du bot Discord incomplet.");
+		}
 	}
 
 	private async Task OnReadyAsync()
 	{
+		try
+		{
+			await RegisterCommandsAsync();
+		}
+		catch (Exception exception)
+		{
+			logger.LogError(exception, "Enregistrement des commandes slash en échec : les commandes déjà publiées restent en place.");
+		}
+		_ = Task.Run(ReconcileNicknamesAsync);
+	}
+
+	private async Task RegisterCommandsAsync()
+	{
 		var devServers = DiscordGuildIds.Parse(config);
 		if (devServers.Count > 0)
 		{
-			// Développement : enregistrement immédiat sur les serveurs de test.
-			await client.Rest.DeleteAllGlobalCommandsAsync();
+			// Développement : enregistrement immédiat sur les serveurs de test, chacun isolément.
 			foreach (var serverId in devServers)
 			{
-				await interactions.RegisterCommandsToGuildAsync(serverId);
-				logger.LogInformation("Commandes slash enregistrées sur le serveur {GuildId}.", serverId);
+				try
+				{
+					await interactions.RegisterCommandsToGuildAsync(serverId);
+					logger.LogInformation("Commandes slash enregistrées sur le serveur {GuildId}.", serverId);
+				}
+				catch (Exception exception)
+				{
+					logger.LogError(exception, "Commandes slash non enregistrées sur le serveur {GuildId}.", serverId);
+				}
 			}
+			await client.Rest.DeleteAllGlobalCommandsAsync();
 		}
 		else
 		{
 			// Production : commandes globales (~1 h de propagation), disponibles
 			// sur tout serveur qui invite le bot. Les anciennes commandes par
 			// serveur sont effacées, sinon chaque commande apparaîtrait en double.
-			await interactions.RegisterCommandsGloballyAsync();
+			await RegisterGloballyAsync();
 			foreach (var guild in client.Guilds)
 			{
 				try
@@ -86,8 +153,40 @@ public sealed class DiscordBotService(
 			}
 			logger.LogInformation("Commandes slash enregistrées globalement ({Count} serveurs).", client.Guilds.Count);
 		}
+	}
 
-		_ = Task.Run(ReconcileNicknamesAsync);
+	/// <summary>
+	/// Discord refuse un envoi groupé dès qu'une commande est invalide (et
+	/// garde alors les anciennes). En repli, chaque commande de premier niveau
+	/// (/gkeep, /gkeep-setup) est publiée seule : /gkeep ne bloque pas
+	/// /gkeep-setup, et inversement. L'isolation ne descend pas plus bas : une
+	/// sous-commande refusée (un groupe de module) laisse tout /gkeep dans son
+	/// ancienne version. Les tests construisent chaque groupe à part pour que
+	/// ce cas soit pris avant la mise en production.
+	/// </summary>
+	private async Task RegisterGloballyAsync()
+	{
+		try
+		{
+			await interactions.RegisterCommandsGloballyAsync();
+			return;
+		}
+		catch (Exception exception)
+		{
+			logger.LogError(exception, "Enregistrement groupé des commandes refusé : publication commande par commande.");
+		}
+		foreach (var module in interactions.Modules.Where(m => m.Parent is null))
+		{
+			try
+			{
+				await interactions.AddModulesGloballyAsync(false, module);
+			}
+			catch (Exception exception)
+			{
+				logger.LogError(exception, "Commande /{Command} refusée par Discord : elle reste dans son ancienne version.",
+					module.SlashGroupName ?? module.Name);
+			}
+		}
 	}
 
 	// Réaligne les pseudos des guildes qui l'ont activé : rattrape un renommage
@@ -105,25 +204,38 @@ public sealed class DiscordBotService(
 			}
 			foreach (var guild in guilds)
 			{
-				await using var scope = services.CreateAsyncScope();
-				scope.ServiceProvider.GetRequiredService<GuildContext>().Use(guild);
-				var roster = scope.ServiceProvider.GetRequiredService<RosterService>();
-				var nicknames = scope.ServiceProvider.GetRequiredService<NicknameSync>();
-				var targets = await roster.GetNicknameTargetsAsync();
-				var updated = 0;
-				foreach (var (discordId, characterName) in targets)
+				// Une guilde en échec (permission Discord, données) n'arrête pas les suivantes.
+				try
 				{
-					var outcomes = await nicknames.SyncAsync(guild, discordId, characterName);
-					updated += outcomes.Count(o => o == NicknameOutcome.Updated);
+					await ReconcileGuildNicknamesAsync(guild);
 				}
-				logger.LogInformation("Pseudos réalignés pour « {Guild} » : {Updated} modifié(s) sur {Members} membre(s).",
-					guild.Name, updated, targets.Count);
+				catch (Exception exception)
+				{
+					logger.LogError(exception, "Réalignement des pseudos en échec pour « {Guild} ».", guild.Name);
+				}
 			}
 		}
 		catch (Exception exception)
 		{
 			logger.LogError(exception, "Réalignement des pseudos en échec.");
 		}
+	}
+
+	private async Task ReconcileGuildNicknamesAsync(Guild guild)
+	{
+		await using var scope = services.CreateAsyncScope();
+		scope.ServiceProvider.GetRequiredService<GuildContext>().Use(guild);
+		var annuaire = scope.ServiceProvider.GetRequiredService<IAnnuaire>();
+		var nicknames = scope.ServiceProvider.GetRequiredService<NicknameSync>();
+		var targets = await annuaire.NicknameTargetsAsync();
+		var updated = 0;
+		foreach (var (discordId, characterName) in targets)
+		{
+			var outcomes = await nicknames.SyncAsync(guild, discordId, characterName);
+			updated += outcomes.Count(o => o == NicknameOutcome.Updated);
+		}
+		logger.LogInformation("Pseudos réalignés pour « {Guild} » : {Updated} modifié(s) sur {Members} membre(s).",
+			guild.Name, updated, targets.Count);
 	}
 
 	private Task OnInteractionAsync(SocketInteraction interaction)
@@ -158,7 +270,9 @@ public sealed class DiscordBotService(
 	}
 
 	// Sans ce hook, une commande qui échoue (exception, précondition...) est
-	// silencieuse : l'utilisateur reçoit au moins la raison d'un refus.
+	// silencieuse : l'utilisateur reçoit au moins la raison d'un refus, ou un
+	// message « momentanément indisponible » si le module a levé une exception
+	// (sinon Discord afficherait « réfléchit… » jusqu'à expiration).
 	private async Task OnInteractionExecutedAsync(ICommandInfo? command, IInteractionContext context, global::Discord.Interactions.IResult result)
 	{
 		if (result.IsSuccess)
@@ -166,17 +280,36 @@ public sealed class DiscordBotService(
 			return;
 		}
 		logger.LogError("Commande /{Command} en échec : {Error} — {Reason}", command?.Name, result.Error, result.ErrorReason);
-		if (result.Error == InteractionCommandError.UnmetPrecondition && !context.Interaction.HasResponded &&
-			context.Interaction.Type != InteractionType.ApplicationCommandAutocomplete)
+		if (context.Interaction.Type == InteractionType.ApplicationCommandAutocomplete)
 		{
-			try
+			return;
+		}
+		var message = result.Error switch
+		{
+			InteractionCommandError.UnmetPrecondition => result.ErrorReason,
+			InteractionCommandError.Exception => BotLocalizer.For(BotLocalizer.FromLocale(context.Interaction.UserLocale ?? context.Interaction.GuildLocale))
+				.T("Cette fonction est momentanément indisponible. Le reste de Guildkeep fonctionne ; réessaie plus tard.",
+					"This feature is temporarily unavailable. The rest of Guildkeep works; try again later."),
+			_ => null,
+		};
+		if (message is null)
+		{
+			return;
+		}
+		try
+		{
+			if (context.Interaction.HasResponded)
 			{
-				await context.Interaction.RespondAsync(result.ErrorReason, ephemeral: true);
+				await context.Interaction.FollowupAsync(message, ephemeral: true);
 			}
-			catch (Exception exception)
+			else
 			{
-				logger.LogDebug(exception, "Réponse de refus impossible.");
+				await context.Interaction.RespondAsync(message, ephemeral: true);
 			}
+		}
+		catch (Exception exception)
+		{
+			logger.LogDebug(exception, "Réponse d'échec impossible.");
 		}
 	}
 
@@ -193,14 +326,13 @@ public sealed class DiscordBotService(
 		try
 		{
 			await using var scope = services.CreateAsyncScope();
-			var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-			var guild = await scope.ServiceProvider.GetRequiredService<GuildDirectory>().FindByDiscordServerAsync(serverId);
+			var guilds = scope.ServiceProvider.GetRequiredService<GuildDirectory>();
+			var guild = await guilds.FindByDiscordServerAsync(serverId);
 			if (guild is null)
 			{
 				return;
 			}
-			guild.BotRemovedUtc = removedUtc;
-			await db.SaveChangesAsync();
+			await guilds.MarkRemovedAsync(guild, removedUtc);
 			logger.LogInformation(removedUtc is null
 				? "Bot réinvité sur le serveur de « {Guild} »."
 				: "Bot retiré du serveur de « {Guild} » : suppression des données dans 30 jours.", guild.Name);
@@ -224,8 +356,17 @@ public sealed class DiscordBotService(
 				var expired = await db.Guilds.Where(g => g.BotRemovedUtc != null && g.BotRemovedUtc < threshold).ToListAsync(ct);
 				foreach (var guild in expired)
 				{
-					await scope.ServiceProvider.GetRequiredService<GuildDirectory>().DeleteAsync(guild, ct);
-					logger.LogInformation("Guilde « {Guild} » supprimée (bot retiré depuis plus de 30 jours).", guild.Name);
+					// Une suppression en échec n'empêche pas celle des guildes suivantes.
+					try
+					{
+						await scope.ServiceProvider.GetRequiredService<GuildDirectory>().DeleteAsync(guild, ct);
+						logger.LogInformation("Guilde « {Guild} » supprimée (bot retiré depuis plus de 30 jours).", guild.Name);
+					}
+					catch (Exception exception) when (exception is not OperationCanceledException)
+					{
+						logger.LogError(exception, "Suppression de la guilde « {Guild} » en échec, nouvel essai au prochain cycle.", guild.Name);
+						db.ChangeTracker.Clear();
+					}
 				}
 			}
 			catch (Exception exception) when (exception is not OperationCanceledException)

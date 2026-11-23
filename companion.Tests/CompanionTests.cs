@@ -1,3 +1,4 @@
+using System.Text.Json;
 using GuildProfessions.Companion;
 using GuildProfessions.Companion.Lua;
 using Xunit;
@@ -494,4 +495,57 @@ public sealed class DataLuaSignatureTests : IDisposable
 	[Fact]
 	public void Un_fichier_absent_n_est_pas_a_jour() =>
 		Assert.False(DataLuaWriter.IsCurrent(DataPath, new Dictionary<string, long> { ["Former Hope"] = 4 }));
+
+	[Fact]
+	public void Un_export_partiel_est_reecrit_des_que_l_export_complet_revient()
+	{
+		var partial = Export("Former Hope", 4) with { FailedModules = ["Présence et butin"] };
+		File.WriteAllText(DataPath, DataLuaWriter.Build([partial]));
+
+		// Tant que le module est en panne : rien à réécrire.
+		Assert.True(DataLuaWriter.IsCurrent(DataPath, [partial]));
+		// Le module répond de nouveau, à version égale : le fichier partiel n'est plus à jour.
+		Assert.False(DataLuaWriter.IsCurrent(DataPath, [Export("Former Hope", 4)]));
+		Assert.False(DataLuaWriter.IsCurrent(DataPath, new Dictionary<string, long> { ["Former Hope"] = 4 }));
+	}
+}
+
+/// <summary>
+/// Export partiel du serveur (un module en panne) : les sections absentes sont
+/// omises de Data.lua, les autres sont écrites normalement.
+/// </summary>
+public sealed class PartialExportTests
+{
+	[Fact]
+	public void Sections_null_Should_BeOmitted_WithoutBreakingTheOthers()
+	{
+		// Annuaire et Présence en panne : personnages, noms de recettes et raids à null.
+		const string json = """
+			{ "version": 7, "generatedUtc": "2026-11-23T08:00:00Z", "recipeNames": null, "characters": null,
+			  "orders": [{ "id": 3, "clientId": null, "requester": "Nayra", "crafter": null, "item": "Flacon des Titans",
+			               "quantity": 1, "note": null, "status": "open", "createdUtc": "2026-11-23 08:00" }],
+			  "guildName": "FORMER HOPE", "events": [], "raids": null, "catalog": null }
+			""";
+		var export = JsonSerializer.Deserialize<ExportDto>(json, new JsonSerializerOptions(JsonSerializerDefaults.Web))!
+			with { FailedModules = ["Annuaire", "Présence et butin"] };
+
+		var lua = DataLuaWriter.Build([export]);
+
+		Assert.Contains("item = \"Flacon des Titans\"", lua);
+		Assert.DoesNotContain("characters =", lua);
+		Assert.DoesNotContain("recipeNames =", lua);
+		Assert.DoesNotContain("raids =", lua);
+		Assert.Contains("-- guildkeep-sync: FORMER HOPE=7!partiel", lua);
+	}
+
+	[Fact]
+	public void FailedModulesHeader_Should_BeDecoded()
+	{
+		using var response = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+		response.Headers.Add("X-Guildkeep-Failed-Modules",
+			$"{Uri.EscapeDataString("Présence et butin")},{Uri.EscapeDataString("Événements")}");
+
+		Assert.Equal(["Présence et butin", "Événements"], SyncService.FailedModules(response));
+		Assert.Empty(SyncService.FailedModules(new HttpResponseMessage(System.Net.HttpStatusCode.OK)));
+	}
 }

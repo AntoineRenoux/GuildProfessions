@@ -1,7 +1,6 @@
 using Discord;
 using Discord.Interactions;
-using GuildProfessions.Server.Data;
-using Microsoft.EntityFrameworkCore;
+using GuildProfessions.Server.Modules.Annuaire.Contracts;
 
 namespace GuildProfessions.Server.Discord;
 
@@ -12,17 +11,9 @@ public sealed class OwnCharacterAutocompleteHandler : AutocompleteHandler
 		IInteractionContext context, IAutocompleteInteraction autocompleteInteraction,
 		IParameterInfo parameter, IServiceProvider services)
 	{
-		var db = services.GetRequiredService<AppDbContext>();
-		var discordId = context.User.Id.ToString();
-		var typed = (autocompleteInteraction.Data.Current.Value?.ToString() ?? "").Trim().ToLower();
-
-		var names = await db.Characters.AsNoTracking()
-			.Where(c => c.Member != null && c.Member.DiscordId == discordId)
-			.Where(c => typed == "" || c.Name.ToLower().Contains(typed))
-			.OrderBy(c => c.Name)
-			.Select(c => c.Name)
-			.Take(25)
-			.ToListAsync();
+		var annuaire = services.GetRequiredService<IAnnuaire>();
+		var typed = autocompleteInteraction.Data.Current.Value?.ToString() ?? "";
+		var names = await annuaire.OwnCharacterSuggestionsAsync(context.User.Id.ToString(), typed, 25);
 
 		return AutocompletionResult.FromSuccess(names.Select(name => new AutocompleteResult(name, name)));
 	}

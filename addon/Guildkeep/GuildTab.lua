@@ -1,7 +1,7 @@
 local _, GP = ...
 
--- Accès à l'addon depuis la fenêtre « Guilde et communautés » : un onglet
--- latéral de plus, sous ceux de Blizzard (Discussion, Membres, Infos…).
+-- Accès à l'addon (socle) depuis la fenêtre « Guilde et communautés » : un
+-- onglet latéral de plus, sous ceux de Blizzard (Discussion, Membres, Infos…).
 --
 -- On ne suppose ni le nom ni le nombre des onglets Blizzard (ils varient selon
 -- le client) : on repère les CheckButton visibles collés au bord droit de la
@@ -24,10 +24,10 @@ GP.OnMainFrameVisibilityChanged = UpdateChecked
 local function ShowTooltip(self)
 	GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 	GameTooltip:SetText("Guildkeep", 1, 1, 1)
-	GameTooltip:AddLine("Métiers, équipement et commandes de craft de la guilde.", nil, nil, nil, true)
-	local count = GP.CountOrdersToHandle and GP.CountOrdersToHandle() or 0
-	if count > 0 then
-		GameTooltip:AddLine(("%d commande%s à traiter"):format(count, count > 1 and "s" or ""), 1, 0.82, 0)
+	GameTooltip:AddLine("Événements, métiers, équipement et commandes de craft de la guilde.", nil, nil, nil, true)
+	-- Ce qui attend le joueur, selon les modules actifs (pastilles des onglets).
+	for _, line in ipairs(GP.UI.TabBadges()) do
+		GameTooltip:AddLine(line, 1, 0.82, 0)
 	end
 	GameTooltip:AddLine("Aussi : /gkeep", 0.62, 0.62, 0.62)
 	GameTooltip:Show()
@@ -181,7 +181,7 @@ local function TryAttach()
 end
 
 -- Diagnostic en jeu : /gkeep debug
-function GP.DebugGuildTab()
+local function DebugGuildTab()
 	local frame = CommunitiesFrame
 	print("|cff33ff99Guildkeep|r — diagnostic de l'onglet de guilde")
 	if not frame then
@@ -210,6 +210,8 @@ function GP.DebugGuildTab()
 		print("  notre onglet : non créé")
 	end
 end
+
+GP.Modules.On("DEBUG", DebugGuildTab)
 
 local loader = CreateFrame("Frame")
 loader:RegisterEvent("PLAYER_LOGIN")

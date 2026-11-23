@@ -5,7 +5,7 @@
 	},
 	"gkeep": {
 		"name": "gkeep",
-		"description": "Guildkeep : les métiers, artisans et commandes de ta guilde",
+		"description": "Guildkeep : événements, réservations, présence, métiers et commandes de ta guilde",
 		"help": {
 			"name": "aide",
 			"description": "Ce que fait Guildkeep et comment s'en servir"
@@ -13,12 +13,18 @@
 		"link": {
 			"name": "lier",
 			"description": "Lier un de tes personnages à ton compte Discord",
-			"character": { "name": "personnage", "description": "Nom du personnage en jeu" }
+			"character": {
+				"name": "personnage",
+				"description": "Nom du personnage en jeu"
+			}
 		},
 		"main": {
 			"name": "principal",
 			"description": "Choisir ton personnage principal (ton pseudo, si la guilde l'a activé)",
-			"character": { "name": "personnage", "description": "Un de tes personnages liés" }
+			"character": {
+				"name": "personnage",
+				"description": "Un de tes personnages liés"
+			}
 		},
 		"token": {
 			"name": "token",
@@ -38,67 +44,606 @@
 			"who": {
 				"name": "qui",
 				"description": "Qui peut le fabriquer ? Par métier, niveau ou recette",
-				"recipe": { "name": "recette", "description": "Texte à chercher dans les recettes connues" },
-				"profession": { "name": "metier", "description": "Le métier" },
-				"min_level": { "name": "niveau_min", "description": "Niveau de compétence minimal" }
+				"recipe": {
+					"name": "recette",
+					"description": "Texte à chercher dans les recettes connues"
+				},
+				"profession": {
+					"name": "metier",
+					"description": "Le métier"
+				},
+				"min_level": {
+					"name": "niveau_min",
+					"description": "Niveau de compétence minimal"
+				}
 			},
 			"recipes": {
 				"name": "recettes",
 				"description": "Les recettes connues d'un personnage",
-				"character": { "name": "personnage", "description": "Le personnage" },
-				"profession": { "name": "metier", "description": "Seulement ce métier" },
-				"search": { "name": "recherche", "description": "Filtrer les recettes par texte" }
+				"character": {
+					"name": "personnage",
+					"description": "Le personnage"
+				},
+				"profession": {
+					"name": "metier",
+					"description": "Seulement ce métier"
+				},
+				"search": {
+					"name": "recherche",
+					"description": "Filtrer les recettes par texte"
+				}
 			},
 			"list": {
 				"name": "liste",
 				"description": "Tout l'annuaire des métiers de la guilde",
-				"profession": { "name": "metier", "description": "Seulement ce métier" }
+				"profession": {
+					"name": "metier",
+					"description": "Seulement ce métier"
+				}
 			},
 			"set": {
 				"name": "definir",
 				"description": "Déclarer ou mettre à jour un métier d'un de tes personnages",
-				"character": { "name": "personnage", "description": "Nom du personnage en jeu" },
-				"profession": { "name": "metier", "description": "Le métier" },
-				"level": { "name": "niveau", "description": "Niveau de compétence actuel" },
-				"note": { "name": "note", "description": "Note libre (disponibilités, conditions...)" }
+				"character": {
+					"name": "personnage",
+					"description": "Nom du personnage en jeu"
+				},
+				"profession": {
+					"name": "metier",
+					"description": "Le métier"
+				},
+				"level": {
+					"name": "niveau",
+					"description": "Niveau de compétence actuel"
+				},
+				"note": {
+					"name": "note",
+					"description": "Note libre (disponibilités, conditions...)"
+				}
 			},
 			"remove": {
 				"name": "retirer",
 				"description": "Retirer un métier d'un de tes personnages",
-				"character": { "name": "personnage", "description": "Nom du personnage en jeu" },
-				"profession": { "name": "metier", "description": "Le métier à retirer" }
+				"character": {
+					"name": "personnage",
+					"description": "Nom du personnage en jeu"
+				},
+				"profession": {
+					"name": "metier",
+					"description": "Le métier à retirer"
+				}
+			}
+		},
+		"event": {
+			"name": "evenement",
+			"description": "Événements de guilde : raids, donjons et inscriptions",
+			"list": {
+				"name": "liste",
+				"description": "Les événements à venir et qui s'est inscrit"
+			},
+			"show": {
+				"name": "voir",
+				"description": "Le détail d'un événement, sa composition et son roster",
+				"event": {
+					"name": "evenement",
+					"description": "L'événement"
+				}
+			},
+			"signup": {
+				"name": "inscription",
+				"description": "Répondre à un événement avec un de tes personnages",
+				"event": {
+					"name": "evenement",
+					"description": "L'événement"
+				},
+				"response": {
+					"name": "reponse",
+					"description": "Ta réponse"
+				},
+				"role": {
+					"name": "role",
+					"description": "Le rôle que tu joueras (par défaut : le précédent)"
+				},
+				"character": {
+					"name": "personnage",
+					"description": "Un de tes personnages liés (par défaut : ton principal)"
+				},
+				"note": {
+					"name": "note",
+					"description": "Un mot pour l'organisateur"
+				},
+				"spec": {
+					"name": "spe",
+					"description": "Ta spécialisation (ex. Protection)"
+				}
+			},
+			"create": {
+				"name": "creer",
+				"description": "Créer un événement de guilde (raid, donjon, JcJ...)",
+				"title": {
+					"name": "titre",
+					"description": "Nom de l'événement"
+				},
+				"date": {
+					"name": "date",
+					"description": "Jour : 29/11, 29/11/2026 ou 2026-11-29"
+				},
+				"time": {
+					"name": "heure",
+					"description": "Heure de début : 20:45 ou 20h45"
+				},
+				"kind": {
+					"name": "type",
+					"description": "Type d'événement"
+				},
+				"tanks": {
+					"name": "tanks",
+					"description": "Nombre de tanks visé"
+				},
+				"healers": {
+					"name": "soigneurs",
+					"description": "Nombre de soigneurs visé"
+				},
+				"melee": {
+					"name": "melee",
+					"description": "Nombre de DPS mêlée visé"
+				},
+				"ranged": {
+					"name": "distance",
+					"description": "Nombre de DPS distance visé"
+				},
+				"details": {
+					"name": "details",
+					"description": "Précisions (consommables, point de rendez-vous...)"
+				},
+				"organizer": {
+					"name": "organisateur",
+					"description": "Personnage organisateur (par défaut : ton principal)"
+				},
+				"timezone": {
+					"name": "fuseau",
+					"description": "Fuseau de la date et de l'heure (par défaut : celui de la guilde)"
+				}
+			},
+			"edit": {
+				"name": "modifier",
+				"description": "Modifier un événement (organisateur ou officier)",
+				"event": {
+					"name": "evenement",
+					"description": "L'événement"
+				},
+				"title": {
+					"name": "titre",
+					"description": "Nouveau nom"
+				},
+				"date": {
+					"name": "date",
+					"description": "Nouveau jour : 29/11, 29/11/2026 ou 2026-11-29"
+				},
+				"time": {
+					"name": "heure",
+					"description": "Nouvelle heure de début : 20:45 ou 20h45"
+				},
+				"kind": {
+					"name": "type",
+					"description": "Type d'événement"
+				},
+				"tanks": {
+					"name": "tanks",
+					"description": "Nombre de tanks visé"
+				},
+				"healers": {
+					"name": "soigneurs",
+					"description": "Nombre de soigneurs visé"
+				},
+				"melee": {
+					"name": "melee",
+					"description": "Nombre de DPS mêlée visé"
+				},
+				"ranged": {
+					"name": "distance",
+					"description": "Nombre de DPS distance visé"
+				},
+				"details": {
+					"name": "details",
+					"description": "Nouvelles précisions (un tiret seul les efface)"
+				},
+				"timezone": {
+					"name": "fuseau",
+					"description": "Fuseau de la date et de l'heure (par défaut : celui de la guilde)"
+				}
+			},
+			"cancel": {
+				"name": "annuler",
+				"description": "Annuler un événement (organisateur ou officier)",
+				"event": {
+					"name": "evenement",
+					"description": "L'événement"
+				}
+			},
+			"restore": {
+				"name": "retablir",
+				"description": "Rétablir un événement annulé (organisateur ou officier)",
+				"event": {
+					"name": "evenement",
+					"description": "L'événement"
+				}
+			},
+			"place": {
+				"name": "placer",
+				"description": "Placer un joueur : confirmé, remplaçant, banc (organisateur ou officier)",
+				"event": {
+					"name": "evenement",
+					"description": "L'événement"
+				},
+				"character": {
+					"name": "personnage",
+					"description": "Le personnage du joueur"
+				},
+				"placement": {
+					"name": "place",
+					"description": "Sa place dans le roster"
+				}
+			},
+			"duty": {
+				"name": "soutien",
+				"description": "Confier un rôle de soutien à un joueur, ou le libérer (organisateur ou officier)",
+				"event": {
+					"name": "evenement",
+					"description": "L'événement"
+				},
+				"duty": {
+					"name": "role",
+					"description": "Le rôle de soutien"
+				},
+				"character": {
+					"name": "personnage",
+					"description": "Qui s'en charge (vide pour libérer le poste)"
+				}
+			},
+			"checklist": {
+				"name": "checklist",
+				"description": "Ce qui manque encore avant le raid",
+				"event": {
+					"name": "evenement",
+					"description": "L'événement"
+				}
+			}
+		},
+		"reserve": {
+			"name": "reserve",
+			"description": "Réservations de butin d'un événement : priorité haute, normale et basse",
+			"set": {
+				"name": "poser",
+				"description": "Réserver un objet pour un événement (un par priorité)",
+				"event": {
+					"name": "evenement",
+					"description": "L'événement"
+				},
+				"priority": {
+					"name": "priorite",
+					"description": "Priorité de la réservation"
+				},
+				"item": {
+					"name": "objet",
+					"description": "Numéro de l'objet (ex. 19019), un lien contenant item=19019, ou une suggestion"
+				},
+				"character": {
+					"name": "personnage",
+					"description": "Pour un autre joueur (organisateur ou officier) ; par défaut : ton principal"
+				}
+			},
+			"clear": {
+				"name": "retirer",
+				"description": "Retirer une de tes réservations",
+				"event": {
+					"name": "evenement",
+					"description": "L'événement"
+				},
+				"priority": {
+					"name": "priorite",
+					"description": "Priorité de la réservation"
+				},
+				"character": {
+					"name": "personnage",
+					"description": "Pour un autre joueur (organisateur ou officier) ; par défaut : ton principal"
+				}
+			},
+			"list": {
+				"name": "liste",
+				"description": "Toutes les réservations d'un événement, objet par objet, avec les conflits",
+				"event": {
+					"name": "evenement",
+					"description": "L'événement"
+				}
+			},
+			"hard": {
+				"name": "ferme",
+				"description": "Réserver un objet d'office : les joueurs ne peuvent plus le réserver (organisateur ou officier)",
+				"event": {
+					"name": "evenement",
+					"description": "L'événement"
+				},
+				"item": {
+					"name": "objet",
+					"description": "Numéro de l'objet (ex. 19019) ou une suggestion"
+				},
+				"holder": {
+					"name": "destinataire",
+					"description": "Qui le reçoit (facultatif)"
+				}
+			},
+			"unhard": {
+				"name": "lever",
+				"description": "Lever une réservation ferme (organisateur ou officier)",
+				"event": {
+					"name": "evenement",
+					"description": "L'événement"
+				},
+				"item": {
+					"name": "objet",
+					"description": "Numéro de l'objet ou une suggestion"
+				}
+			},
+			"lock": {
+				"name": "verrouiller",
+				"description": "Verrouiller les réservations : seuls les confirmés gardent les leurs (organisateur ou officier)",
+				"event": {
+					"name": "evenement",
+					"description": "L'événement"
+				}
+			},
+			"unlock": {
+				"name": "deverrouiller",
+				"description": "Déverrouiller les réservations (organisateur ou officier)",
+				"event": {
+					"name": "evenement",
+					"description": "L'événement"
+				}
+			}
+		},
+		"attendance": {
+			"name": "presence",
+			"description": "Présence réelle en raid, relevée en jeu (les inscriptions ne comptent pas)",
+			"summary": {
+				"name": "resume",
+				"description": "Taux de présence de chaque raideur sur 30, 60 ou 90 jours",
+				"days": {
+					"name": "jours",
+					"description": "Période"
+				}
+			},
+			"player": {
+				"name": "joueur",
+				"description": "Tendances de présence, derniers raids et butin d'un joueur",
+				"character": {
+					"name": "personnage",
+					"description": "Le personnage"
+				}
+			},
+			"raids": {
+				"name": "raids",
+				"description": "Les raids relevés en jeu, du plus récent au plus ancien"
+			},
+			"raid": {
+				"name": "raid",
+				"description": "Qui était là et ce qui est tombé",
+				"raid": {
+					"name": "raid",
+					"description": "Le raid"
+				}
+			},
+			"correct": {
+				"name": "corriger",
+				"description": "Corriger la présence d'un joueur à un raid (officier)",
+				"raid": {
+					"name": "raid",
+					"description": "Le raid"
+				},
+				"character": {
+					"name": "personnage",
+					"description": "Le personnage"
+				},
+				"status": {
+					"name": "statut",
+					"description": "Ce qui s'est vraiment passé"
+				},
+				"note": {
+					"name": "note",
+					"description": "Pourquoi (facultatif)"
+				}
+			}
+		},
+		"loot": {
+			"name": "butin",
+			"description": "Objets épiques ou mieux reçus en raid",
+			"list": {
+				"name": "liste",
+				"description": "Historique du butin, de tous ou d'un joueur",
+				"character": {
+					"name": "personnage",
+					"description": "Seulement ce personnage"
+				},
+				"days": {
+					"name": "jours",
+					"description": "Période"
+				}
+			},
+			"void": {
+				"name": "annuler",
+				"description": "Annuler un objet relevé : désenchanté, erreur... (officier)",
+				"item": {
+					"name": "objet",
+					"description": "L'objet relevé"
+				},
+				"note": {
+					"name": "note",
+					"description": "Pourquoi (facultatif)"
+				}
+			},
+			"restore": {
+				"name": "retablir",
+				"description": "Rétablir un objet annulé (officier)",
+				"item": {
+					"name": "objet",
+					"description": "L'objet relevé"
+				}
+			}
+		},
+		"quest": {
+			"name": "quete",
+			"description": "Quêtes élites, de donjon et de raid du journal des membres",
+			"list": {
+				"name": "liste",
+				"description": "Les quêtes partagées par zone ou donjon, avec qui les a",
+				"kind": {
+					"name": "type",
+					"description": "Type de quête"
+				},
+				"location": {
+					"name": "lieu",
+					"description": "Zone ou donjon (texte à chercher)"
+				}
+			},
+			"who": {
+				"name": "qui",
+				"description": "Qui a cette quête",
+				"quest": {
+					"name": "quete",
+					"description": "La quête"
+				}
+			},
+			"mine": {
+				"name": "miennes",
+				"description": "Tes quêtes partagées, et qui d'autre a chacune",
+				"character": {
+					"name": "personnage",
+					"description": "Un de tes personnages (par défaut : tous)"
+				}
 			}
 		},
 		"order": {
 			"name": "commande",
-			"description": "Commandes de craft entre membres",
+			"description": "Commandes de craft et demandes ouvertes entre membres",
 			"new": {
 				"name": "nouvelle",
-				"description": "Commander un craft à un artisan",
-				"crafter": { "name": "artisan", "description": "Le personnage artisan" },
-				"item": { "name": "objet", "description": "L'objet ou la recette voulus" },
-				"quantity": { "name": "quantite", "description": "Quantité" },
-				"note": { "name": "note", "description": "Précisions (matériaux fournis, délai...)" }
+				"description": "Demander un craft : à tous les artisans, ou à un artisan précis",
+				"item": {
+					"name": "objet",
+					"description": "L'objet ou la recette voulus (suggestions du catalogue de la guilde)"
+				},
+				"crafter": {
+					"name": "artisan",
+					"description": "Un artisan précis (vide : tous les artisans)"
+				},
+				"quantity": {
+					"name": "quantite",
+					"description": "Quantité"
+				},
+				"note": {
+					"name": "note",
+					"description": "Précisions (matériaux fournis, délai...)"
+				}
 			},
 			"list": {
 				"name": "liste",
-				"description": "Les commandes en cours",
-				"filter": { "name": "filtre", "description": "Seulement les commandes qui me concernent" }
+				"description": "Les commandes et demandes en cours",
+				"filter": {
+					"name": "filtre",
+					"description": "Lesquelles"
+				}
+			},
+			"show": {
+				"name": "voir",
+				"description": "Le détail d'une commande et les offres des artisans",
+				"id": {
+					"name": "numero",
+					"description": "La commande"
+				}
+			},
+			"offer": {
+				"name": "proposer",
+				"description": "Proposer de faire une demande ouverte (artisan)",
+				"id": {
+					"name": "numero",
+					"description": "La demande"
+				},
+				"note": {
+					"name": "note",
+					"description": "Un mot pour le demandeur (prix, délai...)"
+				},
+				"character": {
+					"name": "personnage",
+					"description": "Ton personnage artisan (par défaut : ton principal)"
+				}
+			},
+			"withdraw": {
+				"name": "retirer",
+				"description": "Retirer ton offre",
+				"id": {
+					"name": "numero",
+					"description": "La demande"
+				},
+				"character": {
+					"name": "personnage",
+					"description": "Ton personnage artisan (par défaut : ton principal)"
+				}
 			},
 			"accept": {
 				"name": "accepter",
-				"description": "Accepter une commande (artisan)",
-				"id": { "name": "numero", "description": "La commande" }
+				"description": "Accepter une commande (artisan) ou retenir l'offre d'un artisan (demandeur)",
+				"id": {
+					"name": "numero",
+					"description": "La commande"
+				},
+				"crafter": {
+					"name": "artisan",
+					"description": "Demandeur : l'artisan dont tu retiens l'offre"
+				}
 			},
-			"done": {
-				"name": "terminer",
-				"description": "Marquer une commande comme terminée (artisan)",
-				"id": { "name": "numero", "description": "La commande" }
+			"ready": {
+				"name": "prete",
+				"description": "Fabriquée, prête à être échangée en main propre (artisan)",
+				"id": {
+					"name": "numero",
+					"description": "La commande"
+				}
+			},
+			"mailed": {
+				"name": "envoyee",
+				"description": "Envoyée par courrier (artisan)",
+				"id": {
+					"name": "numero",
+					"description": "La commande"
+				}
+			},
+			"received": {
+				"name": "recu",
+				"description": "Confirmer que tu as reçu l'objet (demandeur)",
+				"id": {
+					"name": "numero",
+					"description": "La commande"
+				}
 			},
 			"cancel": {
 				"name": "annuler",
 				"description": "Annuler une commande (artisan ou demandeur)",
-				"id": { "name": "numero", "description": "La commande" }
+				"id": {
+					"name": "numero",
+					"description": "La commande"
+				}
+			},
+			"catalog": {
+				"name": "catalogue",
+				"description": "Chercher dans le catalogue de recettes de la guilde, avec qui sait les faire",
+				"search": {
+					"name": "recherche",
+					"description": "Texte à trouver dans le nom des recettes"
+				},
+				"profession": {
+					"name": "metier",
+					"description": "Seulement ce métier"
+				}
 			}
 		}
 	}

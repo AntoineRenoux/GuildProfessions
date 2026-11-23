@@ -12,6 +12,7 @@ public sealed class CraftOrderServiceTests : IDisposable
 	private readonly SqliteConnection _connection;
 	private readonly AppDbContext _db;
 	private readonly GuildContext _guild = new();
+	private readonly TestModules _modules;
 	private readonly RosterService _roster;
 	private readonly CraftOrderService _orders;
 	private readonly RecordingNotifier _notifier = new();
@@ -26,35 +27,40 @@ public sealed class CraftOrderServiceTests : IDisposable
 		_db = new AppDbContext(options, _guild);
 		_db.Database.EnsureCreated();
 		_guild.Use(TestGuilds.Create(_db, "FORMER HOPE", "former-hope"));
-		_roster = new RosterService(_db, _guild);
-		_orders = new CraftOrderService(_db, _roster, _notifier, _guild);
+		_modules = TestModules.For(_db, _guild, _notifier);
+		_roster = _modules.Roster;
+		_orders = _modules.Orders;
 	}
 
 	public void Dispose()
 	{
+		_modules.Dispose();
 		_db.Dispose();
 		_connection.Dispose();
 	}
 
 	[Fact]
-	public async Task Lifecycle_Should_FlowFromOpenToAcceptedToDone_ByCrafterOnly()
+	public async Task Lifecycle_Should_FlowFromAcceptedToMailedToReceived()
 	{
 		await _roster.LinkCharacterAsync("10", "demandeur", "Nayra");
 		await _roster.LinkCharacterAsync("20", "artisan", "Thorgal");
 		var created = await _orders.CreateFromDiscordAsync("10", "demandeur", "Thorgal", "Heaume Cœur de lion", 1, null);
-		Assert.True(created.Success);
+		Assert.True(created.IsSuccess);
 		var orderId = (await _db.CraftOrders.SingleAsync()).Id;
 
 		// Le demandeur ne peut pas accepter sa propre commande.
 		var refusedAccept = await _orders.UpdateStatusFromDiscordAsync("10", orderId, CraftOrderStatus.Accepted);
-		Assert.False(refusedAccept.Success);
+		Assert.False(refusedAccept.IsSuccess);
 
-		Assert.True((await _orders.UpdateStatusFromDiscordAsync("20", orderId, CraftOrderStatus.Accepted)).Success);
-		Assert.True((await _orders.UpdateStatusFromDiscordAsync("20", orderId, CraftOrderStatus.Done)).Success);
+		Assert.True((await _orders.UpdateStatusFromDiscordAsync("20", orderId, CraftOrderStatus.Accepted)).IsSuccess);
+		Assert.True((await _orders.UpdateStatusFromDiscordAsync("20", orderId, CraftOrderStatus.Mailed)).IsSuccess);
+		// C'est le demandeur qui confirme la réception, pas l'artisan.
+		Assert.False((await _orders.UpdateStatusFromDiscordAsync("20", orderId, CraftOrderStatus.Done)).IsSuccess);
+		Assert.True((await _orders.UpdateStatusFromDiscordAsync("10", orderId, CraftOrderStatus.Done)).IsSuccess);
 
 		// Terminée = terminale : plus aucune transition.
 		var refusedCancel = await _orders.UpdateStatusFromDiscordAsync("20", orderId, CraftOrderStatus.Cancelled);
-		Assert.False(refusedCancel.Success);
+		Assert.False(refusedCancel.IsSuccess);
 		Assert.Equal(CraftOrderStatus.Done, (await _db.CraftOrders.SingleAsync()).Status);
 	}
 
@@ -67,7 +73,7 @@ public sealed class CraftOrderServiceTests : IDisposable
 
 		var result = await _orders.UpdateStatusFromDiscordAsync("10", orderId, CraftOrderStatus.Cancelled);
 
-		Assert.True(result.Success);
+		Assert.True(result.IsSuccess);
 		Assert.Equal(CraftOrderStatus.Cancelled, (await _db.CraftOrders.SingleAsync()).Status);
 	}
 
@@ -172,6 +178,12 @@ public sealed class CraftOrderServiceTests : IDisposable
 			StatusRecipients.Add(requesterDiscordId);
 			return Task.CompletedTask;
 		}
+
+		public Task NotifyOfferAsync(CraftOrder order, CraftOffer offer, string? requesterDiscordId, BotLanguage language = BotLanguage.French) => Task.CompletedTask;
+
+		public Task NotifyCrafterAsync(CraftOrder order, string? crafterDiscordId, BotLanguage language = BotLanguage.French) => Task.CompletedTask;
+
+		public Task NotifyOpenRequestAsync(CraftOrder order, IReadOnlyList<string> crafterDiscordIds, BotLanguage language = BotLanguage.French) => Task.CompletedTask;
 	}
 
 	#endregion
