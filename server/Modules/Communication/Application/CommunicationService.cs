@@ -426,8 +426,8 @@ public sealed class CommunicationService(
 		var channel = await AnnouncementsChannelAsync(ct);
 		await PublishSafelyAsync(announcement.Title, announcement.Body, announcement.Author, ct);
 		return Result.Success(L.T(
-			$"Annonce **#{announcement.Id} · {announcement.Title}** publiée{(channel is null ? " (aucun salon d'annonces réglé : `/gkeep annonce salon`)" : $" dans <#{channel}>")}. Elle s'affichera en jeu à la prochaine synchro.",
-			$"Announcement **#{announcement.Id} · {announcement.Title}** posted{(channel is null ? " (no announcements channel set: `/gkeep announce channel`)" : $" in <#{channel}>")}. It will show in game at the next sync."));
+			$"Annonce **#{announcement.Id} · {announcement.Title}** publiée{(channel is null ? " (aucun salon d'annonces réglé : `/gkeep-guilde annonce salon`)" : $" dans <#{channel}>")}. Elle s'affichera en jeu à la prochaine synchro.",
+			$"Announcement **#{announcement.Id} · {announcement.Title}** posted{(channel is null ? " (no announcements channel set: `/gkeep-guild announce channel`)" : $" in <#{channel}>")}. It will show in game at the next sync."));
 	}
 
 	public async Task<Result> DeleteAnnouncementFromDiscordAsync(string discordId, bool isServerAdmin, int id, CancellationToken ct = default)
@@ -585,8 +585,8 @@ public sealed class CommunicationService(
 		db.GuildGoals.Add(goal);
 		await dataVersion.SaveAndBumpAsync(ct);
 		return Result.Success(L.T(
-			$"Objectif **#{goal.Id} · {goal.Title}** créé : {goal.Target} {goal.Unit}. Contributions : `/gkeep objectif contribuer`.",
-			$"Goal **#{goal.Id} · {goal.Title}** created: {goal.Target} {goal.Unit}. Contribute with `/gkeep goal contribute`."));
+			$"Objectif **#{goal.Id} · {goal.Title}** créé : {goal.Target} {goal.Unit}. Contributions : `/gkeep-guilde objectif contribuer`.",
+			$"Goal **#{goal.Id} · {goal.Title}** created: {goal.Target} {goal.Unit}. Contribute with `/gkeep-guild goal contribute`."));
 	}
 
 	public async Task<Result> ContributeFromDiscordAsync(string discordId, int goalId, int amount, string? note, string? character,

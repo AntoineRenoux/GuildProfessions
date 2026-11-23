@@ -7,11 +7,11 @@ using GuildProfessions.Server.Shared;
 
 namespace GuildProfessions.Server.Discord;
 
-// Commandes Discord du module Présence : /gkeep attendance (présence observée) ; /gkeep loot est dans LootCommands.cs.
+// Commandes Discord du module Présence : /gkeep-raid attendance (présence observée) ; /gkeep-raid loot est dans LootCommands.cs.
 // Le groupe reste imbriqué dans GkeepModule (Discord ne connaît les sous-commandes que
 // par imbrication) et garde son namespace : même hiérarchie /gkeep <groupe> <commande>,
 // mêmes clés de traduction dans commands.fr.json. Il ne dépend que de son module.
-public sealed partial class GkeepModule
+public sealed partial class GkeepRaidModule
 {
 	// ---- Présence et butin ------------------------------------------------------------------
 
@@ -42,8 +42,8 @@ public sealed partial class GkeepModule
 				.WithColor(Green)
 				.WithTitle(l.T($"Présence sur {days} jours · {raids} raid(s)", $"Attendance over {days} days · {raids} raid(s)"))
 				.WithDescription(Clip(string.Join("\n", lines), 4000))
-				.WithFooter(l.T("Flèche : 30 derniers jours comparés aux 30 d'avant · détail : /gkeep presence joueur",
-					"Arrow: last 30 days compared with the 30 before · details: /gkeep attendance player"));
+				.WithFooter(l.T("Flèche : 30 derniers jours comparés aux 30 d'avant · détail : /gkeep-raid presence joueur",
+					"Arrow: last 30 days compared with the 30 before · details: /gkeep-raid attendance player"));
 			await FollowupAsync(embed: embed.Build(), ephemeral: true);
 		}
 
@@ -88,7 +88,7 @@ public sealed partial class GkeepModule
 			await FollowupAsync(embed: new EmbedBuilder().WithColor(Green)
 				.WithTitle(l.T("Raids relevés", "Observed raids"))
 				.WithDescription(Clip(string.Join("\n", lines), 4000))
-				.WithFooter(l.T("Détail : /gkeep presence raid", "Details: /gkeep attendance raid")).Build(), ephemeral: true);
+				.WithFooter(l.T("Détail : /gkeep-raid presence raid", "Details: /gkeep-raid attendance raid")).Build(), ephemeral: true);
 		}
 
 		[SlashCommand("raid", "Who was there and what dropped")]

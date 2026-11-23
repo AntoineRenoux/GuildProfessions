@@ -16,7 +16,7 @@ Un addon WoW n'a accès ni au réseau ni au disque : le compagnon fait le pont, 
 1. Un administrateur invite le bot sur son serveur Discord et lance **`/gkeep-setup`** (réservé au droit « Gérer le serveur ») : nom exact de la guilde en jeu, deux options (renommage des pseudos, salon des annonces), récapitulatif, création.
 2. Il partage le **lien d'installation** donné par le bot : chaque joueur y télécharge le pack de la guilde, déjà configuré (`/api/v1/pack/{code}/{système}`).
 3. Le joueur lance `GuildkeepCompanion` : addon installé, synchronisation automatique. Personnages dans plusieurs guildes : il lance le pack de chacune, un seul compagnon les synchronise toutes.
-4. Sur Discord, tout est sous **`/gkeep`** (`/gkeep help`), en français ou en anglais selon la langue de chacun.
+4. Sur Discord, trois commandes (`/gkeep help` les résume), en français ou en anglais selon la langue de chacun : **`/gkeep`** (compte, tableau, métiers, commandes de craft, profils, quêtes), **`/gkeep-raid`** (événements, réservations, présence, butin) et **`/gkeep-guild`** (annonces, charte, objectifs). Discord limite la taille d'une commande à 8 000 caractères : `server.Tests/CommandSizeTests.cs` le vérifie.
 
 ## Isolation des guildes
 

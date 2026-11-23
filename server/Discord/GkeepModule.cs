@@ -12,8 +12,8 @@ using GuildProfessions.Server.Shared.Modules;
 namespace GuildProfessions.Server.Discord;
 
 /// <summary>
-/// Toutes les commandes des membres, sous /gkeep pour ne jamais entrer en
-/// conflit avec d'autres bots. Noms en anglais par défaut, traduits en
+/// Commandes des membres, sous /gkeep (et /gkeep-raid, /gkeep-guild : Discord
+/// limite la taille d'une commande) pour ne jamais entrer en conflit avec d'autres bots. Noms en anglais par défaut, traduits en
 /// français par Localization/commands.fr.json ; réponses dans la langue de
 /// l'utilisateur, toujours éphémères pour ne pas encombrer les salons.
 /// L'administration est à part (/gkeep-setup), réservée au droit « Gérer le serveur ».
@@ -21,7 +21,7 @@ namespace GuildProfessions.Server.Discord;
 /// import) ; chaque groupe vit dans le dossier Presentation de son module
 /// (Modules/{Module}/Presentation/*Commands.cs).
 /// </summary>
-[Group("gkeep", "Guildkeep: your guild's events, reserves, attendance, professions and orders")]
+[Group("gkeep", "Guildkeep: your account, dashboard, professions, craft orders, profiles and quests")]
 [CommandContextType(InteractionContextType.Guild)]
 public sealed partial class GkeepModule(RosterService roster, NicknameSync nicknames, GuildContext guildContext,
 	BotLocalizer l, IServiceProvider services)
@@ -39,8 +39,8 @@ public sealed partial class GkeepModule(RosterService roster, NicknameSync nickn
 			.WithColor(Green)
 			.WithTitle(l.T("Guildkeep · aide", "Guildkeep · help"))
 			.WithDescription(l.T(
-				"L'annuaire des artisans de la guilde et ses commandes de craft, en jeu (addon) et ici.",
-				"Your guild's crafter directory and craft orders, in game (addon) and here."));
+				"La gestion de ta guilde, en jeu (addon) et ici. Trois commandes : `/gkeep` (compte, tableau, métiers, commandes de craft, profils, quêtes), `/gkeep-raid` (événements, réservations, présence, butin) et `/gkeep-guilde` (annonces, charte, objectifs).",
+				"Your guild's management, in game (addon) and here. Three commands: `/gkeep` (account, dashboard, professions, craft orders, profiles, quests), `/gkeep-raid` (events, reserves, attendance, loot) and `/gkeep-guild` (announcements, handbook, goals)."));
 		if (guildContext.Guild is null)
 		{
 			embed.AddField(l.T("Pas encore installé", "Not set up yet"), l.T(
@@ -56,17 +56,18 @@ public sealed partial class GkeepModule(RosterService roster, NicknameSync nickn
 			.AddField(l.T("Commandes de craft", "Craft orders"), l.T(
 				"`/gkeep commande nouvelle` demande à tous les artisans ou à l'un d'eux · `liste` avec filtres (que je peux faire, mes offres…) · `proposer` pour un artisan · `accepter`, `prete`, `envoyee`, `recu`, `annuler` pour avancer · `catalogue` cherche une recette",
 				"`/gkeep order new` asks every crafter or one of them · `list` with filters (I can make, my offers…) · `offer` for crafters · `accept`, `ready`, `mailed`, `received`, `cancel` move it along · `catalog` finds a recipe"))
-			.AddField(l.T("Événements", "Events"), l.T(
-				"`/gkeep annonce liste`, `/gkeep charte lire` et `/gkeep objectif liste` pour suivre la vie de la guilde · `objectif contribuer` pour participer · publier, écrire et créer pour les officiers · `/gkeep evenement rappel` prévient les inscrits\n" +
-				"`/gkeep quete liste` les quêtes élites, de donjon et de raid des membres · `qui` a une quête · `miennes` tes quêtes et qui les a aussi\n" +
-				"`/gkeep presence resume`, `joueur`, `raids`, `raid` la présence réelle en raid (30, 60, 90 jours) · `/gkeep butin liste` l'historique du butin · `corriger`, `annuler` pour les officiers\n" +
-				"`/gkeep reserve poser`, `retirer`, `liste` tes réservations de butin (haute, normale, basse) · `ferme`, `verrouiller` pour les officiers · `/gkeep evenement soutien` et `checklist` pour préparer la soirée\n" +
-				"`/gkeep evenement liste` les raids et sorties à venir · `voir` le détail et le roster · `inscription` pour répondre (rôle, spé, personnage) · `creer`, `modifier`, `annuler`, `retablir` et `placer` (confirmé, remplaçant, banc) pour l'organisateur et les officiers",
-				"`/gkeep announce list`, `/gkeep handbook show` and `/gkeep goal list` keep up with guild life · `goal contribute` to take part · post, edit and create for officers · `/gkeep event remind` pings signed-up players\n" +
-				"`/gkeep quest list` members' elite, dungeon and raid quests · `who` has a quest · `mine` your quests and who else has them\n" +
-				"`/gkeep attendance summary`, `player`, `raids`, `raid` real raid attendance (30, 60, 90 days) · `/gkeep loot list` the loot history · `correct`, `void` for officers\n" +
-				"`/gkeep reserve set`, `clear`, `list` your loot reserves (high, normal, low) · `hard`, `lock` for officers · `/gkeep event duty` and `checklist` to prepare the night\n" +
-				"`/gkeep event list` shows upcoming raids and outings · `show` the details and roster · `signup` to answer (role, spec, character) · `create`, `edit`, `cancel`, `restore` and `place` (confirmed, standby, bench) for the organizer and officers"))
+			.AddField(l.T("Raids et événements", "Raids and events"), l.T(
+				"`/gkeep-raid evenement liste` les raids et sorties à venir · `voir` le détail et le roster · `inscription` pour répondre (rôle, spé, personnage) · `creer`, `modifier`, `annuler`, `retablir`, `placer` pour l'organisateur et les officiers · `rappel` prévient les inscrits\n" +
+				"`/gkeep-raid reserve poser`, `retirer`, `liste` tes réservations de butin · `ferme`, `verrouiller` pour les officiers · `/gkeep-raid evenement soutien` et `checklist` pour préparer la soirée\n" +
+				"`/gkeep-raid presence resume`, `joueur`, `raids`, `raid` la présence réelle (30, 60, 90 jours) · `/gkeep-raid butin liste` l'historique du butin · `corriger`, `annuler` pour les officiers",
+				"`/gkeep-raid event list` upcoming raids and outings · `show` the details and roster · `signup` to answer (role, spec, character) · `create`, `edit`, `cancel`, `restore`, `place` for the organizer and officers · `remind` pings signed-up players\n" +
+				"`/gkeep-raid reserve set`, `clear`, `list` your loot reserves · `hard`, `lock` for officers · `/gkeep-raid event duty` and `checklist` to prepare the night\n" +
+				"`/gkeep-raid attendance summary`, `player`, `raids`, `raid` real attendance (30, 60, 90 days) · `/gkeep-raid loot list` the loot history · `correct`, `void` for officers"))
+			.AddField(l.T("Vie de la guilde", "Guild life"), l.T(
+				"`/gkeep-guilde annonce liste`, `/gkeep-guilde charte lire` et `/gkeep-guilde objectif liste` pour suivre la vie de la guilde · `objectif contribuer` pour participer · publier, écrire et créer pour les officiers\n" +
+				"`/gkeep quete liste` les quêtes élites, de donjon et de raid des membres · `qui` a une quête · `miennes` tes quêtes et qui les a aussi",
+				"`/gkeep-guild announce list`, `/gkeep-guild handbook show` and `/gkeep-guild goal list` keep up with guild life · `goal contribute` to take part · post, edit and create for officers\n" +
+				"`/gkeep quest list` members' elite, dungeon and raid quests · `who` has a quest · `mine` your quests and who else has them"))
 			.AddField(l.T("Profils et accueil", "Profiles and onboarding"), l.T(
 				"`/gkeep tableau voir` ton tableau de bord : événements, annonces, commandes, présence et accueil\n" +
 				"`/gkeep profil voir` le profil d'un joueur · `modifier` rôles, disponibilités, note · `arrivees` arrivées et départs · `versions` versions de l'addon (officier)\n" +

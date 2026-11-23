@@ -5,7 +5,7 @@
 	},
 	"gkeep": {
 		"name": "gkeep",
-		"description": "Guildkeep : événements, réservations, présence, métiers et commandes de ta guilde",
+		"description": "Guildkeep : ton compte, ton tableau de bord, métiers, commandes de craft, profils et quêtes",
 		"help": {
 			"name": "aide",
 			"description": "Ce que fait Guildkeep et comment s'en servir"
@@ -114,6 +114,266 @@
 				}
 			}
 		},
+		"quest": {
+			"name": "quete",
+			"description": "Quêtes élites, de donjon et de raid du journal des membres",
+			"list": {
+				"name": "liste",
+				"description": "Les quêtes partagées par zone ou donjon, avec qui les a",
+				"kind": {
+					"name": "type",
+					"description": "Type de quête"
+				},
+				"location": {
+					"name": "lieu",
+					"description": "Zone ou donjon (texte à chercher)"
+				}
+			},
+			"who": {
+				"name": "qui",
+				"description": "Qui a cette quête",
+				"quest": {
+					"name": "quete",
+					"description": "La quête"
+				}
+			},
+			"mine": {
+				"name": "miennes",
+				"description": "Tes quêtes partagées, et qui d'autre a chacune",
+				"character": {
+					"name": "personnage",
+					"description": "Un de tes personnages (par défaut : tous)"
+				}
+			}
+		},
+		"order": {
+			"name": "commande",
+			"description": "Commandes de craft et demandes ouvertes entre membres",
+			"new": {
+				"name": "nouvelle",
+				"description": "Demander un craft : à tous les artisans, ou à un artisan précis",
+				"item": {
+					"name": "objet",
+					"description": "L'objet ou la recette voulus (suggestions du catalogue de la guilde)"
+				},
+				"crafter": {
+					"name": "artisan",
+					"description": "Un artisan précis (vide : tous les artisans)"
+				},
+				"quantity": {
+					"name": "quantite",
+					"description": "Quantité"
+				},
+				"note": {
+					"name": "note",
+					"description": "Précisions (matériaux fournis, délai...)"
+				}
+			},
+			"list": {
+				"name": "liste",
+				"description": "Les commandes et demandes en cours",
+				"filter": {
+					"name": "filtre",
+					"description": "Lesquelles"
+				}
+			},
+			"show": {
+				"name": "voir",
+				"description": "Le détail d'une commande et les offres des artisans",
+				"id": {
+					"name": "numero",
+					"description": "La commande"
+				}
+			},
+			"offer": {
+				"name": "proposer",
+				"description": "Proposer de faire une demande ouverte (artisan)",
+				"id": {
+					"name": "numero",
+					"description": "La demande"
+				},
+				"note": {
+					"name": "note",
+					"description": "Un mot pour le demandeur (prix, délai...)"
+				},
+				"character": {
+					"name": "personnage",
+					"description": "Ton personnage artisan (par défaut : ton principal)"
+				}
+			},
+			"withdraw": {
+				"name": "retirer",
+				"description": "Retirer ton offre",
+				"id": {
+					"name": "numero",
+					"description": "La demande"
+				},
+				"character": {
+					"name": "personnage",
+					"description": "Ton personnage artisan (par défaut : ton principal)"
+				}
+			},
+			"accept": {
+				"name": "accepter",
+				"description": "Accepter une commande (artisan) ou retenir l'offre d'un artisan (demandeur)",
+				"id": {
+					"name": "numero",
+					"description": "La commande"
+				},
+				"crafter": {
+					"name": "artisan",
+					"description": "Demandeur : l'artisan dont tu retiens l'offre"
+				}
+			},
+			"ready": {
+				"name": "prete",
+				"description": "Fabriquée, prête à être échangée en main propre (artisan)",
+				"id": {
+					"name": "numero",
+					"description": "La commande"
+				}
+			},
+			"mailed": {
+				"name": "envoyee",
+				"description": "Envoyée par courrier (artisan)",
+				"id": {
+					"name": "numero",
+					"description": "La commande"
+				}
+			},
+			"received": {
+				"name": "recu",
+				"description": "Confirmer que tu as reçu l'objet (demandeur)",
+				"id": {
+					"name": "numero",
+					"description": "La commande"
+				}
+			},
+			"cancel": {
+				"name": "annuler",
+				"description": "Annuler une commande (artisan ou demandeur)",
+				"id": {
+					"name": "numero",
+					"description": "La commande"
+				}
+			},
+			"catalog": {
+				"name": "catalogue",
+				"description": "Chercher dans le catalogue de recettes de la guilde, avec qui sait les faire",
+				"search": {
+					"name": "recherche",
+					"description": "Texte à trouver dans le nom des recettes"
+				},
+				"profession": {
+					"name": "metier",
+					"description": "Seulement ce métier"
+				}
+			}
+		},
+		"profile": {
+			"name": "profil",
+			"description": "Profils des joueurs : principal, rerolls, rôles, disponibilités",
+			"show": {
+				"name": "voir",
+				"description": "Voir le profil d'un joueur (le vôtre par défaut)",
+				"character": {
+					"name": "personnage",
+					"description": "N'importe quel personnage du joueur"
+				}
+			},
+			"edit": {
+				"name": "modifier",
+				"description": "Remplir votre profil ; vos autres personnages liés deviennent vos rerolls",
+				"role": {
+					"name": "role",
+					"description": "Votre rôle principal"
+				},
+				"second-role": {
+					"name": "second-role",
+					"description": "Un autre rôle que vous savez jouer"
+				},
+				"availability": {
+					"name": "disponibilites",
+					"description": "Quand vous jouez d'habitude, ex. soirs de semaine"
+				},
+				"note": {
+					"name": "note",
+					"description": "Un mot pour les officiers"
+				},
+				"main": {
+					"name": "principal",
+					"description": "Votre personnage principal (par défaut : celui de Discord)"
+				}
+			},
+			"arrivals": {
+				"name": "arrivees",
+				"description": "Arrivées et départs récents dans la guilde",
+				"days": {
+					"name": "jours",
+					"description": "Combien de jours en arrière (14 par défaut)"
+				}
+			},
+			"versions": {
+				"name": "versions",
+				"description": "Version de l'addon de chaque membre (officier)"
+			}
+		},
+		"welcome": {
+			"name": "accueil",
+			"description": "Liste d'accueil des nouveaux",
+			"status": {
+				"name": "etat",
+				"description": "Liste d'accueil d'un joueur (la vôtre par défaut)",
+				"character": {
+					"name": "personnage",
+					"description": "Le personnage du joueur"
+				}
+			},
+			"done": {
+				"name": "fait",
+				"description": "Cocher une étape d'accueil (la vôtre, ou celle d'un joueur pour les officiers)",
+				"step": {
+					"name": "etape",
+					"description": "L'étape"
+				},
+				"character": {
+					"name": "personnage",
+					"description": "Un autre joueur (officier)"
+				}
+			},
+			"undo": {
+				"name": "annuler",
+				"description": "Décocher une étape d'accueil",
+				"step": {
+					"name": "etape",
+					"description": "L'étape"
+				},
+				"character": {
+					"name": "personnage",
+					"description": "Un autre joueur (officier)"
+				}
+			},
+			"list": {
+				"name": "liste",
+				"description": "Nouveaux dont l'accueil n'est pas fini (officier)"
+			},
+			"remind": {
+				"name": "relancer",
+				"description": "Publier un rappel qui mentionne les nouveaux en retard (officier)"
+			}
+		},
+		"home": {
+			"name": "tableau",
+			"description": "Ton tableau de bord : ce qui arrive et ce qui t'attend",
+			"show": {
+				"name": "voir",
+				"description": "Événements à venir, vie de la guilde, tes commandes, ta présence et ton accueil"
+			}
+		}
+	},
+	"gkeep-raid": {
+		"name": "gkeep-raid",
+		"description": "Guildkeep : événements et inscriptions, réservations de butin, présence en raid et butin",
 		"event": {
 			"name": "evenement",
 			"description": "Événements de guilde : raids, donjons et inscriptions",
@@ -501,39 +761,11 @@
 					"description": "L'objet relevé"
 				}
 			}
-		},
-		"quest": {
-			"name": "quete",
-			"description": "Quêtes élites, de donjon et de raid du journal des membres",
-			"list": {
-				"name": "liste",
-				"description": "Les quêtes partagées par zone ou donjon, avec qui les a",
-				"kind": {
-					"name": "type",
-					"description": "Type de quête"
-				},
-				"location": {
-					"name": "lieu",
-					"description": "Zone ou donjon (texte à chercher)"
-				}
-			},
-			"who": {
-				"name": "qui",
-				"description": "Qui a cette quête",
-				"quest": {
-					"name": "quete",
-					"description": "La quête"
-				}
-			},
-			"mine": {
-				"name": "miennes",
-				"description": "Tes quêtes partagées, et qui d'autre a chacune",
-				"character": {
-					"name": "personnage",
-					"description": "Un de tes personnages (par défaut : tous)"
-				}
-			}
-		},
+		}
+	},
+	"gkeep-guild": {
+		"name": "gkeep-guilde",
+		"description": "Guildkeep : annonces, charte et objectifs de la guilde",
 		"announce": {
 			"name": "annonce",
 			"description": "Annonces de la guilde et leurs modèles",
@@ -724,230 +956,6 @@
 					"name": "objectif",
 					"description": "L'objectif"
 				}
-			}
-		},
-		"order": {
-			"name": "commande",
-			"description": "Commandes de craft et demandes ouvertes entre membres",
-			"new": {
-				"name": "nouvelle",
-				"description": "Demander un craft : à tous les artisans, ou à un artisan précis",
-				"item": {
-					"name": "objet",
-					"description": "L'objet ou la recette voulus (suggestions du catalogue de la guilde)"
-				},
-				"crafter": {
-					"name": "artisan",
-					"description": "Un artisan précis (vide : tous les artisans)"
-				},
-				"quantity": {
-					"name": "quantite",
-					"description": "Quantité"
-				},
-				"note": {
-					"name": "note",
-					"description": "Précisions (matériaux fournis, délai...)"
-				}
-			},
-			"list": {
-				"name": "liste",
-				"description": "Les commandes et demandes en cours",
-				"filter": {
-					"name": "filtre",
-					"description": "Lesquelles"
-				}
-			},
-			"show": {
-				"name": "voir",
-				"description": "Le détail d'une commande et les offres des artisans",
-				"id": {
-					"name": "numero",
-					"description": "La commande"
-				}
-			},
-			"offer": {
-				"name": "proposer",
-				"description": "Proposer de faire une demande ouverte (artisan)",
-				"id": {
-					"name": "numero",
-					"description": "La demande"
-				},
-				"note": {
-					"name": "note",
-					"description": "Un mot pour le demandeur (prix, délai...)"
-				},
-				"character": {
-					"name": "personnage",
-					"description": "Ton personnage artisan (par défaut : ton principal)"
-				}
-			},
-			"withdraw": {
-				"name": "retirer",
-				"description": "Retirer ton offre",
-				"id": {
-					"name": "numero",
-					"description": "La demande"
-				},
-				"character": {
-					"name": "personnage",
-					"description": "Ton personnage artisan (par défaut : ton principal)"
-				}
-			},
-			"accept": {
-				"name": "accepter",
-				"description": "Accepter une commande (artisan) ou retenir l'offre d'un artisan (demandeur)",
-				"id": {
-					"name": "numero",
-					"description": "La commande"
-				},
-				"crafter": {
-					"name": "artisan",
-					"description": "Demandeur : l'artisan dont tu retiens l'offre"
-				}
-			},
-			"ready": {
-				"name": "prete",
-				"description": "Fabriquée, prête à être échangée en main propre (artisan)",
-				"id": {
-					"name": "numero",
-					"description": "La commande"
-				}
-			},
-			"mailed": {
-				"name": "envoyee",
-				"description": "Envoyée par courrier (artisan)",
-				"id": {
-					"name": "numero",
-					"description": "La commande"
-				}
-			},
-			"received": {
-				"name": "recu",
-				"description": "Confirmer que tu as reçu l'objet (demandeur)",
-				"id": {
-					"name": "numero",
-					"description": "La commande"
-				}
-			},
-			"cancel": {
-				"name": "annuler",
-				"description": "Annuler une commande (artisan ou demandeur)",
-				"id": {
-					"name": "numero",
-					"description": "La commande"
-				}
-			},
-			"catalog": {
-				"name": "catalogue",
-				"description": "Chercher dans le catalogue de recettes de la guilde, avec qui sait les faire",
-				"search": {
-					"name": "recherche",
-					"description": "Texte à trouver dans le nom des recettes"
-				},
-				"profession": {
-					"name": "metier",
-					"description": "Seulement ce métier"
-				}
-			}
-		},
-		"profile": {
-			"name": "profil",
-			"description": "Profils des joueurs : principal, rerolls, rôles, disponibilités",
-			"show": {
-				"name": "voir",
-				"description": "Voir le profil d'un joueur (le vôtre par défaut)",
-				"character": {
-					"name": "personnage",
-					"description": "N'importe quel personnage du joueur"
-				}
-			},
-			"edit": {
-				"name": "modifier",
-				"description": "Remplir votre profil ; vos autres personnages liés deviennent vos rerolls",
-				"role": {
-					"name": "role",
-					"description": "Votre rôle principal"
-				},
-				"second-role": {
-					"name": "second-role",
-					"description": "Un autre rôle que vous savez jouer"
-				},
-				"availability": {
-					"name": "disponibilites",
-					"description": "Quand vous jouez d'habitude, ex. soirs de semaine"
-				},
-				"note": {
-					"name": "note",
-					"description": "Un mot pour les officiers"
-				},
-				"main": {
-					"name": "principal",
-					"description": "Votre personnage principal (par défaut : celui de Discord)"
-				}
-			},
-			"arrivals": {
-				"name": "arrivees",
-				"description": "Arrivées et départs récents dans la guilde",
-				"days": {
-					"name": "jours",
-					"description": "Combien de jours en arrière (14 par défaut)"
-				}
-			},
-			"versions": {
-				"name": "versions",
-				"description": "Version de l'addon de chaque membre (officier)"
-			}
-		},
-		"welcome": {
-			"name": "accueil",
-			"description": "Liste d'accueil des nouveaux",
-			"status": {
-				"name": "etat",
-				"description": "Liste d'accueil d'un joueur (la vôtre par défaut)",
-				"character": {
-					"name": "personnage",
-					"description": "Le personnage du joueur"
-				}
-			},
-			"done": {
-				"name": "fait",
-				"description": "Cocher une étape d'accueil (la vôtre, ou celle d'un joueur pour les officiers)",
-				"step": {
-					"name": "etape",
-					"description": "L'étape"
-				},
-				"character": {
-					"name": "personnage",
-					"description": "Un autre joueur (officier)"
-				}
-			},
-			"undo": {
-				"name": "annuler",
-				"description": "Décocher une étape d'accueil",
-				"step": {
-					"name": "etape",
-					"description": "L'étape"
-				},
-				"character": {
-					"name": "personnage",
-					"description": "Un autre joueur (officier)"
-				}
-			},
-			"list": {
-				"name": "liste",
-				"description": "Nouveaux dont l'accueil n'est pas fini (officier)"
-			},
-			"remind": {
-				"name": "relancer",
-				"description": "Publier un rappel qui mentionne les nouveaux en retard (officier)"
-			}
-		},
-		"home": {
-			"name": "tableau",
-			"description": "Ton tableau de bord : ce qui arrive et ce qui t'attend",
-			"show": {
-				"name": "voir",
-				"description": "Événements à venir, vie de la guilde, tes commandes, ta présence et ton accueil"
 			}
 		}
 	}

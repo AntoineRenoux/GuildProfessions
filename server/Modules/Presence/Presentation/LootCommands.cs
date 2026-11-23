@@ -7,11 +7,11 @@ using GuildProfessions.Server.Shared;
 
 namespace GuildProfessions.Server.Discord;
 
-// Commandes Discord du module Présence : /gkeep loot (butin épique et mieux reçu en raid).
+// Commandes Discord du module Présence : /gkeep-raid loot (butin épique et mieux reçu en raid).
 // Le groupe reste imbriqué dans GkeepModule (Discord ne connaît les sous-commandes que
 // par imbrication) et garde son namespace : même hiérarchie /gkeep <groupe> <commande>,
 // mêmes clés de traduction dans commands.fr.json. Il ne dépend que de son module.
-public sealed partial class GkeepModule
+public sealed partial class GkeepRaidModule
 {
 	// ---- Butin ------------------------------------------------------------------------------
 

@@ -21,7 +21,7 @@ public sealed class CommandLocalizationTests
 	private static readonly ILocalizationManager French =
 		new JsonLocalizationManager(Path.Combine(AppContext.BaseDirectory, "Localization"), "commands");
 
-	private static async Task<InteractionService> LoadAsync()
+	internal static async Task<InteractionService> LoadAsync()
 	{
 		var (service, services) = Create();
 		await service.AddModulesAsync(typeof(GkeepModule).Assembly, services);
@@ -46,12 +46,10 @@ public sealed class CommandLocalizationTests
 	}
 
 	public static TheoryData<string> ModuleGroups =>
-		new(typeof(GkeepModule).GetNestedTypes()
-			.Where(t => typeof(IInteractionModuleBase).IsAssignableFrom(t))
-			.Select(t => t.Name));
+		new(DiscordRoots.Groups().Select(t => t.Name));
 
 	/// <summary>
-	/// Les groupes des modules sont tous sous /gkeep : au démarrage comme à la
+	/// Les groupes des modules sont sous /gkeep, /gkeep-raid ou /gkeep-guild : au démarrage comme à la
 	/// publication, un seul groupe invalide (paramètre non pris en charge,
 	/// handler d'autocomplétion, nom en double, limites Discord) ferait tomber
 	/// toute la commande. Chaque groupe est donc construit seul ici, pour que
@@ -62,7 +60,7 @@ public sealed class CommandLocalizationTests
 	public async Task EachModuleGroup_Should_BuildAlone(string group)
 	{
 		var (service, services) = Create();
-		var type = typeof(GkeepModule).GetNestedType(group)!;
+		var type = DiscordRoots.Group(group);
 
 		// Discord.Net ne construit un groupe imbriqué qu'avec son parent : on appelle
 		// son constructeur de module interne sur le seul groupe (test seulement).
@@ -163,7 +161,7 @@ public sealed class CommandLocalizationTests
 
 	[Fact]
 	public void BotService_Should_LoadEachTopLevelDiscordModuleSeparately() =>
-		Assert.Equal(["GkeepModule", "SetupModule"], DiscordBotService.InteractionModuleTypes().Select(t => t.Name).Order());
+		Assert.Equal(["GkeepGuildModule", "GkeepModule", "GkeepRaidModule", "SetupModule"], DiscordBotService.InteractionModuleTypes().Select(t => t.Name).Order());
 
 	private static bool Translated(IDictionary<string, string>? values) =>
 		values is not null && values.TryGetValue("fr", out var value) && !string.IsNullOrWhiteSpace(value);

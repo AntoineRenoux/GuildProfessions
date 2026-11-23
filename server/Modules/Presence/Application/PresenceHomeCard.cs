@@ -30,6 +30,6 @@ public sealed class PresenceHomeCard(AttendanceService attendance, IAnnuaire ann
 				$"**{main}**: {AttendanceStats.Percent(stats.Last30)} over 30 days ({stats.Last30.Attended}/{stats.Last30.Eligible} raids)"),
 			l.T($"Butin épique sur 90 jours : {stats.Loot90}", $"Epic loot over 90 days: {stats.Loot90}"),
 		};
-		return new HomeCard(l.T("Présence en raid", "Raid attendance"), lines, l.T("/gkeep presence joueur", "/gkeep attendance player"));
+		return new HomeCard(l.T("Présence en raid", "Raid attendance"), lines, l.T("/gkeep-raid presence joueur", "/gkeep-raid attendance player"));
 	}
 }

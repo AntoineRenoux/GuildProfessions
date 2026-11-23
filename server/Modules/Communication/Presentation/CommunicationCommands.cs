@@ -7,11 +7,11 @@ using GuildProfessions.Server.Shared;
 
 namespace GuildProfessions.Server.Discord;
 
-// Commandes Discord du module Communication : /gkeep announce, /gkeep handbook, /gkeep goal.
+// Commandes Discord du module Communication : /gkeep-guild announce, handbook, goal.
 // Groupes imbriqués dans GkeepModule (Discord ne connaît les sous-commandes que par
 // imbrication) ; ils ne dépendent que de leur module (les événements proposés viennent du
 // contrat public du module Événements).
-public sealed partial class GkeepModule
+public sealed partial class GkeepGuildModule
 {
 	// ---- Annonces -------------------------------------------------------------------------------
 
@@ -82,7 +82,7 @@ public sealed partial class GkeepModule
 			await DeferAsync(ephemeral: true);
 			var templates = await communication.TemplatesAsync();
 			await FollowupAsync(templates.Count == 0
-				? l.T("Aucun modèle : `/gkeep annonce modele-enregistrer`.", "No template: `/gkeep announce template-save`.")
+				? l.T("Aucun modèle : `/gkeep-guilde annonce modele-enregistrer`.", "No template: `/gkeep-guild announce template-save`.")
 				: Text.Ellipsize(string.Join("\n", templates.Select(t => $"**{t.Key}** · {t.Title}")), 2000), ephemeral: true);
 		}
 
