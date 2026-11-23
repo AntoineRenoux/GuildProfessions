@@ -56,6 +56,7 @@ public static class DataLuaWriter
 			AppendGuild(builder, export, "\t\t\t");
 			AppendRaids(builder, export, "\t\t\t");
 			AppendCatalog(builder, export, "\t\t\t");
+			CommunicationLua.Append(builder, export, "\t\t\t", Quote);
 			builder.AppendLine("\t\t},");
 		}
 		builder.AppendLine("\t},");

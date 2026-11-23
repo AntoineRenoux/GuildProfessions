@@ -257,7 +257,7 @@ Game.__index = Game
 function Wow.New(options)
 	local game = setmetatable({
 		options = options,
-		prints = {}, errors = {}, sent = {}, prefixes = {}, unknown = {}, objects = {},
+		prints = {}, errors = {}, sent = {}, chat = {}, prefixes = {}, unknown = {}, objects = {},
 		timers = {}, tickers = {}, hooks = {}, settingsCategories = {}, interfacePanels = {},
 		now = options.now or 1795000000, clock = 1000,
 		first = options.first or "Thorgal", last = options.last or "Marteau",
@@ -359,6 +359,10 @@ function Game:BuildEnv()
 	api.SearchBoxTemplate_OnTextChanged = function() end
 	api.SetPortraitToTexture = function() end
 	api.PlaySound = function() end
+	-- Messages de chat envoyés par le joueur (canal de guilde…).
+	api.SendChatMessage = function(text, channel)
+		game.chat[#game.chat + 1] = { text = text, channel = channel }
+	end
 	api.SOUNDKIT = {}
 	api.CreateScrollBoxListLinearView = function()
 		return NewObject(game, "ScrollBoxListLinearView")

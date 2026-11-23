@@ -309,6 +309,12 @@ public sealed class ModuleIsolationTests : IDisposable
 	{
 		public Task<int?> EventOfRaidAsync(long startedAt, TimeSpan window, IReadOnlyCollection<string> participants, CancellationToken ct = default) =>
 			throw new InvalidOperationException("Panne simulée du module Événements.");
+
+		public Task<EventBrief?> EventBriefAsync(int eventId, CancellationToken ct = default) =>
+			throw new InvalidOperationException("Panne simulée du module Événements.");
+
+		public Task<IReadOnlyList<EventBrief>> UpcomingBriefsAsync(int max, CancellationToken ct = default) =>
+			throw new InvalidOperationException("Panne simulée du module Événements.");
 	}
 
 	[Fact]

@@ -5,13 +5,13 @@ local T = { Wow = Wow }
 
 T.NOW = 1795000000
 T.GUILD = "FORMER HOPE"
-T.MODULES = { "professions", "members", "craft", "events", "raid", "attendance", "quests" }
+T.MODULES = { "professions", "members", "craft", "events", "raid", "attendance", "quests", "communication" }
 T.LABELS = {
 	professions = "Métiers", members = "Membres", craft = "Artisanat", events = "Événements",
-	raid = "Soirée de raid", attendance = "Présence et butin", quests = "Quêtes",
+	raid = "Soirée de raid", attendance = "Présence et butin", quests = "Quêtes", communication = "Communication",
 }
 T.TABS = { professions = "Métiers", members = "Membres", craft = "Commandes", events = "Événements",
-	attendance = "Présence", quests = "Quêtes" }
+	attendance = "Présence", quests = "Quêtes", communication = "Guilde" }
 
 function T.check(condition, message)
 	if not condition then
@@ -131,6 +131,17 @@ function T.CheckClean(game, allowErrors)
 end
 
 -- Ouvre la fenêtre et affiche chaque onglet tour à tour (construction et rafraîchissement).
+-- Minuteries actives d'un intervalle donné (présence : 60 s, rappels d'événements : 30 s).
+function T.Tickers(game, seconds)
+	local list = {}
+	for _, ticker in ipairs(game.tickers) do
+		if ticker._seconds == seconds and not ticker._cancelled then
+			list[#list + 1] = ticker
+		end
+	end
+	return list
+end
+
 function T.ShowEveryTab(game)
 	if not game.GP.IsMainFrameShown() then
 		game.GP.ToggleMainFrame()

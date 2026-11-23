@@ -19,7 +19,7 @@ public sealed class ArchitectureTests
 	private static readonly Assembly Server = typeof(GkeepModule).Assembly;
 	private static readonly string[] Internals = ["Application", "Domain", "Infrastructure", "Presentation"];
 
-	private static readonly string[] ModuleNames = ["Annuaire", "Artisanat", "Evenements", "Presence", "Quetes"];
+	private static readonly string[] ModuleNames = ["Annuaire", "Artisanat", "Evenements", "Presence", "Quetes", "Communication"];
 
 	public static TheoryData<string> Modules => new(ModuleNames);
 
@@ -86,6 +86,8 @@ public sealed class ArchitectureTests
 		["Evenements"] = [typeof(GuildEvent), typeof(EventSignup), typeof(EventReserve), typeof(EventHardReserve), typeof(EventDuty)],
 		["Presence"] = [typeof(RaidSession), typeof(RaidParticipant), typeof(RaidLoot), typeof(AttendanceCorrection)],
 		["Quetes"] = [typeof(CharacterQuestLog)],
+		["Communication"] = [typeof(Announcement), typeof(AnnouncementTemplate), typeof(HandbookSection), typeof(GuildGoal),
+			typeof(GoalContribution), typeof(CommunicationSettings)],
 	};
 
 	/// <summary>Entités et internes (Application, Domain, Infrastructure, Presentation) des modules donnés.</summary>
@@ -156,6 +158,9 @@ public sealed class ArchitectureTests
 		[nameof(GkeepModule.AttendanceGroup)] = "Presence",
 		[nameof(GkeepModule.LootGroup)] = "Presence",
 		[nameof(GkeepModule.QuestGroup)] = "Quetes",
+		[nameof(GkeepModule.AnnounceGroup)] = "Communication",
+		[nameof(GkeepModule.HandbookGroup)] = "Communication",
+		[nameof(GkeepModule.GoalGroup)] = "Communication",
 	};
 
 	public static TheoryData<string, string> DiscordGroups

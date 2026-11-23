@@ -10,6 +10,23 @@ public sealed class EvenementsQueries(AppDbContext db) : IEvenements
 	/// <summary>Sortes d'événements auxquelles un raid relevé peut se rattacher.</summary>
 	private static readonly string[] RaidKinds = ["raid", "dungeon"];
 
+	public async Task<EventBrief?> EventBriefAsync(int eventId, CancellationToken ct = default) =>
+		await db.Events.AsNoTracking()
+			.Where(e => e.Id == eventId)
+			.Select(e => new EventBrief(e.Id, e.Title, e.StartsAt, e.Cancelled))
+			.SingleOrDefaultAsync(ct);
+
+	public async Task<IReadOnlyList<EventBrief>> UpcomingBriefsAsync(int max, CancellationToken ct = default)
+	{
+		var since = DateTimeOffset.UtcNow.AddHours(-4).ToUnixTimeSeconds();
+		return await db.Events.AsNoTracking()
+			.Where(e => !e.Cancelled && e.StartsAt >= since)
+			.OrderBy(e => e.StartsAt)
+			.Take(max)
+			.Select(e => new EventBrief(e.Id, e.Title, e.StartsAt, e.Cancelled))
+			.ToListAsync(ct);
+	}
+
 	public async Task<int?> EventOfRaidAsync(long startedAt, TimeSpan window, IReadOnlyCollection<string> participants, CancellationToken ct = default)
 	{
 		var seconds = (long)window.TotalSeconds;

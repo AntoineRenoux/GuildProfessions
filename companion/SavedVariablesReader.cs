@@ -25,16 +25,17 @@ public static class SavedVariablesReader
 		var loot = ReadLoot(db.GetTable("raidLoot"));
 		var attendanceCorrections = ReadAttendanceCorrections(db.GetTable("attendanceCorrections"));
 		var lootCorrections = ReadLootCorrections(db.GetTable("lootCorrections"));
+		var communication = CommunicationLua.Read(db);
 		var hasEventData = events is not null || signups is not null || placements is not null ||
 			reserves is not null || hardReserves is not null || duties is not null ||
 			raids is not null || loot is not null || attendanceCorrections is not null || lootCorrections is not null ||
-			offers is not null;
+			offers is not null || communication is not null;
 		if (charactersTable is null || charactersTable.Map.Count == 0)
 		{
 			return orders is null && orderActions is null && !hasEventData
 				? null
 				: new UploadPayload([], orders, orderActions, null, events, signups, placements, reserves, hardReserves, duties,
-					raids, loot, attendanceCorrections, lootCorrections, offers);
+					raids, loot, attendanceCorrections, lootCorrections, offers, communication);
 		}
 
 		var recipeNames = new Dictionary<int, string>();
@@ -127,7 +128,7 @@ public static class SavedVariablesReader
 		return characters.Count == 0 && orders is null && orderActions is null && !hasEventData
 			? null
 			: new UploadPayload(characters, orders, orderActions, null, events, signups, placements, reserves, hardReserves, duties,
-				raids, loot, attendanceCorrections, lootCorrections, offers);
+				raids, loot, attendanceCorrections, lootCorrections, offers, communication);
 	}
 
 	// Clé d'un événement : numérique = id serveur, sinon id client (créé en jeu, pas encore synchronisé).

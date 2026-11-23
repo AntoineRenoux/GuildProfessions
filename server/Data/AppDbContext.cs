@@ -39,6 +39,7 @@ public sealed partial class AppDbContext(DbContextOptions<AppDbContext> options,
 		ConfigureEvenements(modelBuilder);
 		ConfigurePresence(modelBuilder);
 		ConfigureQuetes(modelBuilder);
+		ConfigureCommunication(modelBuilder);
 	}
 
 	public override int SaveChanges(bool acceptAllChangesOnSuccess)

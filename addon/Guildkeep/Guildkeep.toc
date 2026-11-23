@@ -29,6 +29,7 @@ MembersUI.lua
 Craft.lua
 CraftUI.lua
 Events.lua
+EventReminders.lua
 EventsUI.lua
 RaidNight.lua
 RaidNightUI.lua
@@ -36,3 +37,5 @@ Attendance.lua
 HistoryUI.lua
 Quests.lua
 QuestsUI.lua
+Communication.lua
+CommunicationUI.lua

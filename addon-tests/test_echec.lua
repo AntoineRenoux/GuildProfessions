@@ -42,7 +42,7 @@ test("un module qui plante au chargement : message d'échec, les autres se charg
 	T.check(next(game.env.GuildkeepDB.orderPeer) == nil, "messages de commande ignorés")
 	game.errors = {}
 	local labels = T.ShowEveryTab(game)
-	T.equal(table.concat(labels, ","), "Métiers,Membres,Événements,Présence,Quêtes", "onglet Commandes retiré, les autres restent")
+	T.equal(table.concat(labels, ","), "Métiers,Membres,Événements,Présence,Quêtes,Guilde", "onglet Commandes retiré, les autres restent")
 	T.check(game.GP.IsMainFrameShown(), "la fenêtre s'ouvre")
 	T.CheckClean(game)
 end)
@@ -59,7 +59,7 @@ test("données corrompues : Événements échoue, Soirée de raid suit, le reste
 	game.errors = {}
 	game:RunTimers()
 	local labels = T.ShowEveryTab(game)
-	T.equal(table.concat(labels, ","), "Métiers,Membres,Commandes,Présence,Quêtes", "pas d'onglet Événements")
+	T.equal(table.concat(labels, ","), "Métiers,Membres,Commandes,Présence,Quêtes,Guilde", "pas d'onglet Événements")
 	T.CheckClean(game)
 end)
 
@@ -111,7 +111,7 @@ test("un onglet qui plante à l'affichage : la fenêtre et les autres onglets re
 	game:Login()
 	T.equal(Lines(game).quests, "module Quêtes chargé", "le module se charge")
 	local labels = T.ShowEveryTab(game)
-	T.equal(table.concat(labels, ","), "Métiers,Membres,Commandes,Événements,Présence,Quêtes", "tous les onglets")
+	T.equal(table.concat(labels, ","), "Métiers,Membres,Commandes,Événements,Présence,Quêtes,Guilde", "tous les onglets")
 	T.check(game.GP.IsMainFrameShown(), "fenêtre ouverte")
 	T.check(T.find(game.errors, "construction impossible") and T.find(game.errors, "affichage impossible"), "erreurs signalées")
 	T.equal(#game.GP.UI.TabBadges(), 0, "compteur en erreur ignoré")
