@@ -1,0 +1,174 @@
+title: toutes les fonctionnalités
+description: La liste complète des fonctionnalités de Guildkeep, module par module : ce qu'on fait en jeu, la commande Discord équivalente et qui peut s'en servir.
+lead: [[Tout ce que fait Guildkeep, module par module : ce que tu fais dans l'addon, la commande Discord qui fait la même chose, et qui peut s'en servir. Chaque ligne renvoie au tutoriel pas à pas.||Everything Guildkeep does, module by module: what you do in the addon, the Discord command that does the same, and who can use it. Each row links to the step-by-step tutorial.]]
+---
+<section>
+<h2 id="en-bref">[[En bref||At a glance]]</h2>
+<ul>
+	<li>[[<strong>Dix modules</strong>, chacun activable ou non par chaque joueur (Options &gt; Extensions &gt; Guildkeep). Un module coupé ne relève rien et n'affiche pas son onglet ; un module en panne n'empêche pas les autres de fonctionner.||<strong>Ten modules</strong>, each one turned on or off by every player (Options &gt; AddOns &gt; Guildkeep). A module that's off records nothing and hides its tab; a failing module doesn't stop the others.]]</li>
+	<li>[[<strong>78 commandes Discord</strong>, en français et en anglais selon la langue de chacun : {d:/gkeep||/gkeep}, {d:/gkeep-raid||/gkeep-raid}, {d:/gkeep-guilde||/gkeep-guild} et {d:/gkeep-setup||/gkeep-setup} pour l'administrateur. Ce que tu fais en jeu se fait aussi sur Discord, avec les mêmes droits.||<strong>78 Discord commands</strong>, in English or French following each user's language: {d:/gkeep||/gkeep}, {d:/gkeep-raid||/gkeep-raid}, {d:/gkeep-guilde||/gkeep-guild} and {d:/gkeep-setup||/gkeep-setup} for the admin. What you do in game can also be done on Discord, with the same rights.]]</li>
+	<li>[[<strong>Un tutoriel en jeu par onglet</strong>, qui présente chaque bouton, et une page de documentation par module.||<strong>One in-game tutorial per tab</strong>, presenting every button, and one documentation page per module.]]</li>
+	<li>[[<strong>Gratuit, sans compte ni mot de passe.</strong> Chaque guilde ne voit que ses propres données.||<strong>Free, no account and no password.</strong> Each guild only sees its own data.]]</li>
+</ul>
+<p class="rights">[[Qui peut :||Who can:]] {who:all} {who:self} {who:crafter} {who:requester} {who:org} {who:officer} {who:admin}</p>
+</section>
+
+<section>
+<h2 id="tableau">[[Tableau de bord et thèmes||Dashboard and themes]]</h2>
+<div class="table-wrap"><table class="doc-table">
+	<thead><tr><th scope="col">[[Fonctionnalité||Feature]]</th><th scope="col">[[En jeu||In game]]</th><th scope="col">Discord</th><th scope="col">[[Qui||Who]]</th></tr></thead>
+	<tbody>
+		<tr><td>[[<a href="/docs/tableau.html">Résumé de ce qui t'attend</a> : prochains événements et ta réponse, annonces non lues, objectifs, tes commandes, ta présence, ton accueil, tes quêtes de groupe||<a href="/docs/tableau.html">Summary of what's waiting for you</a>: upcoming events and your answer, unread announcements, goals, your orders, attendance, onboarding, group quests]]</td><td>[[Onglet {t:Tableau||Dashboard}, premier de la fenêtre||{t:Tableau||Dashboard} tab, the window's first]]</td><td>{d:/gkeep tableau voir||/gkeep home show}</td><td>{who:all}</td></tr>
+		<tr><td>[[Bouton {b:Ouvrir||Open} sur chaque carte, vers l'onglet du module||{b:Ouvrir||Open} button on each card, to the module's tab]]</td><td>✓</td><td>[[la commande à utiliser est indiquée||the command to use is shown]]</td><td>{who:all}</td></tr>
+		<tr><td>[[<a href="/docs/tableau.html#themes">Cinq thèmes de couleur</a> : or de guilde, argent, émeraude, arcanes, braise||<a href="/docs/tableau.html#themes">Five color themes</a>: guild gold, silver, emerald, arcane, ember]]</td><td>[[Bouton du tableau, options, {g:/gkeep theme}||Dashboard button, options, {g:/gkeep theme}]]</td><td>[[— (réglage d'affichage, reste dans le jeu)||— (display setting, stays in game)]]</td><td>{who:self}</td></tr>
+	</tbody>
+</table></div>
+</section>
+
+<section>
+<h2 id="evenements">[[Événements||Events]]</h2>
+<div class="table-wrap"><table class="doc-table">
+	<thead><tr><th scope="col">[[Fonctionnalité||Feature]]</th><th scope="col">[[En jeu||In game]]</th><th scope="col">Discord</th><th scope="col">[[Qui||Who]]</th></tr></thead>
+	<tbody>
+		<tr><td>[[Événements à venir, en liste ou en calendrier du mois||Upcoming events, as a list or a month calendar]]</td><td>[[Onglet {t:Événements||Events}||{t:Événements||Events} tab]]</td><td>{d:/gkeep-raid evenement liste||/gkeep-raid event list}</td><td>{who:all}</td></tr>
+		<tr><td>[[Détail, composition par rôle et roster||Details, composition by role and roster]]</td><td>✓</td><td>{d:/gkeep-raid evenement voir||/gkeep-raid event show}</td><td>{who:all}</td></tr>
+		<tr><td>[[<a href="/docs/evenements.html#s-inscrire">S'inscrire</a> : présent, peut-être, absent, avec rôle, spé, personnage et note||<a href="/docs/evenements.html#s-inscrire">Sign up</a>: attending, tentative, not attending, with role, spec, character and note]]</td><td>✓</td><td>{d:/gkeep-raid evenement inscription||/gkeep-raid event signup}</td><td>{who:self}</td></tr>
+		<tr><td>[[<a href="/docs/evenements.html#creer-un-raid">Créer</a> un raid, un donjon, du JcJ ou une sortie, avec la composition visée||<a href="/docs/evenements.html#creer-un-raid">Create</a> a raid, dungeon, PvP or outing, with the target composition]]</td><td>✓</td><td>{d:/gkeep-raid evenement creer||/gkeep-raid event create}</td><td>{who:all}</td></tr>
+		<tr><td>[[Modifier, annuler ou rétablir un événement||Edit, cancel or restore an event]]</td><td>✓</td><td>[[{d:/gkeep-raid evenement modifier||/gkeep-raid event edit}, {d:annuler||cancel}, {d:retablir||restore}||{d:/gkeep-raid evenement modifier||/gkeep-raid event edit}, {d:annuler||cancel}, {d:retablir||restore}]]</td><td>{who:org}</td></tr>
+		<tr><td>[[Placer les joueurs : confirmé, remplaçant, banc||Place players: confirmed, standby, bench]]</td><td>✓</td><td>{d:/gkeep-raid evenement placer||/gkeep-raid event place}</td><td>{who:org}</td></tr>
+		<tr><td>[[<a href="/docs/evenements.html#inviter">Inviter les confirmés</a> en ligne en un clic (le raid se forme), copier le roster pour Discord||<a href="/docs/evenements.html#inviter">Invite confirmed players</a> online in one click (the raid forms), copy the roster for Discord]]</td><td>✓</td><td>[[— (invitation en jeu seulement)||— (invites in game only)]]</td><td>{who:org}</td></tr>
+		<tr><td>[[<a href="/docs/evenements.html#rappels">Rappels</a> : alerte personnelle avant tes événements, rappel aux inscrits||<a href="/docs/evenements.html#rappels">Reminders</a>: personal alert before your events, reminder to signed-up players]]</td><td>[[{g:/gkeep rappel 30}, bouton de rappel||{g:/gkeep rappel 30}, reminder button]]</td><td>{d:/gkeep-raid evenement rappel||/gkeep-raid event remind}</td><td>{who:org}</td></tr>
+	</tbody>
+</table></div>
+</section>
+
+<section>
+<h2 id="soiree-raid">[[Soirée de raid||Raid night]]</h2>
+<div class="table-wrap"><table class="doc-table">
+	<thead><tr><th scope="col">[[Fonctionnalité||Feature]]</th><th scope="col">[[En jeu||In game]]</th><th scope="col">Discord</th><th scope="col">[[Qui||Who]]</th></tr></thead>
+	<tbody>
+		<tr><td>[[<a href="/docs/soiree-raid.html">Réservations de butin</a> : un objet par priorité (haute, normale, basse), conflits signalés, avertissement sur l'équipement que ta classe ne porte pas||<a href="/docs/soiree-raid.html">Loot reserves</a>: one item per priority (high, normal, low), conflicts flagged, warning on gear your class can't use]]</td><td>[[Maj+clic sur l'objet||Shift-click the item]]</td><td>[[{d:/gkeep-raid reserve poser||/gkeep-raid reserve set}, {d:retirer||clear}, {d:liste||list}||{d:/gkeep-raid reserve poser||/gkeep-raid reserve set}, {d:retirer||clear}, {d:liste||list}]]</td><td>{who:self}</td></tr>
+		<tr><td>[[Réserver pour un joueur sans addon||Reserve for a player without the addon]]</td><td>✓</td><td>{d:/gkeep-raid reserve poser||/gkeep-raid reserve set}</td><td>{who:officer}</td></tr>
+		<tr><td>[[Réservations d'office (objet retiré du jeu des réservations)||Hard reserves (item taken out of the reserve pool)]]</td><td>✓</td><td>[[{d:/gkeep-raid reserve ferme||/gkeep-raid reserve hard}, {d:lever||unhard}||{d:/gkeep-raid reserve ferme||/gkeep-raid reserve hard}, {d:lever||unhard}]]</td><td>{who:officer}</td></tr>
+		<tr><td>[[Verrouiller les réservations (seuls les confirmés comptent), avec passage facultatif au maître du butin||Lock reserves (only confirmed players count), with an optional switch to master looter]]</td><td>✓</td><td>[[{d:/gkeep-raid reserve verrouiller||/gkeep-raid reserve lock}, {d:deverrouiller||unlock}||{d:/gkeep-raid reserve verrouiller||/gkeep-raid reserve lock}, {d:deverrouiller||unlock}]]</td><td>{who:officer}</td></tr>
+		<tr><td>[[Rôles de soutien : chef de raid, invocations, consommables, robot de réparation||Support duties: raid lead, summons, consumables, repair bot]]</td><td>✓</td><td>{d:/gkeep-raid evenement soutien||/gkeep-raid event duty}</td><td>{who:org}</td></tr>
+		<tr><td>[[Checklist « Avant le raid » : rôles manquants, joueurs non placés, conflits, rôles de soutien vides ; copie de la soirée pour Discord||"Before the raid" checklist: missing roles, unplaced players, conflicts, empty duties; copy the night for Discord]]</td><td>✓</td><td>{d:/gkeep-raid evenement checklist||/gkeep-raid event checklist}</td><td>{who:all}</td></tr>
+	</tbody>
+</table></div>
+</section>
+
+<section>
+<h2 id="presence">[[Présence et butin||Attendance and loot]]</h2>
+<div class="table-wrap"><table class="doc-table">
+	<thead><tr><th scope="col">[[Fonctionnalité||Feature]]</th><th scope="col">[[En jeu||In game]]</th><th scope="col">Discord</th><th scope="col">[[Qui||Who]]</th></tr></thead>
+	<tbody>
+		<tr><td>[[<a href="/docs/presence.html">Présence relevée en raid</a>, minute par minute (un raid compte dès 5 membres de la guilde) ; s'inscrire ne vaut pas présence||<a href="/docs/presence.html">Attendance recorded in raids</a>, minute by minute (a raid counts from 5 guild members); signing up isn't attending]]</td><td>[[Automatique||Automatic]]</td><td>—</td><td>{who:all}</td></tr>
+		<tr><td>[[Butin épique et mieux relevé dans les messages de butin||Epic and better loot read from loot messages]]</td><td>[[Automatique||Automatic]]</td><td>{d:/gkeep-raid butin liste||/gkeep-raid loot list}</td><td>{who:all}</td></tr>
+		<tr><td>[[Taux sur 30, 60 et 90 jours de chaque raideur, comparé aux 30 jours d'avant||30, 60 and 90-day rate for every raider, compared with the previous 30 days]]</td><td>[[Onglet {t:Présence||Attendance}||{t:Présence||Attendance} tab]]</td><td>{d:/gkeep-raid presence resume||/gkeep-raid attendance summary}</td><td>{who:all}</td></tr>
+		<tr><td>[[Tendances, derniers raids et butin d'un joueur ; détail d'un raid||A player's trends, recent raids and loot; a raid's details]]</td><td>✓</td><td>[[{d:/gkeep-raid presence joueur||/gkeep-raid attendance player}, {d:raids||raids}, {d:raid||raid}||{d:/gkeep-raid presence joueur||/gkeep-raid attendance player}, {d:raids||raids}, {d:raid||raid}]]</td><td>{who:all}</td></tr>
+		<tr><td>[[<a href="/docs/presence.html#corriger">Corriger</a> la présence (présent, absent, excusé) et annuler ou rétablir un objet||<a href="/docs/presence.html#corriger">Correct</a> attendance (present, absent, excused) and void or restore an item]]</td><td>✓</td><td>[[{d:/gkeep-raid presence corriger||/gkeep-raid attendance correct}, {d:/gkeep-raid butin annuler||/gkeep-raid loot void}, {d:retablir||restore}||{d:/gkeep-raid presence corriger||/gkeep-raid attendance correct}, {d:/gkeep-raid butin annuler||/gkeep-raid loot void}, {d:retablir||restore}]]</td><td>{who:officer}</td></tr>
+	</tbody>
+</table></div>
+</section>
+
+<section>
+<h2 id="metiers">[[Métiers||Professions]]</h2>
+<div class="table-wrap"><table class="doc-table">
+	<thead><tr><th scope="col">[[Fonctionnalité||Feature]]</th><th scope="col">[[En jeu||In game]]</th><th scope="col">Discord</th><th scope="col">[[Qui||Who]]</th></tr></thead>
+	<tbody>
+		<tr><td>[[<a href="/docs/metiers.html">Annuaire des artisans</a> : métiers, niveau et rang de chaque membre, filtres par métier et niveau, tri||<a href="/docs/metiers.html">Crafter directory</a>: every member's professions, level and rank, filters by profession and level, sorting]]</td><td>[[Onglet {t:Métiers||Professions}||{t:Métiers||Professions} tab]]</td><td>{d:/gkeep metier liste||/gkeep profession list}</td><td>{who:all}</td></tr>
+		<tr><td>[[Trouver qui sait fabriquer une recette||Find who can craft a recipe]]</td><td>[[Recherche||Search]]</td><td>{d:/gkeep metier qui||/gkeep profession who}</td><td>{who:all}</td></tr>
+		<tr><td>[[Toutes les recettes d'un artisan, avec recherche ; lier une recette dans le chat||All of a crafter's recipes, searchable; link a recipe in chat]]</td><td>{b:Voir (N)||View (N)}</td><td>{d:/gkeep metier recettes||/gkeep profession recipes}</td><td>{who:all}</td></tr>
+		<tr><td>[[Relevé automatique de tes métiers et recettes||Automatic scan of your professions and recipes]]</td><td>[[À la connexion et à l'ouverture d'un métier||At login and when opening a profession]]</td><td>—</td><td>{who:self}</td></tr>
+		<tr><td>[[Déclarer ou retirer un métier sans l'addon||Declare or remove a profession without the addon]]</td><td>—</td><td>[[{d:/gkeep metier definir||/gkeep profession set}, {d:retirer||remove}||{d:/gkeep metier definir||/gkeep profession set}, {d:retirer||remove}]]</td><td>{who:self}</td></tr>
+	</tbody>
+</table></div>
+</section>
+
+<section>
+<h2 id="artisanat">[[Commandes de craft||Craft orders]]</h2>
+<div class="table-wrap"><table class="doc-table">
+	<thead><tr><th scope="col">[[Fonctionnalité||Feature]]</th><th scope="col">[[En jeu||In game]]</th><th scope="col">Discord</th><th scope="col">[[Qui||Who]]</th></tr></thead>
+	<tbody>
+		<tr><td>[[<a href="/docs/artisanat.html">Commander à un artisan</a> : composants à envoyer, ce que tu as déjà, ce qu'un autre membre peut fabriquer||<a href="/docs/artisanat.html">Order from a crafter</a>: reagents to send, what you already carry, what another member can craft]]</td><td>✓</td><td>{d:/gkeep commande nouvelle||/gkeep order new}</td><td>{who:all}</td></tr>
+		<tr><td>[[Demande ouverte à toute la guilde (les artisans concernés sont prévenus, expire après cinq jours)||Request open to the whole guild (relevant crafters notified, expires after five days)]]</td><td>✓</td><td>{d:/gkeep commande nouvelle||/gkeep order new}</td><td>{who:all}</td></tr>
+		<tr><td>[[Proposer de faire une demande, avec une note ; retirer son offre||Offer to make a request, with a note; withdraw your offer]]</td><td>✓</td><td>[[{d:/gkeep commande proposer||/gkeep order offer}, {d:retirer||withdraw}||{d:/gkeep commande proposer||/gkeep order offer}, {d:retirer||withdraw}]]</td><td>{who:crafter}</td></tr>
+		<tr><td>[[Choisir une offre, ou accepter une commande||Pick an offer, or accept an order]]</td><td>✓</td><td>{d:/gkeep commande accepter||/gkeep order accept}</td><td>[[{who:requester} {who:crafter}||{who:requester} {who:crafter}]]</td></tr>
+		<tr><td>[[Suivi : prête, envoyée par courrier, reçue, annulée ; messages privés sur Discord||Tracking: ready, mailed, received, cancelled; Discord direct messages]]</td><td>✓</td><td>[[{d:/gkeep commande prete||/gkeep order ready}, {d:envoyee||mailed}, {d:recu||received}, {d:annuler||cancel}||{d:/gkeep commande prete||/gkeep order ready}, {d:envoyee||mailed}, {d:recu||received}, {d:annuler||cancel}]]</td><td>[[{who:requester} {who:crafter}||{who:requester} {who:crafter}]]</td></tr>
+		<tr><td>[[Liste filtrée : tout, à fabriquer pour moi, mes demandes, ce que je sais faire, mes offres||Filtered list: everything, to craft for me, my requests, what I can make, my offers]]</td><td>✓</td><td>[[{d:/gkeep commande liste||/gkeep order list}, {d:voir||show}||{d:/gkeep commande liste||/gkeep order list}, {d:voir||show}]]</td><td>{who:all}</td></tr>
+		<tr><td>[[Catalogue des recettes de la guilde, enrichi à chaque fenêtre de métier ouverte||Guild recipe catalog, growing with every profession window opened]]</td><td>✓</td><td>{d:/gkeep commande catalogue||/gkeep order catalog}</td><td>{who:all}</td></tr>
+	</tbody>
+</table></div>
+</section>
+
+<section>
+<h2 id="membres">[[Membres||Members]]</h2>
+<div class="table-wrap"><table class="doc-table">
+	<thead><tr><th scope="col">[[Fonctionnalité||Feature]]</th><th scope="col">[[En jeu||In game]]</th><th scope="col">Discord</th><th scope="col">[[Qui||Who]]</th></tr></thead>
+	<tbody>
+		<tr><td>[[<a href="/docs/membres.html">Le roster</a> : personnages, classe, niveau, qui est en ligne||<a href="/docs/membres.html">The roster</a>: characters, class, level, who's online]]</td><td>[[Onglet {t:Membres||Members}||{t:Membres||Members} tab]]</td><td>{d:/gkeep metier liste||/gkeep profession list}</td><td>{who:all}</td></tr>
+		<tr><td>[[Fiche d'un membre : équipement relevé à sa dernière déconnexion, couleurs de qualité, aperçu 3D||Member sheet: gear recorded at their last logout, quality colors, 3D preview]]</td><td>✓</td><td>—</td><td>{who:all}</td></tr>
+	</tbody>
+</table></div>
+</section>
+
+<section>
+<h2 id="quetes">[[Quêtes||Quests]]</h2>
+<div class="table-wrap"><table class="doc-table">
+	<thead><tr><th scope="col">[[Fonctionnalité||Feature]]</th><th scope="col">[[En jeu||In game]]</th><th scope="col">Discord</th><th scope="col">[[Qui||Who]]</th></tr></thead>
+	<tbody>
+		<tr><td>[[<a href="/docs/quetes.html">Quêtes élites, de donjon et de raid</a> des membres, par zone ou donjon, avec qui les a, qui est en ligne et qui a fini les objectifs||Members' <a href="/docs/quetes.html">elite, dungeon and raid quests</a>, by zone or dungeon, with who has them, who's online and whose objectives are done]]</td><td>[[Onglet {t:Quêtes||Quests}||{t:Quêtes||Quests} tab]]</td><td>[[{d:/gkeep quete liste||/gkeep quest list}, {d:qui||who}||{d:/gkeep quete liste||/gkeep quest list}, {d:qui||who}]]</td><td>{who:all}</td></tr>
+		<tr><td>[[Mes quêtes et qui les a aussi ; quêtes déjà rendues masquées||My quests and who else has them; quests already turned in hidden]]</td><td>[[Filtre « mes quêtes »||"My quests" filter]]</td><td>{d:/gkeep quete miennes||/gkeep quest mine}</td><td>{who:self}</td></tr>
+		<tr><td>[[Chuchoter, inviter et partager la quête en un clic||Whisper, invite and share the quest in one click]]</td><td>✓</td><td>—</td><td>{who:all}</td></tr>
+	</tbody>
+</table></div>
+</section>
+
+<section>
+<h2 id="communication">[[Communication||Communication]]</h2>
+<div class="table-wrap"><table class="doc-table">
+	<thead><tr><th scope="col">[[Fonctionnalité||Feature]]</th><th scope="col">[[En jeu||In game]]</th><th scope="col">Discord</th><th scope="col">[[Qui||Who]]</th></tr></thead>
+	<tbody>
+		<tr><td>[[<a href="/docs/communication.html">Annonces</a> des officiers, liées ou non à un événement ; non lues signalées à la connexion||Officers' <a href="/docs/communication.html">announcements</a>, optionally about an event; unread ones flagged at login]]</td><td>[[Onglet {t:Guilde||Guild}||{t:Guilde||Guild} tab]]</td><td>[[{d:/gkeep-guilde annonce publier||/gkeep-guild announce post}, {d:liste||list}, {d:retirer||delete}||{d:/gkeep-guilde annonce publier||/gkeep-guild announce post}, {d:liste||list}, {d:retirer||delete}]]</td><td>[[{who:officer} (lecture : {who:all})||{who:officer} (reading: {who:all})]]</td></tr>
+		<tr><td>[[Modèles d'annonce réutilisables ({event}, {date}, {guild} remplacés)||Reusable announcement templates ({event}, {date}, {guild} replaced)]]</td><td>✓</td><td>[[{d:/gkeep-guilde annonce modele-enregistrer||/gkeep-guild announce template-save}, {d:modele-liste||template-list}, {d:modele-supprimer||template-delete}||{d:/gkeep-guilde annonce modele-enregistrer||/gkeep-guild announce template-save}, {d:modele-liste||template-list}, {d:modele-supprimer||template-delete}]]</td><td>{who:officer}</td></tr>
+		<tr><td>[[Publication des annonces dans un salon Discord||Announcements posted to a Discord channel]]</td><td>—</td><td>{d:/gkeep-guilde annonce salon||/gkeep-guild announce channel}</td><td>{who:admin}</td></tr>
+		<tr><td>[[<a href="/docs/communication.html#charte">Charte de la guilde</a> : règlement, règles de butin, toute section||<a href="/docs/communication.html#charte">Guild handbook</a>: rules, loot rules, any section]]</td><td>✓</td><td>[[{d:/gkeep-guilde charte lire||/gkeep-guild handbook show}, {d:ecrire||edit}, {d:retirer||remove}||{d:/gkeep-guilde charte lire||/gkeep-guild handbook show}, {d:ecrire||edit}, {d:retirer||remove}]]</td><td>[[{who:officer} (lecture : {who:all})||{who:officer} (reading: {who:all})]]</td></tr>
+		<tr><td>[[<a href="/docs/communication.html#objectifs">Objectifs de guilde</a> chiffrés et contributions de chacun||Quantified <a href="/docs/communication.html#objectifs">guild goals</a> and everyone's contributions]]</td><td>✓</td><td>[[{d:/gkeep-guilde objectif liste||/gkeep-guild goal list}, {d:voir||show}, {d:contribuer||contribute}||{d:/gkeep-guilde objectif liste||/gkeep-guild goal list}, {d:voir||show}, {d:contribuer||contribute}]]</td><td>{who:all}</td></tr>
+		<tr><td>[[Créer, clore et rouvrir un objectif||Create, close and reopen a goal]]</td><td>✓</td><td>[[{d:/gkeep-guilde objectif creer||/gkeep-guild goal create}, {d:clore||close}, {d:rouvrir||reopen}||{d:/gkeep-guilde objectif creer||/gkeep-guild goal create}, {d:clore||close}, {d:rouvrir||reopen}]]</td><td>{who:officer}</td></tr>
+	</tbody>
+</table></div>
+</section>
+
+<section>
+<h2 id="profils">[[Profils et accueil||Profiles and onboarding]]</h2>
+<div class="table-wrap"><table class="doc-table">
+	<thead><tr><th scope="col">[[Fonctionnalité||Feature]]</th><th scope="col">[[En jeu||In game]]</th><th scope="col">Discord</th><th scope="col">[[Qui||Who]]</th></tr></thead>
+	<tbody>
+		<tr><td>[[<a href="/docs/profils.html">Profil de chaque joueur</a> : principal, rerolls, rôles, disponibilités, note||<a href="/docs/profils.html">Each player's profile</a>: main, alts, roles, availability, note]]</td><td>[[Onglet {t:Profils||Profiles}, {b:Mon profil||My profile}||{t:Profils||Profiles} tab, {b:Mon profil||My profile}]]</td><td>[[{d:/gkeep profil voir||/gkeep profile show}, {d:modifier||edit}||{d:/gkeep profil voir||/gkeep profile show}, {d:modifier||edit}]]</td><td>[[{who:self} (lecture : {who:all})||{who:self} (reading: {who:all})]]</td></tr>
+		<tr><td>[[Talents de chaque personnage (points par arbre, arbre principal)||Each character's talents (points per tree, main tree)]]</td><td>[[Automatique||Automatic]]</td><td>{d:/gkeep profil voir||/gkeep profile show}</td><td>{who:all}</td></tr>
+		<tr><td>[[Version de l'addon de chacun||Everyone's addon version]]</td><td>[[Section {o:Journal||Log}||{o:Journal||Log} section]]</td><td>{d:/gkeep profil versions||/gkeep profile versions}</td><td>{who:officer}</td></tr>
+		<tr><td>[[<a href="/docs/profils.html#journal">Arrivées et départs</a> relevés dans le roster, gardés 90 jours||<a href="/docs/profils.html#journal">Arrivals and departures</a> read from the roster, kept 90 days]]</td><td>[[Automatique, section {o:Journal||Log}||Automatic, {o:Journal||Log} section]]</td><td>{d:/gkeep profil arrivees||/gkeep profile arrivals}</td><td>{who:all}</td></tr>
+		<tr><td>[[<a href="/docs/profils.html#accueil">Liste d'accueil</a> en cinq étapes (Discord, principal, profil, charte, présentation)||Five-step <a href="/docs/profils.html#accueil">onboarding checklist</a> (Discord, main, profile, handbook, introduction)]]</td><td>[[Section {o:Accueil||Onboarding}||{o:Accueil||Onboarding} section]]</td><td>[[{d:/gkeep accueil etat||/gkeep welcome status}, {d:fait||done}, {d:annuler||undo}||{d:/gkeep accueil etat||/gkeep welcome status}, {d:fait||done}, {d:annuler||undo}]]</td><td>[[{who:self} ; {who:officer} pour les autres||{who:self}; {who:officer} for others]]</td></tr>
+		<tr><td>[[Suivre les nouveaux et les relancer||Follow newcomers and remind them]]</td><td>{b:Copier un rappel||Copy a reminder}</td><td>[[{d:/gkeep accueil liste||/gkeep welcome list}, {d:relancer||remind}||{d:/gkeep accueil liste||/gkeep welcome list}, {d:relancer||remind}]]</td><td>{who:officer}</td></tr>
+	</tbody>
+</table></div>
+</section>
+
+<section>
+<h2 id="socle">[[Pour toute la guilde : installation, synchro et réglages||For the whole guild: setup, sync and settings]]</h2>
+<div class="table-wrap"><table class="doc-table">
+	<thead><tr><th scope="col">[[Fonctionnalité||Feature]]</th><th scope="col">[[Où||Where]]</th><th scope="col">[[Qui||Who]]</th></tr></thead>
+	<tbody>
+		<tr><td>[[<a href="/docs/installation.html">Créer la guilde</a> en deux minutes, options (renommage des pseudos, salon des annonces), nouveau lien d'installation, suppression||<a href="/docs/installation.html">Create the guild</a> in two minutes, options (nickname renaming, announcement channel), new install link, deletion]]</td><td>{d:/gkeep-setup||/gkeep-setup}</td><td>{who:admin}</td></tr>
+		<tr><td>[[Pack de la guilde à télécharger, déjà configuré (Windows, macOS)||Guild pack to download, already configured (Windows, macOS)]]</td><td>[[Lien d'installation||Install link]]</td><td>{who:all}</td></tr>
+		<tr><td>[[<a href="/docs/compagnon.html">App compagnon</a> : synchro automatique dans les deux sens, mise à jour de l'addon, plusieurs guildes à la fois||<a href="/docs/compagnon.html">Companion app</a>: automatic two-way sync, addon updates, several guilds at once]]</td><td>[[Ton PC||Your PC]]</td><td>{who:all}</td></tr>
+		<tr><td>[[Canal manuel sans compagnon : exporter et importer une chaîne||Manual channel without the companion: export and import a string]]</td><td>[[{d:/gkeep exporter||/gkeep export}, {d:importer||import} ; boutons {b:Exporter||Export} et {b:Importer||Import} en jeu||{d:/gkeep exporter||/gkeep export}, {d:importer||import}; {b:Exporter||Export} and {b:Importer||Import} buttons in game]]</td><td>{who:all}</td></tr>
+		<tr><td>[[Lier ses personnages à Discord, choisir son principal (et son pseudo), token personnel||Link your characters to Discord, pick your main (and nickname), personal token]]</td><td>[[{d:/gkeep lier||/gkeep link}, {d:principal||main}, {d:token||token}||{d:/gkeep lier||/gkeep link}, {d:principal||main}, {d:token||token}]]</td><td>{who:self}</td></tr>
+		<tr><td>[[Activer ou couper chaque module ; message de chargement de chaque module à la connexion||Turn each module on or off; each module's load message at login]]</td><td>[[Options &gt; Extensions &gt; Guildkeep, {g:/gkeep modules}||Options &gt; AddOns &gt; Guildkeep, {g:/gkeep modules}]]</td><td>{who:self}</td></tr>
+		<tr><td>[[Tutoriels en jeu à revoir ou couper||In-game tutorials to replay or turn off]]</td><td>[[Bouton {b:?}, {g:/gkeep tuto}||{b:?} button, {g:/gkeep tuto}]]</td><td>{who:self}</td></tr>
+		<tr><td>[[Changements partagés aussitôt avec les membres connectés qui ont l'addon||Changes shared right away with online members who have the addon]]</td><td>[[Automatique||Automatic]]</td><td>{who:all}</td></tr>
+		<tr><td>[[Aide sur Discord, en deux écrans||Help on Discord, in two screens]]</td><td>{d:/gkeep aide||/gkeep help}</td><td>{who:all}</td></tr>
+	</tbody>
+</table></div>
+{note}<p>[[La liste détaillée des commandes, avec leurs noms anglais et français : <a href="/docs/commandes.html">commandes Discord</a>.||The detailed command list, with English and French names: <a href="/docs/commandes.html">Discord commands</a>.]]</p>{/note}
+</section>
