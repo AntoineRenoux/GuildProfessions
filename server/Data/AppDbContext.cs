@@ -40,6 +40,7 @@ public sealed partial class AppDbContext(DbContextOptions<AppDbContext> options,
 		ConfigurePresence(modelBuilder);
 		ConfigureQuetes(modelBuilder);
 		ConfigureCommunication(modelBuilder);
+		ConfigureProfils(modelBuilder);
 	}
 
 	public override int SaveChanges(bool acceptAllChangesOnSuccess)

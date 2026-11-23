@@ -164,6 +164,23 @@ lead: [[Toutes les commandes du bot, rangées par module, avec leur nom anglais 
 </table></div>
 </section>
 <section>
+<h2 id="profils">[[Profils et accueil||Profiles and onboarding]]</h2>
+<div class="table-wrap"><table class="doc-table">
+	<thead><tr><th scope="col">[[Anglais||English]]</th><th scope="col">[[Français||French]]</th><th scope="col">[[Qui peut||Who can]]</th><th scope="col">[[Ce que ça fait||What it does]]</th></tr></thead>
+	<tbody>
+		<tr><td><code class="d">/gkeep profile show</code></td><td><code class="d">/gkeep profil voir</code></td><td>{who:all}</td><td>[[Voir le profil d'un joueur (le vôtre par défaut)||Show a player's profile (yours by default)]]</td></tr>
+		<tr><td><code class="d">/gkeep profile edit</code></td><td><code class="d">/gkeep profil modifier</code></td><td>{who:all}</td><td>[[Remplir votre profil ; vos autres personnages liés deviennent vos rerolls||Fill in your profile; your other linked characters become your alts]]</td></tr>
+		<tr><td><code class="d">/gkeep profile arrivals</code></td><td><code class="d">/gkeep profil arrivees</code></td><td>{who:all}</td><td>[[Arrivées et départs récents dans la guilde||Recent arrivals and departures in the guild]]</td></tr>
+		<tr><td><code class="d">/gkeep profile versions</code></td><td><code class="d">/gkeep profil versions</code></td><td>{who:officer}</td><td>[[Version de l'addon de chaque membre (officier)||Addon version of each member (officer)]]</td></tr>
+		<tr><td><code class="d">/gkeep welcome status</code></td><td><code class="d">/gkeep accueil etat</code></td><td>{who:all}</td><td>[[Liste d'accueil d'un joueur (la vôtre par défaut)||Onboarding checklist of a player (yours by default)]]</td></tr>
+		<tr><td><code class="d">/gkeep welcome done</code></td><td><code class="d">/gkeep accueil fait</code></td><td>{who:all}</td><td>[[Cocher une étape d'accueil (la vôtre, ou celle d'un joueur pour les officiers)||Tick an onboarding step (yours, or a player's for officers)]]</td></tr>
+		<tr><td><code class="d">/gkeep welcome undo</code></td><td><code class="d">/gkeep accueil annuler</code></td><td>{who:all}</td><td>[[Décocher une étape d'accueil||Untick an onboarding step]]</td></tr>
+		<tr><td><code class="d">/gkeep welcome list</code></td><td><code class="d">/gkeep accueil liste</code></td><td>{who:officer}</td><td>[[Nouveaux dont l'accueil n'est pas fini (officier)||Newcomers whose onboarding is not finished (officer)]]</td></tr>
+		<tr><td><code class="d">/gkeep welcome remind</code></td><td><code class="d">/gkeep accueil relancer</code></td><td>{who:officer}</td><td>[[Publier un rappel qui mentionne les nouveaux en retard (officier)||Post a reminder mentioning newcomers with steps left (officer)]]</td></tr>
+	</tbody>
+</table></div>
+</section>
+<section>
 <h2 id="en-jeu">[[Commandes en jeu||In-game commands]]</h2>
 <p>[[À taper dans la fenêtre de discussion du jeu. {g:/gp} est un raccourci de {g:/gkeep}.||To type in the game's chat box. {g:/gp} is a shortcut for {g:/gkeep}.]]</p>
 <div class="table-wrap"><table class="doc-table">
@@ -174,6 +191,7 @@ lead: [[Toutes les commandes du bot, rangées par module, avec leur nom anglais 
 		<tr><td><code>/gkeep presence</code> · <code>butin</code></td><td>[[Ouvre l'onglet Présence (aussi <code>attendance</code>, <code>loot</code>).||Opens the Attendance tab (also <code>attendance</code>, <code>loot</code>).]]</td></tr>
 		<tr><td><code>/gkeep quetes</code> · <code>quests</code></td><td>[[Ouvre l'onglet Quêtes.||Opens the Quests tab.]]</td></tr>
 		<tr><td><code>/gkeep guilde</code> · <code>annonces</code> · <code>charte</code> · <code>objectifs</code></td><td>[[Ouvre l'onglet Guilde (aussi <code>guild</code>).||Opens the Guild tab (also <code>guild</code>).]]</td></tr>
+		<tr><td><code>/gkeep profils</code> · <code>accueil</code></td><td>[[Ouvre l'onglet Profils (aussi <code>profil</code>, <code>profiles</code>, <code>welcome</code>) ; <code>/gkeep profil moi</code> ouvre ton profil.||Opens the Profiles tab (also <code>profil</code>, <code>profiles</code>, <code>welcome</code>); <code>/gkeep profil moi</code> opens your profile.]]</td></tr>
 		<tr><td><code>/gkeep rappel 30</code> · <code>rappel off</code></td><td>[[Règle ton rappel personnel d'événement (minutes avant), ou le coupe ; sans argument, affiche le réglage.||Sets your personal event reminder (minutes before), or turns it off; with no argument, shows the setting.]]</td></tr>
 		<tr><td><code>/gkeep tuto</code></td><td>[[Rejoue le tutoriel de l'onglet affiché ; <code>tuto reset</code> pour tout revoir, <code>tuto off</code> / <code>tuto on</code> pour les couper ou les remettre.||Replays the tutorial of the tab on screen; <code>tuto reset</code> to see them all again, <code>tuto off</code> / <code>tuto on</code> to turn them off or back on.]]</td></tr>
 		<tr><td><code>/gkeep modules</code></td><td>[[Affiche l'état de chaque module ; <code>/gkeep modules &lt;nom&gt; on|off</code> en change un (au prochain {g:/reload}).||Shows each module's state; <code>/gkeep modules &lt;name&gt; on|off</code> changes one (on the next {g:/reload}).]]</td></tr>

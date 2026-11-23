@@ -5,13 +5,14 @@ local T = { Wow = Wow }
 
 T.NOW = 1795000000
 T.GUILD = "FORMER HOPE"
-T.MODULES = { "professions", "members", "craft", "events", "raid", "attendance", "quests", "communication" }
+T.MODULES = { "professions", "members", "craft", "events", "raid", "attendance", "quests", "communication", "profiles" }
 T.LABELS = {
 	professions = "Métiers", members = "Membres", craft = "Artisanat", events = "Événements",
 	raid = "Soirée de raid", attendance = "Présence et butin", quests = "Quêtes", communication = "Communication",
+	profiles = "Profils et accueil",
 }
 T.TABS = { professions = "Métiers", members = "Membres", craft = "Commandes", events = "Événements",
-	attendance = "Présence", quests = "Quêtes", communication = "Guilde" }
+	attendance = "Présence", quests = "Quêtes", communication = "Guilde", profiles = "Profils" }
 
 function T.check(condition, message)
 	if not condition then
@@ -146,7 +147,7 @@ function T.ShowEveryTab(game)
 	if not game.GP.IsMainFrameShown() then
 		game.GP.ToggleMainFrame()
 	end
-	for _, key in ipairs({ "tabProfessions", "tabMembers", "tabOrders", "tabEvents", "tabHistory", "tabQuests", "tabGuild" }) do
+	for _, key in ipairs({ "tabProfessions", "tabMembers", "tabOrders", "tabEvents", "tabHistory", "tabQuests", "tabGuild", "tabProfiles" }) do
 		game.GP.ShowTab(key)
 		-- Bascules de l'onglet : sections du détail d'un événement, modes d'affichage.
 		for _, field in ipairs({ "section", "mode" }) do

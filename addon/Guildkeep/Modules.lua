@@ -37,6 +37,8 @@ M.LIST = {
 		description = "Quêtes élites, de donjon et de raid partagées dans la guilde." },
 	{ id = "communication", label = "Communication", parts = { "data", "ui" },
 		description = "Annonces des officiers, charte de la guilde et objectifs communs." },
+	{ id = "profiles", label = "Profils et accueil", parts = { "data", "ui" },
+		description = "Profil de chaque joueur (principal, rerolls, rôles, talents), arrivées et départs, accueil des nouveaux." },
 }
 
 local BY_ID = {}

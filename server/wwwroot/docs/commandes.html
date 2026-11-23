@@ -20,6 +20,7 @@
 <symbol id="i-presence" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M10 6h22l7 7v29H10z"/><path fill="none" stroke="#1a1208" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.4" d="M16 26l5 5 10-11"/></symbol>
 <symbol id="i-quetes" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M20 5h8l-1.5 26h-5zM24 35a4 4 0 1 1 0 8 4 4 0 0 1 0-8z"/></symbol>
 <symbol id="i-communication" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M6 19h8l20-11v32L14 29H6z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M39 17c3 4 3 10 0 14M12 30l3 11h6l-3-11"/></symbol>
+<symbol id="i-profils" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M5 10h38v28H5z"/><circle fill="#1a1208" cx="16" cy="21" r="5"/><path fill="#1a1208" d="M8 33c1-5 4-7 8-7s7 2 8 7zM27 17h12v3H27zM27 24h12v3H27zM27 31h8v3h-8z"/></symbol>
 <symbol id="i-install" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M17 12c0-5 3-8 7-8s7 3 7 8h-3c0-3-2-5-4-5s-4 2-4 5z"/><path fill="url(#gk-gold)" d="M10 14h28l4 26a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4z"/><path fill="#1a1208" d="M20 22h8v6h-8z"/></symbol>
 <symbol id="i-compagnon" viewBox="0 0 48 48"><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="4" d="M6 34c6-14 30-14 36 0M12 34V22M24 34V18M36 34V22"/><path fill="url(#gk-gold)" d="M4 34h40v5H4z"/></symbol>
 <symbol id="i-cmd" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M5 9h38v30H5z"/><path fill="#1a1208" d="M8 15h32v21H8z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M14 32l8-13M26 32h8"/></symbol>
@@ -65,6 +66,8 @@
 </li>
 <li><a href="/docs/communication.html"><span lang="fr">Communication</span><span lang="en">Communication</span></a>
 </li>
+<li><a href="/docs/profils.html"><span lang="fr">Profils et accueil</span><span lang="en">Profiles and onboarding</span></a>
+</li>
 </ul>
 <p class="doc-nav-label"><span lang="fr">Référence</span><span lang="en">Reference</span></p><ul>
 <li><a href="/docs/commandes.html" aria-current="page"><span lang="fr">Commandes Discord</span><span lang="en">Discord commands</span></a>
@@ -79,6 +82,7 @@
 <li><a href="#presence"><span lang="fr">Présence et butin</span><span lang="en">Attendance and loot</span></a></li>
 <li><a href="#quetes"><span lang="fr">Quêtes</span><span lang="en">Quests</span></a></li>
 <li><a href="#communication"><span lang="fr">Communication</span><span lang="en">Communication</span></a></li>
+<li><a href="#profils"><span lang="fr">Profils et accueil</span><span lang="en">Profiles and onboarding</span></a></li>
 <li><a href="#en-jeu"><span lang="fr">Commandes en jeu</span><span lang="en">In-game commands</span></a></li>
 </ul>
 </li>
@@ -253,6 +257,23 @@
 </table></div>
 </section>
 <section>
+<h2 id="profils"><a class="anchor" href="#profils" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Profils et accueil</span><span lang="en">Profiles and onboarding</span></h2>
+<div class="table-wrap"><table class="doc-table">
+	<thead><tr><th scope="col"><span lang="fr">Anglais</span><span lang="en">English</span></th><th scope="col"><span lang="fr">Français</span><span lang="en">French</span></th><th scope="col"><span lang="fr">Qui peut</span><span lang="en">Who can</span></th><th scope="col"><span lang="fr">Ce que ça fait</span><span lang="en">What it does</span></th></tr></thead>
+	<tbody>
+		<tr><td><code class="d">/gkeep profile show</code></td><td><code class="d">/gkeep profil voir</code></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Voir le profil d'un joueur (le vôtre par défaut)</span><span lang="en">Show a player's profile (yours by default)</span></td></tr>
+		<tr><td><code class="d">/gkeep profile edit</code></td><td><code class="d">/gkeep profil modifier</code></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Remplir votre profil ; vos autres personnages liés deviennent vos rerolls</span><span lang="en">Fill in your profile; your other linked characters become your alts</span></td></tr>
+		<tr><td><code class="d">/gkeep profile arrivals</code></td><td><code class="d">/gkeep profil arrivees</code></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Arrivées et départs récents dans la guilde</span><span lang="en">Recent arrivals and departures in the guild</span></td></tr>
+		<tr><td><code class="d">/gkeep profile versions</code></td><td><code class="d">/gkeep profil versions</code></td><td><span class="badge b-officer"><span lang="fr">Officier</span><span lang="en">Officer</span></span></td><td><span lang="fr">Version de l'addon de chaque membre (officier)</span><span lang="en">Addon version of each member (officer)</span></td></tr>
+		<tr><td><code class="d">/gkeep welcome status</code></td><td><code class="d">/gkeep accueil etat</code></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Liste d'accueil d'un joueur (la vôtre par défaut)</span><span lang="en">Onboarding checklist of a player (yours by default)</span></td></tr>
+		<tr><td><code class="d">/gkeep welcome done</code></td><td><code class="d">/gkeep accueil fait</code></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Cocher une étape d'accueil (la vôtre, ou celle d'un joueur pour les officiers)</span><span lang="en">Tick an onboarding step (yours, or a player's for officers)</span></td></tr>
+		<tr><td><code class="d">/gkeep welcome undo</code></td><td><code class="d">/gkeep accueil annuler</code></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Décocher une étape d'accueil</span><span lang="en">Untick an onboarding step</span></td></tr>
+		<tr><td><code class="d">/gkeep welcome list</code></td><td><code class="d">/gkeep accueil liste</code></td><td><span class="badge b-officer"><span lang="fr">Officier</span><span lang="en">Officer</span></span></td><td><span lang="fr">Nouveaux dont l'accueil n'est pas fini (officier)</span><span lang="en">Newcomers whose onboarding is not finished (officer)</span></td></tr>
+		<tr><td><code class="d">/gkeep welcome remind</code></td><td><code class="d">/gkeep accueil relancer</code></td><td><span class="badge b-officer"><span lang="fr">Officier</span><span lang="en">Officer</span></span></td><td><span lang="fr">Publier un rappel qui mentionne les nouveaux en retard (officier)</span><span lang="en">Post a reminder mentioning newcomers with steps left (officer)</span></td></tr>
+	</tbody>
+</table></div>
+</section>
+<section>
 <h2 id="en-jeu"><a class="anchor" href="#en-jeu" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Commandes en jeu</span><span lang="en">In-game commands</span></h2>
 <p><span lang="fr">À taper dans la fenêtre de discussion du jeu. <code>/gp</code> est un raccourci de <code>/gkeep</code>.</span><span lang="en">To type in the game's chat box. <code>/gp</code> is a shortcut for <code>/gkeep</code>.</span></p>
 <div class="table-wrap"><table class="doc-table">
@@ -263,6 +284,7 @@
 		<tr><td><code>/gkeep presence</code> · <code>butin</code></td><td><span lang="fr">Ouvre l'onglet Présence (aussi <code>attendance</code>, <code>loot</code>).</span><span lang="en">Opens the Attendance tab (also <code>attendance</code>, <code>loot</code>).</span></td></tr>
 		<tr><td><code>/gkeep quetes</code> · <code>quests</code></td><td><span lang="fr">Ouvre l'onglet Quêtes.</span><span lang="en">Opens the Quests tab.</span></td></tr>
 		<tr><td><code>/gkeep guilde</code> · <code>annonces</code> · <code>charte</code> · <code>objectifs</code></td><td><span lang="fr">Ouvre l'onglet Guilde (aussi <code>guild</code>).</span><span lang="en">Opens the Guild tab (also <code>guild</code>).</span></td></tr>
+		<tr><td><code>/gkeep profils</code> · <code>accueil</code></td><td><span lang="fr">Ouvre l'onglet Profils (aussi <code>profil</code>, <code>profiles</code>, <code>welcome</code>) ; <code>/gkeep profil moi</code> ouvre ton profil.</span><span lang="en">Opens the Profiles tab (also <code>profil</code>, <code>profiles</code>, <code>welcome</code>); <code>/gkeep profil moi</code> opens your profile.</span></td></tr>
 		<tr><td><code>/gkeep rappel 30</code> · <code>rappel off</code></td><td><span lang="fr">Règle ton rappel personnel d'événement (minutes avant), ou le coupe ; sans argument, affiche le réglage.</span><span lang="en">Sets your personal event reminder (minutes before), or turns it off; with no argument, shows the setting.</span></td></tr>
 		<tr><td><code>/gkeep tuto</code></td><td><span lang="fr">Rejoue le tutoriel de l'onglet affiché ; <code>tuto reset</code> pour tout revoir, <code>tuto off</code> / <code>tuto on</code> pour les couper ou les remettre.</span><span lang="en">Replays the tutorial of the tab on screen; <code>tuto reset</code> to see them all again, <code>tuto off</code> / <code>tuto on</code> to turn them off or back on.</span></td></tr>
 		<tr><td><code>/gkeep modules</code></td><td><span lang="fr">Affiche l'état de chaque module ; <code>/gkeep modules &lt;nom&gt; on|off</code> en change un (au prochain <code>/reload</code>).</span><span lang="en">Shows each module's state; <code>/gkeep modules &lt;name&gt; on|off</code> changes one (on the next <code>/reload</code>).</span></td></tr>
@@ -273,7 +295,7 @@
 </table></div>
 </section>
 <nav class="doc-pager" aria-label="Pages voisines / Adjacent pages">
-<a class="prev" href="/docs/communication.html" rel="prev"><small><span lang="fr">← Précédent</span><span lang="en">← Previous</span></small><b><span lang="fr">Communication</span><span lang="en">Communication</span></b></a>
+<a class="prev" href="/docs/profils.html" rel="prev"><small><span lang="fr">← Précédent</span><span lang="en">← Previous</span></small><b><span lang="fr">Profils et accueil</span><span lang="en">Profiles and onboarding</span></b></a>
 <a class="next" href="/docs/faq.html" rel="next"><small><span lang="fr">Suivant →</span><span lang="en">Next →</span></small><b><span lang="fr">FAQ et dépannage</span><span lang="en">FAQ and troubleshooting</span></b></a>
 </nav>
 </main>

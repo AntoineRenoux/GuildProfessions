@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guildkeep · module Profils et accueil</title>
+<meta name="description" content="Le module Profils et accueil de Guildkeep : profil de chaque joueur (principal, rerolls, rôles, disponibilités, talents), arrivées et départs de la guilde, liste d&#x27;accueil des nouveaux, en jeu et sur Discord.">
+<link rel="preload" href="/fonts/cinzel-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/alegreya-sans-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/site.css?v=6">
+<script>document.documentElement.classList.add('js');try{var l=localStorage.getItem('gk-lang')||((navigator.language||'fr').toLowerCase().indexOf('fr')===0?'fr':'en');document.documentElement.lang=l}catch(e){}</script>
+</head>
+<body>
+<svg class="sprite" aria-hidden="true" focusable="false"><defs><linearGradient id="gk-gold" gradientUnits="userSpaceOnUse" x1="0" y1="4" x2="0" y2="44"><stop offset="0" stop-color="#fff1bf"/><stop offset=".45" stop-color="#f0c25e"/><stop offset="1" stop-color="#9a6a20"/></linearGradient>
+<symbol id="i-metiers" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M6 15h25c1 5 5 8 11 8v4H31l3 9H14l3-9h-3C9 27 6 22 6 15z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M36 6l4 4M33 9l4 4"/></symbol>
+<symbol id="i-membres" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M24 5c9 0 15 7 15 16v14l-6 6h-4V27h-10v14h-4l-6-6V21C9 12 15 5 24 5z"/><path fill="#1a1208" d="M15 20h18v4H15z"/></symbol>
+<symbol id="i-artisanat" viewBox="0 0 48 48"><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M10 38L36 12"/><ellipse fill="none" stroke="url(#gk-gold)" stroke-width="3.2" cx="37.5" cy="10.5" rx="3.2" ry="1.8" transform="rotate(-45 37.5 10.5)"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="1.8" d="M39 9c6 6-4 12-10 16s-14 10-8 17"/></symbol>
+<symbol id="i-evenements" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M7 11h34v30H7z"/><path fill="#1a1208" d="M10 19h28v19H10z"/><path fill="url(#gk-gold)" d="M13 22h6v5h-6zM21 22h6v5h-6zM29 22h6v5h-6zM13 30h6v5h-6zM21 30h6v5h-6z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M15 6v8M33 6v8"/></symbol>
+<symbol id="i-raid" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M24 4l17 6v12c0 11-7 18-17 22C14 40 7 33 7 22V10z"/><path fill="#1a1208" d="M24 11l11 4v8c0 7-4 12-11 15z"/></symbol>
+<symbol id="i-presence" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M10 6h22l7 7v29H10z"/><path fill="none" stroke="#1a1208" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.4" d="M16 26l5 5 10-11"/></symbol>
+<symbol id="i-quetes" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M20 5h8l-1.5 26h-5zM24 35a4 4 0 1 1 0 8 4 4 0 0 1 0-8z"/></symbol>
+<symbol id="i-communication" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M6 19h8l20-11v32L14 29H6z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M39 17c3 4 3 10 0 14M12 30l3 11h6l-3-11"/></symbol>
+<symbol id="i-profils" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M5 10h38v28H5z"/><circle fill="#1a1208" cx="16" cy="21" r="5"/><path fill="#1a1208" d="M8 33c1-5 4-7 8-7s7 2 8 7zM27 17h12v3H27zM27 24h12v3H27zM27 31h8v3h-8z"/></symbol>
+<symbol id="i-install" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M17 12c0-5 3-8 7-8s7 3 7 8h-3c0-3-2-5-4-5s-4 2-4 5z"/><path fill="url(#gk-gold)" d="M10 14h28l4 26a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4z"/><path fill="#1a1208" d="M20 22h8v6h-8z"/></symbol>
+<symbol id="i-compagnon" viewBox="0 0 48 48"><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="4" d="M6 34c6-14 30-14 36 0M12 34V22M24 34V18M36 34V22"/><path fill="url(#gk-gold)" d="M4 34h40v5H4z"/></symbol>
+<symbol id="i-cmd" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M5 9h38v30H5z"/><path fill="#1a1208" d="M8 15h32v21H8z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M14 32l8-13M26 32h8"/></symbol>
+<symbol id="i-faq" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M8 6h26l6 6v30H8z"/><path fill="none" stroke="#1a1208" stroke-linecap="round" stroke-width="3.4" d="M19 19c0-4 3-6 5.5-6s5.5 2 5.5 5.5-5 4-5 8M24.5 32v.5"/></symbol>
+</defs></svg>
+<header class="topbar">
+	<a class="wordmark" href="/">Guildkeep</a>
+	<nav aria-label="Navigation">
+		<a href="/docs/" aria-current="page"><span lang="fr">Documentation</span><span lang="en">Docs</span></a>
+		<a class="hide-phone" href="/docs/faq.html"><span lang="fr">Aide</span><span lang="en">Help</span></a>
+		<div class="lang-switch" role="group" aria-label="Langue / Language">
+			<button type="button" data-set-lang="fr" aria-pressed="true">FR</button>
+			<button type="button" data-set-lang="en" aria-pressed="false">EN</button>
+		</div>
+		<a class="button invite-link hide-phone" href="/#mise-en-place"><span lang="fr">Ajouter à Discord</span><span lang="en">Add to Discord</span></a>
+	</nav>
+</header>
+
+<div class="doc">
+<aside class="doc-nav" aria-label="Sommaire / Contents"><details open><summary><span><span lang="fr">Sommaire</span><span lang="en">Contents</span></span><i class="plus" aria-hidden="true"></i></summary><div>
+<p class="doc-nav-label"><span lang="fr">Démarrer</span><span lang="en">Getting started</span></p><ul>
+<li><a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a>
+</li>
+<li><a href="/docs/installation.html"><span lang="fr">Installer Guildkeep</span><span lang="en">Installing Guildkeep</span></a>
+</li>
+<li><a href="/docs/compagnon.html"><span lang="fr">L'app compagnon</span><span lang="en">The companion app</span></a>
+</li>
+</ul>
+<p class="doc-nav-label"><span lang="fr">Modules</span><span lang="en">Modules</span></p><ul>
+<li><a href="/docs/metiers.html"><span lang="fr">Métiers</span><span lang="en">Professions</span></a>
+</li>
+<li><a href="/docs/membres.html"><span lang="fr">Membres</span><span lang="en">Members</span></a>
+</li>
+<li><a href="/docs/artisanat.html"><span lang="fr">Artisanat</span><span lang="en">Crafting orders</span></a>
+</li>
+<li><a href="/docs/evenements.html"><span lang="fr">Événements</span><span lang="en">Events</span></a>
+</li>
+<li><a href="/docs/soiree-raid.html"><span lang="fr">Soirée de raid</span><span lang="en">Raid night</span></a>
+</li>
+<li><a href="/docs/presence.html"><span lang="fr">Présence et butin</span><span lang="en">Attendance and loot</span></a>
+</li>
+<li><a href="/docs/quetes.html"><span lang="fr">Quêtes</span><span lang="en">Quests</span></a>
+</li>
+<li><a href="/docs/communication.html"><span lang="fr">Communication</span><span lang="en">Communication</span></a>
+</li>
+<li><a href="/docs/profils.html" aria-current="page"><span lang="fr">Profils et accueil</span><span lang="en">Profiles and onboarding</span></a>
+<ul>
+<li><a href="#a-quoi-ca-sert"><span lang="fr">À quoi ça sert</span><span lang="en">What it's for</span></a></li>
+<li><a href="#mon-profil"><span lang="fr">Tutoriel : remplir son profil</span><span lang="en">Tutorial: fill in your profile</span></a></li>
+<li><a href="#talents"><span lang="fr">Talents et version de l'addon</span><span lang="en">Talents and addon version</span></a></li>
+<li><a href="#accueil"><span lang="fr">Tutoriel : l'accueil d'un nouveau</span><span lang="en">Tutorial: welcoming a newcomer</span></a></li>
+<li><a href="#journal"><span lang="fr">Arrivées et départs</span><span lang="en">Arrivals and departures</span></a></li>
+<li><a href="#droits"><span lang="fr">Qui peut faire quoi</span><span lang="en">Who can do what</span></a></li>
+</ul>
+</li>
+</ul>
+<p class="doc-nav-label"><span lang="fr">Référence</span><span lang="en">Reference</span></p><ul>
+<li><a href="/docs/commandes.html"><span lang="fr">Commandes Discord</span><span lang="en">Discord commands</span></a>
+</li>
+<li><a href="/docs/faq.html"><span lang="fr">FAQ et dépannage</span><span lang="en">FAQ and troubleshooting</span></a>
+</li>
+</ul>
+</div></details></aside>
+<main class="doc-main" id="contenu">
+<nav class="crumbs" aria-label="Fil d'Ariane / Breadcrumb"><ol class="crumbs-list"><li><a href="/"><span lang="fr">Accueil</span><span lang="en">Home</span></a></li><li><a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a></li><li aria-current="page"><span lang="fr">Profils et accueil</span><span lang="en">Profiles and onboarding</span></li></ol></nav>
+<h1><span lang="fr">Profils et accueil</span><span lang="en">Profiles and onboarding</span></h1>
+<p class="lead"><span lang="fr">L'onglet Profils : qui joue quel personnage et quel rôle, quand chacun est disponible, qui vient d'arriver ou de partir, et une liste d'accueil pour que chaque nouveau trouve vite sa place.</span><span lang="en">The Profiles tab: who plays which character and role, when everyone is available, who just joined or left, and an onboarding checklist so every newcomer quickly finds their place.</span></p>
+<div class="rule" aria-hidden="true"><i></i></div>
+<section>
+<h2 id="a-quoi-ca-sert"><a class="anchor" href="#a-quoi-ca-sert" aria-hidden="true" tabindex="-1">#</a><span lang="fr">À quoi ça sert</span><span lang="en">What it's for</span></h2>
+<p><span lang="fr">L'onglet <span lang="fr"><span class="ui tab">Profils</span></span><span lang="en"><span class="ui tab">Profils</span> <span class="gloss">(Profiles)</span></span> a trois sections : <span lang="fr"><span class="ui opt">Profils</span></span><span lang="en"><span class="ui opt">Profils</span> <span class="gloss">(Profiles)</span></span>, <span lang="fr"><span class="ui opt">Accueil</span></span><span lang="en"><span class="ui opt">Accueil</span> <span class="gloss">(Onboarding)</span></span> et <span lang="fr"><span class="ui opt">Journal</span></span><span lang="en"><span class="ui opt">Journal</span> <span class="gloss">(Log)</span></span>.</span><span lang="en">The <span lang="fr"><span class="ui tab">Profils</span></span><span lang="en"><span class="ui tab">Profils</span> <span class="gloss">(Profiles)</span></span> tab has three sections: <span lang="fr"><span class="ui opt">Profils</span></span><span lang="en"><span class="ui opt">Profils</span> <span class="gloss">(Profiles)</span></span>, <span lang="fr"><span class="ui opt">Accueil</span></span><span lang="en"><span class="ui opt">Accueil</span> <span class="gloss">(Onboarding)</span></span> and <span lang="fr"><span class="ui opt">Journal</span></span><span lang="en"><span class="ui opt">Journal</span> <span class="gloss">(Log)</span></span>.</span></p>
+<ul>
+	<li><span lang="fr"><strong>Profils</strong> : un profil par joueur, avec son personnage principal, ses rerolls, ses rôles (tank, soigneur, DPS mêlée, DPS distance), ses disponibilités et une note. Les talents de chaque personnage sont relevés tout seuls.</span><span lang="en"><strong>Profiles</strong>: one profile per player, with their main character, their alts, their roles (tank, healer, melee DPS, ranged DPS), their availability and a note. Each character's talents are recorded automatically.</span></li>
+	<li><span lang="fr"><strong>Accueil</strong> : cinq étapes pour bien démarrer dans la guilde. Chacun coche les siennes ; les officiers suivent tous les nouveaux.</span><span lang="en"><strong>Onboarding</strong>: five steps to get started in the guild. Everyone ticks their own; officers follow every newcomer.</span></li>
+	<li><span lang="fr"><strong>Journal</strong> : les arrivées et départs de la guilde, relevés par les membres qui ont l'addon. Les officiers y voient aussi la version de l'addon de chacun.</span><span lang="en"><strong>Log</strong>: guild arrivals and departures, recorded by members who have the addon. Officers also see everyone's addon version there.</span></li>
+</ul>
+<p><span lang="fr"><code>/gkeep profils</code> (ou <code>/gkeep accueil</code>) ouvre l'onglet ; <code>/gkeep profil moi</code> ouvre directement ton profil.</span><span lang="en"><code>/gkeep profils</code> (or <code>/gkeep accueil</code>) opens the tab; <code>/gkeep profil moi</code> opens your profile directly.</span></p>
+<figure class="mock" data-ui>
+	<div class="wow">
+		<div class="bar-line"><span class="chip is-on">Profils</span><span class="chip">Accueil</span><span class="chip">Journal</span><span style="margin-left:auto" class="wow-button">Mon profil</span></div>
+		<div style="padding:10px 12px"><div class="gold">Maël Corvin</div><div class="soft" style="font-size:12px">Soigneur, DPS distance · mis à jour le 21/11/2026</div>
+		<div style="margin-top:8px;font-size:13px"><span class="gold">Rerolls :</span> Maël Ferrant, Maëlis Corvin<br><span class="gold">Disponibilités :</span> soirs de semaine, après 21 h<br><span class="gold">Talents :</span> Maël Corvin : Sacré (31/20/0)</div></div>
+	</div>
+	<figcaption><span lang="fr">Maquette : le profil d'un joueur.</span><span lang="en">Mock-up: a player's profile.</span></figcaption>
+</figure>
+
+<aside class="callout c-tip"><p class="callout-title"><span lang="fr">Astuce</span><span lang="en">Tip</span></p><p><span lang="fr"><strong>Tutoriel en jeu.</strong> À la première ouverture de l'onglet <span lang="fr"><span class="ui tab">Profils</span></span><span lang="en"><span class="ui tab">Profils</span> <span class="gloss">(Profiles)</span></span>, un tutoriel pas à pas encadre chaque bouton et explique à quoi il sert. Tu peux le passer à tout moment, et le revoir avec le bouton <span class="ui">?</span> en haut à droite de la fenêtre ou <code>/gkeep tuto</code>.</span><span lang="en"><strong>In-game tutorial.</strong> The first time you open the <span lang="fr"><span class="ui tab">Profils</span></span><span lang="en"><span class="ui tab">Profils</span> <span class="gloss">(Profiles)</span></span> tab, a step-by-step tutorial highlights every button and explains what it does. You can skip it at any time, and replay it with the <span class="ui">?</span> button at the top right of the window or <code>/gkeep tuto</code>.</span></p></aside>
+</section>
+
+<section>
+<h2 id="mon-profil"><a class="anchor" href="#mon-profil" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Tutoriel : remplir son profil</span><span lang="en">Tutorial: fill in your profile</span></h2>
+<div class="rights"><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></div>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu</span><span lang="en">In game</span></span><span lang="fr">Bouton Mon profil</span><span lang="en">My profile button</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Onglet <span lang="fr"><span class="ui tab">Profils</span></span><span lang="en"><span class="ui tab">Profils</span> <span class="gloss">(Profiles)</span></span>, clique <span lang="fr"><span class="ui">Mon profil</span></span><span lang="en"><span class="ui">Mon profil</span> <span class="gloss">(My profile)</span></span>.</span><span lang="en"><span lang="fr"><span class="ui tab">Profils</span></span><span lang="en"><span class="ui tab">Profils</span> <span class="gloss">(Profiles)</span></span> tab, click <span lang="fr"><span class="ui">Mon profil</span></span><span lang="en"><span class="ui">Mon profil</span> <span class="gloss">(My profile)</span></span>.</span></li>
+		<li><span lang="fr">Ligne <span lang="fr"><span class="ui opt">Principal</span></span><span lang="en"><span class="ui opt">Principal</span> <span class="gloss">(Main)</span></span> : choisis ton personnage principal. Ligne <span lang="fr"><span class="ui opt">Rerolls</span></span><span lang="en"><span class="ui opt">Rerolls</span> <span class="gloss">(Alts)</span></span> : coche tes autres personnages. Seuls les personnages de ce compte, dans cette guilde, qui ont lancé l'addon au moins une fois, sont proposés.</span><span lang="en"><span lang="fr"><span class="ui opt">Principal</span></span><span lang="en"><span class="ui opt">Principal</span> <span class="gloss">(Main)</span></span> row: pick your main character. <span lang="fr"><span class="ui opt">Rerolls</span></span><span lang="en"><span class="ui opt">Rerolls</span> <span class="gloss">(Alts)</span></span> row: tick your other characters. Only characters of this account, in this guild, that ran the addon at least once, are offered.</span></li>
+		<li><span lang="fr">Ligne <span lang="fr"><span class="ui opt">Rôles</span></span><span lang="en"><span class="ui opt">Rôles</span> <span class="gloss">(Roles)</span></span> : coche ce que tu sais jouer (<span class="ui opt">Tank</span>, <span lang="fr"><span class="ui opt">Soigneur</span></span><span lang="en"><span class="ui opt">Soigneur</span> <span class="gloss">(Healer)</span></span>, <span lang="fr"><span class="ui opt">DPS mêlée</span></span><span lang="en"><span class="ui opt">DPS mêlée</span> <span class="gloss">(Melee DPS)</span></span>, <span lang="fr"><span class="ui opt">DPS distance</span></span><span lang="en"><span class="ui opt">DPS distance</span> <span class="gloss">(Ranged DPS)</span></span>).</span><span lang="en"><span lang="fr"><span class="ui opt">Rôles</span></span><span lang="en"><span class="ui opt">Rôles</span> <span class="gloss">(Roles)</span></span> row: tick what you can play (<span class="ui opt">Tank</span>, <span lang="fr"><span class="ui opt">Soigneur</span></span><span lang="en"><span class="ui opt">Soigneur</span> <span class="gloss">(Healer)</span></span>, <span lang="fr"><span class="ui opt">DPS mêlée</span></span><span lang="en"><span class="ui opt">DPS mêlée</span> <span class="gloss">(Melee DPS)</span></span>, <span lang="fr"><span class="ui opt">DPS distance</span></span><span lang="en"><span class="ui opt">DPS distance</span> <span class="gloss">(Ranged DPS)</span></span>).</span></li>
+		<li><span lang="fr"><span lang="fr"><span class="ui opt">Disponibilités</span></span><span lang="en"><span class="ui opt">Disponibilités</span> <span class="gloss">(Availability)</span></span> : quand tu joues d'habitude (« soirs de semaine, après 21 h »). <span class="ui opt">Note</span> : un mot pour les officiers, facultatif.</span><span lang="en"><span lang="fr"><span class="ui opt">Disponibilités</span></span><span lang="en"><span class="ui opt">Disponibilités</span> <span class="gloss">(Availability)</span></span>: when you usually play ("weekday evenings, after 9 pm"). <span class="ui opt">Note</span>: a word for the officers, optional.</span></li>
+		<li><span lang="fr">Clique <span lang="fr"><span class="ui">Enregistrer</span></span><span lang="en"><span class="ui">Enregistrer</span> <span class="gloss">(Save)</span></span>. Les membres connectés voient ton profil aussitôt ; il part sur le serveur à la prochaine synchro du compagnon.</span><span lang="en">Click <span lang="fr"><span class="ui">Enregistrer</span></span><span lang="en"><span class="ui">Enregistrer</span> <span class="gloss">(Save)</span></span>. Online members see your profile right away; it reaches the server on the companion's next sync.</span></li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span><span lang="fr">Avec /gkeep profil modifier</span><span lang="en">With /gkeep profile edit</span></h3>
+	<ol class="steps">
+		<li><span lang="fr"><code class="d"><span lang="fr">/gkeep profil modifier</span><span lang="en">/gkeep profile edit</span></code> : <code>role</code> et <code>second-role</code>, <code><span lang="fr">disponibilites</span><span lang="en">availability</span></code>, <code>note</code>. Ce que tu n'indiques pas reste inchangé.</span><span lang="en"><code class="d"><span lang="fr">/gkeep profil modifier</span><span lang="en">/gkeep profile edit</span></code>: <code>role</code> and <code>second-role</code>, <code>availability</code>, <code>note</code>. Whatever you leave out stays unchanged.</span></li>
+		<li><span lang="fr">Ton principal est ton personnage principal sur Discord (ou celui choisi dans <code><span lang="fr">principal</span><span lang="en">main</span></code>) ; tes autres personnages liés deviennent tes rerolls.</span><span lang="en">Your main is your main character on Discord (or the one picked in <code>main</code>); your other linked characters become your alts.</span></li>
+		<li><span lang="fr"><code class="d"><span lang="fr">/gkeep profil voir</span><span lang="en">/gkeep profile show</span></code> affiche ton profil, ou celui d'un autre joueur avec <code><span lang="fr">personnage</span><span lang="en">character</span></code> (n'importe lequel de ses personnages).</span><span lang="en"><code class="d"><span lang="fr">/gkeep profil voir</span><span lang="en">/gkeep profile show</span></code> shows your profile, or another player's with <code>character</code> (any of their characters).</span></li>
+	</ol>
+</div>
+<aside class="callout c-note"><p class="callout-title"><span lang="fr">Bon à savoir</span><span lang="en">Good to know</span></p><p><span lang="fr">Un personnage n'appartient qu'à un profil. Si tu changes de principal, l'ancien devient un reroll du nouveau.</span><span lang="en">A character belongs to only one profile. If you change your main, the old one becomes an alt of the new one.</span></p></aside>
+</section>
+
+<section>
+<h2 id="talents"><a class="anchor" href="#talents" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Talents et version de l'addon</span><span lang="en">Talents and addon version</span></h2>
+<p><span lang="fr">Rien à faire : à chaque connexion, et à chaque point de talent dépensé, l'addon relève la répartition de tes points par arbre (« 31/20/0 ») et ton arbre principal. Ils s'affichent dans ton profil, pour chacun de tes personnages.</span><span lang="en">Nothing to do: at each login, and each time you spend a talent point, the addon records how your points are split across trees ("31/20/0") and your main tree. They show in your profile, for each of your characters.</span></p>
+<p><span lang="fr">L'addon note aussi sa version. Les officiers la voient dans le détail d'un profil et dans la section <span lang="fr"><span class="ui opt">Journal</span></span><span lang="en"><span class="ui opt">Journal</span> <span class="gloss">(Log)</span></span> ; sur Discord, <code class="d"><span lang="fr">/gkeep profil versions</span><span lang="en">/gkeep profile versions</span></code> regroupe les membres par version, pour savoir qui doit mettre à jour.</span><span lang="en">The addon also records its version. Officers see it in a profile's details and in the <span lang="fr"><span class="ui opt">Journal</span></span><span lang="en"><span class="ui opt">Journal</span> <span class="gloss">(Log)</span></span> section; on Discord, <code class="d"><span lang="fr">/gkeep profil versions</span><span lang="en">/gkeep profile versions</span></code> groups members by version, to know who needs to update.</span></p>
+</section>
+
+<section>
+<h2 id="accueil"><a class="anchor" href="#accueil" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Tutoriel : l'accueil d'un nouveau</span><span lang="en">Tutorial: welcoming a newcomer</span></h2>
+<p><span lang="fr">Cinq étapes : <span lang="fr"><span class="ui opt">Rejoindre le Discord et lier son personnage</span></span><span lang="en"><span class="ui opt">Rejoindre le Discord et lier son personnage</span> <span class="gloss">(Join the Discord and link your character)</span></span>, <span lang="fr"><span class="ui opt">Choisir son personnage principal</span></span><span lang="en"><span class="ui opt">Choisir son personnage principal</span> <span class="gloss">(Pick your main character)</span></span>, <span lang="fr"><span class="ui opt">Remplir son profil</span></span><span lang="en"><span class="ui opt">Remplir son profil</span> <span class="gloss">(Fill in your profile)</span></span>, <span lang="fr"><span class="ui opt">Lire la charte et les règles de butin</span></span><span lang="en"><span class="ui opt">Lire la charte et les règles de butin</span> <span class="gloss">(Read the handbook and loot rules)</span></span> et <span lang="fr"><span class="ui opt">Se présenter à la guilde</span></span><span lang="en"><span class="ui opt">Se présenter à la guilde</span> <span class="gloss">(Introduce yourself to the guild)</span></span>. Les trois premières se cochent d'elles-mêmes : compte lié sur Discord, profil enregistré avec des rôles ou des disponibilités.</span><span lang="en">Five steps: <span lang="fr"><span class="ui opt">Rejoindre le Discord et lier son personnage</span></span><span lang="en"><span class="ui opt">Rejoindre le Discord et lier son personnage</span> <span class="gloss">(Join the Discord and link your character)</span></span>, <span lang="fr"><span class="ui opt">Choisir son personnage principal</span></span><span lang="en"><span class="ui opt">Choisir son personnage principal</span> <span class="gloss">(Pick your main character)</span></span>, <span lang="fr"><span class="ui opt">Remplir son profil</span></span><span lang="en"><span class="ui opt">Remplir son profil</span> <span class="gloss">(Fill in your profile)</span></span>, <span lang="fr"><span class="ui opt">Lire la charte et les règles de butin</span></span><span lang="en"><span class="ui opt">Lire la charte et les règles de butin</span> <span class="gloss">(Read the handbook and loot rules)</span></span> and <span lang="fr"><span class="ui opt">Se présenter à la guilde</span></span><span lang="en"><span class="ui opt">Se présenter à la guilde</span> <span class="gloss">(Introduce yourself to the guild)</span></span>. The first three tick themselves: account linked on Discord, profile saved with roles or availability.</span></p>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu</span><span lang="en">In game</span></span><span lang="fr">Pour le nouveau</span><span lang="en">For the newcomer</span></h3>
+	<div class="rights"><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></div>
+	<ol class="steps">
+		<li><span lang="fr">Onglet <span lang="fr"><span class="ui tab">Profils</span></span><span lang="en"><span class="ui tab">Profils</span> <span class="gloss">(Profiles)</span></span>, section <span lang="fr"><span class="ui opt">Accueil</span></span><span lang="en"><span class="ui opt">Accueil</span> <span class="gloss">(Onboarding)</span></span> : ta liste est en haut.</span><span lang="en"><span lang="fr"><span class="ui tab">Profils</span></span><span lang="en"><span class="ui tab">Profils</span> <span class="gloss">(Profiles)</span></span> tab, <span lang="fr"><span class="ui opt">Accueil</span></span><span lang="en"><span class="ui opt">Accueil</span> <span class="gloss">(Onboarding)</span></span> section: your checklist is at the top.</span></li>
+		<li><span lang="fr">Clique une étape pour la cocher quand tu l'as faite (et de nouveau pour la décocher). La charte se lit dans l'onglet <span lang="fr"><span class="ui tab">Guilde</span></span><span lang="en"><span class="ui tab">Guilde</span> <span class="gloss">(Guild)</span></span> (module <a href="/docs/communication.html#charte">Communication</a>).</span><span lang="en">Click a step to tick it once done (and again to untick it). The handbook is in the <span lang="fr"><span class="ui tab">Guilde</span></span><span lang="en"><span class="ui tab">Guilde</span> <span class="gloss">(Guild)</span></span> tab (<a href="/docs/communication.html#charte">Communication</a> module).</span></li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu</span><span lang="en">In game</span></span><span lang="fr">Pour les officiers</span><span lang="en">For officers</span></h3>
+	<div class="rights"><span class="badge b-officer"><span lang="fr">Officier</span><span lang="en">Officer</span></span></div>
+	<ol class="steps">
+		<li><span lang="fr">Section <span lang="fr"><span class="ui opt">Accueil</span></span><span lang="en"><span class="ui opt">Accueil</span> <span class="gloss">(Onboarding)</span></span> : sous ta propre liste, chaque nouveau dont l'accueil n'est pas fini, les moins avancés d'abord. L'onglet affiche leur nombre.</span><span lang="en"><span lang="fr"><span class="ui opt">Accueil</span></span><span lang="en"><span class="ui opt">Accueil</span> <span class="gloss">(Onboarding)</span></span> section: under your own checklist, every newcomer whose onboarding isn't finished, least advanced first. The tab shows how many.</span></li>
+		<li><span lang="fr">Clique un nouveau, puis une étape pour la cocher pour lui (par exemple après sa présentation en vocal).</span><span lang="en">Click a newcomer, then a step to tick it for them (for instance after their introduction on voice chat).</span></li>
+		<li><span lang="fr"><span lang="fr"><span class="ui">Copier un rappel</span></span><span lang="en"><span class="ui">Copier un rappel</span> <span class="gloss">(Copy a reminder)</span></span> prépare un message qui liste, pour chaque nouveau, les étapes qui restent : copie-le (Ctrl+C) et colle-le dans le canal de guilde ou sur Discord.</span><span lang="en"><span lang="fr"><span class="ui">Copier un rappel</span></span><span lang="en"><span class="ui">Copier un rappel</span> <span class="gloss">(Copy a reminder)</span></span> prepares a message listing, for each newcomer, the steps left: copy it (Ctrl+C) and paste it in guild chat or on Discord.</span></li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span><span lang="fr">Les commandes d'accueil</span><span lang="en">Onboarding commands</span></h3>
+	<ul>
+		<li><span lang="fr"><code class="d"><span lang="fr">/gkeep accueil etat</span><span lang="en">/gkeep welcome status</span></code> : ta liste d'accueil, ou celle d'un joueur avec <code><span lang="fr">personnage</span><span lang="en">character</span></code>.</span><span lang="en"><code class="d"><span lang="fr">/gkeep accueil etat</span><span lang="en">/gkeep welcome status</span></code>: your checklist, or a player's with <code>character</code>.</span></li>
+		<li><span lang="fr"><code class="d"><span lang="fr">/gkeep accueil fait</span><span lang="en">/gkeep welcome done</span></code> et <code class="d"><span lang="fr">/gkeep accueil annuler</span><span lang="en">/gkeep welcome undo</span></code> : cocher ou décocher une <code><span lang="fr">etape</span><span lang="en">step</span></code> (la tienne ; celle d'un autre avec <code><span lang="fr">personnage</span><span lang="en">character</span></code>, pour les officiers).</span><span lang="en"><code class="d"><span lang="fr">/gkeep accueil fait</span><span lang="en">/gkeep welcome done</span></code> and <code class="d"><span lang="fr">/gkeep accueil annuler</span><span lang="en">/gkeep welcome undo</span></code>: tick or untick a <code>step</code> (yours; someone else's with <code>character</code>, for officers).</span></li>
+		<li><span lang="fr">Officiers : <code class="d"><span lang="fr">/gkeep accueil liste</span><span lang="en">/gkeep welcome list</span></code> montre les nouveaux en retard ; <code class="d"><span lang="fr">/gkeep accueil relancer</span><span lang="en">/gkeep welcome remind</span></code> publie dans le salon un rappel qui les mentionne (jusqu'à 20 joueurs ayant lié leur compte).</span><span lang="en">Officers: <code class="d"><span lang="fr">/gkeep accueil liste</span><span lang="en">/gkeep welcome list</span></code> shows newcomers who are behind; <code class="d"><span lang="fr">/gkeep accueil relancer</span><span lang="en">/gkeep welcome remind</span></code> posts a reminder in the channel that mentions them (up to 20 players who linked their account).</span></li>
+	</ul>
+</div>
+</section>
+
+<section>
+<h2 id="journal"><a class="anchor" href="#journal" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Arrivées et départs</span><span lang="en">Arrivals and departures</span></h2>
+<div class="rights"><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></div>
+<p><span lang="fr">Quand le roster de la guilde change, l'addon de chaque membre connecté compare la liste à celle qu'il avait vue : un nom nouveau est une arrivée, un nom disparu un départ. Le chat annonce les arrivées (« Bleu Neuf a rejoint la guilde »), et la section <span lang="fr"><span class="ui opt">Journal</span></span><span lang="en"><span class="ui opt">Journal</span> <span class="gloss">(Log)</span></span> les garde 90 jours. Le serveur ne note qu'une fois un même mouvement relevé par plusieurs membres.</span><span lang="en">When the guild roster changes, every online member's addon compares the list with the one it saw before: a new name is an arrival, a missing name a departure. Chat announces arrivals ("Bleu Neuf a rejoint la guilde"), and the <span lang="fr"><span class="ui opt">Journal</span></span><span lang="en"><span class="ui opt">Journal</span> <span class="gloss">(Log)</span></span> section keeps them for 90 days. The server records a move only once, even when several members saw it.</span></p>
+<p><span lang="fr">Chaque arrivée est suivie dans <span lang="fr"><span class="ui opt">Accueil</span></span><span lang="en"><span class="ui opt">Accueil</span> <span class="gloss">(Onboarding)</span></span> pendant 60 jours. Sur Discord : <code class="d"><span lang="fr">/gkeep profil arrivees</span><span lang="en">/gkeep profile arrivals</span></code>, avec <code><span lang="fr">jours</span><span lang="en">days</span></code> (14 par défaut, jusqu'à 90).</span><span lang="en">Each arrival is followed in <span lang="fr"><span class="ui opt">Accueil</span></span><span lang="en"><span class="ui opt">Accueil</span> <span class="gloss">(Onboarding)</span></span> for 60 days. On Discord: <code class="d"><span lang="fr">/gkeep profil arrivees</span><span lang="en">/gkeep profile arrivals</span></code>, with <code>days</code> (14 by default, up to 90).</span></p>
+<aside class="callout c-note"><p class="callout-title"><span lang="fr">Bon à savoir</span><span lang="en">Good to know</span></p><p><span lang="fr">Le relevé a besoin d'un membre avec l'addon en ligne pendant le changement, ou qui se connecte ensuite : la première fois, l'addon pose seulement sa référence. Un roster chargé à moitié (écart énorme d'un coup) est ignoré pour ne pas noter de faux départs.</span><span lang="en">Recording needs a member with the addon online during the change, or logging in afterwards: the first time, the addon only sets its reference. A half-loaded roster (a huge gap all at once) is ignored so as not to record false departures.</span></p></aside>
+</section>
+
+<section>
+<h2 id="droits"><a class="anchor" href="#droits" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Qui peut faire quoi</span><span lang="en">Who can do what</span></h2>
+<div class="table-wrap"><table class="doc-table">
+	<thead><tr><th scope="col"><span lang="fr">Action</span><span lang="en">Action</span></th><th scope="col"><span lang="fr">Qui peut</span><span lang="en">Who can</span></th></tr></thead>
+	<tbody>
+		<tr><td><span lang="fr">Voir les profils, le journal, sa liste d'accueil</span><span lang="en">See profiles, the log, your onboarding checklist</span></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td></tr>
+		<tr><td><span lang="fr">Remplir son profil (ses propres personnages seulement)</span><span lang="en">Fill in your profile (your own characters only)</span></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td></tr>
+		<tr><td><span lang="fr">Cocher ses propres étapes d'accueil</span><span lang="en">Tick your own onboarding steps</span></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td></tr>
+		<tr><td><span lang="fr">Cocher les étapes d'un autre, suivre les nouveaux, copier ou publier un rappel</span><span lang="en">Tick someone else's steps, follow newcomers, copy or post a reminder</span></td><td><span class="badge b-officer"><span lang="fr">Officier</span><span lang="en">Officer</span></span></td></tr>
+		<tr><td><span lang="fr">Voir la version de l'addon de chacun</span><span lang="en">See everyone's addon version</span></td><td><span class="badge b-officer"><span lang="fr">Officier</span><span lang="en">Officer</span></span></td></tr>
+	</tbody>
+</table></div>
+<aside class="callout c-warn"><p class="callout-title"><span lang="fr">Attention</span><span lang="en">Watch out</span></p><p><span lang="fr">Ce qu'un officier coche en jeu pour un autre n'est retenu par le serveur que si son rang y est enregistré (compagnon avec <a href="/docs/compagnon.html#token">token personnel</a>). Sur Discord, il suffit d'être reconnu officier ou d'avoir « Gérer le serveur ».</span><span lang="en">What an officer ticks in game for someone else is only kept by the server if their rank is recorded there (companion with a <a href="/docs/compagnon.html#token">personal token</a>). On Discord, being recognized as an officer or having "Manage Server" is enough.</span></p></aside>
+</section>
+<nav class="doc-pager" aria-label="Pages voisines / Adjacent pages">
+<a class="prev" href="/docs/communication.html" rel="prev"><small><span lang="fr">← Précédent</span><span lang="en">← Previous</span></small><b><span lang="fr">Communication</span><span lang="en">Communication</span></b></a>
+<a class="next" href="/docs/commandes.html" rel="next"><small><span lang="fr">Suivant →</span><span lang="en">Next →</span></small><b><span lang="fr">Commandes Discord</span><span lang="en">Discord commands</span></b></a>
+</nav>
+</main>
+</div>
+
+<footer class="foot">
+	<span><span lang="fr">Outil de guilde pour WoW: Forever</span><span lang="en">Guild tool for WoW: Forever</span></span>
+	<nav aria-label="Pied de page / Footer">
+		<a href="/"><span lang="fr">Accueil</span><span lang="en">Home</span></a>
+		<a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a>
+		<a href="/confidentialite.html"><span lang="fr">Confidentialité</span><span lang="en">Privacy</span></a>
+		<a href="/conditions.html"><span lang="fr">Conditions</span><span lang="en">Terms</span></a>
+		<a href="https://github.com/AntoineRenoux/GuildProfessions" rel="noopener"><span lang="fr">Code source</span><span lang="en">Source code</span></a>
+	</nav>
+	<span class="end">2026</span>
+	<span class="credit"><span lang="fr">World of Warcraft est une marque de Blizzard Entertainment ; Guildkeep n'y est pas affilié.</span><span lang="en">World of Warcraft is a trademark of Blizzard Entertainment; Guildkeep is not affiliated.</span></span>
+</footer>
+
+<script src="/site.js?v=6" defer></script>
+</body>
+</html>
