@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guildkeep · module Soirée de raid</title>
+<meta name="description" content="Le module Soirée de raid de Guildkeep : réservations de butin haute, normale et basse, réservations d&#x27;office, verrouillage, maître du butin, rôles de soutien et checklist.">
+<link rel="preload" href="/fonts/cinzel-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/alegreya-sans-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/site.css?v=6">
+<script>document.documentElement.classList.add('js');try{var l=localStorage.getItem('gk-lang')||((navigator.language||'fr').toLowerCase().indexOf('fr')===0?'fr':'en');document.documentElement.lang=l}catch(e){}</script>
+</head>
+<body>
+<svg class="sprite" aria-hidden="true" focusable="false"><defs><linearGradient id="gk-gold" gradientUnits="userSpaceOnUse" x1="0" y1="4" x2="0" y2="44"><stop offset="0" stop-color="#fff1bf"/><stop offset=".45" stop-color="#f0c25e"/><stop offset="1" stop-color="#9a6a20"/></linearGradient>
+<symbol id="i-metiers" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M6 15h25c1 5 5 8 11 8v4H31l3 9H14l3-9h-3C9 27 6 22 6 15z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M36 6l4 4M33 9l4 4"/></symbol>
+<symbol id="i-membres" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M24 5c9 0 15 7 15 16v14l-6 6h-4V27h-10v14h-4l-6-6V21C9 12 15 5 24 5z"/><path fill="#1a1208" d="M15 20h18v4H15z"/></symbol>
+<symbol id="i-artisanat" viewBox="0 0 48 48"><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M10 38L36 12"/><ellipse fill="none" stroke="url(#gk-gold)" stroke-width="3.2" cx="37.5" cy="10.5" rx="3.2" ry="1.8" transform="rotate(-45 37.5 10.5)"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="1.8" d="M39 9c6 6-4 12-10 16s-14 10-8 17"/></symbol>
+<symbol id="i-evenements" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M7 11h34v30H7z"/><path fill="#1a1208" d="M10 19h28v19H10z"/><path fill="url(#gk-gold)" d="M13 22h6v5h-6zM21 22h6v5h-6zM29 22h6v5h-6zM13 30h6v5h-6zM21 30h6v5h-6z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M15 6v8M33 6v8"/></symbol>
+<symbol id="i-raid" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M24 4l17 6v12c0 11-7 18-17 22C14 40 7 33 7 22V10z"/><path fill="#1a1208" d="M24 11l11 4v8c0 7-4 12-11 15z"/></symbol>
+<symbol id="i-presence" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M10 6h22l7 7v29H10z"/><path fill="none" stroke="#1a1208" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.4" d="M16 26l5 5 10-11"/></symbol>
+<symbol id="i-quetes" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M20 5h8l-1.5 26h-5zM24 35a4 4 0 1 1 0 8 4 4 0 0 1 0-8z"/></symbol>
+<symbol id="i-communication" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M6 19h8l20-11v32L14 29H6z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M39 17c3 4 3 10 0 14M12 30l3 11h6l-3-11"/></symbol>
+<symbol id="i-install" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M17 12c0-5 3-8 7-8s7 3 7 8h-3c0-3-2-5-4-5s-4 2-4 5z"/><path fill="url(#gk-gold)" d="M10 14h28l4 26a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4z"/><path fill="#1a1208" d="M20 22h8v6h-8z"/></symbol>
+<symbol id="i-compagnon" viewBox="0 0 48 48"><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="4" d="M6 34c6-14 30-14 36 0M12 34V22M24 34V18M36 34V22"/><path fill="url(#gk-gold)" d="M4 34h40v5H4z"/></symbol>
+<symbol id="i-cmd" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M5 9h38v30H5z"/><path fill="#1a1208" d="M8 15h32v21H8z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M14 32l8-13M26 32h8"/></symbol>
+<symbol id="i-faq" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M8 6h26l6 6v30H8z"/><path fill="none" stroke="#1a1208" stroke-linecap="round" stroke-width="3.4" d="M19 19c0-4 3-6 5.5-6s5.5 2 5.5 5.5-5 4-5 8M24.5 32v.5"/></symbol>
+</defs></svg>
+<header class="topbar">
+	<a class="wordmark" href="/">Guildkeep</a>
+	<nav aria-label="Navigation">
+		<a href="/docs/" aria-current="page"><span lang="fr">Documentation</span><span lang="en">Docs</span></a>
+		<a class="hide-phone" href="/docs/faq.html"><span lang="fr">Aide</span><span lang="en">Help</span></a>
+		<div class="lang-switch" role="group" aria-label="Langue / Language">
+			<button type="button" data-set-lang="fr" aria-pressed="true">FR</button>
+			<button type="button" data-set-lang="en" aria-pressed="false">EN</button>
+		</div>
+		<a class="button invite-link hide-phone" href="/#mise-en-place"><span lang="fr">Ajouter à Discord</span><span lang="en">Add to Discord</span></a>
+	</nav>
+</header>
+
+<div class="doc">
+<aside class="doc-nav" aria-label="Sommaire / Contents"><details open><summary><span><span lang="fr">Sommaire</span><span lang="en">Contents</span></span><i class="plus" aria-hidden="true"></i></summary><div>
+<p class="doc-nav-label"><span lang="fr">Démarrer</span><span lang="en">Getting started</span></p><ul>
+<li><a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a>
+</li>
+<li><a href="/docs/installation.html"><span lang="fr">Installer Guildkeep</span><span lang="en">Installing Guildkeep</span></a>
+</li>
+<li><a href="/docs/compagnon.html"><span lang="fr">L'app compagnon</span><span lang="en">The companion app</span></a>
+</li>
+</ul>
+<p class="doc-nav-label"><span lang="fr">Modules</span><span lang="en">Modules</span></p><ul>
+<li><a href="/docs/metiers.html"><span lang="fr">Métiers</span><span lang="en">Professions</span></a>
+</li>
+<li><a href="/docs/membres.html"><span lang="fr">Membres</span><span lang="en">Members</span></a>
+</li>
+<li><a href="/docs/artisanat.html"><span lang="fr">Artisanat</span><span lang="en">Crafting orders</span></a>
+</li>
+<li><a href="/docs/evenements.html"><span lang="fr">Événements</span><span lang="en">Events</span></a>
+</li>
+<li><a href="/docs/soiree-raid.html" aria-current="page"><span lang="fr">Soirée de raid</span><span lang="en">Raid night</span></a>
+<ul>
+<li><a href="#a-quoi-ca-sert"><span lang="fr">À quoi ça sert</span><span lang="en">What it's for</span></a></li>
+<li><a href="#reserver"><span lang="fr">Tutoriel : réserver un objet</span><span lang="en">Tutorial: reserve an item</span></a></li>
+<li><a href="#pour-un-autre"><span lang="fr">Tutoriel : réserver pour un joueur sans addon</span><span lang="en">Tutorial: reserve for a player without the addon</span></a></li>
+<li><a href="#d-office"><span lang="fr">Tutoriel : réserver un objet d'office</span><span lang="en">Tutorial: hard-reserve an item</span></a></li>
+<li><a href="#verrouiller"><span lang="fr">Tutoriel : verrouiller avant le raid</span><span lang="en">Tutorial: lock before the raid</span></a></li>
+<li><a href="#soutien"><span lang="fr">Tutoriel : confier les rôles de soutien</span><span lang="en">Tutorial: assign support duties</span></a></li>
+<li><a href="#checklist"><span lang="fr">Tutoriel : vérifier la checklist « Avant le raid »</span><span lang="en">Tutorial: check the "before the raid" checklist</span></a></li>
+</ul>
+</li>
+<li><a href="/docs/presence.html"><span lang="fr">Présence et butin</span><span lang="en">Attendance and loot</span></a>
+</li>
+<li><a href="/docs/quetes.html"><span lang="fr">Quêtes</span><span lang="en">Quests</span></a>
+</li>
+<li><a href="/docs/communication.html"><span lang="fr">Communication</span><span lang="en">Communication</span></a>
+</li>
+</ul>
+<p class="doc-nav-label"><span lang="fr">Référence</span><span lang="en">Reference</span></p><ul>
+<li><a href="/docs/commandes.html"><span lang="fr">Commandes Discord</span><span lang="en">Discord commands</span></a>
+</li>
+<li><a href="/docs/faq.html"><span lang="fr">FAQ et dépannage</span><span lang="en">FAQ and troubleshooting</span></a>
+</li>
+</ul>
+</div></details></aside>
+<main class="doc-main" id="contenu">
+<nav class="crumbs" aria-label="Fil d'Ariane / Breadcrumb"><ol class="crumbs-list"><li><a href="/"><span lang="fr">Accueil</span><span lang="en">Home</span></a></li><li><a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a></li><li aria-current="page"><span lang="fr">Soirée de raid</span><span lang="en">Raid night</span></li></ol></nav>
+<h1><span lang="fr">Soirée de raid</span><span lang="en">Raid night</span></h1>
+<p class="lead"><span lang="fr">Tout ce qui se prépare avant de lancer le premier boss : les réservations de butin, les rôles de soutien et une liste de ce qui manque encore. Ce module s'ajoute au détail de chaque événement.</span><span lang="en">Everything you prepare before pulling the first boss: loot reserves, support duties and a list of what's still missing. This module plugs into each event's details.</span></p>
+<div class="rule" aria-hidden="true"><i></i></div>
+<section>
+<h2 id="a-quoi-ca-sert"><a class="anchor" href="#a-quoi-ca-sert" aria-hidden="true" tabindex="-1">#</a><span lang="fr">À quoi ça sert</span><span lang="en">What it's for</span></h2>
+<p><span lang="fr">La Soirée de raid n'a pas d'onglet à elle : elle ajoute deux sections au bas du détail d'un événement, à côté de <span class="ui opt">Roster</span> : <span lang="fr"><span class="ui opt">Réserves</span></span><span lang="en"><span class="ui opt">Réserves</span> <span class="gloss">(Reserves)</span></span> et <span lang="fr"><span class="ui opt">Soirée</span></span><span lang="en"><span class="ui opt">Soirée</span> <span class="gloss">(Night)</span></span>. Elle nécessite le module <a href="/docs/evenements.html">Événements</a>.</span><span lang="en">Raid night has no tab of its own: it adds two sections at the bottom of an event's details, next to <span class="ui opt">Roster</span>: <span lang="fr"><span class="ui opt">Réserves</span></span><span lang="en"><span class="ui opt">Réserves</span> <span class="gloss">(Reserves)</span></span> and <span lang="fr"><span class="ui opt">Soirée</span></span><span lang="en"><span class="ui opt">Soirée</span> <span class="gloss">(Night)</span></span>. It needs the <a href="/docs/evenements.html">Events</a> module.</span></p>
+<ul>
+	<li><span lang="fr"><strong>Réservations</strong> : chaque joueur réserve <strong>un objet par priorité</strong>, haute, normale et basse. La section affiche ensuite toutes les réservations, objet par objet, avec les conflits (« 2 sur l'objet »).</span><span lang="en"><strong>Reserves</strong>: each player reserves <strong>one item per priority</strong>, high, normal and low. The section then shows every reserve, item by item, with conflicts ("2 sur l'objet", 2 on the item).</span></li>
+	<li><span lang="fr"><strong>Réservation d'office</strong> : l'organisateur ou un officier peut réserver un objet pour la guilde ou pour quelqu'un ; plus personne ne peut alors le réserver.</span><span lang="en"><strong>Hard reserve</strong>: the organizer or an officer can reserve an item for the guild or for someone; nobody else can reserve it then.</span></li>
+	<li><span lang="fr"><strong>Verrouillage</strong> : une fois verrouillées, les réservations sont figées et <strong>seules celles des joueurs confirmés comptent</strong>.</span><span lang="en"><strong>Locking</strong>: once locked, reserves are frozen and <strong>only confirmed players' reserves count</strong>.</span></li>
+	<li><span lang="fr"><strong>Rôles de soutien</strong> : chef de raid, invocateur, consommables, robot de réparation ; et la <strong>checklist</strong> « Avant le raid ».</span><span lang="en"><strong>Support duties</strong>: raid lead, summoner, consumables, repair bot; and the "Avant le raid" (before the raid) <strong>checklist</strong>.</span></li>
+</ul>
+<figure class="mock" data-ui>
+	<div class="wow">
+		<div class="bar-line"><span class="chip">Roster</span><span class="chip is-on">Réserves (14)</span><span class="chip">Soirée</span></div>
+		<div style="padding:8px 12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="gold">Mes réservations</span><span class="soft" style="font-size:12px">Un objet par priorité. Les officiers verrouillent avant le raid.</span><span style="margin-left:auto" class="wow-button">Verrouiller</span></div>
+		<div class="wow-row"><span class="wow-ico">H</span><span>Haute · <span class="q-epic">Lame du vent sanglant</span></span><span class="acts"><span class="wow-button">Réserver</span><span class="wow-button">Retirer</span></span></div>
+		<div class="wow-row"><span class="wow-ico">N</span><span>Normale · <span class="soft">shift-clic sur un objet</span></span><span class="acts"><span class="wow-button">Réserver</span><span class="wow-button">Retirer</span></span></div>
+		<div style="padding:8px 12px 4px" class="gold">Toutes les réservations</div>
+		<div class="wow-row"><span class="wow-ico">⚔</span><span><span class="q-epic">Lame du vent sanglant</span><br><span class="soft" style="font-size:12px"><span class="bad">2 sur l'objet · </span>Tamsin Rouage (haute), Sorcha Tanne (normale)</span></span><span class="wow-button">D'office</span></div>
+	</div>
+	<figcaption><span lang="fr">Maquette : la section Réserves d'un raid, vue par un officier (noms d'objets inventés).</span><span lang="en">Mock-up: a raid's Reserves section, as an officer sees it (made-up item names).</span></figcaption>
+</figure>
+
+<aside class="callout c-tip"><p class="callout-title"><span lang="fr">Astuce</span><span lang="en">Tip</span></p><p><span lang="fr"><strong>Tutoriel en jeu.</strong> À la première ouverture de l'onglet <span lang="fr"><span class="ui tab">Événements</span></span><span lang="en"><span class="ui tab">Événements</span> <span class="gloss">(Events)</span></span>, un tutoriel pas à pas encadre chaque bouton et explique à quoi il sert. Tu peux le passer à tout moment, et le revoir avec le bouton <span class="ui">?</span> en haut à droite de la fenêtre ou <code>/gkeep tuto</code>. Celui de la soirée de raid suit celui des événements et ouvre lui-même les sections Réserves et Soirée.</span><span lang="en"><strong>In-game tutorial.</strong> The first time you open the <span lang="fr"><span class="ui tab">Événements</span></span><span lang="en"><span class="ui tab">Événements</span> <span class="gloss">(Events)</span></span> tab, a step-by-step tutorial highlights every button and explains what it does. You can skip it at any time, and replay it with the <span class="ui">?</span> button at the top right of the window or <code>/gkeep tuto</code>. The raid night one follows the events one and opens the Reserves and Raid night sections itself.</span></p></aside>
+</section>
+
+<section>
+<h2 id="reserver"><a class="anchor" href="#reserver" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Tutoriel : réserver un objet</span><span lang="en">Tutorial: reserve an item</span></h2>
+<div class="rights"><span class="badge b-self"><span lang="fr">Toi seul</span><span lang="en">Only you</span></span></div>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu</span><span lang="en">In game</span></span><span lang="fr">Section Réserves</span><span lang="en">Reserves section</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Onglet <span lang="fr"><span class="ui tab">Événements</span></span><span lang="en"><span class="ui tab">Événements</span> <span class="gloss">(Events)</span></span>, ouvre le raid, puis la section <span lang="fr"><span class="ui opt">Réserves</span></span><span lang="en"><span class="ui opt">Réserves</span> <span class="gloss">(Reserves)</span></span> en bas du détail.</span><span lang="en"><span lang="fr"><span class="ui tab">Événements</span></span><span lang="en"><span class="ui tab">Événements</span> <span class="gloss">(Events)</span></span> tab, open the raid, then the <span lang="fr"><span class="ui opt">Réserves</span></span><span lang="en"><span class="ui opt">Réserves</span> <span class="gloss">(Reserves)</span></span> section at the bottom of the details.</span></li>
+		<li><span lang="fr">Clique dans le champ de la priorité voulue (Haute, Normale ou Basse), puis fais <kbd class="key">Maj</kbd>+clic sur l'objet : dans tes sacs, le chat, une fenêtre de butin ou un atlas de donjon. Tu peux aussi taper son numéro (par exemple 19019).</span><span lang="en">Click in the field of the priority you want (Haute, Normale or Basse: high, normal, low), then <kbd class="key">Shift</kbd>+click the item: in your bags, chat, a loot window or a dungeon atlas. You can also type its number (for example 19019).</span></li>
+		<li><span lang="fr">Clique <span lang="fr"><span class="ui">Réserver</span></span><span lang="en"><span class="ui">Réserver</span> <span class="gloss">(Reserve)</span></span>. Un « ! » rouge signale un objet que ta classe ne peut pas utiliser.</span><span lang="en">Click <span lang="fr"><span class="ui">Réserver</span></span><span lang="en"><span class="ui">Réserver</span> <span class="gloss">(Reserve)</span></span>. A red "!" flags an item your class can't use.</span></li>
+		<li><span lang="fr">Pour changer d'avis : <span lang="fr"><span class="ui">Retirer</span></span><span lang="en"><span class="ui">Retirer</span> <span class="gloss">(Remove)</span></span> sur la ligne, tant que ce n'est pas verrouillé.</span><span lang="en">To change your mind: <span lang="fr"><span class="ui">Retirer</span></span><span lang="en"><span class="ui">Retirer</span> <span class="gloss">(Remove)</span></span> on the row, as long as it isn't locked.</span></li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span><span lang="fr">Avec /gkeep reserve poser</span><span lang="en">With /gkeep reserve set</span></h3>
+	<ol class="steps">
+		<li><span lang="fr"><code class="d"><span lang="fr">/gkeep reserve poser</span><span lang="en">/gkeep reserve set</span></code> : l'événement, la <code><span lang="fr">priorite</span><span lang="en">priority</span></code> (Haute, Normale, Basse) et l'<code><span lang="fr">objet</span><span lang="en">item</span></code> : son numéro, un lien contenant <code>item=19019</code>, ou une suggestion de la liste.</span><span lang="en"><code class="d"><span lang="fr">/gkeep reserve poser</span><span lang="en">/gkeep reserve set</span></code>: the event, the <code>priority</code> (High, Normal, Low) and the <code>item</code>: its number, a link containing <code>item=19019</code>, or a suggestion from the list.</span></li>
+		<li><span lang="fr"><code class="d"><span lang="fr">/gkeep reserve liste</span><span lang="en">/gkeep reserve list</span></code> montre toutes les réservations de l'événement, avec les conflits ; <code class="d"><span lang="fr">/gkeep reserve retirer</span><span lang="en">/gkeep reserve clear</span></code> retire la tienne.</span><span lang="en"><code class="d"><span lang="fr">/gkeep reserve liste</span><span lang="en">/gkeep reserve list</span></code> shows all the event's reserves, with conflicts; <code class="d"><span lang="fr">/gkeep reserve retirer</span><span lang="en">/gkeep reserve clear</span></code> removes yours.</span></li>
+	</ol>
+</div>
+<aside class="callout c-warn"><p class="callout-title"><span lang="fr">Attention</span><span lang="en">Watch out</span></p><p><span lang="fr">Un seul objet par priorité, et pas le même objet à deux priorités. Un objet réservé d'office ne peut plus être réservé. Une fois verrouillées, seul un officier ou l'organisateur peut encore corriger.</span><span lang="en">One item per priority, and not the same item at two priorities. A hard-reserved item can't be reserved anymore. Once locked, only an officer or the organizer can still correct things.</span></p></aside>
+</section>
+
+<section>
+<h2 id="pour-un-autre"><a class="anchor" href="#pour-un-autre" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Tutoriel : réserver pour un joueur sans addon</span><span lang="en">Tutorial: reserve for a player without the addon</span></h2>
+<div class="rights"><span class="badge b-org"><span lang="fr">Organisateur ou officier</span><span lang="en">Organizer or officer</span></span></div>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu</span><span lang="en">In game</span></span><span lang="fr">Le champ « Pour »</span><span lang="en">The "Pour" (for) field</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Dans la section <span lang="fr"><span class="ui opt">Réserves</span></span><span lang="en"><span class="ui opt">Réserves</span> <span class="gloss">(Reserves)</span></span>, écris le nom du joueur dans le champ <span lang="fr"><span class="ui opt">Pour</span></span><span lang="en"><span class="ui opt">Pour</span> <span class="gloss">(For)</span></span>, à côté de <span lang="fr"><span class="ui">Verrouiller</span></span><span lang="en"><span class="ui">Verrouiller</span> <span class="gloss">(Lock)</span></span>.</span><span lang="en">In the <span lang="fr"><span class="ui opt">Réserves</span></span><span lang="en"><span class="ui opt">Réserves</span> <span class="gloss">(Reserves)</span></span> section, type the player's name in the <span lang="fr"><span class="ui opt">Pour</span></span><span lang="en"><span class="ui opt">Pour</span> <span class="gloss">(For)</span></span> field, next to <span lang="fr"><span class="ui">Verrouiller</span></span><span lang="en"><span class="ui">Verrouiller</span> <span class="gloss">(Lock)</span></span>.</span></li>
+		<li><span lang="fr">Les lignes Haute / Normale / Basse montrent maintenant ses réservations : réserve ou retire comme pour toi.</span><span lang="en">The High / Normal / Low rows now show their reserves: reserve or remove as you would for yourself.</span></li>
+		<li><span lang="fr">Vide le champ <span lang="fr"><span class="ui opt">Pour</span></span><span lang="en"><span class="ui opt">Pour</span> <span class="gloss">(For)</span></span> pour revenir à tes propres réservations.</span><span lang="en">Clear the <span lang="fr"><span class="ui opt">Pour</span></span><span lang="en"><span class="ui opt">Pour</span> <span class="gloss">(For)</span></span> field to go back to your own reserves.</span></li>
+	</ol>
+</div>
+<p><span lang="fr">Sur Discord : l'option <code><span lang="fr">personnage</span><span lang="en">character</span></code> de <code class="d"><span lang="fr">/gkeep reserve poser</span><span lang="en">/gkeep reserve set</span></code> et <code class="d"><span lang="fr">/gkeep reserve retirer</span><span lang="en">/gkeep reserve clear</span></code>. Ça marche même verrouillé.</span><span lang="en">On Discord: the <code>character</code> option of <code class="d"><span lang="fr">/gkeep reserve poser</span><span lang="en">/gkeep reserve set</span></code> and <code class="d"><span lang="fr">/gkeep reserve retirer</span><span lang="en">/gkeep reserve clear</span></code>. It works even when locked.</span></p>
+</section>
+
+<section>
+<h2 id="d-office"><a class="anchor" href="#d-office" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Tutoriel : réserver un objet d'office</span><span lang="en">Tutorial: hard-reserve an item</span></h2>
+<div class="rights"><span class="badge b-org"><span lang="fr">Organisateur ou officier</span><span lang="en">Organizer or officer</span></span></div>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu</span><span lang="en">In game</span></span><span lang="fr">Le bouton D'office</span><span lang="en">The D'office (hard) button</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Dans <span lang="fr"><span class="ui opt">Toutes les réservations</span></span><span lang="en"><span class="ui opt">Toutes les réservations</span> <span class="gloss">(All reserves)</span></span>, clique <span lang="fr"><span class="ui">D'office</span></span><span lang="en"><span class="ui">D'office</span> <span class="gloss">(Hard)</span></span> sur la ligne de l'objet. Elle affiche « Réservé d'office » et les réservations des joueurs sur cet objet ne comptent plus.</span><span lang="en">In <span lang="fr"><span class="ui opt">Toutes les réservations</span></span><span lang="en"><span class="ui opt">Toutes les réservations</span> <span class="gloss">(All reserves)</span></span>, click <span lang="fr"><span class="ui">D'office</span></span><span lang="en"><span class="ui">D'office</span> <span class="gloss">(Hard)</span></span> on the item's row. It now reads "Réservé d'office" (hard-reserved) and players' reserves on that item no longer count.</span></li>
+		<li><span lang="fr"><span lang="fr"><span class="ui">Lever</span></span><span lang="en"><span class="ui">Lever</span> <span class="gloss">(Lift)</span></span> annule la réservation d'office.</span><span lang="en"><span lang="fr"><span class="ui">Lever</span></span><span lang="en"><span class="ui">Lever</span> <span class="gloss">(Lift)</span></span> cancels the hard reserve.</span></li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span><span lang="fr">Avec /gkeep reserve ferme</span><span lang="en">With /gkeep reserve hard</span></h3>
+	<p><span lang="fr"><code class="d"><span lang="fr">/gkeep reserve ferme</span><span lang="en">/gkeep reserve hard</span></code> : l'événement, l'<code><span lang="fr">objet</span><span lang="en">item</span></code>, et un <code><span lang="fr">destinataire</span><span lang="en">holder</span></code> facultatif (qui le reçoit). Cela permet aussi de réserver d'office un objet que personne n'a encore réservé. <code class="d"><span lang="fr">/gkeep reserve lever</span><span lang="en">/gkeep reserve unhard</span></code> lève la réservation.</span><span lang="en"><code class="d"><span lang="fr">/gkeep reserve ferme</span><span lang="en">/gkeep reserve hard</span></code>: the event, the <code>item</code>, and an optional <code>holder</code> (who gets it). It also lets you hard-reserve an item nobody has reserved yet. <code class="d"><span lang="fr">/gkeep reserve lever</span><span lang="en">/gkeep reserve unhard</span></code> lifts it.</span></p>
+</div>
+</section>
+
+<section>
+<h2 id="verrouiller"><a class="anchor" href="#verrouiller" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Tutoriel : verrouiller avant le raid</span><span lang="en">Tutorial: lock before the raid</span></h2>
+<div class="rights"><span class="badge b-org"><span lang="fr">Organisateur ou officier</span><span lang="en">Organizer or officer</span></span></div>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu</span><span lang="en">In game</span></span><span lang="fr">Le bouton Verrouiller</span><span lang="en">The Verrouiller (Lock) button</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Confirme d'abord ton roster (voir <a href="/docs/evenements.html#creer-un-raid">Événements</a>) : au verrouillage, seules les réservations des confirmés comptent ; les autres sont marquées « ne compte pas : non confirmé ».</span><span lang="en">Confirm your roster first (see <a href="/docs/evenements.html#creer-un-raid">Events</a>): once locked, only confirmed players' reserves count; others are marked "ne compte pas : non confirmé" (doesn't count: not confirmed).</span></li>
+		<li><span lang="fr">Clique <span lang="fr"><span class="ui">Verrouiller</span></span><span lang="en"><span class="ui">Verrouiller</span> <span class="gloss">(Lock)</span></span> dans la section <span lang="fr"><span class="ui opt">Réserves</span></span><span lang="en"><span class="ui opt">Réserves</span> <span class="gloss">(Reserves)</span></span>. Un cadenas apparaît sur le nom de la section.</span><span lang="en">Click <span lang="fr"><span class="ui">Verrouiller</span></span><span lang="en"><span class="ui">Verrouiller</span> <span class="gloss">(Lock)</span></span> in the <span lang="fr"><span class="ui opt">Réserves</span></span><span lang="en"><span class="ui opt">Réserves</span> <span class="gloss">(Reserves)</span></span> section. A padlock appears on the section name.</span></li>
+		<li><span lang="fr">Si tu mènes déjà le raid, Guildkeep propose : « Passer le raid en maître du butin (toi) ? ». <span lang="fr"><span class="ui">Oui</span></span><span lang="en"><span class="ui">Oui</span> <span class="gloss">(Yes)</span></span> te donne le butin à distribuer.</span><span lang="en">If you already lead the raid, Guildkeep asks: "Passer le raid en maître du butin (toi) ?" (switch to master looter, you). <span lang="fr"><span class="ui">Oui</span></span><span lang="en"><span class="ui">Oui</span> <span class="gloss">(Yes)</span></span> hands you the loot to distribute.</span></li>
+		<li><span lang="fr"><span lang="fr"><span class="ui">Déverrouiller</span></span><span lang="en"><span class="ui">Déverrouiller</span> <span class="gloss">(Unlock)</span></span> rouvre les réservations.</span><span lang="en"><span lang="fr"><span class="ui">Déverrouiller</span></span><span lang="en"><span class="ui">Déverrouiller</span> <span class="gloss">(Unlock)</span></span> reopens reserves.</span></li>
+	</ol>
+</div>
+<p><span lang="fr">Sur Discord : <code class="d"><span lang="fr">/gkeep reserve verrouiller</span><span lang="en">/gkeep reserve lock</span></code> et <code class="d"><span lang="fr">/gkeep reserve deverrouiller</span><span lang="en">/gkeep reserve unlock</span></code>.</span><span lang="en">On Discord: <code class="d"><span lang="fr">/gkeep reserve verrouiller</span><span lang="en">/gkeep reserve lock</span></code> and <code class="d"><span lang="fr">/gkeep reserve deverrouiller</span><span lang="en">/gkeep reserve unlock</span></code>.</span></p>
+</section>
+
+<section>
+<h2 id="soutien"><a class="anchor" href="#soutien" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Tutoriel : confier les rôles de soutien</span><span lang="en">Tutorial: assign support duties</span></h2>
+<div class="rights"><span class="badge b-org"><span lang="fr">Organisateur ou officier</span><span lang="en">Organizer or officer</span></span></div>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu</span><span lang="en">In game</span></span><span lang="fr">Section Soirée</span><span lang="en">Night section</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Ouvre la section <span lang="fr"><span class="ui opt">Soirée</span></span><span lang="en"><span class="ui opt">Soirée</span> <span class="gloss">(Night)</span></span>. Sous « Rôles de soutien » : <span lang="fr"><span class="ui opt">Chef de raid</span></span><span lang="en"><span class="ui opt">Chef de raid</span> <span class="gloss">(Raid lead)</span></span>, <span lang="fr"><span class="ui opt">Invocateur</span></span><span lang="en"><span class="ui opt">Invocateur</span> <span class="gloss">(Summoner)</span></span>, <span lang="fr"><span class="ui opt">Consommables</span></span><span lang="en"><span class="ui opt">Consommables</span> <span class="gloss">(Consumables)</span></span>, <span lang="fr"><span class="ui opt">Robot de réparation</span></span><span lang="en"><span class="ui opt">Robot de réparation</span> <span class="gloss">(Repair bot)</span></span>, chacun avec son titulaire ou « personne ».</span><span lang="en">Open the <span lang="fr"><span class="ui opt">Soirée</span></span><span lang="en"><span class="ui opt">Soirée</span> <span class="gloss">(Night)</span></span> section. Under "Rôles de soutien" (support duties): <span lang="fr"><span class="ui opt">Chef de raid</span></span><span lang="en"><span class="ui opt">Chef de raid</span> <span class="gloss">(Raid lead)</span></span>, <span lang="fr"><span class="ui opt">Invocateur</span></span><span lang="en"><span class="ui opt">Invocateur</span> <span class="gloss">(Summoner)</span></span>, <span lang="fr"><span class="ui opt">Consommables</span></span><span lang="en"><span class="ui opt">Consommables</span> <span class="gloss">(Consumables)</span></span>, <span lang="fr"><span class="ui opt">Robot de réparation</span></span><span lang="en"><span class="ui opt">Robot de réparation</span> <span class="gloss">(Repair bot)</span></span>, each with its holder or "personne" (nobody).</span></li>
+		<li><span lang="fr">Tape le nom (ou le début du prénom) d'un inscrit dans le champ de la ligne, puis <span lang="fr"><span class="ui">Confier</span></span><span lang="en"><span class="ui">Confier</span> <span class="gloss">(Assign)</span></span>.</span><span lang="en">Type a sign-up's name (or the start of the first name) in the row's field, then <span lang="fr"><span class="ui">Confier</span></span><span lang="en"><span class="ui">Confier</span> <span class="gloss">(Assign)</span></span>.</span></li>
+		<li><span lang="fr"><span lang="fr"><span class="ui">Libérer</span></span><span lang="en"><span class="ui">Libérer</span> <span class="gloss">(Free)</span></span> retire la personne. Un titulaire qui n'est plus confirmé est signalé « (non confirmé) ».</span><span lang="en"><span lang="fr"><span class="ui">Libérer</span></span><span lang="en"><span class="ui">Libérer</span> <span class="gloss">(Free)</span></span> removes the person. A holder who's no longer confirmed is flagged "(non confirmé)".</span></li>
+	</ol>
+</div>
+<p><span lang="fr">Sur Discord : <code class="d"><span lang="fr">/gkeep evenement soutien</span><span lang="en">/gkeep event duty</span></code> : l'événement, le <code>role</code> de soutien et le <code><span lang="fr">personnage</span><span lang="en">character</span></code> (vide pour libérer le poste).</span><span lang="en">On Discord: <code class="d"><span lang="fr">/gkeep evenement soutien</span><span lang="en">/gkeep event duty</span></code>: the event, the <code>duty</code> and the <code>character</code> (empty to free the post).</span></p>
+</section>
+
+<section>
+<h2 id="checklist"><a class="anchor" href="#checklist" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Tutoriel : vérifier la checklist « Avant le raid »</span><span lang="en">Tutorial: check the "before the raid" checklist</span></h2>
+<div class="rights"><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></div>
+<p><span lang="fr">Dans la section <span lang="fr"><span class="ui opt">Soirée</span></span><span lang="en"><span class="ui opt">Soirée</span> <span class="gloss">(Night)</span></span>, « Avant le raid » liste ce qui manque encore, les points bloquants en premier :</span><span lang="en">In the <span lang="fr"><span class="ui opt">Soirée</span></span><span lang="en"><span class="ui opt">Soirée</span> <span class="gloss">(Night)</span></span> section, "Avant le raid" lists what's still missing, blocking points first:</span></p>
+<ul>
+	<li><span lang="fr">un rôle sous son objectif (« Il manque 2 soigneurs confirmés (6/8) ») ;</span><span lang="en">a role below its target ("Il manque 2 soigneurs confirmés (6/8)", 2 confirmed healers missing);</span></li>
+	<li><span lang="fr">des présents pas encore placés, des « peut-être », des confirmés hors ligne ;</span><span lang="en">attending players not placed yet, tentatives, confirmed players offline;</span></li>
+	<li><span lang="fr">des objets réservés par plusieurs joueurs ;</span><span lang="en">items reserved by several players;</span></li>
+	<li><span lang="fr">un rôle de soutien vide (le chef de raid est bloquant) ou tenu par un non-confirmé ;</span><span lang="en">an empty support duty (raid lead is blocking) or held by someone not confirmed;</span></li>
+	<li><span lang="fr">des réservations pas encore verrouillées.</span><span lang="en">reserves not locked yet.</span></li>
+</ul>
+<p><span lang="fr">Quand tout va bien : « Tout est prêt. ». Sur Discord : <code class="d"><span lang="fr">/gkeep evenement checklist</span><span lang="en">/gkeep event checklist</span></code>. Pour poster le résumé sur Discord, <span lang="fr"><span class="ui">Copier la soirée</span></span><span lang="en"><span class="ui">Copier la soirée</span> <span class="gloss">(Copy the night)</span></span> met le roster, les rôles de soutien et les réservations en texte.</span><span lang="en">When all is well: "Tout est prêt." (all set). On Discord: <code class="d"><span lang="fr">/gkeep evenement checklist</span><span lang="en">/gkeep event checklist</span></code>. To post the summary on Discord, <span lang="fr"><span class="ui">Copier la soirée</span></span><span lang="en"><span class="ui">Copier la soirée</span> <span class="gloss">(Copy the night)</span></span> puts the roster, support duties and reserves into text.</span></p>
+</section>
+<nav class="doc-pager" aria-label="Pages voisines / Adjacent pages">
+<a class="prev" href="/docs/evenements.html" rel="prev"><small><span lang="fr">← Précédent</span><span lang="en">← Previous</span></small><b><span lang="fr">Événements</span><span lang="en">Events</span></b></a>
+<a class="next" href="/docs/presence.html" rel="next"><small><span lang="fr">Suivant →</span><span lang="en">Next →</span></small><b><span lang="fr">Présence et butin</span><span lang="en">Attendance and loot</span></b></a>
+</nav>
+</main>
+</div>
+
+<footer class="foot">
+	<span><span lang="fr">Outil de guilde pour WoW: Forever</span><span lang="en">Guild tool for WoW: Forever</span></span>
+	<nav aria-label="Pied de page / Footer">
+		<a href="/"><span lang="fr">Accueil</span><span lang="en">Home</span></a>
+		<a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a>
+		<a href="/confidentialite.html"><span lang="fr">Confidentialité</span><span lang="en">Privacy</span></a>
+		<a href="/conditions.html"><span lang="fr">Conditions</span><span lang="en">Terms</span></a>
+		<a href="https://github.com/AntoineRenoux/GuildProfessions" rel="noopener"><span lang="fr">Code source</span><span lang="en">Source code</span></a>
+	</nav>
+	<span class="end">2026</span>
+	<span class="credit"><span lang="fr">World of Warcraft est une marque de Blizzard Entertainment ; Guildkeep n'y est pas affilié.</span><span lang="en">World of Warcraft is a trademark of Blizzard Entertainment; Guildkeep is not affiliated.</span></span>
+</footer>
+
+<script src="/site.js?v=6" defer></script>
+</body>
+</html>

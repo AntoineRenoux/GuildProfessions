@@ -1,0 +1,67 @@
+title: documentation
+description: La documentation de Guildkeep : installation, app compagnon, tutoriels pas à pas pour chaque module, toutes les commandes Discord et le dépannage.
+lead: [[Tout ce qu'il faut pour se servir de Guildkeep, en jeu et sur Discord : l'installation, puis un tutoriel pas à pas pour chaque module. Écrit pour les joueurs comme pour les officiers.||Everything you need to use Guildkeep, in game and on Discord: the install, then a step-by-step tutorial for every module. Written for players and officers alike.]]
+---
+<section>
+<h2 id="demarrage-rapide">[[Démarrage rapide||Quick start]]</h2>
+<p>[[Deux chemins selon ton rôle. Chacun prend quelques minutes.||Two paths depending on your role. Each takes a few minutes.]]</p>
+<div class="quick">
+	<div class="howto">
+		<h3><span class="where">[[Joueur||Player]]</span>[[Je rejoins ma guilde||I'm joining my guild]]</h3>
+		<ol class="steps">
+			<li>[[Ouvre le lien d'installation que ton officier a partagé sur Discord (il ressemble à <code>guildkeep.warpvault.com/rejoindre/k7m2qpxa4h</code>).||Open the install link your officer shared on Discord (it looks like <code>guildkeep.warpvault.com/rejoindre/k7m2qpxa4h</code>).]]</li>
+			<li>[[Télécharge le pack de ta guilde, dézippe-le et lance <strong>GuildkeepCompanion</strong> : il installe l'addon et synchronise tout seul.||Download your guild's pack, unzip it and run <strong>GuildkeepCompanion</strong>: it installs the addon and syncs by itself.]]</li>
+			<li>[[En jeu, tape {g:/gkeep} ou ouvre l'onglet Guildkeep de la fenêtre de guilde. Un tutoriel te fait faire le tour.||In game, type {g:/gkeep} or open the Guildkeep tab in the guild window. A tutorial walks you around.]]</li>
+			<li>[[Sur Discord, relie ton personnage : {d:/gkeep lier||/gkeep link}.||On Discord, link your character: {d:/gkeep lier||/gkeep link}.]]</li>
+		</ol>
+		<p style="margin-top:14px"><a href="/docs/installation.html#joueur">[[Le détail, avec Mac et Linux||The details, with Mac and Linux]]</a></p>
+	</div>
+	<div class="howto">
+		<h3><span class="where">[[Admin||Admin]]</span>[[J'installe Guildkeep pour ma guilde||I'm setting Guildkeep up for my guild]]</h3>
+		<ol class="steps">
+			<li>[[Invite le bot Guildkeep sur ton serveur Discord (bouton « Ajouter à Discord » de l'accueil).||Invite the Guildkeep bot to your Discord server (the "Add to Discord" button on the home page).]]</li>
+			<li>[[Lance {d:/gkeep-setup||/gkeep-setup} : nom exact de la guilde en jeu, deux options, puis {B:Créer ma guilde||Create my guild}.||Run {d:/gkeep-setup||/gkeep-setup}: the exact in-game guild name, two options, then {B:Créer ma guilde||Create my guild}.]]</li>
+			<li>[[Partage le lien d'installation (bouton {B:Annoncer dans ce salon||Announce in this channel}).||Share the install link (the {B:Annoncer dans ce salon||Announce in this channel} button).]]</li>
+			<li>[[Les officiers récupèrent leur token personnel ({d:/gkeep token||/gkeep token}) pour que leur rang soit reconnu.||Officers grab their personal token ({d:/gkeep token||/gkeep token}) so their rank is recognized.]]</li>
+		</ol>
+		<p style="margin-top:14px"><a href="/docs/installation.html#admin">[[L'assistant pas à pas||The wizard step by step]]</a></p>
+	</div>
+</div>
+{note}<p>[[L'interface de l'addon est en français pour l'instant ; les noms de boutons de cette documentation sont donc ceux du jeu, en français, avec leur traduction entre parenthèses dans la version anglaise. Le bot Discord parle français et anglais selon la langue de chacun.||The addon's interface is in French for now, so button names in this documentation are the game's French ones, with an English translation in brackets. The Discord bot speaks English and French, following each user's Discord language.]]</p>{/note}
+</section>
+
+<section>
+<h2 id="modules">[[Les huit modules||The eight modules]]</h2>
+<p>[[Chaque module est indépendant : ta guilde peut s'en servir de tous, ou seulement de certains, et chaque joueur peut couper ceux qu'il n'utilise pas (Options &gt; Extensions &gt; Guildkeep).||Each module stands alone: your guild can use all of them or just a few, and every player can turn off the ones they don't use (Options &gt; AddOns &gt; Guildkeep).]]</p>
+<div class="doc-cards">
+	<a class="doc-card" href="/docs/metiers.html"><svg aria-hidden="true"><use href="#i-metiers"/></svg><b>[[Métiers||Professions]]</b><span>[[Qui sait fabriquer quoi, recherche de recette, niveaux.||Who can craft what, recipe search, skill levels.]]</span></a>
+	<a class="doc-card" href="/docs/membres.html"><svg aria-hidden="true"><use href="#i-membres"/></svg><b>[[Membres||Members]]</b><span>[[Le roster, qui est en ligne, l'équipement en aperçu 3D.||The roster, who's online, gear with a 3D preview.]]</span></a>
+	<a class="doc-card" href="/docs/artisanat.html"><svg aria-hidden="true"><use href="#i-artisanat"/></svg><b>[[Artisanat||Crafting orders]]</b><span>[[Commandes de craft, demandes ouvertes à tous, offres.||Craft orders, requests open to everyone, offers.]]</span></a>
+	<a class="doc-card" href="/docs/evenements.html"><svg aria-hidden="true"><use href="#i-evenements"/></svg><b>[[Événements||Events]]</b><span>[[Raids et sorties, inscriptions, composition, roster.||Raids and outings, sign-ups, composition, roster.]]</span></a>
+	<a class="doc-card" href="/docs/soiree-raid.html"><svg aria-hidden="true"><use href="#i-raid"/></svg><b>[[Soirée de raid||Raid night]]</b><span>[[Réservations de butin, rôles de soutien, checklist.||Loot reserves, support duties, checklist.]]</span></a>
+	<a class="doc-card" href="/docs/presence.html"><svg aria-hidden="true"><use href="#i-presence"/></svg><b>[[Présence et butin||Attendance and loot]]</b><span>[[Présence réelle en raid, butin épique, taux.||Real raid attendance, epic loot, rates.]]</span></a>
+	<a class="doc-card" href="/docs/quetes.html"><svg aria-hidden="true"><use href="#i-quetes"/></svg><b>[[Quêtes||Quests]]</b><span>[[Qui a la même quête élite, de donjon ou de raid.||Who has the same elite, dungeon or raid quest.]]</span></a>
+	<a class="doc-card" href="/docs/communication.html"><svg aria-hidden="true"><use href="#i-communication"/></svg><b>[[Communication||Communication]]</b><span>[[Annonces, charte de la guilde, objectifs communs.||Announcements, guild handbook, shared goals.]]</span></a>
+</div>
+</section>
+
+<section>
+<h2 id="references">[[Références||Reference]]</h2>
+<div class="doc-cards">
+	<a class="doc-card" href="/docs/installation.html"><svg aria-hidden="true"><use href="#i-install"/></svg><b>[[Installation||Install]]</b><span>[[Assistant Discord, pack de la guilde, premiers pas en jeu, droits.||Discord wizard, guild pack, first steps in game, permissions.]]</span></a>
+	<a class="doc-card" href="/docs/compagnon.html"><svg aria-hidden="true"><use href="#i-compagnon"/></svg><b>[[App compagnon||Companion app]]</b><span>[[La synchro automatique, le token personnel, le canal manuel.||Automatic sync, the personal token, the manual channel.]]</span></a>
+	<a class="doc-card" href="/docs/commandes.html"><svg aria-hidden="true"><use href="#i-cmd"/></svg><b>[[Commandes Discord||Discord commands]]</b><span>[[Toutes les commandes /gkeep, en français et en anglais.||Every /gkeep command, in English and French.]]</span></a>
+	<a class="doc-card" href="/docs/faq.html"><svg aria-hidden="true"><use href="#i-faq"/></svg><b>[[FAQ et dépannage||FAQ and troubleshooting]]</b><span>[[Module désactivé, données qui n'arrivent pas, sécurité.||Disabled module, data not arriving, security.]]</span></a>
+</div>
+</section>
+
+<section>
+<h2 id="comment-ca-marche">[[Comment les données circulent||How data travels]]</h2>
+<p>[[Un addon WoW n'a pas accès à Internet. Guildkeep a donc trois morceaux :||A WoW addon can't reach the internet. So Guildkeep has three parts:]]</p>
+<ul>
+	<li>[[<strong>l'addon</strong>, en jeu : il relève tes métiers, ton équipement, tes quêtes et la présence en raid, et affiche ce que la guilde partage ;||<strong>the addon</strong>, in game: it reads your professions, gear, quests and raid attendance, and shows what the guild shares;]]</li>
+	<li>[[<strong>le bot Discord</strong> : les mêmes données, consultables et modifiables par {d:/gkeep||/gkeep} ;||<strong>the Discord bot</strong>: the same data, readable and editable with {d:/gkeep||/gkeep};]]</li>
+	<li>[[<strong>l'app compagnon</strong>, sur ton PC : elle fait le pont entre les deux, à chaque déconnexion ou {g:/reload}.||<strong>the companion app</strong>, on your PC: it bridges the two at every logout or {g:/reload}.]]</li>
+</ul>
+<p>[[Entre joueurs connectés en même temps, l'addon partage aussi les changements tout de suite (inscriptions, commandes, réservations…), sans attendre le serveur. Sans l'app compagnon, une chaîne de texte à copier-coller fait le même travail à la main : voir <a href="/docs/compagnon.html#canal-manuel">le canal manuel</a>.||Between players online at the same time, the addon also shares changes right away (sign-ups, orders, reserves…), without waiting for the server. Without the companion app, a copy-and-paste text string does the same job by hand: see <a href="/docs/compagnon.html#canal-manuel">the manual channel</a>.]]</p>
+</section>

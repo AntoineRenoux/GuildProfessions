@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guildkeep · FAQ et dépannage</title>
+<meta name="description" content="Dépannage de Guildkeep : module désactivé, échec du chargement, données qui n&#x27;arrivent pas, /reload, rang d&#x27;officier, pseudos, sécurité et suppression des données.">
+<link rel="preload" href="/fonts/cinzel-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/alegreya-sans-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/site.css?v=6">
+<script>document.documentElement.classList.add('js');try{var l=localStorage.getItem('gk-lang')||((navigator.language||'fr').toLowerCase().indexOf('fr')===0?'fr':'en');document.documentElement.lang=l}catch(e){}</script>
+</head>
+<body>
+<svg class="sprite" aria-hidden="true" focusable="false"><defs><linearGradient id="gk-gold" gradientUnits="userSpaceOnUse" x1="0" y1="4" x2="0" y2="44"><stop offset="0" stop-color="#fff1bf"/><stop offset=".45" stop-color="#f0c25e"/><stop offset="1" stop-color="#9a6a20"/></linearGradient>
+<symbol id="i-metiers" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M6 15h25c1 5 5 8 11 8v4H31l3 9H14l3-9h-3C9 27 6 22 6 15z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M36 6l4 4M33 9l4 4"/></symbol>
+<symbol id="i-membres" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M24 5c9 0 15 7 15 16v14l-6 6h-4V27h-10v14h-4l-6-6V21C9 12 15 5 24 5z"/><path fill="#1a1208" d="M15 20h18v4H15z"/></symbol>
+<symbol id="i-artisanat" viewBox="0 0 48 48"><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M10 38L36 12"/><ellipse fill="none" stroke="url(#gk-gold)" stroke-width="3.2" cx="37.5" cy="10.5" rx="3.2" ry="1.8" transform="rotate(-45 37.5 10.5)"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="1.8" d="M39 9c6 6-4 12-10 16s-14 10-8 17"/></symbol>
+<symbol id="i-evenements" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M7 11h34v30H7z"/><path fill="#1a1208" d="M10 19h28v19H10z"/><path fill="url(#gk-gold)" d="M13 22h6v5h-6zM21 22h6v5h-6zM29 22h6v5h-6zM13 30h6v5h-6zM21 30h6v5h-6z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M15 6v8M33 6v8"/></symbol>
+<symbol id="i-raid" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M24 4l17 6v12c0 11-7 18-17 22C14 40 7 33 7 22V10z"/><path fill="#1a1208" d="M24 11l11 4v8c0 7-4 12-11 15z"/></symbol>
+<symbol id="i-presence" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M10 6h22l7 7v29H10z"/><path fill="none" stroke="#1a1208" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.4" d="M16 26l5 5 10-11"/></symbol>
+<symbol id="i-quetes" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M20 5h8l-1.5 26h-5zM24 35a4 4 0 1 1 0 8 4 4 0 0 1 0-8z"/></symbol>
+<symbol id="i-communication" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M6 19h8l20-11v32L14 29H6z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M39 17c3 4 3 10 0 14M12 30l3 11h6l-3-11"/></symbol>
+<symbol id="i-install" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M17 12c0-5 3-8 7-8s7 3 7 8h-3c0-3-2-5-4-5s-4 2-4 5z"/><path fill="url(#gk-gold)" d="M10 14h28l4 26a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4z"/><path fill="#1a1208" d="M20 22h8v6h-8z"/></symbol>
+<symbol id="i-compagnon" viewBox="0 0 48 48"><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="4" d="M6 34c6-14 30-14 36 0M12 34V22M24 34V18M36 34V22"/><path fill="url(#gk-gold)" d="M4 34h40v5H4z"/></symbol>
+<symbol id="i-cmd" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M5 9h38v30H5z"/><path fill="#1a1208" d="M8 15h32v21H8z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M14 32l8-13M26 32h8"/></symbol>
+<symbol id="i-faq" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M8 6h26l6 6v30H8z"/><path fill="none" stroke="#1a1208" stroke-linecap="round" stroke-width="3.4" d="M19 19c0-4 3-6 5.5-6s5.5 2 5.5 5.5-5 4-5 8M24.5 32v.5"/></symbol>
+</defs></svg>
+<header class="topbar">
+	<a class="wordmark" href="/">Guildkeep</a>
+	<nav aria-label="Navigation">
+		<a href="/docs/" aria-current="page"><span lang="fr">Documentation</span><span lang="en">Docs</span></a>
+		<a class="hide-phone" href="/docs/faq.html"><span lang="fr">Aide</span><span lang="en">Help</span></a>
+		<div class="lang-switch" role="group" aria-label="Langue / Language">
+			<button type="button" data-set-lang="fr" aria-pressed="true">FR</button>
+			<button type="button" data-set-lang="en" aria-pressed="false">EN</button>
+		</div>
+		<a class="button invite-link hide-phone" href="/#mise-en-place"><span lang="fr">Ajouter à Discord</span><span lang="en">Add to Discord</span></a>
+	</nav>
+</header>
+
+<div class="doc">
+<aside class="doc-nav" aria-label="Sommaire / Contents"><details open><summary><span><span lang="fr">Sommaire</span><span lang="en">Contents</span></span><i class="plus" aria-hidden="true"></i></summary><div>
+<p class="doc-nav-label"><span lang="fr">Démarrer</span><span lang="en">Getting started</span></p><ul>
+<li><a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a>
+</li>
+<li><a href="/docs/installation.html"><span lang="fr">Installer Guildkeep</span><span lang="en">Installing Guildkeep</span></a>
+</li>
+<li><a href="/docs/compagnon.html"><span lang="fr">L'app compagnon</span><span lang="en">The companion app</span></a>
+</li>
+</ul>
+<p class="doc-nav-label"><span lang="fr">Modules</span><span lang="en">Modules</span></p><ul>
+<li><a href="/docs/metiers.html"><span lang="fr">Métiers</span><span lang="en">Professions</span></a>
+</li>
+<li><a href="/docs/membres.html"><span lang="fr">Membres</span><span lang="en">Members</span></a>
+</li>
+<li><a href="/docs/artisanat.html"><span lang="fr">Artisanat</span><span lang="en">Crafting orders</span></a>
+</li>
+<li><a href="/docs/evenements.html"><span lang="fr">Événements</span><span lang="en">Events</span></a>
+</li>
+<li><a href="/docs/soiree-raid.html"><span lang="fr">Soirée de raid</span><span lang="en">Raid night</span></a>
+</li>
+<li><a href="/docs/presence.html"><span lang="fr">Présence et butin</span><span lang="en">Attendance and loot</span></a>
+</li>
+<li><a href="/docs/quetes.html"><span lang="fr">Quêtes</span><span lang="en">Quests</span></a>
+</li>
+<li><a href="/docs/communication.html"><span lang="fr">Communication</span><span lang="en">Communication</span></a>
+</li>
+</ul>
+<p class="doc-nav-label"><span lang="fr">Référence</span><span lang="en">Reference</span></p><ul>
+<li><a href="/docs/commandes.html"><span lang="fr">Commandes Discord</span><span lang="en">Discord commands</span></a>
+</li>
+<li><a href="/docs/faq.html" aria-current="page"><span lang="fr">FAQ et dépannage</span><span lang="en">FAQ and troubleshooting</span></a>
+<ul>
+<li><a href="#module-desactive"><span lang="fr">« module … désactivé » à la connexion</span><span lang="en">"module … désactivé" at login</span></a></li>
+<li><a href="#echec"><span lang="fr">« échec du chargement, contacte un administrateur »</span><span lang="en">"échec du chargement, contacte un administrateur" (failed to load)</span></a></li>
+<li><a href="#donnees"><span lang="fr">Mes données ou celles de la guilde n'arrivent pas</span><span lang="en">My data or the guild's isn't arriving</span></a></li>
+<li><a href="#reload"><span lang="fr">À quoi sert /reload ?</span><span lang="en">What is /reload for?</span></a></li>
+<li><a href="#officier"><span lang="fr">Je suis officier mais Discord ne me reconnaît pas</span><span lang="en">I'm an officer but Discord doesn't recognize me</span></a></li>
+<li><a href="#autres"><span lang="fr">Autres soucis courants</span><span lang="en">Other common issues</span></a></li>
+<li><a href="#securite"><span lang="fr">Sécurité et vie privée</span><span lang="en">Security and privacy</span></a></li>
+</ul>
+</li>
+</ul>
+</div></details></aside>
+<main class="doc-main" id="contenu">
+<nav class="crumbs" aria-label="Fil d'Ariane / Breadcrumb"><ol class="crumbs-list"><li><a href="/"><span lang="fr">Accueil</span><span lang="en">Home</span></a></li><li><a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a></li><li aria-current="page"><span lang="fr">FAQ et dépannage</span><span lang="en">FAQ and troubleshooting</span></li></ol></nav>
+<h1><span lang="fr">FAQ et dépannage</span><span lang="en">FAQ and troubleshooting</span></h1>
+<p class="lead"><span lang="fr">Les problèmes les plus courants, et comment les régler soi-même. Si rien ne marche, un officier ou l'administrateur de ta guilde peut aider.</span><span lang="en">The most common problems, and how to fix them yourself. If nothing works, an officer or your guild's admin can help.</span></p>
+<div class="rule" aria-hidden="true"><i></i></div>
+<section>
+<h2 id="module-desactive"><a class="anchor" href="#module-desactive" aria-hidden="true" tabindex="-1">#</a><span lang="fr">« module … désactivé » à la connexion</span><span lang="en">"module … désactivé" at login</span></h2>
+<p><span lang="fr">Ce module est coupé pour ton compte : son onglet n'apparaît pas et il ne relève rien.</span><span lang="en">That module is turned off for your account: its tab doesn't show and it records nothing.</span></p>
+<ol class="steps">
+	<li><span lang="fr">Options &gt; Extensions &gt; Guildkeep (ou <code>/gkeep options</code>) : coche le module.</span><span lang="en">Options &gt; AddOns &gt; Guildkeep (or <code>/gkeep options</code>): tick the module.</span></li>
+	<li><span lang="fr">Clique <span lang="fr"><span class="ui">Recharger l'interface</span></span><span lang="en"><span class="ui">Recharger l'interface</span> <span class="gloss">(Reload UI)</span></span>, ou tape <code>/reload</code>.</span><span lang="en">Click <span lang="fr"><span class="ui">Recharger l'interface</span></span><span lang="en"><span class="ui">Recharger l'interface</span> <span class="gloss">(Reload UI)</span></span>, or type <code>/reload</code>.</span></li>
+</ol>
+<p><span lang="fr">« module Soirée de raid désactivé : il nécessite le module Événements » : réactive d'abord les Événements. « Aucun module n'est activé » dans la fenêtre : ils sont tous coupés, même remède.</span><span lang="en">"module Soirée de raid désactivé : il nécessite le module Événements" (needs the Events module): turn Events back on first. "Aucun module n'est activé" (no module enabled) in the window: they're all off, same fix.</span></p>
+</section>
+
+<section>
+<h2 id="echec"><a class="anchor" href="#echec" aria-hidden="true" tabindex="-1">#</a><span lang="fr">« échec du chargement, contacte un administrateur »</span><span lang="en">"échec du chargement, contacte un administrateur" (failed to load)</span></h2>
+<p><span lang="fr">Le module a rencontré une erreur au chargement. Il est mis de côté, et <strong>tous les autres fonctionnent normalement</strong>. Même chose en cours de partie avec « erreur, désactivé jusqu'au prochain /reload ».</span><span lang="en">The module hit an error while loading. It's set aside, and <strong>all the others work normally</strong>. Same thing mid-session with "erreur, désactivé jusqu'au prochain /reload" (error, disabled until next reload).</span></p>
+<ol class="steps">
+	<li><span lang="fr">Tape <code>/reload</code> : une erreur passagère disparaît souvent.</span><span lang="en">Type <code>/reload</code>: a passing error often goes away.</span></li>
+	<li><span lang="fr">Vérifie que l'addon est à jour : avec le compagnon, il se met à jour tout seul (redémarre-le) ; sinon, retélécharge le pack ou mets à jour l'addon sur CurseForge.</span><span lang="en">Check the addon is up to date: with the companion it updates itself (restart it); otherwise download the pack again or update the addon on CurseForge.</span></li>
+	<li><span lang="fr">Toujours là ? Coupe ce module en attendant (Options &gt; Extensions &gt; Guildkeep), et préviens un administrateur de ta guilde avec le texte de l'erreur Lua (affiché par le jeu) et le résultat de <code>/gkeep debug</code>.</span><span lang="en">Still there? Turn that module off meanwhile (Options &gt; AddOns &gt; Guildkeep), and tell a guild admin, with the Lua error text (shown by the game) and the output of <code>/gkeep debug</code>.</span></li>
+</ol>
+<aside class="callout c-tip"><p class="callout-title"><span lang="fr">Astuce</span><span lang="en">Tip</span></p><p><span lang="fr">Si le jeu n'affiche pas les erreurs Lua, active-les avec <code>/console scriptErrors 1</code>, puis <code>/reload</code>.</span><span lang="en">If the game doesn't show Lua errors, turn them on with <code>/console scriptErrors 1</code>, then <code>/reload</code>.</span></p></aside>
+</section>
+
+<section>
+<h2 id="donnees"><a class="anchor" href="#donnees" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Mes données ou celles de la guilde n'arrivent pas</span><span lang="en">My data or the guild's isn't arriving</span></h2>
+<p><span lang="fr">Passe cette liste dans l'ordre :</span><span lang="en">Go through this list in order:</span></p>
+<ol class="steps">
+	<li><span lang="fr"><strong>Le compagnon tourne-t-il ?</strong> Sur Windows, relance <strong>GuildkeepCompanion</strong> : s'il tourne déjà, il le dit. Sur Mac et Linux, il doit rester ouvert pendant que tu joues.</span><span lang="en"><strong>Is the companion running?</strong> On Windows, run <strong>GuildkeepCompanion</strong> again: if it's already running, it says so. On Mac and Linux, it must stay open while you play.</span></li>
+	<li><span lang="fr"><strong>As-tu fait un <code>/reload</code> ?</strong> Tes relevés ne partent qu'à la déconnexion ou au <code>/reload</code>, et les nouvelles données de la guilde ne s'affichent qu'au chargement suivant de l'interface.</span><span lang="en"><strong>Did you <code>/reload</code>?</strong> Your scans only leave at logout or <code>/reload</code>, and new guild data only shows on the next UI load.</span></li>
+	<li><span lang="fr"><strong>Ta guilde est-elle inscrite sur ce PC ?</strong> En bas de la fenêtre, « « X » n'utilise pas encore Guildkeep » veut dire que le pack de cette guilde n'a pas été lancé ici (ou que la guilde n'a pas encore fait <code class="d"><span lang="fr">/gkeep-setup</span><span lang="en">/gkeep-setup</span></code>).</span><span lang="en"><strong>Is your guild set up on this PC?</strong> At the bottom of the window, "« X » n'utilise pas encore Guildkeep" (doesn't use Guildkeep yet) means that guild's pack wasn't run here (or the guild hasn't run <code class="d"><span lang="fr">/gkeep-setup</span><span lang="en">/gkeep-setup</span></code> yet).</span></li>
+	<li><span lang="fr"><strong>Recettes manquantes ?</strong> Ouvre la fenêtre de chacun de tes métiers : les recettes ne se lisent que là. Voir <a href="/docs/metiers.html#releve">Métiers</a>.</span><span lang="en"><strong>Missing recipes?</strong> Open each of your profession windows: recipes can only be read there. See <a href="/docs/metiers.html#releve">Professions</a>.</span></li>
+	<li><span lang="fr"><strong>Le compagnon dit « lien révoqué ou guilde supprimée » ?</strong> L'admin a créé un nouveau lien : retélécharge le pack depuis le nouveau lien et lance-le.</span><span lang="en"><strong>Does the companion say "lien révoqué ou guilde supprimée"?</strong> The admin made a new link: download the pack again from the new link and run it.</span></li>
+	<li><span lang="fr"><strong>Personnage hors guilde ?</strong> Un personnage sans guilde n'est jamais relevé ni partagé.</span><span lang="en"><strong>Character outside a guild?</strong> A character with no guild is never scanned or shared.</span></li>
+</ol>
+<p><span lang="fr">Pour lire les messages du compagnon, voir <a href="/docs/compagnon.html#messages">la liste</a>. Sans compagnon, n'oublie pas que le <a href="/docs/compagnon.html#canal-manuel">canal manuel</a> est à refaire à chaque fois.</span><span lang="en">To read the companion's messages, see <a href="/docs/compagnon.html#messages">the list</a>. Without the companion, remember the <a href="/docs/compagnon.html#canal-manuel">manual channel</a> has to be redone each time.</span></p>
+</section>
+
+<section>
+<h2 id="reload"><a class="anchor" href="#reload" aria-hidden="true" tabindex="-1">#</a><span lang="fr">À quoi sert /reload ?</span><span lang="en">What is /reload for?</span></h2>
+<p><span lang="fr"><code>/reload</code> recharge l'interface du jeu sans te déconnecter. Pour Guildkeep, il fait trois choses : il écrit tes relevés sur le disque (le compagnon les envoie aussitôt), il recharge les données de la guilde reçues entre-temps, et il applique les modules que tu as cochés ou décochés. Tu le fais quand :</span><span lang="en"><code>/reload</code> reloads the game's UI without logging out. For Guildkeep it does three things: it writes your scans to disk (the companion sends them right away), it reloads guild data received meanwhile, and it applies the modules you ticked or unticked. Do it when:</span></p>
+<ul>
+	<li><span lang="fr">tu viens d'ouvrir tes fenêtres de métier, de t'inscrire, de commander, et tu veux que ce soit sur Discord tout de suite ;</span><span lang="en">you just opened your profession windows, signed up, ordered, and want it on Discord right now;</span></li>
+	<li><span lang="fr">le compagnon annonce « Data.lua écrit » ;</span><span lang="en">the companion says "Data.lua écrit" (written);</span></li>
+	<li><span lang="fr">tu as changé un module.</span><span lang="en">you changed a module.</span></li>
+</ul>
+<p><span lang="fr">Entre joueurs connectés en même temps, la plupart des changements (inscriptions, commandes, réservations, annonces, quêtes) passent tout de suite, sans <code>/reload</code>.</span><span lang="en">Between players online at the same time, most changes (sign-ups, orders, reserves, announcements, quests) go through right away, without <code>/reload</code>.</span></p>
+</section>
+
+<section>
+<h2 id="officier"><a class="anchor" href="#officier" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Je suis officier mais Discord ne me reconnaît pas</span><span lang="en">I'm an officer but Discord doesn't recognize me</span></h2>
+<ol class="steps">
+	<li><span lang="fr">Relie ton personnage officier à ton compte : <code class="d"><span lang="fr">/gkeep lier</span><span lang="en">/gkeep link</span></code>.</span><span lang="en">Link your officer character to your account: <code class="d"><span lang="fr">/gkeep lier</span><span lang="en">/gkeep link</span></code>.</span></li>
+	<li><span lang="fr">Ajoute ton <a href="/docs/compagnon.html#token">token personnel</a> au compagnon, puis <code>/reload</code> en jeu : ton rang est relevé et enregistré.</span><span lang="en">Add your <a href="/docs/compagnon.html#token">personal token</a> to the companion, then <code>/reload</code> in game: your rank is read and recorded.</span></li>
+	<li><span lang="fr">En attendant, une personne avec le droit « Gérer le serveur » peut agir comme officier sur Discord.</span><span lang="en">Meanwhile, someone with the "Manage Server" permission can act as an officer on Discord.</span></li>
+</ol>
+</section>
+
+<section>
+<h2 id="autres"><a class="anchor" href="#autres" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Autres soucis courants</span><span lang="en">Other common issues</span></h2>
+<h3 id="onglet-guilde"><span lang="fr">L'onglet Guildkeep n'apparaît pas dans la fenêtre de guilde</span><span lang="en">The Guildkeep tab doesn't show in the guild window</span></h3>
+<p><span lang="fr"><code>/gkeep</code> ouvre la même fenêtre. Si l'onglet manque, <code>/gkeep debug</code> donne un diagnostic à transmettre à un administrateur.</span><span lang="en"><code>/gkeep</code> opens the same window. If the tab is missing, <code>/gkeep debug</code> prints a diagnosis to pass on to an admin.</span></p>
+<h3 id="pseudo"><span lang="fr">Mon pseudo Discord n'est pas renommé</span><span lang="en">My Discord nickname isn't renamed</span></h3>
+<p><span lang="fr">Le renommage doit être activé (<code class="d"><span lang="fr">/gkeep-setup</span><span lang="en">/gkeep-setup</span></code>) et le bot doit avoir « Gérer les pseudos », avec un rôle placé au-dessus du tien. Un bot ne peut jamais renommer le propriétaire du serveur.</span><span lang="en">Renaming must be on (<code class="d"><span lang="fr">/gkeep-setup</span><span lang="en">/gkeep-setup</span></code>) and the bot needs "Manage Nicknames", with a role above yours. A bot can never rename the server owner.</span></p>
+<h3 id="inviter"><span lang="fr">« Inviter les confirmés » ne fait rien</span><span lang="en">"Inviter les confirmés" (invite confirmed) does nothing</span></h3>
+<p><span lang="fr">Il faut être hors combat, chef ou assistant du groupe (ou sans groupe), pas dans un groupe de recherche ; seuls les confirmés en ligne sont invités. Le chat dit ce qui bloque.</span><span lang="en">You must be out of combat, group leader or assistant (or not grouped), not in a looking-for-group party; only confirmed players online are invited. Chat says what's blocking.</span></p>
+<h3 id="anglais"><span lang="fr">L'addon est-il traduit en anglais ?</span><span lang="en">Is the addon translated into English?</span></h3>
+<p><span lang="fr">Pas encore : l'interface en jeu est en français. Le bot Discord et ce site parlent déjà anglais.</span><span lang="en">Not yet: the in-game interface is in French. The Discord bot and this site already speak English.</span></p>
+<h3 id="plusieurs-guildes"><span lang="fr">J'ai des personnages dans deux guildes</span><span lang="en">My characters are in two guilds</span></h3>
+<p><span lang="fr">Lance le pack de chaque guilde une fois. Un seul compagnon les synchronise toutes, et chaque personnage ne voit et n'envoie que les données de sa propre guilde.</span><span lang="en">Run each guild's pack once. A single companion syncs them all, and each character only sees and sends its own guild's data.</span></p>
+</section>
+
+<section>
+<h2 id="securite"><a class="anchor" href="#securite" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Sécurité et vie privée</span><span lang="en">Security and privacy</span></h2>
+<ul>
+	<li><span lang="fr"><strong>Jamais de mot de passe</strong>, d'e-mail ou de compte Battle.net. Le compagnon ne lit et n'écrit que les fichiers de l'addon Guildkeep, et ne lance jamais le jeu.</span><span lang="en"><strong>Never a password</strong>, an email or a Battle.net account. The companion only reads and writes the Guildkeep addon's own files, and never launches the game.</span></li>
+	<li><span lang="fr"><strong>Chaque guilde est isolée</strong> : ses données ne sont visibles que de ses membres.</span><span lang="en"><strong>Each guild is isolated</strong>: its data is only visible to its members.</span></li>
+	<li><span lang="fr"><strong>Le lien d'installation est une clé</strong> : il donne accès aux données de la guilde. Garde-le sur ton serveur Discord. S'il a fuité, <code class="d"><span lang="fr">/gkeep-setup</span><span lang="en">/gkeep-setup</span></code> puis <span class="ui"><span lang="fr">Nouveau lien d'installation</span><span lang="en">New install link</span></span> : l'ancien cesse aussitôt de fonctionner.</span><span lang="en"><strong>The install link is a key</strong>: it grants access to the guild's data. Keep it on your Discord server. If it leaked, <code class="d"><span lang="fr">/gkeep-setup</span><span lang="en">/gkeep-setup</span></code> then <span class="ui"><span lang="fr">Nouveau lien d'installation</span><span lang="en">New install link</span></span>: the old one stops working at once.</span></li>
+	<li><span lang="fr"><strong>Ton token personnel</strong> agit en ton nom : ne le partage jamais.</span><span lang="en"><strong>Your personal token</strong> acts on your behalf: never share it.</span></li>
+	<li><span lang="fr"><strong>Windows ou macOS avertissent</strong> au premier lancement du compagnon parce qu'il n'est pas signé par Microsoft ou notarisé par Apple ; son code source est public.</span><span lang="en"><strong>Windows or macOS warn you</strong> the first time you run the companion because it isn't signed by Microsoft or notarized by Apple; its source code is public.</span></li>
+	<li><span lang="fr"><strong>Tout effacer</strong> : <code class="d"><span lang="fr">/gkeep-setup</span><span lang="en">/gkeep-setup</span></code>, puis <span class="ui"><span lang="fr">Supprimer la guilde</span><span lang="en">Delete the guild</span></span>. Si le bot est simplement retiré du serveur, tout est effacé au bout de 30 jours.</span><span lang="en"><strong>Erase everything</strong>: <code class="d"><span lang="fr">/gkeep-setup</span><span lang="en">/gkeep-setup</span></code>, then <span class="ui"><span lang="fr">Supprimer la guilde</span><span lang="en">Delete the guild</span></span>. If the bot is simply removed from the server, everything is erased after 30 days.</span></li>
+</ul>
+<p><span lang="fr">Le détail de ce qui est enregistré : <a href="/confidentialite.html">confidentialité</a> et <a href="/conditions.html">conditions</a>.</span><span lang="en">Details of what is stored: <a href="/confidentialite.html">privacy</a> and <a href="/conditions.html">terms</a>.</span></p>
+</section>
+<nav class="doc-pager" aria-label="Pages voisines / Adjacent pages">
+<a class="prev" href="/docs/commandes.html" rel="prev"><small><span lang="fr">← Précédent</span><span lang="en">← Previous</span></small><b><span lang="fr">Commandes Discord</span><span lang="en">Discord commands</span></b></a>
+</nav>
+</main>
+</div>
+
+<footer class="foot">
+	<span><span lang="fr">Outil de guilde pour WoW: Forever</span><span lang="en">Guild tool for WoW: Forever</span></span>
+	<nav aria-label="Pied de page / Footer">
+		<a href="/"><span lang="fr">Accueil</span><span lang="en">Home</span></a>
+		<a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a>
+		<a href="/confidentialite.html"><span lang="fr">Confidentialité</span><span lang="en">Privacy</span></a>
+		<a href="/conditions.html"><span lang="fr">Conditions</span><span lang="en">Terms</span></a>
+		<a href="https://github.com/AntoineRenoux/GuildProfessions" rel="noopener"><span lang="fr">Code source</span><span lang="en">Source code</span></a>
+	</nav>
+	<span class="end">2026</span>
+	<span class="credit"><span lang="fr">World of Warcraft est une marque de Blizzard Entertainment ; Guildkeep n'y est pas affilié.</span><span lang="en">World of Warcraft is a trademark of Blizzard Entertainment; Guildkeep is not affiliated.</span></span>
+</footer>
+
+<script src="/site.js?v=6" defer></script>
+</body>
+</html>

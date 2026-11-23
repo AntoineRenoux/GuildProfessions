@@ -146,7 +146,7 @@ function T.ShowEveryTab(game)
 	if not game.GP.IsMainFrameShown() then
 		game.GP.ToggleMainFrame()
 	end
-	for _, key in ipairs({ "tabProfessions", "tabMembers", "tabOrders", "tabEvents", "tabHistory", "tabQuests" }) do
+	for _, key in ipairs({ "tabProfessions", "tabMembers", "tabOrders", "tabEvents", "tabHistory", "tabQuests", "tabGuild" }) do
 		game.GP.ShowTab(key)
 		-- Bascules de l'onglet : sections du détail d'un événement, modes d'affichage.
 		for _, field in ipairs({ "section", "mode" }) do

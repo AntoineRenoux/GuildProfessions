@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guildkeep · commandes Discord</title>
+<meta name="description" content="Toutes les commandes Discord de Guildkeep sous /gkeep, en anglais et en français, avec qui peut s&#x27;en servir, et les commandes en jeu de l&#x27;addon.">
+<link rel="preload" href="/fonts/cinzel-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/alegreya-sans-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/site.css?v=6">
+<script>document.documentElement.classList.add('js');try{var l=localStorage.getItem('gk-lang')||((navigator.language||'fr').toLowerCase().indexOf('fr')===0?'fr':'en');document.documentElement.lang=l}catch(e){}</script>
+</head>
+<body>
+<svg class="sprite" aria-hidden="true" focusable="false"><defs><linearGradient id="gk-gold" gradientUnits="userSpaceOnUse" x1="0" y1="4" x2="0" y2="44"><stop offset="0" stop-color="#fff1bf"/><stop offset=".45" stop-color="#f0c25e"/><stop offset="1" stop-color="#9a6a20"/></linearGradient>
+<symbol id="i-metiers" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M6 15h25c1 5 5 8 11 8v4H31l3 9H14l3-9h-3C9 27 6 22 6 15z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M36 6l4 4M33 9l4 4"/></symbol>
+<symbol id="i-membres" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M24 5c9 0 15 7 15 16v14l-6 6h-4V27h-10v14h-4l-6-6V21C9 12 15 5 24 5z"/><path fill="#1a1208" d="M15 20h18v4H15z"/></symbol>
+<symbol id="i-artisanat" viewBox="0 0 48 48"><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M10 38L36 12"/><ellipse fill="none" stroke="url(#gk-gold)" stroke-width="3.2" cx="37.5" cy="10.5" rx="3.2" ry="1.8" transform="rotate(-45 37.5 10.5)"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="1.8" d="M39 9c6 6-4 12-10 16s-14 10-8 17"/></symbol>
+<symbol id="i-evenements" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M7 11h34v30H7z"/><path fill="#1a1208" d="M10 19h28v19H10z"/><path fill="url(#gk-gold)" d="M13 22h6v5h-6zM21 22h6v5h-6zM29 22h6v5h-6zM13 30h6v5h-6zM21 30h6v5h-6z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M15 6v8M33 6v8"/></symbol>
+<symbol id="i-raid" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M24 4l17 6v12c0 11-7 18-17 22C14 40 7 33 7 22V10z"/><path fill="#1a1208" d="M24 11l11 4v8c0 7-4 12-11 15z"/></symbol>
+<symbol id="i-presence" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M10 6h22l7 7v29H10z"/><path fill="none" stroke="#1a1208" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.4" d="M16 26l5 5 10-11"/></symbol>
+<symbol id="i-quetes" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M20 5h8l-1.5 26h-5zM24 35a4 4 0 1 1 0 8 4 4 0 0 1 0-8z"/></symbol>
+<symbol id="i-communication" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M6 19h8l20-11v32L14 29H6z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M39 17c3 4 3 10 0 14M12 30l3 11h6l-3-11"/></symbol>
+<symbol id="i-install" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M17 12c0-5 3-8 7-8s7 3 7 8h-3c0-3-2-5-4-5s-4 2-4 5z"/><path fill="url(#gk-gold)" d="M10 14h28l4 26a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4z"/><path fill="#1a1208" d="M20 22h8v6h-8z"/></symbol>
+<symbol id="i-compagnon" viewBox="0 0 48 48"><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="4" d="M6 34c6-14 30-14 36 0M12 34V22M24 34V18M36 34V22"/><path fill="url(#gk-gold)" d="M4 34h40v5H4z"/></symbol>
+<symbol id="i-cmd" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M5 9h38v30H5z"/><path fill="#1a1208" d="M8 15h32v21H8z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M14 32l8-13M26 32h8"/></symbol>
+<symbol id="i-faq" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M8 6h26l6 6v30H8z"/><path fill="none" stroke="#1a1208" stroke-linecap="round" stroke-width="3.4" d="M19 19c0-4 3-6 5.5-6s5.5 2 5.5 5.5-5 4-5 8M24.5 32v.5"/></symbol>
+</defs></svg>
+<header class="topbar">
+	<a class="wordmark" href="/">Guildkeep</a>
+	<nav aria-label="Navigation">
+		<a href="/docs/" aria-current="page"><span lang="fr">Documentation</span><span lang="en">Docs</span></a>
+		<a class="hide-phone" href="/docs/faq.html"><span lang="fr">Aide</span><span lang="en">Help</span></a>
+		<div class="lang-switch" role="group" aria-label="Langue / Language">
+			<button type="button" data-set-lang="fr" aria-pressed="true">FR</button>
+			<button type="button" data-set-lang="en" aria-pressed="false">EN</button>
+		</div>
+		<a class="button invite-link hide-phone" href="/#mise-en-place"><span lang="fr">Ajouter à Discord</span><span lang="en">Add to Discord</span></a>
+	</nav>
+</header>
+
+<div class="doc">
+<aside class="doc-nav" aria-label="Sommaire / Contents"><details open><summary><span><span lang="fr">Sommaire</span><span lang="en">Contents</span></span><i class="plus" aria-hidden="true"></i></summary><div>
+<p class="doc-nav-label"><span lang="fr">Démarrer</span><span lang="en">Getting started</span></p><ul>
+<li><a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a>
+</li>
+<li><a href="/docs/installation.html"><span lang="fr">Installer Guildkeep</span><span lang="en">Installing Guildkeep</span></a>
+</li>
+<li><a href="/docs/compagnon.html"><span lang="fr">L'app compagnon</span><span lang="en">The companion app</span></a>
+</li>
+</ul>
+<p class="doc-nav-label"><span lang="fr">Modules</span><span lang="en">Modules</span></p><ul>
+<li><a href="/docs/metiers.html"><span lang="fr">Métiers</span><span lang="en">Professions</span></a>
+</li>
+<li><a href="/docs/membres.html"><span lang="fr">Membres</span><span lang="en">Members</span></a>
+</li>
+<li><a href="/docs/artisanat.html"><span lang="fr">Artisanat</span><span lang="en">Crafting orders</span></a>
+</li>
+<li><a href="/docs/evenements.html"><span lang="fr">Événements</span><span lang="en">Events</span></a>
+</li>
+<li><a href="/docs/soiree-raid.html"><span lang="fr">Soirée de raid</span><span lang="en">Raid night</span></a>
+</li>
+<li><a href="/docs/presence.html"><span lang="fr">Présence et butin</span><span lang="en">Attendance and loot</span></a>
+</li>
+<li><a href="/docs/quetes.html"><span lang="fr">Quêtes</span><span lang="en">Quests</span></a>
+</li>
+<li><a href="/docs/communication.html"><span lang="fr">Communication</span><span lang="en">Communication</span></a>
+</li>
+</ul>
+<p class="doc-nav-label"><span lang="fr">Référence</span><span lang="en">Reference</span></p><ul>
+<li><a href="/docs/commandes.html" aria-current="page"><span lang="fr">Commandes Discord</span><span lang="en">Discord commands</span></a>
+<ul>
+<li><a href="#mode-d-emploi"><span lang="fr">Mode d'emploi</span><span lang="en">How to use them</span></a></li>
+<li><a href="#compte"><span lang="fr">Compte, aide et canal manuel</span><span lang="en">Account, help and manual channel</span></a></li>
+<li><a href="#admin"><span lang="fr">Administration</span><span lang="en">Administration</span></a></li>
+<li><a href="#metiers"><span lang="fr">Métiers</span><span lang="en">Professions</span></a></li>
+<li><a href="#artisanat"><span lang="fr">Artisanat (commandes)</span><span lang="en">Crafting orders</span></a></li>
+<li><a href="#evenements"><span lang="fr">Événements</span><span lang="en">Events</span></a></li>
+<li><a href="#soiree"><span lang="fr">Soirée de raid</span><span lang="en">Raid night</span></a></li>
+<li><a href="#presence"><span lang="fr">Présence et butin</span><span lang="en">Attendance and loot</span></a></li>
+<li><a href="#quetes"><span lang="fr">Quêtes</span><span lang="en">Quests</span></a></li>
+<li><a href="#communication"><span lang="fr">Communication</span><span lang="en">Communication</span></a></li>
+<li><a href="#en-jeu"><span lang="fr">Commandes en jeu</span><span lang="en">In-game commands</span></a></li>
+</ul>
+</li>
+<li><a href="/docs/faq.html"><span lang="fr">FAQ et dépannage</span><span lang="en">FAQ and troubleshooting</span></a>
+</li>
+</ul>
+</div></details></aside>
+<main class="doc-main" id="contenu">
+<nav class="crumbs" aria-label="Fil d'Ariane / Breadcrumb"><ol class="crumbs-list"><li><a href="/"><span lang="fr">Accueil</span><span lang="en">Home</span></a></li><li><a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a></li><li aria-current="page"><span lang="fr">Commandes Discord</span><span lang="en">Discord commands</span></li></ol></nav>
+<h1><span lang="fr">Commandes Discord</span><span lang="en">Discord commands</span></h1>
+<p class="lead"><span lang="fr">Toutes les commandes du bot, rangées par module, avec leur nom anglais et français, et qui peut s'en servir. Puis les commandes à taper en jeu.</span><span lang="en">Every bot command, by module, with its English and French name, and who can use it. Then the commands to type in game.</span></p>
+<div class="rule" aria-hidden="true"><i></i></div>
+<section>
+<h2 id="mode-d-emploi"><a class="anchor" href="#mode-d-emploi" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Mode d'emploi</span><span lang="en">How to use them</span></h2>
+<ul>
+	<li><span lang="fr">Tout passe par une seule commande, <code class="d"><span lang="fr">/gkeep</span><span lang="en">/gkeep</span></code>, suivie d'un groupe et d'une action. Tape <code>/gkeep</code> dans n'importe quel salon : Discord propose la suite et chaque option.</span><span lang="en">Everything goes through one command, <code class="d"><span lang="fr">/gkeep</span><span lang="en">/gkeep</span></code>, followed by a group and an action. Type <code>/gkeep</code> in any channel: Discord suggests the rest and every option.</span></li>
+	<li><span lang="fr"><strong>Les noms suivent la langue de ton Discord</strong> : un client en français voit <code class="d"><span lang="fr">/gkeep evenement inscription</span><span lang="en">/gkeep evenement inscription</span></code>, un client en anglais <code class="d">/gkeep event signup</code>. C'est la même commande.</span><span lang="en"><strong>Names follow your Discord language</strong>: a client in English sees <code class="d">/gkeep event signup</code>, a client in French <code class="d">/gkeep evenement inscription</code>. It's the same command.</span></li>
+	<li><span lang="fr">Les options suivies d'une liste (événement, personnage, recette, commande…) se remplissent en tapant le début : choisis dans les suggestions plutôt que de recopier un numéro.</span><span lang="en">Options backed by a list (event, character, recipe, order…) fill in as you type: pick from the suggestions rather than copying a number.</span></li>
+	<li><span lang="fr">La plupart des réponses ne sont visibles que de toi. Les rappels et les annonces, eux, sont publics.</span><span lang="en">Most replies are only visible to you. Reminders and announcements are public.</span></li>
+	<li><span lang="fr"><code class="d"><span lang="fr">/gkeep aide</span><span lang="en">/gkeep help</span></code> résume tout en deux écrans.</span><span lang="en"><code class="d"><span lang="fr">/gkeep aide</span><span lang="en">/gkeep help</span></code> sums it all up in two screens.</span></li>
+</ul>
+<p class="rights"><span lang="fr">Qui peut :</span><span lang="en">Who can:</span> <span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span> <span class="badge b-self"><span lang="fr">Toi seul</span><span lang="en">Only you</span></span> <span class="badge b-org"><span lang="fr">L'artisan</span><span lang="en">The crafter</span></span> <span class="badge b-self"><span lang="fr">Le demandeur</span><span lang="en">The requester</span></span> <span class="badge b-org"><span lang="fr">Organisateur ou officier</span><span lang="en">Organizer or officer</span></span> <span class="badge b-officer"><span lang="fr">Officier</span><span lang="en">Officer</span></span> <span class="badge b-admin"><span lang="fr">Admin « Gérer le serveur »</span><span lang="en">Admin (“Manage Server”)</span></span> — <span lang="fr">voir <a href="/docs/installation.html#droits">Qui peut faire quoi</a>.</span><span lang="en">see <a href="/docs/installation.html#droits">Who can do what</a>.</span></p>
+<aside class="callout c-note"><p class="callout-title"><span lang="fr">Bon à savoir</span><span lang="en">Good to know</span></p><p><span lang="fr">Il faut d'abord relier un personnage à ton compte (<code class="d"><span lang="fr">/gkeep lier</span><span lang="en">/gkeep link</span></code>) pour tout ce qui agit en ton nom : s'inscrire, réserver, commander, proposer, contribuer, créer un événement.</span><span lang="en">You first need to link a character to your account (<code class="d"><span lang="fr">/gkeep lier</span><span lang="en">/gkeep link</span></code>) for anything that acts on your behalf: signing up, reserving, ordering, offering, contributing, creating an event.</span></p></aside>
+</section>
+
+<section>
+<h2 id="compte"><a class="anchor" href="#compte" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Compte, aide et canal manuel</span><span lang="en">Account, help and manual channel</span></h2>
+<div class="table-wrap"><table class="doc-table">
+	<thead><tr><th scope="col"><span lang="fr">Anglais</span><span lang="en">English</span></th><th scope="col"><span lang="fr">Français</span><span lang="en">French</span></th><th scope="col"><span lang="fr">Qui peut</span><span lang="en">Who can</span></th><th scope="col"><span lang="fr">Ce que ça fait</span><span lang="en">What it does</span></th></tr></thead>
+	<tbody>
+		<tr><td><code class="d">/gkeep help</code></td><td><code class="d">/gkeep aide</code></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Ce que fait Guildkeep et comment s'en servir</span><span lang="en">What Guildkeep does and how to use it</span></td></tr>
+		<tr><td><code class="d">/gkeep link</code></td><td><code class="d">/gkeep lier</code></td><td><span class="badge b-self"><span lang="fr">Toi seul</span><span lang="en">Only you</span></span></td><td><span lang="fr">Lier un de tes personnages à ton compte Discord</span><span lang="en">Link one of your characters to your Discord account</span></td></tr>
+		<tr><td><code class="d">/gkeep main</code></td><td><code class="d">/gkeep principal</code></td><td><span class="badge b-self"><span lang="fr">Toi seul</span><span lang="en">Only you</span></span></td><td><span lang="fr">Choisir ton personnage principal (ton pseudo, si la guilde l'a activé)</span><span lang="en">Pick your main character (used as your nickname if the guild enabled it)</span></td></tr>
+		<tr><td><code class="d">/gkeep token</code></td><td><code class="d">/gkeep token</code></td><td><span class="badge b-self"><span lang="fr">Toi seul</span><span lang="en">Only you</span></span></td><td><span lang="fr">Ton token personnel pour l'app compagnon (facultatif)</span><span lang="en">Your personal token for the companion app (optional)</span></td></tr>
+		<tr><td><code class="d">/gkeep export</code></td><td><code class="d">/gkeep exporter</code></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Obtenir la chaîne des données de la guilde à coller en jeu (/gkeep, Importer)</span><span lang="en">Get the guild data string to paste in game (/gkeep, Import)</span></td></tr>
+		<tr><td><code class="d">/gkeep import</code></td><td><code class="d">/gkeep importer</code></td><td><span class="badge b-self"><span lang="fr">Toi seul</span><span lang="en">Only you</span></span></td><td><span lang="fr">Envoyer la chaîne exportée en jeu (/gkeep, Exporter)</span><span lang="en">Send the string exported in game (/gkeep, Export)</span></td></tr>
+	</tbody>
+</table></div>
+</section>
+
+<section>
+<h2 id="admin"><a class="anchor" href="#admin" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Administration</span><span lang="en">Administration</span></h2>
+<div class="table-wrap"><table class="doc-table">
+	<thead><tr><th scope="col"><span lang="fr">Anglais</span><span lang="en">English</span></th><th scope="col"><span lang="fr">Français</span><span lang="en">French</span></th><th scope="col"><span lang="fr">Qui peut</span><span lang="en">Who can</span></th><th scope="col"><span lang="fr">Ce que ça fait</span><span lang="en">What it does</span></th></tr></thead>
+	<tbody>
+		<tr><td><code class="d">/gkeep-setup</code></td><td><code class="d">/gkeep-setup</code></td><td><span class="badge b-admin"><span lang="fr">Admin « Gérer le serveur »</span><span lang="en">Admin (“Manage Server”)</span></span></td><td><span lang="fr">Créer la guilde Guildkeep de ce serveur, ou la gérer</span><span lang="en">Create this server's Guildkeep guild, or manage it</span></td></tr>
+		<tr><td><code class="d">/gkeep announce channel</code></td><td><code class="d">/gkeep annonce salon</code></td><td><span class="badge b-admin"><span lang="fr">Admin « Gérer le serveur »</span><span lang="en">Admin (“Manage Server”)</span></span></td><td><span lang="fr">Salon où publier les annonces (gestionnaires du serveur)</span><span lang="en">Channel where announcements are posted (server managers)</span></td></tr>
+	</tbody>
+</table></div>
+</section>
+
+<section>
+<h2 id="metiers"><a class="anchor" href="#metiers" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Métiers</span><span lang="en">Professions</span></h2>
+<div class="table-wrap"><table class="doc-table">
+	<thead><tr><th scope="col"><span lang="fr">Anglais</span><span lang="en">English</span></th><th scope="col"><span lang="fr">Français</span><span lang="en">French</span></th><th scope="col"><span lang="fr">Qui peut</span><span lang="en">Who can</span></th><th scope="col"><span lang="fr">Ce que ça fait</span><span lang="en">What it does</span></th></tr></thead>
+	<tbody>
+		<tr><td><code class="d">/gkeep profession who</code></td><td><code class="d">/gkeep metier qui</code></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Qui peut le fabriquer ? Par métier, niveau ou recette</span><span lang="en">Who can craft it? Search by profession, level or recipe</span></td></tr>
+		<tr><td><code class="d">/gkeep profession recipes</code></td><td><code class="d">/gkeep metier recettes</code></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Les recettes connues d'un personnage</span><span lang="en">Recipes known by a character</span></td></tr>
+		<tr><td><code class="d">/gkeep profession list</code></td><td><code class="d">/gkeep metier liste</code></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Tout l'annuaire des métiers de la guilde</span><span lang="en">The guild's whole profession directory</span></td></tr>
+		<tr><td><code class="d">/gkeep profession set</code></td><td><code class="d">/gkeep metier definir</code></td><td><span class="badge b-self"><span lang="fr">Toi seul</span><span lang="en">Only you</span></span></td><td><span lang="fr">Déclarer ou mettre à jour un métier d'un de tes personnages</span><span lang="en">Declare or update one of your character's professions</span></td></tr>
+		<tr><td><code class="d">/gkeep profession remove</code></td><td><code class="d">/gkeep metier retirer</code></td><td><span class="badge b-self"><span lang="fr">Toi seul</span><span lang="en">Only you</span></span></td><td><span lang="fr">Retirer un métier d'un de tes personnages</span><span lang="en">Remove a profession from one of your characters</span></td></tr>
+	</tbody>
+</table></div>
+</section>
+
+<section>
+<h2 id="artisanat"><a class="anchor" href="#artisanat" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Artisanat (commandes)</span><span lang="en">Crafting orders</span></h2>
+<div class="table-wrap"><table class="doc-table">
+	<thead><tr><th scope="col"><span lang="fr">Anglais</span><span lang="en">English</span></th><th scope="col"><span lang="fr">Français</span><span lang="en">French</span></th><th scope="col"><span lang="fr">Qui peut</span><span lang="en">Who can</span></th><th scope="col"><span lang="fr">Ce que ça fait</span><span lang="en">What it does</span></th></tr></thead>
+	<tbody>
+		<tr><td><code class="d">/gkeep order new</code></td><td><code class="d">/gkeep commande nouvelle</code></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Demander un craft : à tous les artisans, ou à un artisan précis</span><span lang="en">Ask for a craft: open to every crafter, or from a given crafter</span></td></tr>
+		<tr><td><code class="d">/gkeep order list</code></td><td><code class="d">/gkeep commande liste</code></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Les commandes et demandes en cours</span><span lang="en">Craft orders and open requests</span></td></tr>
+		<tr><td><code class="d">/gkeep order show</code></td><td><code class="d">/gkeep commande voir</code></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Le détail d'une commande et les offres des artisans</span><span lang="en">An order's details and the crafters' offers</span></td></tr>
+		<tr><td><code class="d">/gkeep order catalog</code></td><td><code class="d">/gkeep commande catalogue</code></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Chercher dans le catalogue de recettes de la guilde, avec qui sait les faire</span><span lang="en">Search the guild's recipe catalog, with who can make each recipe</span></td></tr>
+		<tr><td><code class="d">/gkeep order offer</code></td><td><code class="d">/gkeep commande proposer</code></td><td><span class="badge b-org"><span lang="fr">L'artisan</span><span lang="en">The crafter</span></span></td><td><span lang="fr">Proposer de faire une demande ouverte (artisan)</span><span lang="en">Offer to make an open request (crafter)</span></td></tr>
+		<tr><td><code class="d">/gkeep order withdraw</code></td><td><code class="d">/gkeep commande retirer</code></td><td><span class="badge b-org"><span lang="fr">L'artisan</span><span lang="en">The crafter</span></span></td><td><span lang="fr">Retirer ton offre</span><span lang="en">Withdraw your offer</span></td></tr>
+		<tr><td><code class="d">/gkeep order accept</code></td><td><code class="d">/gkeep commande accepter</code></td><td><span class="badge b-org"><span lang="fr">L'artisan</span><span lang="en">The crafter</span></span> <span class="badge b-self"><span lang="fr">Le demandeur</span><span lang="en">The requester</span></span></td><td><span lang="fr">Accepter une commande (artisan) ou retenir l'offre d'un artisan (demandeur)</span><span lang="en">Accept an order (crafter), or pick a crafter's offer (requester)</span></td></tr>
+		<tr><td><code class="d">/gkeep order ready</code></td><td><code class="d">/gkeep commande prete</code></td><td><span class="badge b-org"><span lang="fr">L'artisan</span><span lang="en">The crafter</span></span></td><td><span lang="fr">Fabriquée, prête à être échangée en main propre (artisan)</span><span lang="en">Crafted and ready to trade in person (crafter)</span></td></tr>
+		<tr><td><code class="d">/gkeep order mailed</code></td><td><code class="d">/gkeep commande envoyee</code></td><td><span class="badge b-org"><span lang="fr">L'artisan</span><span lang="en">The crafter</span></span></td><td><span lang="fr">Envoyée par courrier (artisan)</span><span lang="en">Sent by mail (crafter)</span></td></tr>
+		<tr><td><code class="d">/gkeep order received</code></td><td><code class="d">/gkeep commande recu</code></td><td><span class="badge b-self"><span lang="fr">Le demandeur</span><span lang="en">The requester</span></span></td><td><span lang="fr">Confirmer que tu as reçu l'objet (demandeur)</span><span lang="en">Confirm you received the item (requester)</span></td></tr>
+		<tr><td><code class="d">/gkeep order cancel</code></td><td><code class="d">/gkeep commande annuler</code></td><td><span class="badge b-org"><span lang="fr">L'artisan</span><span lang="en">The crafter</span></span> <span class="badge b-self"><span lang="fr">Le demandeur</span><span lang="en">The requester</span></span></td><td><span lang="fr">Annuler une commande (artisan ou demandeur)</span><span lang="en">Cancel an order (crafter or requester)</span></td></tr>
+	</tbody>
+</table></div>
+</section>
+
+<section>
+<h2 id="evenements"><a class="anchor" href="#evenements" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Événements</span><span lang="en">Events</span></h2>
+<div class="table-wrap"><table class="doc-table">
+	<thead><tr><th scope="col"><span lang="fr">Anglais</span><span lang="en">English</span></th><th scope="col"><span lang="fr">Français</span><span lang="en">French</span></th><th scope="col"><span lang="fr">Qui peut</span><span lang="en">Who can</span></th><th scope="col"><span lang="fr">Ce que ça fait</span><span lang="en">What it does</span></th></tr></thead>
+	<tbody>
+		<tr><td><code class="d">/gkeep event list</code></td><td><code class="d">/gkeep evenement liste</code></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Les événements à venir et qui s'est inscrit</span><span lang="en">Upcoming guild events and who signed up</span></td></tr>
+		<tr><td><code class="d">/gkeep event show</code></td><td><code class="d">/gkeep evenement voir</code></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Le détail d'un événement, sa composition et son roster</span><span lang="en">An event's details, composition and roster</span></td></tr>
+		<tr><td><code class="d">/gkeep event signup</code></td><td><code class="d">/gkeep evenement inscription</code></td><td><span class="badge b-self"><span lang="fr">Toi seul</span><span lang="en">Only you</span></span></td><td><span lang="fr">Répondre à un événement avec un de tes personnages</span><span lang="en">Answer an event with one of your characters</span></td></tr>
+		<tr><td><code class="d">/gkeep event create</code></td><td><code class="d">/gkeep evenement creer</code></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Créer un événement de guilde (raid, donjon, JcJ...)</span><span lang="en">Create a guild event (raid, dungeon, PvP...)</span></td></tr>
+		<tr><td><code class="d">/gkeep event edit</code></td><td><code class="d">/gkeep evenement modifier</code></td><td><span class="badge b-org"><span lang="fr">Organisateur ou officier</span><span lang="en">Organizer or officer</span></span></td><td><span lang="fr">Modifier un événement (organisateur ou officier)</span><span lang="en">Change an event (organizer or officer)</span></td></tr>
+		<tr><td><code class="d">/gkeep event cancel</code></td><td><code class="d">/gkeep evenement annuler</code></td><td><span class="badge b-org"><span lang="fr">Organisateur ou officier</span><span lang="en">Organizer or officer</span></span></td><td><span lang="fr">Annuler un événement (organisateur ou officier)</span><span lang="en">Cancel an event (organizer or officer)</span></td></tr>
+		<tr><td><code class="d">/gkeep event restore</code></td><td><code class="d">/gkeep evenement retablir</code></td><td><span class="badge b-org"><span lang="fr">Organisateur ou officier</span><span lang="en">Organizer or officer</span></span></td><td><span lang="fr">Rétablir un événement annulé (organisateur ou officier)</span><span lang="en">Bring a cancelled event back (organizer or officer)</span></td></tr>
+		<tr><td><code class="d">/gkeep event place</code></td><td><code class="d">/gkeep evenement placer</code></td><td><span class="badge b-org"><span lang="fr">Organisateur ou officier</span><span lang="en">Organizer or officer</span></span></td><td><span lang="fr">Placer un joueur : confirmé, remplaçant, banc (organisateur ou officier)</span><span lang="en">Put a player in the roster: confirmed, standby, bench (organizer or officer)</span></td></tr>
+		<tr><td><code class="d">/gkeep event remind</code></td><td><code class="d">/gkeep evenement rappel</code></td><td><span class="badge b-org"><span lang="fr">Organisateur ou officier</span><span lang="en">Organizer or officer</span></span></td><td><span lang="fr">Rappeler les inscrits dans ce salon (organisateur ou officier)</span><span lang="en">Remind signed-up players in this channel (organizer or officer)</span></td></tr>
+	</tbody>
+</table></div>
+</section>
+
+<section>
+<h2 id="soiree"><a class="anchor" href="#soiree" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Soirée de raid</span><span lang="en">Raid night</span></h2>
+<div class="table-wrap"><table class="doc-table">
+	<thead><tr><th scope="col"><span lang="fr">Anglais</span><span lang="en">English</span></th><th scope="col"><span lang="fr">Français</span><span lang="en">French</span></th><th scope="col"><span lang="fr">Qui peut</span><span lang="en">Who can</span></th><th scope="col"><span lang="fr">Ce que ça fait</span><span lang="en">What it does</span></th></tr></thead>
+	<tbody>
+		<tr><td><code class="d">/gkeep reserve set</code></td><td><code class="d">/gkeep reserve poser</code></td><td><span class="badge b-self"><span lang="fr">Toi seul</span><span lang="en">Only you</span></span> <span class="badge b-org"><span lang="fr">Organisateur ou officier</span><span lang="en">Organizer or officer</span></span></td><td><span lang="fr">Réserver un objet pour un événement (un par priorité)</span><span lang="en">Reserve an item for an event (one per priority)</span></td></tr>
+		<tr><td><code class="d">/gkeep reserve clear</code></td><td><code class="d">/gkeep reserve retirer</code></td><td><span class="badge b-self"><span lang="fr">Toi seul</span><span lang="en">Only you</span></span> <span class="badge b-org"><span lang="fr">Organisateur ou officier</span><span lang="en">Organizer or officer</span></span></td><td><span lang="fr">Retirer une de tes réservations</span><span lang="en">Remove one of your reserves</span></td></tr>
+		<tr><td><code class="d">/gkeep reserve list</code></td><td><code class="d">/gkeep reserve liste</code></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Toutes les réservations d'un événement, objet par objet, avec les conflits</span><span lang="en">All reserves of an event, item by item, with conflicts</span></td></tr>
+		<tr><td><code class="d">/gkeep reserve hard</code></td><td><code class="d">/gkeep reserve ferme</code></td><td><span class="badge b-org"><span lang="fr">Organisateur ou officier</span><span lang="en">Organizer or officer</span></span></td><td><span lang="fr">Réserver un objet d'office : les joueurs ne peuvent plus le réserver (organisateur ou officier)</span><span lang="en">Hard-reserve an item: players can no longer reserve it (organizer or officer)</span></td></tr>
+		<tr><td><code class="d">/gkeep reserve unhard</code></td><td><code class="d">/gkeep reserve lever</code></td><td><span class="badge b-org"><span lang="fr">Organisateur ou officier</span><span lang="en">Organizer or officer</span></span></td><td><span lang="fr">Lever une réservation ferme (organisateur ou officier)</span><span lang="en">Lift a hard reserve (organizer or officer)</span></td></tr>
+		<tr><td><code class="d">/gkeep reserve lock</code></td><td><code class="d">/gkeep reserve verrouiller</code></td><td><span class="badge b-org"><span lang="fr">Organisateur ou officier</span><span lang="en">Organizer or officer</span></span></td><td><span lang="fr">Verrouiller les réservations : seuls les confirmés gardent les leurs (organisateur ou officier)</span><span lang="en">Lock reserves: only confirmed players keep theirs (organizer or officer)</span></td></tr>
+		<tr><td><code class="d">/gkeep reserve unlock</code></td><td><code class="d">/gkeep reserve deverrouiller</code></td><td><span class="badge b-org"><span lang="fr">Organisateur ou officier</span><span lang="en">Organizer or officer</span></span></td><td><span lang="fr">Déverrouiller les réservations (organisateur ou officier)</span><span lang="en">Unlock reserves (organizer or officer)</span></td></tr>
+		<tr><td><code class="d">/gkeep event duty</code></td><td><code class="d">/gkeep evenement soutien</code></td><td><span class="badge b-org"><span lang="fr">Organisateur ou officier</span><span lang="en">Organizer or officer</span></span></td><td><span lang="fr">Confier un rôle de soutien à un joueur, ou le libérer (organisateur ou officier)</span><span lang="en">Give a support duty to a player, or free it (organizer or officer)</span></td></tr>
+		<tr><td><code class="d">/gkeep event checklist</code></td><td><code class="d">/gkeep evenement checklist</code></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Ce qui manque encore avant le raid</span><span lang="en">What is still missing before the raid</span></td></tr>
+	</tbody>
+</table></div>
+</section>
+
+<section>
+<h2 id="presence"><a class="anchor" href="#presence" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Présence et butin</span><span lang="en">Attendance and loot</span></h2>
+<div class="table-wrap"><table class="doc-table">
+	<thead><tr><th scope="col"><span lang="fr">Anglais</span><span lang="en">English</span></th><th scope="col"><span lang="fr">Français</span><span lang="en">French</span></th><th scope="col"><span lang="fr">Qui peut</span><span lang="en">Who can</span></th><th scope="col"><span lang="fr">Ce que ça fait</span><span lang="en">What it does</span></th></tr></thead>
+	<tbody>
+		<tr><td><code class="d">/gkeep attendance summary</code></td><td><code class="d">/gkeep presence resume</code></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Taux de présence de chaque raideur sur 30, 60 ou 90 jours</span><span lang="en">Attendance rate of every raider over 30, 60 or 90 days</span></td></tr>
+		<tr><td><code class="d">/gkeep attendance player</code></td><td><code class="d">/gkeep presence joueur</code></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Tendances de présence, derniers raids et butin d'un joueur</span><span lang="en">A player's attendance trends, recent raids and loot</span></td></tr>
+		<tr><td><code class="d">/gkeep attendance raids</code></td><td><code class="d">/gkeep presence raids</code></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Les raids relevés en jeu, du plus récent au plus ancien</span><span lang="en">Raids observed in game, most recent first</span></td></tr>
+		<tr><td><code class="d">/gkeep attendance raid</code></td><td><code class="d">/gkeep presence raid</code></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Qui était là et ce qui est tombé</span><span lang="en">Who was there and what dropped</span></td></tr>
+		<tr><td><code class="d">/gkeep attendance correct</code></td><td><code class="d">/gkeep presence corriger</code></td><td><span class="badge b-officer"><span lang="fr">Officier</span><span lang="en">Officer</span></span></td><td><span lang="fr">Corriger la présence d'un joueur à un raid (officier)</span><span lang="en">Correct a player's attendance on a raid (officer)</span></td></tr>
+		<tr><td><code class="d">/gkeep loot list</code></td><td><code class="d">/gkeep butin liste</code></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Historique du butin, de tous ou d'un joueur</span><span lang="en">Loot history, for everyone or one player</span></td></tr>
+		<tr><td><code class="d">/gkeep loot void</code></td><td><code class="d">/gkeep butin annuler</code></td><td><span class="badge b-officer"><span lang="fr">Officier</span><span lang="en">Officer</span></span></td><td><span lang="fr">Annuler un objet relevé : désenchanté, erreur... (officier)</span><span lang="en">Void a recorded item: disenchanted, mistake... (officer)</span></td></tr>
+		<tr><td><code class="d">/gkeep loot restore</code></td><td><code class="d">/gkeep butin retablir</code></td><td><span class="badge b-officer"><span lang="fr">Officier</span><span lang="en">Officer</span></span></td><td><span lang="fr">Rétablir un objet annulé (officier)</span><span lang="en">Restore a voided item (officer)</span></td></tr>
+	</tbody>
+</table></div>
+</section>
+
+<section>
+<h2 id="quetes"><a class="anchor" href="#quetes" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Quêtes</span><span lang="en">Quests</span></h2>
+<div class="table-wrap"><table class="doc-table">
+	<thead><tr><th scope="col"><span lang="fr">Anglais</span><span lang="en">English</span></th><th scope="col"><span lang="fr">Français</span><span lang="en">French</span></th><th scope="col"><span lang="fr">Qui peut</span><span lang="en">Who can</span></th><th scope="col"><span lang="fr">Ce que ça fait</span><span lang="en">What it does</span></th></tr></thead>
+	<tbody>
+		<tr><td><code class="d">/gkeep quest list</code></td><td><code class="d">/gkeep quete liste</code></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Les quêtes partagées par zone ou donjon, avec qui les a</span><span lang="en">Shared quests by zone or dungeon, with who has them</span></td></tr>
+		<tr><td><code class="d">/gkeep quest who</code></td><td><code class="d">/gkeep quete qui</code></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Qui a cette quête</span><span lang="en">Who has this quest</span></td></tr>
+		<tr><td><code class="d">/gkeep quest mine</code></td><td><code class="d">/gkeep quete miennes</code></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Tes quêtes partagées, et qui d'autre a chacune</span><span lang="en">Your shared quests, and who else has each one</span></td></tr>
+	</tbody>
+</table></div>
+</section>
+
+<section>
+<h2 id="communication"><a class="anchor" href="#communication" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Communication</span><span lang="en">Communication</span></h2>
+<div class="table-wrap"><table class="doc-table">
+	<thead><tr><th scope="col"><span lang="fr">Anglais</span><span lang="en">English</span></th><th scope="col"><span lang="fr">Français</span><span lang="en">French</span></th><th scope="col"><span lang="fr">Qui peut</span><span lang="en">Who can</span></th><th scope="col"><span lang="fr">Ce que ça fait</span><span lang="en">What it does</span></th></tr></thead>
+	<tbody>
+		<tr><td><code class="d">/gkeep announce post</code></td><td><code class="d">/gkeep annonce publier</code></td><td><span class="badge b-officer"><span lang="fr">Officier</span><span lang="en">Officer</span></span></td><td><span lang="fr">Publier une annonce pour la guilde (officier)</span><span lang="en">Post an announcement to the guild (officer)</span></td></tr>
+		<tr><td><code class="d">/gkeep announce list</code></td><td><code class="d">/gkeep annonce liste</code></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Les annonces récentes</span><span lang="en">Recent announcements</span></td></tr>
+		<tr><td><code class="d">/gkeep announce delete</code></td><td><code class="d">/gkeep annonce retirer</code></td><td><span class="badge b-officer"><span lang="fr">Officier</span><span lang="en">Officer</span></span></td><td><span lang="fr">Retirer une annonce (officier)</span><span lang="en">Remove an announcement (officer)</span></td></tr>
+		<tr><td><code class="d">/gkeep announce template-save</code></td><td><code class="d">/gkeep annonce modele-enregistrer</code></td><td><span class="badge b-officer"><span lang="fr">Officier</span><span lang="en">Officer</span></span></td><td><span lang="fr">Enregistrer un modèle d'annonce (officier)</span><span lang="en">Save an announcement template (officer)</span></td></tr>
+		<tr><td><code class="d">/gkeep announce template-list</code></td><td><code class="d">/gkeep annonce modele-liste</code></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Les modèles d'annonce enregistrés</span><span lang="en">Saved announcement templates</span></td></tr>
+		<tr><td><code class="d">/gkeep announce template-delete</code></td><td><code class="d">/gkeep annonce modele-supprimer</code></td><td><span class="badge b-officer"><span lang="fr">Officier</span><span lang="en">Officer</span></span></td><td><span lang="fr">Supprimer un modèle d'annonce (officier)</span><span lang="en">Delete an announcement template (officer)</span></td></tr>
+		<tr><td><code class="d">/gkeep handbook show</code></td><td><code class="d">/gkeep charte lire</code></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Lire la charte, ou une de ses sections</span><span lang="en">Read the handbook, or one of its sections</span></td></tr>
+		<tr><td><code class="d">/gkeep handbook edit</code></td><td><code class="d">/gkeep charte ecrire</code></td><td><span class="badge b-officer"><span lang="fr">Officier</span><span lang="en">Officer</span></span></td><td><span lang="fr">Écrire ou mettre à jour une section de la charte (officier)</span><span lang="en">Write or update a handbook section (officer)</span></td></tr>
+		<tr><td><code class="d">/gkeep handbook remove</code></td><td><code class="d">/gkeep charte retirer</code></td><td><span class="badge b-officer"><span lang="fr">Officier</span><span lang="en">Officer</span></span></td><td><span lang="fr">Retirer une section de la charte (officier)</span><span lang="en">Remove a handbook section (officer)</span></td></tr>
+		<tr><td><code class="d">/gkeep goal list</code></td><td><code class="d">/gkeep objectif liste</code></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Les objectifs de la guilde et leur avancement</span><span lang="en">Guild goals and their progress</span></td></tr>
+		<tr><td><code class="d">/gkeep goal show</code></td><td><code class="d">/gkeep objectif voir</code></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Un objectif et qui y a contribué</span><span lang="en">A goal and who contributed</span></td></tr>
+		<tr><td><code class="d">/gkeep goal contribute</code></td><td><code class="d">/gkeep objectif contribuer</code></td><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Ajouter ta contribution à un objectif</span><span lang="en">Add your contribution to a goal</span></td></tr>
+		<tr><td><code class="d">/gkeep goal create</code></td><td><code class="d">/gkeep objectif creer</code></td><td><span class="badge b-officer"><span lang="fr">Officier</span><span lang="en">Officer</span></span></td><td><span lang="fr">Créer un objectif de guilde (officier)</span><span lang="en">Create a guild goal (officer)</span></td></tr>
+		<tr><td><code class="d">/gkeep goal close</code></td><td><code class="d">/gkeep objectif clore</code></td><td><span class="badge b-officer"><span lang="fr">Officier</span><span lang="en">Officer</span></span></td><td><span lang="fr">Clore un objectif (officier)</span><span lang="en">Close a goal (officer)</span></td></tr>
+		<tr><td><code class="d">/gkeep goal reopen</code></td><td><code class="d">/gkeep objectif rouvrir</code></td><td><span class="badge b-officer"><span lang="fr">Officier</span><span lang="en">Officer</span></span></td><td><span lang="fr">Rouvrir un objectif clos (officier)</span><span lang="en">Reopen a closed goal (officer)</span></td></tr>
+	</tbody>
+</table></div>
+</section>
+<section>
+<h2 id="en-jeu"><a class="anchor" href="#en-jeu" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Commandes en jeu</span><span lang="en">In-game commands</span></h2>
+<p><span lang="fr">À taper dans la fenêtre de discussion du jeu. <code>/gp</code> est un raccourci de <code>/gkeep</code>.</span><span lang="en">To type in the game's chat box. <code>/gp</code> is a shortcut for <code>/gkeep</code>.</span></p>
+<div class="table-wrap"><table class="doc-table">
+	<thead><tr><th scope="col"><span lang="fr">Commande</span><span lang="en">Command</span></th><th scope="col"><span lang="fr">Ce que ça fait</span><span lang="en">What it does</span></th></tr></thead>
+	<tbody>
+		<tr><td><code>/gkeep</code></td><td><span lang="fr">Ouvre ou ferme la fenêtre de Guildkeep.</span><span lang="en">Opens or closes the Guildkeep window.</span></td></tr>
+		<tr><td><code>/gkeep events</code> · <code>evenements</code></td><td><span lang="fr">Ouvre l'onglet Événements.</span><span lang="en">Opens the Events tab.</span></td></tr>
+		<tr><td><code>/gkeep presence</code> · <code>butin</code></td><td><span lang="fr">Ouvre l'onglet Présence (aussi <code>attendance</code>, <code>loot</code>).</span><span lang="en">Opens the Attendance tab (also <code>attendance</code>, <code>loot</code>).</span></td></tr>
+		<tr><td><code>/gkeep quetes</code> · <code>quests</code></td><td><span lang="fr">Ouvre l'onglet Quêtes.</span><span lang="en">Opens the Quests tab.</span></td></tr>
+		<tr><td><code>/gkeep guilde</code> · <code>annonces</code> · <code>charte</code> · <code>objectifs</code></td><td><span lang="fr">Ouvre l'onglet Guilde (aussi <code>guild</code>).</span><span lang="en">Opens the Guild tab (also <code>guild</code>).</span></td></tr>
+		<tr><td><code>/gkeep rappel 30</code> · <code>rappel off</code></td><td><span lang="fr">Règle ton rappel personnel d'événement (minutes avant), ou le coupe ; sans argument, affiche le réglage.</span><span lang="en">Sets your personal event reminder (minutes before), or turns it off; with no argument, shows the setting.</span></td></tr>
+		<tr><td><code>/gkeep tuto</code></td><td><span lang="fr">Rejoue le tutoriel de l'onglet affiché ; <code>tuto reset</code> pour tout revoir, <code>tuto off</code> / <code>tuto on</code> pour les couper ou les remettre.</span><span lang="en">Replays the tutorial of the tab on screen; <code>tuto reset</code> to see them all again, <code>tuto off</code> / <code>tuto on</code> to turn them off or back on.</span></td></tr>
+		<tr><td><code>/gkeep modules</code></td><td><span lang="fr">Affiche l'état de chaque module ; <code>/gkeep modules &lt;nom&gt; on|off</code> en change un (au prochain <code>/reload</code>).</span><span lang="en">Shows each module's state; <code>/gkeep modules &lt;name&gt; on|off</code> changes one (on the next <code>/reload</code>).</span></td></tr>
+		<tr><td><code>/gkeep options</code></td><td><span lang="fr">Ouvre le panneau Options &gt; Extensions &gt; Guildkeep.</span><span lang="en">Opens the Options &gt; AddOns &gt; Guildkeep panel.</span></td></tr>
+		<tr><td><code>/gkeep debug</code></td><td><span lang="fr">Diagnostic : l'état du relevé des recettes et de l'onglet de guilde, à donner à un administrateur en cas de souci.</span><span lang="en">Diagnostics: the state of recipe scanning and the guild tab, to give an admin when something's wrong.</span></td></tr>
+		<tr><td><code>/reload</code></td><td><span lang="fr">Commande du jeu : recharge l'interface. Envoie tes relevés (avec le compagnon) et charge les dernières données reçues.</span><span lang="en">Game command: reloads the UI. Sends your scans (with the companion) and loads the latest data received.</span></td></tr>
+	</tbody>
+</table></div>
+</section>
+<nav class="doc-pager" aria-label="Pages voisines / Adjacent pages">
+<a class="prev" href="/docs/communication.html" rel="prev"><small><span lang="fr">← Précédent</span><span lang="en">← Previous</span></small><b><span lang="fr">Communication</span><span lang="en">Communication</span></b></a>
+<a class="next" href="/docs/faq.html" rel="next"><small><span lang="fr">Suivant →</span><span lang="en">Next →</span></small><b><span lang="fr">FAQ et dépannage</span><span lang="en">FAQ and troubleshooting</span></b></a>
+</nav>
+</main>
+</div>
+
+<footer class="foot">
+	<span><span lang="fr">Outil de guilde pour WoW: Forever</span><span lang="en">Guild tool for WoW: Forever</span></span>
+	<nav aria-label="Pied de page / Footer">
+		<a href="/"><span lang="fr">Accueil</span><span lang="en">Home</span></a>
+		<a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a>
+		<a href="/confidentialite.html"><span lang="fr">Confidentialité</span><span lang="en">Privacy</span></a>
+		<a href="/conditions.html"><span lang="fr">Conditions</span><span lang="en">Terms</span></a>
+		<a href="https://github.com/AntoineRenoux/GuildProfessions" rel="noopener"><span lang="fr">Code source</span><span lang="en">Source code</span></a>
+	</nav>
+	<span class="end">2026</span>
+	<span class="credit"><span lang="fr">World of Warcraft est une marque de Blizzard Entertainment ; Guildkeep n'y est pas affilié.</span><span lang="en">World of Warcraft is a trademark of Blizzard Entertainment; Guildkeep is not affiliated.</span></span>
+</footer>
+
+<script src="/site.js?v=6" defer></script>
+</body>
+</html>

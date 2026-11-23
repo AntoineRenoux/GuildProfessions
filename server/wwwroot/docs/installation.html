@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guildkeep · installer Guildkeep</title>
+<meta name="description" content="Installer Guildkeep : l&#x27;assistant /gkeep-setup pour l&#x27;admin Discord, le pack de la guilde pour chaque joueur, les premiers pas en jeu, les modules et les droits.">
+<link rel="preload" href="/fonts/cinzel-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/alegreya-sans-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/site.css?v=6">
+<script>document.documentElement.classList.add('js');try{var l=localStorage.getItem('gk-lang')||((navigator.language||'fr').toLowerCase().indexOf('fr')===0?'fr':'en');document.documentElement.lang=l}catch(e){}</script>
+</head>
+<body>
+<svg class="sprite" aria-hidden="true" focusable="false"><defs><linearGradient id="gk-gold" gradientUnits="userSpaceOnUse" x1="0" y1="4" x2="0" y2="44"><stop offset="0" stop-color="#fff1bf"/><stop offset=".45" stop-color="#f0c25e"/><stop offset="1" stop-color="#9a6a20"/></linearGradient>
+<symbol id="i-metiers" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M6 15h25c1 5 5 8 11 8v4H31l3 9H14l3-9h-3C9 27 6 22 6 15z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M36 6l4 4M33 9l4 4"/></symbol>
+<symbol id="i-membres" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M24 5c9 0 15 7 15 16v14l-6 6h-4V27h-10v14h-4l-6-6V21C9 12 15 5 24 5z"/><path fill="#1a1208" d="M15 20h18v4H15z"/></symbol>
+<symbol id="i-artisanat" viewBox="0 0 48 48"><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M10 38L36 12"/><ellipse fill="none" stroke="url(#gk-gold)" stroke-width="3.2" cx="37.5" cy="10.5" rx="3.2" ry="1.8" transform="rotate(-45 37.5 10.5)"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="1.8" d="M39 9c6 6-4 12-10 16s-14 10-8 17"/></symbol>
+<symbol id="i-evenements" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M7 11h34v30H7z"/><path fill="#1a1208" d="M10 19h28v19H10z"/><path fill="url(#gk-gold)" d="M13 22h6v5h-6zM21 22h6v5h-6zM29 22h6v5h-6zM13 30h6v5h-6zM21 30h6v5h-6z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M15 6v8M33 6v8"/></symbol>
+<symbol id="i-raid" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M24 4l17 6v12c0 11-7 18-17 22C14 40 7 33 7 22V10z"/><path fill="#1a1208" d="M24 11l11 4v8c0 7-4 12-11 15z"/></symbol>
+<symbol id="i-presence" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M10 6h22l7 7v29H10z"/><path fill="none" stroke="#1a1208" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.4" d="M16 26l5 5 10-11"/></symbol>
+<symbol id="i-quetes" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M20 5h8l-1.5 26h-5zM24 35a4 4 0 1 1 0 8 4 4 0 0 1 0-8z"/></symbol>
+<symbol id="i-communication" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M6 19h8l20-11v32L14 29H6z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M39 17c3 4 3 10 0 14M12 30l3 11h6l-3-11"/></symbol>
+<symbol id="i-install" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M17 12c0-5 3-8 7-8s7 3 7 8h-3c0-3-2-5-4-5s-4 2-4 5z"/><path fill="url(#gk-gold)" d="M10 14h28l4 26a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4z"/><path fill="#1a1208" d="M20 22h8v6h-8z"/></symbol>
+<symbol id="i-compagnon" viewBox="0 0 48 48"><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="4" d="M6 34c6-14 30-14 36 0M12 34V22M24 34V18M36 34V22"/><path fill="url(#gk-gold)" d="M4 34h40v5H4z"/></symbol>
+<symbol id="i-cmd" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M5 9h38v30H5z"/><path fill="#1a1208" d="M8 15h32v21H8z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M14 32l8-13M26 32h8"/></symbol>
+<symbol id="i-faq" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M8 6h26l6 6v30H8z"/><path fill="none" stroke="#1a1208" stroke-linecap="round" stroke-width="3.4" d="M19 19c0-4 3-6 5.5-6s5.5 2 5.5 5.5-5 4-5 8M24.5 32v.5"/></symbol>
+</defs></svg>
+<header class="topbar">
+	<a class="wordmark" href="/">Guildkeep</a>
+	<nav aria-label="Navigation">
+		<a href="/docs/" aria-current="page"><span lang="fr">Documentation</span><span lang="en">Docs</span></a>
+		<a class="hide-phone" href="/docs/faq.html"><span lang="fr">Aide</span><span lang="en">Help</span></a>
+		<div class="lang-switch" role="group" aria-label="Langue / Language">
+			<button type="button" data-set-lang="fr" aria-pressed="true">FR</button>
+			<button type="button" data-set-lang="en" aria-pressed="false">EN</button>
+		</div>
+		<a class="button invite-link hide-phone" href="/#mise-en-place"><span lang="fr">Ajouter à Discord</span><span lang="en">Add to Discord</span></a>
+	</nav>
+</header>
+
+<div class="doc">
+<aside class="doc-nav" aria-label="Sommaire / Contents"><details open><summary><span><span lang="fr">Sommaire</span><span lang="en">Contents</span></span><i class="plus" aria-hidden="true"></i></summary><div>
+<p class="doc-nav-label"><span lang="fr">Démarrer</span><span lang="en">Getting started</span></p><ul>
+<li><a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a>
+</li>
+<li><a href="/docs/installation.html" aria-current="page"><span lang="fr">Installer Guildkeep</span><span lang="en">Installing Guildkeep</span></a>
+<ul>
+<li><a href="#admin"><span lang="fr">Admin : créer la guilde avec /gkeep-setup</span><span lang="en">Admin: create the guild with /gkeep-setup</span></a></li>
+<li><a href="#gerer"><span lang="fr">Admin : gérer la guilde ensuite</span><span lang="en">Admin: manage the guild later</span></a></li>
+<li><a href="#joueur"><span lang="fr">Joueur : installer le pack de la guilde</span><span lang="en">Player: install the guild pack</span></a></li>
+<li><a href="#premiers-pas"><span lang="fr">Premiers pas en jeu</span><span lang="en">First steps in game</span></a></li>
+<li><a href="#lier"><span lang="fr">Relier ton compte Discord</span><span lang="en">Link your Discord account</span></a></li>
+<li><a href="#droits"><span lang="fr">Qui peut faire quoi</span><span lang="en">Who can do what</span></a></li>
+</ul>
+</li>
+<li><a href="/docs/compagnon.html"><span lang="fr">L'app compagnon</span><span lang="en">The companion app</span></a>
+</li>
+</ul>
+<p class="doc-nav-label"><span lang="fr">Modules</span><span lang="en">Modules</span></p><ul>
+<li><a href="/docs/metiers.html"><span lang="fr">Métiers</span><span lang="en">Professions</span></a>
+</li>
+<li><a href="/docs/membres.html"><span lang="fr">Membres</span><span lang="en">Members</span></a>
+</li>
+<li><a href="/docs/artisanat.html"><span lang="fr">Artisanat</span><span lang="en">Crafting orders</span></a>
+</li>
+<li><a href="/docs/evenements.html"><span lang="fr">Événements</span><span lang="en">Events</span></a>
+</li>
+<li><a href="/docs/soiree-raid.html"><span lang="fr">Soirée de raid</span><span lang="en">Raid night</span></a>
+</li>
+<li><a href="/docs/presence.html"><span lang="fr">Présence et butin</span><span lang="en">Attendance and loot</span></a>
+</li>
+<li><a href="/docs/quetes.html"><span lang="fr">Quêtes</span><span lang="en">Quests</span></a>
+</li>
+<li><a href="/docs/communication.html"><span lang="fr">Communication</span><span lang="en">Communication</span></a>
+</li>
+</ul>
+<p class="doc-nav-label"><span lang="fr">Référence</span><span lang="en">Reference</span></p><ul>
+<li><a href="/docs/commandes.html"><span lang="fr">Commandes Discord</span><span lang="en">Discord commands</span></a>
+</li>
+<li><a href="/docs/faq.html"><span lang="fr">FAQ et dépannage</span><span lang="en">FAQ and troubleshooting</span></a>
+</li>
+</ul>
+</div></details></aside>
+<main class="doc-main" id="contenu">
+<nav class="crumbs" aria-label="Fil d'Ariane / Breadcrumb"><ol class="crumbs-list"><li><a href="/"><span lang="fr">Accueil</span><span lang="en">Home</span></a></li><li><a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a></li><li aria-current="page"><span lang="fr">Installer Guildkeep</span><span lang="en">Installing Guildkeep</span></li></ol></nav>
+<h1><span lang="fr">Installer Guildkeep</span><span lang="en">Installing Guildkeep</span></h1>
+<p class="lead"><span lang="fr">L'admin du serveur Discord crée la guilde en deux minutes, puis chaque joueur installe le pack de sa guilde. Ensuite, quelques réglages en jeu et sur Discord.</span><span lang="en">The Discord server admin creates the guild in two minutes, then each player installs their guild's pack. Then a few settings in game and on Discord.</span></p>
+<div class="rule" aria-hidden="true"><i></i></div>
+<section>
+<h2 id="admin"><a class="anchor" href="#admin" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Admin : créer la guilde avec /gkeep-setup</span><span lang="en">Admin: create the guild with /gkeep-setup</span></h2>
+<div class="rights"><span class="badge b-admin"><span lang="fr">Admin « Gérer le serveur »</span><span lang="en">Admin (“Manage Server”)</span></span></div>
+<p><span lang="fr">Il faut le droit Discord « Gérer le serveur ». La commande <code class="d"><span lang="fr">/gkeep-setup</span><span lang="en">/gkeep-setup</span></code> n'est d'ailleurs visible que par ceux qui l'ont. Une guilde Guildkeep correspond à un serveur Discord.</span><span lang="en">You need the Discord "Manage Server" permission; only people who have it even see <code class="d"><span lang="fr">/gkeep-setup</span><span lang="en">/gkeep-setup</span></code>. One Guildkeep guild matches one Discord server.</span></p>
+<div class="howto">
+	<h3><span class="where">Discord</span><span lang="fr">Tutoriel : installer Guildkeep sur ton serveur</span><span lang="en">Tutorial: set Guildkeep up on your server</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Sur l'accueil du site, clique <span class="ui"><span lang="fr">Ajouter à Discord</span><span lang="en">Add to Discord</span></span> et choisis ton serveur. Le bot demande d'envoyer des messages, d'intégrer des liens, de joindre des fichiers et de gérer les pseudos (ce dernier droit ne sert que si tu actives le renommage).</span><span lang="en">On the site's home page, click <span class="ui"><span lang="fr">Ajouter à Discord</span><span lang="en">Add to Discord</span></span> and pick your server. The bot asks to send messages, embed links, attach files and manage nicknames (the last one is only used if you turn renaming on).</span></li>
+		<li><span lang="fr">Dans n'importe quel salon, tape <code class="d"><span lang="fr">/gkeep-setup</span><span lang="en">/gkeep-setup</span></code>. Une fenêtre s'ouvre : <strong>Étape 1 sur 3</strong>. Écris le <strong>nom exact de la guilde en jeu</strong>, majuscules et accents compris, puis valide.</span><span lang="en">In any channel, type <code class="d"><span lang="fr">/gkeep-setup</span><span lang="en">/gkeep-setup</span></code>. A window opens: <strong>Step 1 of 3</strong>. Type the <strong>exact in-game guild name</strong>, capitals and accents included, then submit.</span></li>
+		<li><span lang="fr"><strong>Étape 2 sur 3 · Options</strong> : choisis « Ne pas toucher aux pseudos » (par défaut) ou « Renommer avec le personnage principal », et, si tu veux, un salon où le bot annonce chaque nouvelle commande de craft. Clique <span class="ui"><span lang="fr">Continuer</span><span lang="en">Continue</span></span> (ou <span class="ui"><span lang="fr">Modifier le nom</span><span lang="en">Change the name</span></span> pour corriger l'étape 1).</span><span lang="en"><strong>Step 2 of 3 · Options</strong>: pick "Leave nicknames alone" (the default) or "Rename after the main character", and, if you like, a channel where the bot announces every new craft order. Click <span class="ui"><span lang="fr">Continuer</span><span lang="en">Continue</span></span> (or <span class="ui"><span lang="fr">Modifier le nom</span><span lang="en">Change the name</span></span> to fix step 1).</span></li>
+		<li><span lang="fr"><strong>Étape 3 sur 3 · Récapitulatif</strong> : vérifie le nom, les pseudos et le salon. Un encadré « À vérifier » signale un droit manquant au bot. Clique <span class="ui"><span lang="fr">Créer ma guilde</span><span lang="en">Create my guild</span></span>.</span><span lang="en"><strong>Step 3 of 3 · Summary</strong>: check the name, nicknames and channel. A "Check this" box flags a permission the bot is missing. Click <span class="ui"><span lang="fr">Créer ma guilde</span><span lang="en">Create my guild</span></span>.</span></li>
+		<li><span lang="fr">Le bot répond « <em>ta guilde</em> est prête » avec le <strong>lien d'installation</strong>. Clique <span class="ui"><span lang="fr">Annoncer dans ce salon</span><span lang="en">Announce in this channel</span></span> pour le publier aux membres, ou <span class="ui"><span lang="fr">Ouvrir la page</span><span lang="en">Open the page</span></span> pour le voir.</span><span lang="en">The bot replies "<em>your guild</em> is ready" with the <strong>install link</strong>. Click <span class="ui"><span lang="fr">Annoncer dans ce salon</span><span lang="en">Announce in this channel</span></span> to post it for members, or <span class="ui"><span lang="fr">Ouvrir la page</span><span lang="en">Open the page</span></span> to see it.</span></li>
+	</ol>
+</div>
+<aside class="callout c-warn"><p class="callout-title"><span lang="fr">Attention</span><span lang="en">Watch out</span></p><p><span lang="fr">Le nom doit être exactement celui du jeu : seuls les personnages de cette guilde entrent dans l'annuaire. Et le lien d'installation donne accès aux données de la guilde : ne le publie pas hors de ton serveur.</span><span lang="en">The name must match the game exactly: only that guild's characters enter the directory. And the install link grants access to the guild's data: don't post it outside your server.</span></p></aside>
+<aside class="callout c-tip"><p class="callout-title"><span lang="fr">Astuce</span><span lang="en">Tip</span></p><p><span lang="fr">Pour le renommage des pseudos, donne au bot le droit « Gérer les pseudos » et place son rôle au-dessus de ceux des membres. Le propriétaire du serveur ne peut jamais être renommé par un bot.</span><span lang="en">For nickname renaming, give the bot the "Manage Nicknames" permission and put its role above members' roles. A bot can never rename the server owner.</span></p></aside>
+</section>
+
+<section>
+<h2 id="gerer"><a class="anchor" href="#gerer" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Admin : gérer la guilde ensuite</span><span lang="en">Admin: manage the guild later</span></h2>
+<div class="rights"><span class="badge b-admin"><span lang="fr">Admin « Gérer le serveur »</span><span lang="en">Admin (“Manage Server”)</span></span></div>
+<p><span lang="fr">Relance <code class="d"><span lang="fr">/gkeep-setup</span><span lang="en">/gkeep-setup</span></code> : sur un serveur déjà inscrit, il ouvre le panneau de gestion, avec le lien d'installation actuel, le nombre de personnages et de membres, et :</span><span lang="en">Run <code class="d"><span lang="fr">/gkeep-setup</span><span lang="en">/gkeep-setup</span></code> again: on a server that's already set up it opens the management panel, with the current install link, character and member counts, and:</span></p>
+<ul>
+	<li><span lang="fr">un menu pour changer le salon des annonces de commandes (vide = aucune annonce) ;</span><span lang="en">a menu to change the order announcement channel (empty = no announcements);</span></li>
+	<li><span lang="fr"><span class="ui"><span lang="fr">Renommer les pseudos</span><span lang="en">Rename nicknames</span></span> ou <span class="ui"><span lang="fr">Ne plus renommer les pseudos</span><span lang="en">Stop renaming nicknames</span></span> ;</span><span lang="en"><span class="ui"><span lang="fr">Renommer les pseudos</span><span lang="en">Rename nicknames</span></span> or <span class="ui"><span lang="fr">Ne plus renommer les pseudos</span><span lang="en">Stop renaming nicknames</span></span>;</span></li>
+	<li><span lang="fr"><span class="ui"><span lang="fr">Nouveau lien d'installation</span><span lang="en">New install link</span></span> : à confirmer par <span class="ui"><span lang="fr">Oui, nouveau lien</span><span lang="en">Yes, new link</span></span>. L'ancien lien et les packs déjà installés cessent de fonctionner ; chaque joueur retélécharge le pack ;</span><span lang="en"><span class="ui"><span lang="fr">Nouveau lien d'installation</span><span lang="en">New install link</span></span>: confirm with <span class="ui"><span lang="fr">Oui, nouveau lien</span><span lang="en">Yes, new link</span></span>. The old link and packs already installed stop working; every player downloads the pack again;</span></li>
+	<li><span lang="fr"><span class="ui"><span lang="fr">Supprimer la guilde</span><span lang="en">Delete the guild</span></span> : à confirmer par <span class="ui"><span lang="fr">Oui, tout supprimer</span><span lang="en">Yes, delete everything</span></span>. L'annuaire, les commandes et les liens Discord sont effacés, sans retour possible.</span><span lang="en"><span class="ui"><span lang="fr">Supprimer la guilde</span><span lang="en">Delete the guild</span></span>: confirm with <span class="ui"><span lang="fr">Oui, tout supprimer</span><span lang="en">Yes, delete everything</span></span>. The directory, orders and Discord links are erased, for good.</span></li>
+</ul>
+<p><span lang="fr">Le salon des <strong>annonces de la guilde</strong> (module Communication) se règle à part : <code class="d"><span lang="fr">/gkeep annonce salon</span><span lang="en">/gkeep announce channel</span></code>, réservé lui aussi au droit « Gérer le serveur ». Voir <a href="/docs/communication.html#salon">Communication</a>.</span><span lang="en">The <strong>guild announcement</strong> channel (Communication module) is set separately: <code class="d"><span lang="fr">/gkeep annonce salon</span><span lang="en">/gkeep announce channel</span></code>, also limited to the "Manage Server" permission. See <a href="/docs/communication.html#salon">Communication</a>.</span></p>
+</section>
+
+<section>
+<h2 id="joueur"><a class="anchor" href="#joueur" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Joueur : installer le pack de la guilde</span><span lang="en">Player: install the guild pack</span></h2>
+<div class="rights"><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></div>
+<p><span lang="fr">Trois façons, de la plus simple à la plus manuelle. Le pack est recommandé : il installe l'addon et le tient à jour.</span><span lang="en">Three ways, from simplest to most manual. The pack is recommended: it installs the addon and keeps it up to date.</span></p>
+<div class="howto">
+	<h3><span class="where">Windows</span><span lang="fr">Tutoriel : installer le pack</span><span lang="en">Tutorial: install the pack</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Ouvre le lien d'installation partagé par ton officier (ou colle son code dans le champ « Ta guilde t'a donné un code ? » en bas de l'accueil).</span><span lang="en">Open the install link your officer shared (or paste its code into the "Your guild gave you a code?" field at the bottom of the home page).</span></li>
+		<li><span lang="fr">Clique <span class="ui"><span lang="fr">Télécharger le pack</span><span lang="en">Download the pack</span></span>, puis dézippe-le où tu veux (le dossier <strong>Guildkeep</strong> peut rester dans Téléchargements).</span><span lang="en">Click <span class="ui"><span lang="fr">Télécharger le pack</span><span lang="en">Download the pack</span></span>, then unzip it anywhere (the <strong>Guildkeep</strong> folder can stay in Downloads).</span></li>
+		<li><span lang="fr">Lance <strong>GuildkeepCompanion</strong>. Si Windows affiche « Windows a protégé votre ordinateur » : « Informations complémentaires », puis « Exécuter quand même ». Une seule fois.</span><span lang="en">Run <strong>GuildkeepCompanion</strong>. If Windows shows "Windows protected your PC": "More info", then "Run anyway". Once only.</span></li>
+		<li><span lang="fr">Le compagnon trouve World of Warcraft, y installe l'addon, puis se relance tout seul à chaque démarrage de Windows. Il ne lance jamais le jeu.</span><span lang="en">The companion finds World of Warcraft, installs the addon in it, then restarts by itself every time Windows starts. It never launches the game.</span></li>
+		<li><span lang="fr">En jeu : <code>/gkeep</code>, ou l'onglet Guildkeep de la fenêtre de guilde. Si WoW était ouvert pendant l'installation, relance le jeu.</span><span lang="en">In game: <code>/gkeep</code>, or the Guildkeep tab in the guild window. If WoW was open during the install, restart the game.</span></li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Mac</span><span lang="fr">Tutoriel : installer le pack sur Mac</span><span lang="en">Tutorial: install the pack on Mac</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Télécharge le pack : Safari le dézippe tout seul dans Téléchargements.</span><span lang="en">Download the pack: Safari unzips it by itself into Downloads.</span></li>
+		<li><span lang="fr">Le compagnon n'est pas notarisé par Apple : macOS le refuse la première fois. Lance-le, puis Réglages Système, Confidentialité et sécurité, tout en bas : « Ouvrir quand même ». Ou dans le Terminal : <code>xattr -dr com.apple.quarantine ~/Downloads/Guildkeep</code></span><span lang="en">The companion isn't notarized by Apple, so macOS refuses it the first time. Run it, then System Settings, Privacy &amp; Security, at the bottom: "Open Anyway". Or in Terminal: <code>xattr -dr com.apple.quarantine ~/Downloads/Guildkeep</code></span></li>
+		<li><span lang="fr">Lance-le dans le Terminal : <code>cd ~/Downloads/Guildkeep &amp;&amp; ./GuildkeepCompanion</code>, et laisse-le tourner pendant que tu joues.</span><span lang="en">Run it in Terminal: <code>cd ~/Downloads/Guildkeep &amp;&amp; ./GuildkeepCompanion</code>, and leave it running while you play.</span></li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Linux</span><span lang="fr">Tutoriel : installer le pack sur Linux</span><span lang="en">Tutorial: install the pack on Linux</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Dézippe, puis <code>chmod +x GuildkeepCompanion &amp;&amp; ./GuildkeepCompanion</code>. Les installations Steam/Proton et Lutris sont détectées.</span><span lang="en">Unzip, then <code>chmod +x GuildkeepCompanion &amp;&amp; ./GuildkeepCompanion</code>. Steam/Proton and Lutris installs are detected.</span></li>
+		<li><span lang="fr">Laisse-le tourner pendant que tu joues : un terminal, tmux ou un service systemd utilisateur.</span><span lang="en">Keep it running while you play: a terminal, tmux or a systemd user service.</span></li>
+	</ol>
+</div>
+<p><span lang="fr">Pas d'app compagnon possible (PC du travail, refus d'installer) ? L'addon seul fonctionne avec une chaîne de texte à copier-coller : voir <a href="/docs/compagnon.html#canal-manuel">le canal manuel</a>. Il faut alors installer l'addon toi-même (CurseForge, ou le dossier <code>Guildkeep</code> du pack copié dans <code>Interface/AddOns</code>).</span><span lang="en">No companion app possible (work PC, won't install)? The addon alone works with a copy-and-paste text string: see <a href="/docs/compagnon.html#canal-manuel">the manual channel</a>. You then install the addon yourself (CurseForge, or the pack's <code>Guildkeep</code> folder copied into <code>Interface/AddOns</code>).</span></p>
+<aside class="callout c-tip"><p class="callout-title"><span lang="fr">Astuce</span><span lang="en">Tip</span></p><p><span lang="fr">Des personnages dans une autre guilde ? Lance aussi le pack de cette guilde : un seul compagnon tourne et les synchronise toutes, chaque personnage ne voyant que sa propre guilde.</span><span lang="en">Characters in another guild? Run that guild's pack too: a single companion runs and syncs them all, and each character only sees its own guild.</span></p></aside>
+</section>
+
+<section>
+<h2 id="premiers-pas"><a class="anchor" href="#premiers-pas" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Premiers pas en jeu</span><span lang="en">First steps in game</span></h2>
+<p><span lang="fr">Ouvre Guildkeep avec <code>/gkeep</code> (ou <code>/gp</code>), ou par l'onglet ajouté à la fenêtre de guilde. La fenêtre a un onglet par module en bas : <span lang="fr"><span class="ui tab">Métiers</span></span><span lang="en"><span class="ui tab">Métiers</span> <span class="gloss">(Professions)</span></span>, <span lang="fr"><span class="ui tab">Membres</span></span><span lang="en"><span class="ui tab">Membres</span> <span class="gloss">(Members)</span></span>, <span lang="fr"><span class="ui tab">Commandes</span></span><span lang="en"><span class="ui tab">Commandes</span> <span class="gloss">(Orders)</span></span>, <span lang="fr"><span class="ui tab">Événements</span></span><span lang="en"><span class="ui tab">Événements</span> <span class="gloss">(Events)</span></span>, <span lang="fr"><span class="ui tab">Présence</span></span><span lang="en"><span class="ui tab">Présence</span> <span class="gloss">(Attendance)</span></span>, <span lang="fr"><span class="ui tab">Quêtes</span></span><span lang="en"><span class="ui tab">Quêtes</span> <span class="gloss">(Quests)</span></span>, <span lang="fr"><span class="ui tab">Guilde</span></span><span lang="en"><span class="ui tab">Guilde</span> <span class="gloss">(Guild)</span></span>. Un chiffre entre parenthèses signale ce qui t'attend : commande à traiter, événement sans ta réponse, annonce non lue.</span><span lang="en">Open Guildkeep with <code>/gkeep</code> (or <code>/gp</code>), or through the tab added to the guild window. The window has one tab per module at the bottom: <span lang="fr"><span class="ui tab">Métiers</span></span><span lang="en"><span class="ui tab">Métiers</span> <span class="gloss">(Professions)</span></span>, <span lang="fr"><span class="ui tab">Membres</span></span><span lang="en"><span class="ui tab">Membres</span> <span class="gloss">(Members)</span></span>, <span lang="fr"><span class="ui tab">Commandes</span></span><span lang="en"><span class="ui tab">Commandes</span> <span class="gloss">(Orders)</span></span>, <span lang="fr"><span class="ui tab">Événements</span></span><span lang="en"><span class="ui tab">Événements</span> <span class="gloss">(Events)</span></span>, <span lang="fr"><span class="ui tab">Présence</span></span><span lang="en"><span class="ui tab">Présence</span> <span class="gloss">(Attendance)</span></span>, <span lang="fr"><span class="ui tab">Quêtes</span></span><span lang="en"><span class="ui tab">Quêtes</span> <span class="gloss">(Quests)</span></span>, <span lang="fr"><span class="ui tab">Guilde</span></span><span lang="en"><span class="ui tab">Guilde</span> <span class="gloss">(Guild)</span></span>. A number in brackets shows what's waiting for you: an order to handle, an event without your answer, an unread announcement.</span></p>
+<p><span lang="fr">En bas à gauche, <span lang="fr"><span class="ui">Importer</span></span><span lang="en"><span class="ui">Importer</span> <span class="gloss">(Import)</span></span> et <span lang="fr"><span class="ui">Exporter</span></span><span lang="en"><span class="ui">Exporter</span> <span class="gloss">(Export)</span></span> servent au canal manuel ; à droite, la date des données de la guilde. Si ta guilde n'utilise pas encore Guildkeep, un message te le dit à cet endroit.</span><span lang="en">Bottom left, <span lang="fr"><span class="ui">Importer</span></span><span lang="en"><span class="ui">Importer</span> <span class="gloss">(Import)</span></span> and <span lang="fr"><span class="ui">Exporter</span></span><span lang="en"><span class="ui">Exporter</span> <span class="gloss">(Export)</span></span> are for the manual channel; on the right, the date of the guild's data. If your guild doesn't use Guildkeep yet, a message says so there.</span></p>
+<figure class="mock" data-ui>
+	<div class="wow">
+		<div class="wow-title"><b>Guildkeep</b><small>&lt;La Garde d'Ambre&gt; · gestion de guilde</small></div>
+		<div style="padding:28px 12px;text-align:center" class="soft"><span lang="fr">… le contenu de l'onglet …</span><span lang="en">… the tab's content …</span></div>
+		<div style="padding:8px 12px;border-top:1px solid #3a2f1c;display:flex;justify-content:space-between;gap:8px;align-items:center"><span style="display:flex;gap:4px"><span class="wow-button">Importer</span><span class="wow-button">Exporter</span></span><span class="soft" style="font-size:12px">Données du 22/11 à 21:04</span></div>
+		<div class="wow-tabs"><span class="is-on">Métiers</span><span>Membres</span><span>Commandes (1)</span><span>Événements (2)</span><span>Présence</span><span>Quêtes</span><span>Guilde</span></div>
+	</div>
+	<figcaption><span lang="fr">Maquette : la fenêtre de Guildkeep, avec des données d'exemple.</span><span lang="en">Mock-up: the Guildkeep window, with sample data.</span></figcaption>
+</figure>
+
+<h3 id="tutoriels"><span lang="fr">Les tutoriels en jeu</span><span lang="en">In-game tutorials</span></h3>
+<p><span lang="fr">À la première ouverture, un tutoriel de bienvenue présente la fenêtre ; puis chaque onglet lance le sien la première fois qu'il s'affiche, en encadrant chaque bouton en doré. Tu avances avec <span lang="fr"><span class="ui">Suivant</span></span><span lang="en"><span class="ui">Suivant</span> <span class="gloss">(Next)</span></span> et <span lang="fr"><span class="ui">Précédent</span></span><span lang="en"><span class="ui">Précédent</span> <span class="gloss">(Previous)</span></span>, tu arrêtes avec <span lang="fr"><span class="ui">Passer</span></span><span lang="en"><span class="ui">Passer</span> <span class="gloss">(Skip)</span></span> ou <kbd class="key">Échap</kbd>. La case <span lang="fr"><span class="ui opt">Ne plus proposer de tutoriels</span></span><span lang="en"><span class="ui opt">Ne plus proposer de tutoriels</span> <span class="gloss">(Don't offer tutorials again)</span></span> les coupe tous.</span><span lang="en">The first time you open it, a welcome tutorial shows you around the window; then each tab starts its own the first time it's shown, outlining each button in gold. Move on with <span lang="fr"><span class="ui">Suivant</span></span><span lang="en"><span class="ui">Suivant</span> <span class="gloss">(Next)</span></span> and <span lang="fr"><span class="ui">Précédent</span></span><span lang="en"><span class="ui">Précédent</span> <span class="gloss">(Previous)</span></span>, stop with <span lang="fr"><span class="ui">Passer</span></span><span lang="en"><span class="ui">Passer</span> <span class="gloss">(Skip)</span></span> or <kbd class="key">Esc</kbd>. The <span lang="fr"><span class="ui opt">Ne plus proposer de tutoriels</span></span><span lang="en"><span class="ui opt">Ne plus proposer de tutoriels</span> <span class="gloss">(Don't offer tutorials again)</span></span> box turns them all off.</span></p>
+<ul>
+	<li><span lang="fr">Le bouton <span class="ui">?</span> de la fenêtre, ou <code>/gkeep tuto</code>, rejoue le tutoriel de l'onglet affiché.</span><span lang="en">The window's <span class="ui">?</span> button, or <code>/gkeep tuto</code>, replays the tutorial of the tab on screen.</span></li>
+	<li><span lang="fr"><code>/gkeep tuto reset</code> : tout revoir (chaque tutoriel se relance à l'ouverture de son onglet).</span><span lang="en"><code>/gkeep tuto reset</code>: see everything again (each tutorial restarts when its tab opens).</span></li>
+	<li><span lang="fr"><code>/gkeep tuto off</code> pour les couper, <code>/gkeep tuto on</code> pour les remettre.</span><span lang="en"><code>/gkeep tuto off</code> turns them off, <code>/gkeep tuto on</code> brings them back.</span></li>
+</ul>
+
+<h3 id="modules"><span lang="fr">Activer ou couper un module</span><span lang="en">Turn a module on or off</span></h3>
+<p><span lang="fr">Chacun des huit modules s'active séparément, pour ton compte. Un module coupé ne relève rien, n'envoie rien et n'affiche pas son onglet ; ses données restent.</span><span lang="en">Each of the eight modules is turned on separately, for your account. A module that's off records nothing, sends nothing and hides its tab; its data stays.</span></p>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu</span><span lang="en">In game</span></span><span lang="fr">Tutoriel : choisir ses modules</span><span lang="en">Tutorial: choose your modules</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Ouvre le menu du jeu (<kbd class="key">Échap</kbd>), puis Options &gt; Extensions &gt; <strong>Guildkeep</strong> (ou tape <code>/gkeep options</code>).</span><span lang="en">Open the game menu (<kbd class="key">Esc</kbd>), then Options &gt; AddOns &gt; <strong>Guildkeep</strong> (or type <code>/gkeep options</code>).</span></li>
+		<li><span lang="fr">Coche ou décoche les modules : <span class="ui opt">Métiers</span>, <span class="ui opt">Membres</span>, <span class="ui opt">Artisanat</span>, <span class="ui opt">Événements</span>, <span class="ui opt">Soirée de raid</span>, <span class="ui opt">Présence et butin</span>, <span class="ui opt">Quêtes</span>, <span class="ui opt">Communication</span>.</span><span lang="en">Tick or untick the modules: <span lang="fr"><span class="ui opt">Métiers</span></span><span lang="en"><span class="ui opt">Métiers</span> <span class="gloss">(Professions)</span></span>, <span lang="fr"><span class="ui opt">Membres</span></span><span lang="en"><span class="ui opt">Membres</span> <span class="gloss">(Members)</span></span>, <span lang="fr"><span class="ui opt">Artisanat</span></span><span lang="en"><span class="ui opt">Artisanat</span> <span class="gloss">(Crafting)</span></span>, <span lang="fr"><span class="ui opt">Événements</span></span><span lang="en"><span class="ui opt">Événements</span> <span class="gloss">(Events)</span></span>, <span lang="fr"><span class="ui opt">Soirée de raid</span></span><span lang="en"><span class="ui opt">Soirée de raid</span> <span class="gloss">(Raid night)</span></span>, <span lang="fr"><span class="ui opt">Présence et butin</span></span><span lang="en"><span class="ui opt">Présence et butin</span> <span class="gloss">(Attendance and loot)</span></span>, <span lang="fr"><span class="ui opt">Quêtes</span></span><span lang="en"><span class="ui opt">Quêtes</span> <span class="gloss">(Quests)</span></span>, <span class="ui opt">Communication</span>.</span></li>
+		<li><span lang="fr">Clique <span lang="fr"><span class="ui">Recharger l'interface</span></span><span lang="en"><span class="ui">Recharger l'interface</span> <span class="gloss">(Reload UI)</span></span> : le changement prend effet au rechargement.</span><span lang="en">Click <span lang="fr"><span class="ui">Recharger l'interface</span></span><span lang="en"><span class="ui">Recharger l'interface</span> <span class="gloss">(Reload UI)</span></span>: the change applies on reload.</span></li>
+	</ol>
+	<p style="margin-top:12px"><span lang="fr">Au clavier : <code>/gkeep modules</code> affiche l'état de chacun ; <code>/gkeep modules quests off</code> (ou <code>on</code>) change un module, par son identifiant (<code>professions</code>, <code>members</code>, <code>craft</code>, <code>events</code>, <code>raid</code>, <code>attendance</code>, <code>quests</code>, <code>communication</code>) ou son nom ; puis <code>/reload</code>.</span><span lang="en">By keyboard: <code>/gkeep modules</code> shows each one's state; <code>/gkeep modules quests off</code> (or <code>on</code>) changes a module, by its id (<code>professions</code>, <code>members</code>, <code>craft</code>, <code>events</code>, <code>raid</code>, <code>attendance</code>, <code>quests</code>, <code>communication</code>) or its name; then <code>/reload</code>.</span></p>
+</div>
+<aside class="callout c-note"><p class="callout-title"><span lang="fr">Bon à savoir</span><span lang="en">Good to know</span></p><p><span lang="fr">La Soirée de raid s'appuie sur les Événements : couper les Événements la coupe aussi.</span><span lang="en">Raid night builds on Events: turning Events off turns it off too.</span></p></aside>
+
+<h3 id="messages"><span lang="fr">Les messages de connexion</span><span lang="en">Login messages</span></h3>
+<p><span lang="fr">À chaque connexion ou <code>/reload</code>, Guildkeep écrit dans le chat une ligne par module :</span><span lang="en">At every login or <code>/reload</code>, Guildkeep writes one chat line per module:</span></p>
+<ul>
+	<li><span lang="fr"><span class="q-uncommon">module Métiers chargé</span> : tout va bien ;</span><span lang="en"><span class="q-uncommon">module Métiers chargé</span> (loaded): all good;</span></li>
+	<li><span lang="fr"><span style="color:#9d9d9d">module Quêtes désactivé</span> : tu l'as coupé (ou il lui manque un module dont il dépend) ;</span><span lang="en"><span style="color:#9d9d9d">module Quêtes désactivé</span> (disabled): you turned it off (or a module it needs is missing);</span></li>
+	<li><span lang="fr"><span style="color:#ff6b6b">module Artisanat : échec du chargement, contacte un administrateur</span> : le module a rencontré une erreur ; les autres fonctionnent normalement. Voir la <a href="/docs/faq.html#echec">FAQ</a>.</span><span lang="en"><span style="color:#ff6b6b">module Artisanat : échec du chargement, contacte un administrateur</span> (failed to load, contact an admin): the module hit an error; the others work normally. See the <a href="/docs/faq.html#echec">FAQ</a>.</span></li>
+</ul>
+</section>
+
+<section>
+<h2 id="lier"><a class="anchor" href="#lier" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Relier ton compte Discord</span><span lang="en">Link your Discord account</span></h2>
+<div class="rights"><span class="badge b-self"><span lang="fr">Toi seul</span><span lang="en">Only you</span></span></div>
+<p><span lang="fr">Relier ton personnage à ton compte Discord te permet de t'inscrire, réserver, commander ou contribuer depuis Discord, et de recevoir les messages privés du bot (nouvelle commande, offre…).</span><span lang="en">Linking your character to your Discord account lets you sign up, reserve, order or contribute from Discord, and get the bot's direct messages (new order, offer…).</span></p>
+<div class="howto">
+	<h3><span class="where">Discord</span><span lang="fr">Tutoriel : lier ton personnage</span><span lang="en">Tutorial: link your character</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Tape <code class="d"><span lang="fr">/gkeep lier</span><span lang="en">/gkeep link</span></code> et, dans <code>personnage</code>, le <strong>nom complet</strong> de ton personnage tel qu'il est en jeu, prénom et nom (par exemple <em>Maël Corvin</em>).</span><span lang="en">Type <code class="d"><span lang="fr">/gkeep lier</span><span lang="en">/gkeep link</span></code> and, in <code>character</code>, your character's <strong>full name</strong> as in game, first and last name (for example <em>Maël Corvin</em>).</span></li>
+		<li><span lang="fr">Le premier personnage lié devient ton <strong>principal</strong>. Pour en changer : <code class="d"><span lang="fr">/gkeep principal</span><span lang="en">/gkeep main</span></code> (la liste propose tes personnages liés).</span><span lang="en">The first linked character becomes your <strong>main</strong>. To change it: <code class="d"><span lang="fr">/gkeep principal</span><span lang="en">/gkeep main</span></code> (the list suggests your linked characters).</span></li>
+		<li><span lang="fr">Si ta guilde a activé le renommage, ton pseudo Discord devient le nom de ton principal. Pour le changer, passe par <code class="d"><span lang="fr">/gkeep principal</span><span lang="en">/gkeep main</span></code> plutôt que par les réglages Discord : le bot le réapplique.</span><span lang="en">If your guild turned renaming on, your Discord nickname becomes your main's name. To change it, use <code class="d"><span lang="fr">/gkeep principal</span><span lang="en">/gkeep main</span></code> rather than Discord settings: the bot reapplies it.</span></li>
+	</ol>
+</div>
+<aside class="callout c-tip"><p class="callout-title"><span lang="fr">Astuce</span><span lang="en">Tip</span></p><p><span lang="fr">Avec ton <a href="/docs/compagnon.html#token">token personnel</a> dans le compagnon, tes personnages relevés en jeu sont reliés à ton compte automatiquement.</span><span lang="en">With your <a href="/docs/compagnon.html#token">personal token</a> in the companion, your characters scanned in game are linked to your account automatically.</span></p></aside>
+</section>
+
+<section>
+<h2 id="droits"><a class="anchor" href="#droits" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Qui peut faire quoi</span><span lang="en">Who can do what</span></h2>
+<div class="table-wrap"><table class="doc-table">
+	<thead><tr><th scope="col"><span lang="fr">Rôle</span><span lang="en">Role</span></th><th scope="col"><span lang="fr">Qui est-ce</span><span lang="en">Who it is</span></th><th scope="col"><span lang="fr">Peut en plus</span><span lang="en">Can also</span></th></tr></thead>
+	<tbody>
+		<tr><td><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></td><td><span lang="fr">Tout joueur de la guilde ; sur Discord, avec un personnage lié.</span><span lang="en">Any guild player; on Discord, with a linked character.</span></td><td><span lang="fr">Consulter, s'inscrire, réserver pour soi, commander, proposer, contribuer, créer un événement.</span><span lang="en">Browse, sign up, reserve for themselves, order, offer, contribute, create an event.</span></td></tr>
+		<tr><td><span class="badge b-org"><span lang="fr">Organisateur ou officier</span><span lang="en">Organizer or officer</span></span></td><td><span lang="fr">Le personnage qui a créé l'événement, ou un officier.</span><span lang="en">The character who created the event, or an officer.</span></td><td><span lang="fr">Modifier, annuler, placer les joueurs, rappeler les inscrits, réserver pour un autre, réservations fermes, verrouillage, rôles de soutien.</span><span lang="en">Edit, cancel, place players, remind sign-ups, reserve for someone else, hard reserves, locking, support duties.</span></td></tr>
+		<tr><td><span class="badge b-officer"><span lang="fr">Officier</span><span lang="en">Officer</span></span></td><td><span lang="fr">Voir ci-dessous.</span><span lang="en">See below.</span></td><td><span lang="fr">Annonces et modèles, charte, objectifs, corrections de présence et de butin.</span><span lang="en">Announcements and templates, handbook, goals, attendance and loot corrections.</span></td></tr>
+		<tr><td><span class="badge b-admin"><span lang="fr">Admin « Gérer le serveur »</span><span lang="en">Admin (“Manage Server”)</span></span></td><td><span lang="fr">Droit Discord « Gérer le serveur ».</span><span lang="en">Discord "Manage Server" permission.</span></td><td><span lang="fr"><code class="d"><span lang="fr">/gkeep-setup</span><span lang="en">/gkeep-setup</span></code>, salon des annonces ; compte aussi comme officier sur Discord.</span><span lang="en"><code class="d"><span lang="fr">/gkeep-setup</span><span lang="en">/gkeep-setup</span></code>, announcement channel; also counts as an officer on Discord.</span></td></tr>
+	</tbody>
+</table></div>
+<h3 id="officier"><span lang="fr">Comment on devient officier</span><span lang="en">How you become an officer</span></h3>
+<ul>
+	<li><span lang="fr"><strong>En jeu</strong>, l'addon lit ton rang : maître de guilde, rang juste en dessous, ou statut d'officier donné par le jeu. Rien à régler.</span><span lang="en"><strong>In game</strong>, the addon reads your rank: guild master, the rank just below, or officer status given by the game. Nothing to set.</span></li>
+	<li><span lang="fr"><strong>Sur Discord</strong>, tu es officier si l'un de tes personnages liés a ce rang <em>relevé en jeu</em>, ou si tu as le droit « Gérer le serveur ».</span><span lang="en"><strong>On Discord</strong>, you're an officer if one of your linked characters has that rank <em>as recorded in game</em>, or if you have the "Manage Server" permission.</span></li>
+</ul>
+<aside class="callout c-warn"><p class="callout-title"><span lang="fr">Attention</span><span lang="en">Watch out</span></p><p><span lang="fr">Le rang d'officier n'est enregistré sur le serveur que s'il arrive par ton <strong>token personnel</strong> (<code class="d"><span lang="fr">/gkeep token</span><span lang="en">/gkeep token</span></code>, voir <a href="/docs/compagnon.html#token">le compagnon</a>). Le pack seul (token de guilde) ou une chaîne collée avec <code class="d"><span lang="fr">/gkeep importer</span><span lang="en">/gkeep import</span></code> ne suffisent pas : sinon n'importe qui pourrait se déclarer officier.</span><span lang="en">The officer rank is only recorded on the server when it comes through your <strong>personal token</strong> (<code class="d"><span lang="fr">/gkeep token</span><span lang="en">/gkeep token</span></code>, see <a href="/docs/compagnon.html#token">the companion</a>). The pack alone (guild token) or a string pasted with <code class="d"><span lang="fr">/gkeep importer</span><span lang="en">/gkeep import</span></code> isn't enough: otherwise anyone could claim to be an officer.</span></p></aside>
+</section>
+<nav class="doc-pager" aria-label="Pages voisines / Adjacent pages">
+<a class="prev" href="/docs/" rel="prev"><small><span lang="fr">← Précédent</span><span lang="en">← Previous</span></small><b><span lang="fr">Documentation</span><span lang="en">Documentation</span></b></a>
+<a class="next" href="/docs/compagnon.html" rel="next"><small><span lang="fr">Suivant →</span><span lang="en">Next →</span></small><b><span lang="fr">L'app compagnon</span><span lang="en">The companion app</span></b></a>
+</nav>
+</main>
+</div>
+
+<footer class="foot">
+	<span><span lang="fr">Outil de guilde pour WoW: Forever</span><span lang="en">Guild tool for WoW: Forever</span></span>
+	<nav aria-label="Pied de page / Footer">
+		<a href="/"><span lang="fr">Accueil</span><span lang="en">Home</span></a>
+		<a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a>
+		<a href="/confidentialite.html"><span lang="fr">Confidentialité</span><span lang="en">Privacy</span></a>
+		<a href="/conditions.html"><span lang="fr">Conditions</span><span lang="en">Terms</span></a>
+		<a href="https://github.com/AntoineRenoux/GuildProfessions" rel="noopener"><span lang="fr">Code source</span><span lang="en">Source code</span></a>
+	</nav>
+	<span class="end">2026</span>
+	<span class="credit"><span lang="fr">World of Warcraft est une marque de Blizzard Entertainment ; Guildkeep n'y est pas affilié.</span><span lang="en">World of Warcraft is a trademark of Blizzard Entertainment; Guildkeep is not affiliated.</span></span>
+</footer>
+
+<script src="/site.js?v=6" defer></script>
+</body>
+</html>

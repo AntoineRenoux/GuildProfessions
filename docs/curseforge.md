@@ -27,6 +27,8 @@ site personnel en bas de page, avatar 400×400, journal de modifications à chaq
 
 **A Guildkeep tab in the guild window**, also opened with `/gkeep` (`/gkeep events`, `/gkeep presence`, `/gkeep quests` and `/gkeep guild` go straight there). Seven tabs, each one a module you can turn off in the game options:
 
+Every tab comes with a short, skippable step-by-step tutorial the first time you open it (replay it with the « ? » button or `/gkeep tuto`). The full guide, with step-by-step tutorials for players and officers, is on the website: https://guildkeep.warpvault.com/docs/
+
 **Events**
 - Plan raids, dungeons, PvP or any outing, in a list or a month calendar.
 - Sign up in one click with your role (tank, healer, melee or ranged DPS), spec and a note: attending, tentative or not attending.

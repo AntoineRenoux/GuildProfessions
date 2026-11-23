@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guildkeep · module Présence et butin</title>
+<meta name="description" content="Le module Présence et butin de Guildkeep : la présence réelle relevée en raid, le butin épique, les taux sur 30, 60 et 90 jours et les corrections des officiers.">
+<link rel="preload" href="/fonts/cinzel-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/alegreya-sans-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/site.css?v=6">
+<script>document.documentElement.classList.add('js');try{var l=localStorage.getItem('gk-lang')||((navigator.language||'fr').toLowerCase().indexOf('fr')===0?'fr':'en');document.documentElement.lang=l}catch(e){}</script>
+</head>
+<body>
+<svg class="sprite" aria-hidden="true" focusable="false"><defs><linearGradient id="gk-gold" gradientUnits="userSpaceOnUse" x1="0" y1="4" x2="0" y2="44"><stop offset="0" stop-color="#fff1bf"/><stop offset=".45" stop-color="#f0c25e"/><stop offset="1" stop-color="#9a6a20"/></linearGradient>
+<symbol id="i-metiers" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M6 15h25c1 5 5 8 11 8v4H31l3 9H14l3-9h-3C9 27 6 22 6 15z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M36 6l4 4M33 9l4 4"/></symbol>
+<symbol id="i-membres" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M24 5c9 0 15 7 15 16v14l-6 6h-4V27h-10v14h-4l-6-6V21C9 12 15 5 24 5z"/><path fill="#1a1208" d="M15 20h18v4H15z"/></symbol>
+<symbol id="i-artisanat" viewBox="0 0 48 48"><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M10 38L36 12"/><ellipse fill="none" stroke="url(#gk-gold)" stroke-width="3.2" cx="37.5" cy="10.5" rx="3.2" ry="1.8" transform="rotate(-45 37.5 10.5)"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="1.8" d="M39 9c6 6-4 12-10 16s-14 10-8 17"/></symbol>
+<symbol id="i-evenements" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M7 11h34v30H7z"/><path fill="#1a1208" d="M10 19h28v19H10z"/><path fill="url(#gk-gold)" d="M13 22h6v5h-6zM21 22h6v5h-6zM29 22h6v5h-6zM13 30h6v5h-6zM21 30h6v5h-6z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M15 6v8M33 6v8"/></symbol>
+<symbol id="i-raid" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M24 4l17 6v12c0 11-7 18-17 22C14 40 7 33 7 22V10z"/><path fill="#1a1208" d="M24 11l11 4v8c0 7-4 12-11 15z"/></symbol>
+<symbol id="i-presence" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M10 6h22l7 7v29H10z"/><path fill="none" stroke="#1a1208" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.4" d="M16 26l5 5 10-11"/></symbol>
+<symbol id="i-quetes" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M20 5h8l-1.5 26h-5zM24 35a4 4 0 1 1 0 8 4 4 0 0 1 0-8z"/></symbol>
+<symbol id="i-communication" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M6 19h8l20-11v32L14 29H6z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M39 17c3 4 3 10 0 14M12 30l3 11h6l-3-11"/></symbol>
+<symbol id="i-install" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M17 12c0-5 3-8 7-8s7 3 7 8h-3c0-3-2-5-4-5s-4 2-4 5z"/><path fill="url(#gk-gold)" d="M10 14h28l4 26a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4z"/><path fill="#1a1208" d="M20 22h8v6h-8z"/></symbol>
+<symbol id="i-compagnon" viewBox="0 0 48 48"><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="4" d="M6 34c6-14 30-14 36 0M12 34V22M24 34V18M36 34V22"/><path fill="url(#gk-gold)" d="M4 34h40v5H4z"/></symbol>
+<symbol id="i-cmd" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M5 9h38v30H5z"/><path fill="#1a1208" d="M8 15h32v21H8z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M14 32l8-13M26 32h8"/></symbol>
+<symbol id="i-faq" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M8 6h26l6 6v30H8z"/><path fill="none" stroke="#1a1208" stroke-linecap="round" stroke-width="3.4" d="M19 19c0-4 3-6 5.5-6s5.5 2 5.5 5.5-5 4-5 8M24.5 32v.5"/></symbol>
+</defs></svg>
+<header class="topbar">
+	<a class="wordmark" href="/">Guildkeep</a>
+	<nav aria-label="Navigation">
+		<a href="/docs/" aria-current="page"><span lang="fr">Documentation</span><span lang="en">Docs</span></a>
+		<a class="hide-phone" href="/docs/faq.html"><span lang="fr">Aide</span><span lang="en">Help</span></a>
+		<div class="lang-switch" role="group" aria-label="Langue / Language">
+			<button type="button" data-set-lang="fr" aria-pressed="true">FR</button>
+			<button type="button" data-set-lang="en" aria-pressed="false">EN</button>
+		</div>
+		<a class="button invite-link hide-phone" href="/#mise-en-place"><span lang="fr">Ajouter à Discord</span><span lang="en">Add to Discord</span></a>
+	</nav>
+</header>
+
+<div class="doc">
+<aside class="doc-nav" aria-label="Sommaire / Contents"><details open><summary><span><span lang="fr">Sommaire</span><span lang="en">Contents</span></span><i class="plus" aria-hidden="true"></i></summary><div>
+<p class="doc-nav-label"><span lang="fr">Démarrer</span><span lang="en">Getting started</span></p><ul>
+<li><a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a>
+</li>
+<li><a href="/docs/installation.html"><span lang="fr">Installer Guildkeep</span><span lang="en">Installing Guildkeep</span></a>
+</li>
+<li><a href="/docs/compagnon.html"><span lang="fr">L'app compagnon</span><span lang="en">The companion app</span></a>
+</li>
+</ul>
+<p class="doc-nav-label"><span lang="fr">Modules</span><span lang="en">Modules</span></p><ul>
+<li><a href="/docs/metiers.html"><span lang="fr">Métiers</span><span lang="en">Professions</span></a>
+</li>
+<li><a href="/docs/membres.html"><span lang="fr">Membres</span><span lang="en">Members</span></a>
+</li>
+<li><a href="/docs/artisanat.html"><span lang="fr">Artisanat</span><span lang="en">Crafting orders</span></a>
+</li>
+<li><a href="/docs/evenements.html"><span lang="fr">Événements</span><span lang="en">Events</span></a>
+</li>
+<li><a href="/docs/soiree-raid.html"><span lang="fr">Soirée de raid</span><span lang="en">Raid night</span></a>
+</li>
+<li><a href="/docs/presence.html" aria-current="page"><span lang="fr">Présence et butin</span><span lang="en">Attendance and loot</span></a>
+<ul>
+<li><a href="#comment-c-est-releve"><span lang="fr">Comment c'est relevé</span><span lang="en">How it's recorded</span></a></li>
+<li><a href="#consulter"><span lang="fr">Tutoriel : consulter la présence d'un joueur</span><span lang="en">Tutorial: look up a player's attendance</span></a></li>
+<li><a href="#consulter-un-raid"><span lang="fr">Tutoriel : revoir un raid</span><span lang="en">Tutorial: review a raid</span></a></li>
+<li><a href="#corriger"><span lang="fr">Tutoriel : corriger la présence ou le butin</span><span lang="en">Tutorial: correct attendance or loot</span></a></li>
+</ul>
+</li>
+<li><a href="/docs/quetes.html"><span lang="fr">Quêtes</span><span lang="en">Quests</span></a>
+</li>
+<li><a href="/docs/communication.html"><span lang="fr">Communication</span><span lang="en">Communication</span></a>
+</li>
+</ul>
+<p class="doc-nav-label"><span lang="fr">Référence</span><span lang="en">Reference</span></p><ul>
+<li><a href="/docs/commandes.html"><span lang="fr">Commandes Discord</span><span lang="en">Discord commands</span></a>
+</li>
+<li><a href="/docs/faq.html"><span lang="fr">FAQ et dépannage</span><span lang="en">FAQ and troubleshooting</span></a>
+</li>
+</ul>
+</div></details></aside>
+<main class="doc-main" id="contenu">
+<nav class="crumbs" aria-label="Fil d'Ariane / Breadcrumb"><ol class="crumbs-list"><li><a href="/"><span lang="fr">Accueil</span><span lang="en">Home</span></a></li><li><a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a></li><li aria-current="page"><span lang="fr">Présence et butin</span><span lang="en">Attendance and loot</span></li></ol></nav>
+<h1><span lang="fr">Présence et butin</span><span lang="en">Attendance and loot</span></h1>
+<p class="lead"><span lang="fr">Qui était vraiment là, raid après raid, et ce que chacun a reçu. Relevé par l'addon pendant le raid, sans rien à saisir : une inscription ne vaut jamais présence.</span><span lang="en">Who was really there, raid after raid, and what everyone received. Recorded by the addon during the raid, nothing to type: a sign-up never counts as attending.</span></p>
+<div class="rule" aria-hidden="true"><i></i></div>
+<section>
+<h2 id="comment-c-est-releve"><a class="anchor" href="#comment-c-est-releve" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Comment c'est relevé</span><span lang="en">How it's recorded</span></h2>
+<ul>
+	<li><span lang="fr">Dès que tu es dans une instance de raid avec <strong>au moins 5 membres de la guilde</strong>, l'addon note, minute par minute, qui de la guilde est dans le raid et connecté. En dessous de 5, rien n'est relevé : ce n'est pas un raid de guilde.</span><span lang="en">As soon as you're in a raid instance with <strong>at least 5 guild members</strong>, the addon notes, minute by minute, who from the guild is in the raid and online. Below 5, nothing is recorded: it isn't a guild raid.</span></li>
+	<li><span lang="fr">Un joueur compte <strong>présent</strong> s'il est resté au moins <strong>15 minutes</strong>.</span><span lang="en">A player counts as <strong>present</strong> if they stayed at least <strong>15 minutes</strong>.</span></li>
+	<li><span lang="fr">Les objets <strong>épiques ou mieux</strong> reçus par les membres de la guilde sont notés à partir des messages de butin du jeu.</span><span lang="en"><strong>Epic or better</strong> items received by guild members are noted from the game's loot messages.</span></li>
+	<li><span lang="fr">Chaque membre présent qui a l'addon relève le même raid ; le serveur fusionne les relevés. Il suffit donc qu'un seul joueur ait le module actif, mais plusieurs, c'est plus sûr.</span><span lang="en">Every member present with the addon records the same raid; the server merges the records. So one player with the module on is enough, but several is safer.</span></li>
+</ul>
+<p><span lang="fr">Le <strong>taux de présence</strong> d'un joueur, c'est le nombre de raids de guilde où il était présent, sur le nombre de raids de guilde de la période (30, 60 ou 90 jours). Un raid où il est marqué <em>excusé</em> ne compte ni pour ni contre lui.</span><span lang="en">A player's <strong>attendance rate</strong> is the number of guild raids they attended, out of the guild raids in the period (30, 60 or 90 days). A raid where they're marked <em>excused</em> counts neither for nor against them.</span></p>
+<figure class="mock" data-ui>
+	<div class="wow">
+		<div class="bar-line"><span class="chip is-on">Joueurs</span><span class="chip">Raids</span><span style="margin-left:12px" class="chip is-on">30 j</span><span class="chip">60 j</span><span class="chip">90 j</span></div>
+		<div class="wow-row"><span class="wow-ico ok">●</span><span><span style="color:#C69B6D">Bragg Ferrefond</span><br><span class="soft" style="font-size:12px">8/8 · 2 obj.</span></span><span class="ok">100%</span></div>
+		<div class="wow-row"><span class="wow-ico ok">●</span><span><span style="color:#3FC7EB">Ysolde Brume</span><br><span class="soft" style="font-size:12px">7/8 · 1 obj.</span></span><span>88%</span></div>
+		<div class="wow-row"><span class="wow-ico soft">●</span><span><span style="color:#AAD372">Sorcha Tanne</span><br><span class="soft" style="font-size:12px">4/8</span></span><span class="bad">50%</span></div>
+	</div>
+	<figcaption><span lang="fr">Maquette : l'onglet Présence en mode Joueurs, sur 30 jours.</span><span lang="en">Mock-up: the Attendance tab in Players mode, over 30 days.</span></figcaption>
+</figure>
+
+<aside class="callout c-tip"><p class="callout-title"><span lang="fr">Astuce</span><span lang="en">Tip</span></p><p><span lang="fr"><strong>Tutoriel en jeu.</strong> À la première ouverture de l'onglet <span lang="fr"><span class="ui tab">Présence</span></span><span lang="en"><span class="ui tab">Présence</span> <span class="gloss">(Attendance)</span></span>, un tutoriel pas à pas encadre chaque bouton et explique à quoi il sert. Tu peux le passer à tout moment, et le revoir avec le bouton <span class="ui">?</span> en haut à droite de la fenêtre ou <code>/gkeep tuto</code>.</span><span lang="en"><strong>In-game tutorial.</strong> The first time you open the <span lang="fr"><span class="ui tab">Présence</span></span><span lang="en"><span class="ui tab">Présence</span> <span class="gloss">(Attendance)</span></span> tab, a step-by-step tutorial highlights every button and explains what it does. You can skip it at any time, and replay it with the <span class="ui">?</span> button at the top right of the window or <code>/gkeep tuto</code>.</span></p></aside>
+</section>
+
+<section>
+<h2 id="consulter"><a class="anchor" href="#consulter" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Tutoriel : consulter la présence d'un joueur</span><span lang="en">Tutorial: look up a player's attendance</span></h2>
+<div class="rights"><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></div>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu</span><span lang="en">In game</span></span><span lang="fr">Onglet Présence</span><span lang="en">Attendance tab</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Ouvre l'onglet <span lang="fr"><span class="ui tab">Présence</span></span><span lang="en"><span class="ui tab">Présence</span> <span class="gloss">(Attendance)</span></span> (ou <code>/gkeep presence</code>).</span><span lang="en">Open the <span lang="fr"><span class="ui tab">Présence</span></span><span lang="en"><span class="ui tab">Présence</span> <span class="gloss">(Attendance)</span></span> tab (or <code>/gkeep presence</code>).</span></li>
+		<li><span lang="fr">Mode <span lang="fr"><span class="ui opt">Joueurs</span></span><span lang="en"><span class="ui opt">Joueurs</span> <span class="gloss">(Players)</span></span> : choisis la période <span lang="fr"><span class="ui opt">30 j</span></span><span lang="en"><span class="ui opt">30 j</span> <span class="gloss">(30 d)</span></span>, <span lang="fr"><span class="ui opt">60 j</span></span><span lang="en"><span class="ui opt">60 j</span> <span class="gloss">(60 d)</span></span> ou <span lang="fr"><span class="ui opt">90 j</span></span><span lang="en"><span class="ui opt">90 j</span> <span class="gloss">(90 d)</span></span>, et cherche un nom dans <span lang="fr"><span class="ui opt">Chercher un joueur</span></span><span lang="en"><span class="ui opt">Chercher un joueur</span> <span class="gloss">(Search a player)</span></span>.</span><span lang="en"><span lang="fr"><span class="ui opt">Joueurs</span></span><span lang="en"><span class="ui opt">Joueurs</span> <span class="gloss">(Players)</span></span> mode: pick the period <span lang="fr"><span class="ui opt">30 j</span></span><span lang="en"><span class="ui opt">30 j</span> <span class="gloss">(30 d)</span></span>, <span lang="fr"><span class="ui opt">60 j</span></span><span lang="en"><span class="ui opt">60 j</span> <span class="gloss">(60 d)</span></span> or <span lang="fr"><span class="ui opt">90 j</span></span><span lang="en"><span class="ui opt">90 j</span> <span class="gloss">(90 d)</span></span>, and look up a name in <span lang="fr"><span class="ui opt">Chercher un joueur</span></span><span lang="en"><span class="ui opt">Chercher un joueur</span> <span class="gloss">(Search a player)</span></span>.</span></li>
+		<li><span lang="fr">Clique le joueur : en haut, ses taux sur 30, 60 et 90 jours et sur les 30 jours d'avant (pour voir la tendance) ; dessous, chacun de ses raids avec ses minutes de présence, puis son butin.</span><span lang="en">Click the player: at the top, their rates over 30, 60 and 90 days and over the 30 days before (to see the trend); below, each of their raids with minutes present, then their loot.</span></li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span><span lang="fr">Les commandes de présence</span><span lang="en">The attendance commands</span></h3>
+	<ul>
+		<li><span lang="fr"><code class="d"><span lang="fr">/gkeep presence resume</span><span lang="en">/gkeep attendance summary</span></code> : le taux de chaque raideur, option <code><span lang="fr">jours</span><span lang="en">days</span></code> (30, 60, 90).</span><span lang="en"><code class="d"><span lang="fr">/gkeep presence resume</span><span lang="en">/gkeep attendance summary</span></code>: every raider's rate, <code>days</code> option (30, 60, 90).</span></li>
+		<li><span lang="fr"><code class="d"><span lang="fr">/gkeep presence joueur</span><span lang="en">/gkeep attendance player</span></code> : les tendances, derniers raids et butin d'un personnage.</span><span lang="en"><code class="d"><span lang="fr">/gkeep presence joueur</span><span lang="en">/gkeep attendance player</span></code>: a character's trends, recent raids and loot.</span></li>
+		<li><span lang="fr"><code class="d"><span lang="fr">/gkeep presence raids</span><span lang="en">/gkeep attendance raids</span></code> : les raids relevés, du plus récent au plus ancien ; <code class="d"><span lang="fr">/gkeep presence raid</span><span lang="en">/gkeep attendance raid</span></code> : qui était là et ce qui est tombé.</span><span lang="en"><code class="d"><span lang="fr">/gkeep presence raids</span><span lang="en">/gkeep attendance raids</span></code>: recorded raids, most recent first; <code class="d"><span lang="fr">/gkeep presence raid</span><span lang="en">/gkeep attendance raid</span></code>: who was there and what dropped.</span></li>
+		<li><span lang="fr"><code class="d"><span lang="fr">/gkeep butin liste</span><span lang="en">/gkeep loot list</span></code> : l'historique du butin, de tous ou d'un <code><span lang="fr">personnage</span><span lang="en">character</span></code>.</span><span lang="en"><code class="d"><span lang="fr">/gkeep butin liste</span><span lang="en">/gkeep loot list</span></code>: the loot history, for everyone or one <code>character</code>.</span></li>
+	</ul>
+</div>
+</section>
+
+<section>
+<h2 id="consulter-un-raid"><a class="anchor" href="#consulter-un-raid" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Tutoriel : revoir un raid</span><span lang="en">Tutorial: review a raid</span></h2>
+<div class="rights"><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></div>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu</span><span lang="en">In game</span></span><span lang="fr">Mode Raids</span><span lang="en">Raids mode</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Onglet <span lang="fr"><span class="ui tab">Présence</span></span><span lang="en"><span class="ui tab">Présence</span> <span class="gloss">(Attendance)</span></span>, mode <span class="ui opt">Raids</span>. Chaque ligne : la date, l'instance, le nombre de personnes et d'objets. « hors décompte » marque un raid à moins de 5 membres ; « local » un relevé pas encore envoyé.</span><span lang="en"><span lang="fr"><span class="ui tab">Présence</span></span><span lang="en"><span class="ui tab">Présence</span> <span class="gloss">(Attendance)</span></span> tab, <span class="ui opt">Raids</span> mode. Each row: the date, instance, number of people and items. "hors décompte" (not counted) marks a raid with fewer than 5 members; "local" a record not sent yet.</span></li>
+		<li><span lang="fr">Clique un raid : le chef de raid, l'heure de début et de fin, la liste « Présence » avec les minutes de chacun, et le « Butin ».</span><span lang="en">Click a raid: the raid leader, start and end time, the "Présence" list with everyone's minutes, and the "Butin" (loot).</span></li>
+	</ol>
+</div>
+</section>
+
+<section>
+<h2 id="corriger"><a class="anchor" href="#corriger" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Tutoriel : corriger la présence ou le butin</span><span lang="en">Tutorial: correct attendance or loot</span></h2>
+<div class="rights"><span class="badge b-officer"><span lang="fr">Officier</span><span lang="en">Officer</span></span></div>
+<p><span lang="fr">Un joueur déconnecté par erreur, un remplaçant resté dehors, un objet désenchanté : les officiers corrigent. Les corrections restent à part de ce qui a été relevé, et sont marquées « (officier) ».</span><span lang="en">A player disconnected by mistake, a standby who stayed outside, a disenchanted item: officers correct. Corrections are kept apart from what was recorded, and marked "(officier)".</span></p>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu</span><span lang="en">In game</span></span><span lang="fr">Dans le détail d'un raid</span><span lang="en">In a raid's details</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Mode <span class="ui opt">Raids</span>, ouvre le raid.</span><span lang="en"><span class="ui opt">Raids</span> mode, open the raid.</span></li>
+		<li><span lang="fr">Sur la ligne d'un joueur, clique <span lang="fr"><span class="ui">Présent</span></span><span lang="en"><span class="ui">Présent</span> <span class="gloss">(Present)</span></span>, <span class="ui">Absent</span> ou <span lang="fr"><span class="ui">Excusé</span></span><span lang="en"><span class="ui">Excusé</span> <span class="gloss">(Excused)</span></span> (excusé : hors calcul du taux).</span><span lang="en">On a player's row, click <span lang="fr"><span class="ui">Présent</span></span><span lang="en"><span class="ui">Présent</span> <span class="gloss">(Present)</span></span>, <span class="ui">Absent</span> or <span lang="fr"><span class="ui">Excusé</span></span><span lang="en"><span class="ui">Excusé</span> <span class="gloss">(Excused)</span></span> (excused: left out of the rate).</span></li>
+		<li><span lang="fr">Quelqu'un manque dans la liste ? Tape son nom dans le champ, puis <span lang="fr"><span class="ui">Marquer présent</span></span><span lang="en"><span class="ui">Marquer présent</span> <span class="gloss">(Mark present)</span></span>.</span><span lang="en">Someone missing from the list? Type their name in the field, then <span lang="fr"><span class="ui">Marquer présent</span></span><span lang="en"><span class="ui">Marquer présent</span> <span class="gloss">(Mark present)</span></span>.</span></li>
+		<li><span lang="fr">Dans « Butin », <span lang="fr"><span class="ui">Annuler</span></span><span lang="en"><span class="ui">Annuler</span> <span class="gloss">(Void)</span></span> retire un objet du décompte (désenchanté, erreur) ; <span lang="fr"><span class="ui">Rétablir</span></span><span lang="en"><span class="ui">Rétablir</span> <span class="gloss">(Restore)</span></span> le remet.</span><span lang="en">Under "Butin" (loot), <span lang="fr"><span class="ui">Annuler</span></span><span lang="en"><span class="ui">Annuler</span> <span class="gloss">(Void)</span></span> removes an item from the count (disenchanted, mistake); <span lang="fr"><span class="ui">Rétablir</span></span><span lang="en"><span class="ui">Rétablir</span> <span class="gloss">(Restore)</span></span> puts it back.</span></li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span><span lang="fr">Les commandes d'officier</span><span lang="en">Officer commands</span></h3>
+	<ul>
+		<li><span lang="fr"><code class="d"><span lang="fr">/gkeep presence corriger</span><span lang="en">/gkeep attendance correct</span></code> : le <code>raid</code>, le <code><span lang="fr">personnage</span><span lang="en">character</span></code>, le <code><span lang="fr">statut</span><span lang="en">status</span></code> (Présent, Absent, Excusé) et une <code>note</code> facultative.</span><span lang="en"><code class="d"><span lang="fr">/gkeep presence corriger</span><span lang="en">/gkeep attendance correct</span></code>: the <code>raid</code>, the <code>character</code>, the <code>status</code> (Present, Absent, Excused) and an optional <code>note</code>.</span></li>
+		<li><span lang="fr"><code class="d"><span lang="fr">/gkeep butin annuler</span><span lang="en">/gkeep loot void</span></code> : l'<code><span lang="fr">objet</span><span lang="en">item</span></code> relevé et une <code>note</code> ; <code class="d"><span lang="fr">/gkeep butin retablir</span><span lang="en">/gkeep loot restore</span></code> pour revenir en arrière.</span><span lang="en"><code class="d"><span lang="fr">/gkeep butin annuler</span><span lang="en">/gkeep loot void</span></code>: the recorded <code>item</code> and a <code>note</code>; <code class="d"><span lang="fr">/gkeep butin retablir</span><span lang="en">/gkeep loot restore</span></code> to undo.</span></li>
+	</ul>
+</div>
+<aside class="callout c-warn"><p class="callout-title"><span lang="fr">Attention</span><span lang="en">Watch out</span></p><p><span lang="fr">Les corrections faites en jeu ne sont retenues par le serveur que si ton rang d'officier y est enregistré, c'est-à-dire si ton compagnon utilise ton <a href="/docs/compagnon.html#token">token personnel</a>. Sinon le compagnon affiche « Correction … ignorée : réservée aux officiers ».</span><span lang="en">Corrections made in game are only kept by the server if your officer rank is recorded there, that is if your companion uses your <a href="/docs/compagnon.html#token">personal token</a>. Otherwise the companion shows "Correction … ignorée : réservée aux officiers" (ignored: officers only).</span></p></aside>
+</section>
+<nav class="doc-pager" aria-label="Pages voisines / Adjacent pages">
+<a class="prev" href="/docs/soiree-raid.html" rel="prev"><small><span lang="fr">← Précédent</span><span lang="en">← Previous</span></small><b><span lang="fr">Soirée de raid</span><span lang="en">Raid night</span></b></a>
+<a class="next" href="/docs/quetes.html" rel="next"><small><span lang="fr">Suivant →</span><span lang="en">Next →</span></small><b><span lang="fr">Quêtes</span><span lang="en">Quests</span></b></a>
+</nav>
+</main>
+</div>
+
+<footer class="foot">
+	<span><span lang="fr">Outil de guilde pour WoW: Forever</span><span lang="en">Guild tool for WoW: Forever</span></span>
+	<nav aria-label="Pied de page / Footer">
+		<a href="/"><span lang="fr">Accueil</span><span lang="en">Home</span></a>
+		<a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a>
+		<a href="/confidentialite.html"><span lang="fr">Confidentialité</span><span lang="en">Privacy</span></a>
+		<a href="/conditions.html"><span lang="fr">Conditions</span><span lang="en">Terms</span></a>
+		<a href="https://github.com/AntoineRenoux/GuildProfessions" rel="noopener"><span lang="fr">Code source</span><span lang="en">Source code</span></a>
+	</nav>
+	<span class="end">2026</span>
+	<span class="credit"><span lang="fr">World of Warcraft est une marque de Blizzard Entertainment ; Guildkeep n'y est pas affilié.</span><span lang="en">World of Warcraft is a trademark of Blizzard Entertainment; Guildkeep is not affiliated.</span></span>
+</footer>
+
+<script src="/site.js?v=6" defer></script>
+</body>
+</html>

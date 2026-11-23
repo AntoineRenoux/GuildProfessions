@@ -199,6 +199,27 @@
 		});
 	}
 
+	// ---- Documentation : sommaire replié sur téléphone, section courante surlignée ---------------
+	const docNav = document.querySelector('.doc-nav details');
+	if (docNav) {
+		if (window.matchMedia('(max-width: 900px)').matches) docNav.open = false;
+		const links = [...docNav.querySelectorAll('ul ul a[href^="#"]')];
+		const sections = links.map((a) => document.getElementById(a.getAttribute('href').slice(1))).filter(Boolean);
+		if (sections.length) {
+			// Section courante : la dernière dont le titre est passé sous le tiers haut de l'écran.
+			const mark = () => {
+				const line = window.innerHeight * 0.3;
+				let current = null;
+				sections.forEach((s) => { if (s.getBoundingClientRect().top <= line) current = s; });
+				links.forEach((a) => a.classList.toggle('is-here', current !== null && a.getAttribute('href') === `#${current.id}`));
+			};
+			let frame = 0;
+			window.addEventListener('scroll', () => { cancelAnimationFrame(frame); frame = requestAnimationFrame(mark); }, { passive: true });
+			window.addEventListener('load', mark);
+			mark();
+		}
+	}
+
 	// ---- Entrées des sections, une fois ----------------------------------------------------------
 	const targets = document.querySelectorAll('[data-reveal]');
 	if (!('IntersectionObserver' in window)) { targets.forEach((el) => el.classList.add('is-in')); return; }

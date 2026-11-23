@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guildkeep · module Artisanat</title>
+<meta name="description" content="Le module Artisanat de Guildkeep : commander un craft à un artisan, demander à toute la guilde, proposer, choisir une offre et suivre la livraison, en jeu et sur Discord.">
+<link rel="preload" href="/fonts/cinzel-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/alegreya-sans-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/site.css?v=6">
+<script>document.documentElement.classList.add('js');try{var l=localStorage.getItem('gk-lang')||((navigator.language||'fr').toLowerCase().indexOf('fr')===0?'fr':'en');document.documentElement.lang=l}catch(e){}</script>
+</head>
+<body>
+<svg class="sprite" aria-hidden="true" focusable="false"><defs><linearGradient id="gk-gold" gradientUnits="userSpaceOnUse" x1="0" y1="4" x2="0" y2="44"><stop offset="0" stop-color="#fff1bf"/><stop offset=".45" stop-color="#f0c25e"/><stop offset="1" stop-color="#9a6a20"/></linearGradient>
+<symbol id="i-metiers" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M6 15h25c1 5 5 8 11 8v4H31l3 9H14l3-9h-3C9 27 6 22 6 15z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M36 6l4 4M33 9l4 4"/></symbol>
+<symbol id="i-membres" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M24 5c9 0 15 7 15 16v14l-6 6h-4V27h-10v14h-4l-6-6V21C9 12 15 5 24 5z"/><path fill="#1a1208" d="M15 20h18v4H15z"/></symbol>
+<symbol id="i-artisanat" viewBox="0 0 48 48"><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M10 38L36 12"/><ellipse fill="none" stroke="url(#gk-gold)" stroke-width="3.2" cx="37.5" cy="10.5" rx="3.2" ry="1.8" transform="rotate(-45 37.5 10.5)"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="1.8" d="M39 9c6 6-4 12-10 16s-14 10-8 17"/></symbol>
+<symbol id="i-evenements" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M7 11h34v30H7z"/><path fill="#1a1208" d="M10 19h28v19H10z"/><path fill="url(#gk-gold)" d="M13 22h6v5h-6zM21 22h6v5h-6zM29 22h6v5h-6zM13 30h6v5h-6zM21 30h6v5h-6z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M15 6v8M33 6v8"/></symbol>
+<symbol id="i-raid" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M24 4l17 6v12c0 11-7 18-17 22C14 40 7 33 7 22V10z"/><path fill="#1a1208" d="M24 11l11 4v8c0 7-4 12-11 15z"/></symbol>
+<symbol id="i-presence" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M10 6h22l7 7v29H10z"/><path fill="none" stroke="#1a1208" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.4" d="M16 26l5 5 10-11"/></symbol>
+<symbol id="i-quetes" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M20 5h8l-1.5 26h-5zM24 35a4 4 0 1 1 0 8 4 4 0 0 1 0-8z"/></symbol>
+<symbol id="i-communication" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M6 19h8l20-11v32L14 29H6z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M39 17c3 4 3 10 0 14M12 30l3 11h6l-3-11"/></symbol>
+<symbol id="i-install" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M17 12c0-5 3-8 7-8s7 3 7 8h-3c0-3-2-5-4-5s-4 2-4 5z"/><path fill="url(#gk-gold)" d="M10 14h28l4 26a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4z"/><path fill="#1a1208" d="M20 22h8v6h-8z"/></symbol>
+<symbol id="i-compagnon" viewBox="0 0 48 48"><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="4" d="M6 34c6-14 30-14 36 0M12 34V22M24 34V18M36 34V22"/><path fill="url(#gk-gold)" d="M4 34h40v5H4z"/></symbol>
+<symbol id="i-cmd" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M5 9h38v30H5z"/><path fill="#1a1208" d="M8 15h32v21H8z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M14 32l8-13M26 32h8"/></symbol>
+<symbol id="i-faq" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M8 6h26l6 6v30H8z"/><path fill="none" stroke="#1a1208" stroke-linecap="round" stroke-width="3.4" d="M19 19c0-4 3-6 5.5-6s5.5 2 5.5 5.5-5 4-5 8M24.5 32v.5"/></symbol>
+</defs></svg>
+<header class="topbar">
+	<a class="wordmark" href="/">Guildkeep</a>
+	<nav aria-label="Navigation">
+		<a href="/docs/" aria-current="page"><span lang="fr">Documentation</span><span lang="en">Docs</span></a>
+		<a class="hide-phone" href="/docs/faq.html"><span lang="fr">Aide</span><span lang="en">Help</span></a>
+		<div class="lang-switch" role="group" aria-label="Langue / Language">
+			<button type="button" data-set-lang="fr" aria-pressed="true">FR</button>
+			<button type="button" data-set-lang="en" aria-pressed="false">EN</button>
+		</div>
+		<a class="button invite-link hide-phone" href="/#mise-en-place"><span lang="fr">Ajouter à Discord</span><span lang="en">Add to Discord</span></a>
+	</nav>
+</header>
+
+<div class="doc">
+<aside class="doc-nav" aria-label="Sommaire / Contents"><details open><summary><span><span lang="fr">Sommaire</span><span lang="en">Contents</span></span><i class="plus" aria-hidden="true"></i></summary><div>
+<p class="doc-nav-label"><span lang="fr">Démarrer</span><span lang="en">Getting started</span></p><ul>
+<li><a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a>
+</li>
+<li><a href="/docs/installation.html"><span lang="fr">Installer Guildkeep</span><span lang="en">Installing Guildkeep</span></a>
+</li>
+<li><a href="/docs/compagnon.html"><span lang="fr">L'app compagnon</span><span lang="en">The companion app</span></a>
+</li>
+</ul>
+<p class="doc-nav-label"><span lang="fr">Modules</span><span lang="en">Modules</span></p><ul>
+<li><a href="/docs/metiers.html"><span lang="fr">Métiers</span><span lang="en">Professions</span></a>
+</li>
+<li><a href="/docs/membres.html"><span lang="fr">Membres</span><span lang="en">Members</span></a>
+</li>
+<li><a href="/docs/artisanat.html" aria-current="page"><span lang="fr">Artisanat</span><span lang="en">Crafting orders</span></a>
+<ul>
+<li><a href="#a-quoi-ca-sert"><span lang="fr">À quoi ça sert</span><span lang="en">What it's for</span></a></li>
+<li><a href="#commander-a-un-artisan"><span lang="fr">Tutoriel : commander à un artisan précis</span><span lang="en">Tutorial: order from a given crafter</span></a></li>
+<li><a href="#demander-a-toute-la-guilde"><span lang="fr">Tutoriel : demander un craft à toute la guilde</span><span lang="en">Tutorial: ask the whole guild for a craft</span></a></li>
+<li><a href="#proposer"><span lang="fr">Tutoriel : proposer de faire une demande (artisan)</span><span lang="en">Tutorial: offer to make a request (crafter)</span></a></li>
+<li><a href="#choisir-une-offre"><span lang="fr">Tutoriel : choisir une offre (demandeur)</span><span lang="en">Tutorial: pick an offer (requester)</span></a></li>
+<li><a href="#livraison"><span lang="fr">Tutoriel : de l'acceptation à la livraison</span><span lang="en">Tutorial: from acceptance to delivery</span></a></li>
+<li><a href="#catalogue"><span lang="fr">Le catalogue de la guilde</span><span lang="en">The guild catalog</span></a></li>
+</ul>
+</li>
+<li><a href="/docs/evenements.html"><span lang="fr">Événements</span><span lang="en">Events</span></a>
+</li>
+<li><a href="/docs/soiree-raid.html"><span lang="fr">Soirée de raid</span><span lang="en">Raid night</span></a>
+</li>
+<li><a href="/docs/presence.html"><span lang="fr">Présence et butin</span><span lang="en">Attendance and loot</span></a>
+</li>
+<li><a href="/docs/quetes.html"><span lang="fr">Quêtes</span><span lang="en">Quests</span></a>
+</li>
+<li><a href="/docs/communication.html"><span lang="fr">Communication</span><span lang="en">Communication</span></a>
+</li>
+</ul>
+<p class="doc-nav-label"><span lang="fr">Référence</span><span lang="en">Reference</span></p><ul>
+<li><a href="/docs/commandes.html"><span lang="fr">Commandes Discord</span><span lang="en">Discord commands</span></a>
+</li>
+<li><a href="/docs/faq.html"><span lang="fr">FAQ et dépannage</span><span lang="en">FAQ and troubleshooting</span></a>
+</li>
+</ul>
+</div></details></aside>
+<main class="doc-main" id="contenu">
+<nav class="crumbs" aria-label="Fil d'Ariane / Breadcrumb"><ol class="crumbs-list"><li><a href="/"><span lang="fr">Accueil</span><span lang="en">Home</span></a></li><li><a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a></li><li aria-current="page"><span lang="fr">Artisanat</span><span lang="en">Crafting orders</span></li></ol></nav>
+<h1><span lang="fr">Artisanat</span><span lang="en">Crafting orders</span></h1>
+<p class="lead"><span lang="fr">Les commandes de craft entre membres : à un artisan précis, ou à toute la guilde d'un coup. Les artisans proposent, tu choisis, puis chacun suit la livraison jusqu'à « Reçue ».</span><span lang="en">Craft orders between members: to a given crafter, or to the whole guild at once. Crafters offer, you choose, then everyone tracks delivery until "Reçue" (received).</span></p>
+<div class="rule" aria-hidden="true"><i></i></div>
+<section>
+<h2 id="a-quoi-ca-sert"><a class="anchor" href="#a-quoi-ca-sert" aria-hidden="true" tabindex="-1">#</a><span lang="fr">À quoi ça sert</span><span lang="en">What it's for</span></h2>
+<p><span lang="fr">L'onglet <span lang="fr"><span class="ui tab">Commandes</span></span><span lang="en"><span class="ui tab">Commandes</span> <span class="gloss">(Orders)</span></span> réunit les commandes que tu as passées et celles que tu peux fabriquer. Le chiffre de l'onglet, par exemple <span class="ui tab">Commandes (2)</span>, compte celles qui attendent ton geste.</span><span lang="en">The <span lang="fr"><span class="ui tab">Commandes</span></span><span lang="en"><span class="ui tab">Commandes</span> <span class="gloss">(Orders)</span></span> tab gathers the orders you placed and those you can craft. The tab's number, for example <span class="ui tab">Commandes (2)</span>, counts those waiting on you.</span></p>
+<ul>
+	<li><span lang="fr"><strong>Commande directe</strong> : depuis la liste des recettes d'un artisan, bouton <span lang="fr"><span class="ui">Commander</span></span><span lang="en"><span class="ui">Commander</span> <span class="gloss">(Order)</span></span>. Seul cet artisan la reçoit.</span><span lang="en"><strong>Direct order</strong>: from a crafter's recipe list, <span lang="fr"><span class="ui">Commander</span></span><span lang="en"><span class="ui">Commander</span> <span class="gloss">(Order)</span></span> button. Only that crafter gets it.</span></li>
+	<li><span lang="fr"><strong>Demande ouverte</strong> : <span lang="fr"><span class="ui">Nouvelle demande</span></span><span lang="en"><span class="ui">Nouvelle demande</span> <span class="gloss">(New request)</span></span>, tu choisis la recette dans le catalogue de la guilde ; tous les artisans qui la connaissent sont prévenus et peuvent proposer. Elle reste ouverte <strong>5 jours</strong>, puis expire.</span><span lang="en"><strong>Open request</strong>: <span lang="fr"><span class="ui">Nouvelle demande</span></span><span lang="en"><span class="ui">Nouvelle demande</span> <span class="gloss">(New request)</span></span>, pick the recipe from the guild catalog; every crafter who knows it is notified and can offer. It stays open <strong>5 days</strong>, then expires.</span></li>
+</ul>
+<p><span lang="fr">Les étapes d'une commande : <em>ouverte</em> → <em>acceptée</em> → <em>prête à échanger</em> (en main propre) ou <em>envoyée par courrier</em> → <em>reçue</em>. Elle peut aussi être <em>annulée</em> ou <em>expirée</em>. L'échange et le courrier se font toujours à la main, en jeu.</span><span lang="en">An order's steps: <em>ouverte</em> (open) → <em>acceptée</em> (accepted) → <em>prête à échanger</em> (ready to trade in person) or <em>envoyée par courrier</em> (mailed) → <em>reçue</em> (received). It can also be <em>annulée</em> (cancelled) or <em>expirée</em> (expired). Trading and mailing are always done by hand, in game.</span></p>
+<figure class="mock" data-ui>
+	<div class="wow">
+		<div class="wow-title"><b>Guildkeep</b><small>&lt;La Garde d'Ambre&gt;</small></div>
+		<div class="bar-line"><span class="chip is-on">Toutes</span><span class="chip">À fabriquer</span><span class="chip">Mes demandes</span><span class="chip">Que je peux faire</span><span class="chip">Mes offres</span><span style="margin-left:auto" class="wow-button">Nouvelle demande</span></div>
+		<div class="wow-row"><span class="wow-ico">!</span><span><span class="ok">2× Flacon des Titans</span>   <span class="gold">ouverte</span><br><span class="soft" style="font-size:12px">toi » tous les artisans · #41 · offres : Maël Corvin · expire dans 4 j</span></span><span class="acts"><span class="wow-button">Offres (1)</span><span class="wow-button">Annuler</span></span></div>
+		<div class="wow-row"><span class="wow-ico">?</span><span>1× Robe d'étoffe runique   <span style="color:#6fb6ff">acceptée</span><br><span class="soft" style="font-size:12px">Tamsin Rouage » toi · #38</span></span><span class="acts"><span class="wow-button">Prête</span><span class="wow-button">Envoyée</span><span class="wow-button">Annuler</span></span></div>
+		<div class="wow-tabs"><span>Métiers</span><span>Membres</span><span class="is-on">Commandes (2)</span></div>
+	</div>
+	<figcaption><span lang="fr">Maquette : l'onglet Commandes, une demande ouverte avec une offre et une commande à fabriquer.</span><span lang="en">Mock-up: the Orders tab, an open request with one offer and an order to craft.</span></figcaption>
+</figure>
+
+<aside class="callout c-tip"><p class="callout-title"><span lang="fr">Astuce</span><span lang="en">Tip</span></p><p><span lang="fr"><strong>Tutoriel en jeu.</strong> À la première ouverture de l'onglet <span lang="fr"><span class="ui tab">Commandes</span></span><span lang="en"><span class="ui tab">Commandes</span> <span class="gloss">(Orders)</span></span>, un tutoriel pas à pas encadre chaque bouton et explique à quoi il sert. Tu peux le passer à tout moment, et le revoir avec le bouton <span class="ui">?</span> en haut à droite de la fenêtre ou <code>/gkeep tuto</code>.</span><span lang="en"><strong>In-game tutorial.</strong> The first time you open the <span lang="fr"><span class="ui tab">Commandes</span></span><span lang="en"><span class="ui tab">Commandes</span> <span class="gloss">(Orders)</span></span> tab, a step-by-step tutorial highlights every button and explains what it does. You can skip it at any time, and replay it with the <span class="ui">?</span> button at the top right of the window or <code>/gkeep tuto</code>.</span></p></aside>
+</section>
+
+<section>
+<h2 id="commander-a-un-artisan"><a class="anchor" href="#commander-a-un-artisan" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Tutoriel : commander à un artisan précis</span><span lang="en">Tutorial: order from a given crafter</span></h2>
+<div class="rights"><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></div>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu</span><span lang="en">In game</span></span><span lang="fr">Depuis ses recettes</span><span lang="en">From their recipes</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Onglet <span lang="fr"><span class="ui tab">Métiers</span></span><span lang="en"><span class="ui tab">Métiers</span> <span class="gloss">(Professions)</span></span> : trouve l'artisan (recherche de recette, filtres) et clique <span lang="fr"><span class="ui">Voir (N)</span></span><span lang="en"><span class="ui">Voir (N)</span> <span class="gloss">(View)</span></span>.</span><span lang="en"><span lang="fr"><span class="ui tab">Métiers</span></span><span lang="en"><span class="ui tab">Métiers</span> <span class="gloss">(Professions)</span></span> tab: find the crafter (recipe search, filters) and click <span lang="fr"><span class="ui">Voir (N)</span></span><span lang="en"><span class="ui">Voir (N)</span> <span class="gloss">(View)</span></span>.</span></li>
+		<li><span lang="fr">Clique <span lang="fr"><span class="ui">Commander</span></span><span lang="en"><span class="ui">Commander</span> <span class="gloss">(Order)</span></span> à côté de la recette. La fenêtre « Commande à <em>artisan</em> » s'ouvre.</span><span lang="en">Click <span lang="fr"><span class="ui">Commander</span></span><span lang="en"><span class="ui">Commander</span> <span class="gloss">(Order)</span></span> next to the recipe. The "Commande à <em>crafter</em>" (order from) window opens.</span></li>
+		<li><span lang="fr">Règle la <span lang="fr"><span class="ui opt">Quantité</span></span><span lang="en"><span class="ui opt">Quantité</span> <span class="gloss">(Quantity)</span></span> et, si besoin, une <span class="ui opt">Note</span> (« je fournis le cuir », « avant jeudi »).</span><span lang="en">Set the <span lang="fr"><span class="ui opt">Quantité</span></span><span lang="en"><span class="ui opt">Quantité</span> <span class="gloss">(Quantity)</span></span> and, if needed, a <span class="ui opt">Note</span> ("I'll bring the leather", "before Thursday").</span></li>
+		<li><span lang="fr">Lis la liste « Composants à envoyer à… » : la colonne <span lang="fr"><span class="ui opt">Tu as</span></span><span lang="en"><span class="ui opt">Tu as</span> <span class="gloss">(You have)</span></span> compte ce que tu portes (sacs et banque), le résumé dit s'il te manque quelque chose. Un composant marqué <span class="ui">+</span> est fabricable dans la guilde : clique-le pour voir ses propres composants.</span><span lang="en">Read the "Composants à envoyer à…" (reagents to send) list: the <span lang="fr"><span class="ui opt">Tu as</span></span><span lang="en"><span class="ui opt">Tu as</span> <span class="gloss">(You have)</span></span> column counts what you carry (bags and bank), the summary says if anything is missing. A reagent marked <span class="ui">+</span> can be crafted in the guild: click it to see its own reagents.</span></li>
+		<li><span lang="fr">Clique <span lang="fr"><span class="ui">Commander</span></span><span lang="en"><span class="ui">Commander</span> <span class="gloss">(Order)</span></span>. Le chat confirme l'envoi ; l'artisan est prévenu en jeu s'il est connecté, et sur Discord en message privé.</span><span lang="en">Click <span lang="fr"><span class="ui">Commander</span></span><span lang="en"><span class="ui">Commander</span> <span class="gloss">(Order)</span></span>. Chat confirms it was sent; the crafter is told in game if online, and by Discord direct message.</span></li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span><span lang="fr">Avec /gkeep commande nouvelle</span><span lang="en">With /gkeep order new</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Tape <code class="d"><span lang="fr">/gkeep commande nouvelle</span><span lang="en">/gkeep order new</span></code>.</span><span lang="en">Type <code class="d"><span lang="fr">/gkeep commande nouvelle</span><span lang="en">/gkeep order new</span></code>.</span></li>
+		<li><span lang="fr">Dans <code><span lang="fr">objet</span><span lang="en">item</span></code>, commence à taper : le bot propose les recettes du catalogue de la guilde.</span><span lang="en">In <code><span lang="fr">objet</span><span lang="en">item</span></code>, start typing: the bot suggests recipes from the guild catalog.</span></li>
+		<li><span lang="fr">Dans <code><span lang="fr">artisan</span><span lang="en">crafter</span></code>, choisis l'artisan ; ajoute <code><span lang="fr">quantite</span><span lang="en">quantity</span></code> (1 à 200) et une <code>note</code> si besoin.</span><span lang="en">In <code><span lang="fr">artisan</span><span lang="en">crafter</span></code>, pick the crafter; add <code><span lang="fr">quantite</span><span lang="en">quantity</span></code> (1 to 200) and a <code>note</code> if needed.</span></li>
+	</ol>
+</div>
+</section>
+
+<section>
+<h2 id="demander-a-toute-la-guilde"><a class="anchor" href="#demander-a-toute-la-guilde" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Tutoriel : demander un craft à toute la guilde</span><span lang="en">Tutorial: ask the whole guild for a craft</span></h2>
+<div class="rights"><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></div>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu</span><span lang="en">In game</span></span><span lang="fr">La demande ouverte</span><span lang="en">The open request</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Onglet <span lang="fr"><span class="ui tab">Commandes</span></span><span lang="en"><span class="ui tab">Commandes</span> <span class="gloss">(Orders)</span></span>, clique <span lang="fr"><span class="ui">Nouvelle demande</span></span><span lang="en"><span class="ui">Nouvelle demande</span> <span class="gloss">(New request)</span></span>. La fenêtre « Nouvelle demande à la guilde » s'ouvre.</span><span lang="en"><span lang="fr"><span class="ui tab">Commandes</span></span><span lang="en"><span class="ui tab">Commandes</span> <span class="gloss">(Orders)</span></span> tab, click <span lang="fr"><span class="ui">Nouvelle demande</span></span><span lang="en"><span class="ui">Nouvelle demande</span> <span class="gloss">(New request)</span></span>. The "Nouvelle demande à la guilde" window opens.</span></li>
+		<li><span lang="fr">Tape dans <span lang="fr"><span class="ui opt">Chercher une recette</span></span><span lang="en"><span class="ui opt">Chercher une recette</span> <span class="gloss">(Search a recipe)</span></span>. Chaque ligne indique le métier et le nombre d'artisans qui la connaissent (« personne ne la connaît encore » est possible : la demande reste visible de tous).</span><span lang="en">Type in <span lang="fr"><span class="ui opt">Chercher une recette</span></span><span lang="en"><span class="ui opt">Chercher une recette</span> <span class="gloss">(Search a recipe)</span></span>. Each row shows the profession and how many crafters know it ("personne ne la connaît encore", nobody knows it yet, is possible: the request stays visible to all).</span></li>
+		<li><span lang="fr">Clique la recette : la fenêtre « Demande à tous les artisans » s'ouvre, avec les « Composants à prévoir pour l'artisan ».</span><span lang="en">Click the recipe: the "Demande à tous les artisans" (request to all crafters) window opens, with the "Composants à prévoir" (reagents to plan).</span></li>
+		<li><span lang="fr">Règle <span lang="fr"><span class="ui opt">Quantité</span></span><span lang="en"><span class="ui opt">Quantité</span> <span class="gloss">(Quantity)</span></span> et <span class="ui opt">Note</span>, puis <span lang="fr"><span class="ui">Commander</span></span><span lang="en"><span class="ui">Commander</span> <span class="gloss">(Order)</span></span>. Le chat confirme : « les artisans connectés sont prévenus, elle reste ouverte 5 jours ».</span><span lang="en">Set <span lang="fr"><span class="ui opt">Quantité</span></span><span lang="en"><span class="ui opt">Quantité</span> <span class="gloss">(Quantity)</span></span> and <span class="ui opt">Note</span>, then <span lang="fr"><span class="ui">Commander</span></span><span lang="en"><span class="ui">Commander</span> <span class="gloss">(Order)</span></span>. Chat confirms: connected crafters are notified, it stays open 5 days.</span></li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span><span lang="fr">Avec /gkeep commande nouvelle, sans artisan</span><span lang="en">With /gkeep order new, no crafter</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Tape <code class="d"><span lang="fr">/gkeep commande nouvelle</span><span lang="en">/gkeep order new</span></code>, remplis <code><span lang="fr">objet</span><span lang="en">item</span></code> et laisse <code><span lang="fr">artisan</span><span lang="en">crafter</span></code> <strong>vide</strong>.</span><span lang="en">Type <code class="d"><span lang="fr">/gkeep commande nouvelle</span><span lang="en">/gkeep order new</span></code>, fill in <code><span lang="fr">objet</span><span lang="en">item</span></code> and leave <code><span lang="fr">artisan</span><span lang="en">crafter</span></code> <strong>empty</strong>.</span></li>
+		<li><span lang="fr">Le bot prévient en message privé jusqu'à 10 artisans qui connaissent la recette (ceux dont le personnage est lié à Discord), et l'annonce dans le salon des commandes si l'admin en a choisi un.</span><span lang="en">The bot DMs up to 10 crafters who know the recipe (those whose character is linked to Discord), and posts it in the orders channel if the admin set one.</span></li>
+	</ol>
+</div>
+<aside class="callout c-tip"><p class="callout-title"><span lang="fr">Astuce</span><span lang="en">Tip</span></p><p><span lang="fr">Pour savoir avant de demander qui sait faire une recette : <code class="d"><span lang="fr">/gkeep commande catalogue</span><span lang="en">/gkeep order catalog</span></code> (option <code><span lang="fr">recherche</span><span lang="en">search</span></code>).</span><span lang="en">To check who can make a recipe before asking: <code class="d"><span lang="fr">/gkeep commande catalogue</span><span lang="en">/gkeep order catalog</span></code> (<code><span lang="fr">recherche</span><span lang="en">search</span></code> option).</span></p></aside>
+</section>
+
+<section>
+<h2 id="proposer"><a class="anchor" href="#proposer" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Tutoriel : proposer de faire une demande (artisan)</span><span lang="en">Tutorial: offer to make a request (crafter)</span></h2>
+<div class="rights"><span class="badge b-org"><span lang="fr">L'artisan</span><span lang="en">The crafter</span></span></div>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu</span><span lang="en">In game</span></span><span lang="fr">Le bouton Proposer</span><span lang="en">The Proposer (Offer) button</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Quand une demande que tu sais faire arrive, une alerte s'affiche : « <em>X</em> cherche quelqu'un pour 2× <em>Y</em>, et tu sais le faire ».</span><span lang="en">When a request you can make arrives, an alert shows: "<em>X</em> cherche quelqu'un pour 2× <em>Y</em>, et tu sais le faire" (is looking for someone, and you can make it).</span></li>
+		<li><span lang="fr">Onglet <span lang="fr"><span class="ui tab">Commandes</span></span><span lang="en"><span class="ui tab">Commandes</span> <span class="gloss">(Orders)</span></span>, filtre <span lang="fr"><span class="ui opt">Que je peux faire</span></span><span lang="en"><span class="ui opt">Que je peux faire</span> <span class="gloss">(I can make)</span></span>.</span><span lang="en"><span lang="fr"><span class="ui tab">Commandes</span></span><span lang="en"><span class="ui tab">Commandes</span> <span class="gloss">(Orders)</span></span> tab, <span lang="fr"><span class="ui opt">Que je peux faire</span></span><span lang="en"><span class="ui opt">Que je peux faire</span> <span class="gloss">(I can make)</span></span> filter.</span></li>
+		<li><span lang="fr">Clique <span lang="fr"><span class="ui">Proposer</span></span><span lang="en"><span class="ui">Proposer</span> <span class="gloss">(Offer)</span></span> sur la demande (<span class="ui">Proposer…</span> si tu ne connais pas la recette : tu peux quand même proposer). Écris un mot pour le demandeur (prix, délai…), facultatif, et valide.</span><span lang="en">Click <span lang="fr"><span class="ui">Proposer</span></span><span lang="en"><span class="ui">Proposer</span> <span class="gloss">(Offer)</span></span> on the request (<span class="ui">Proposer…</span> if you don't know the recipe: you can still offer). Write a word for the requester (price, delay…), optional, and confirm.</span></li>
+		<li><span lang="fr">Tu as changé d'avis ? <span lang="fr"><span class="ui">Retirer l'offre</span></span><span lang="en"><span class="ui">Retirer l'offre</span> <span class="gloss">(Withdraw offer)</span></span>. Le filtre <span lang="fr"><span class="ui opt">Mes offres</span></span><span lang="en"><span class="ui opt">Mes offres</span> <span class="gloss">(My offers)</span></span> les rassemble.</span><span lang="en">Changed your mind? <span lang="fr"><span class="ui">Retirer l'offre</span></span><span lang="en"><span class="ui">Retirer l'offre</span> <span class="gloss">(Withdraw offer)</span></span>. The <span lang="fr"><span class="ui opt">Mes offres</span></span><span lang="en"><span class="ui opt">Mes offres</span> <span class="gloss">(My offers)</span></span> filter gathers them.</span></li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span><span lang="fr">Avec /gkeep commande proposer</span><span lang="en">With /gkeep order offer</span></h3>
+	<ol class="steps">
+		<li><span lang="fr"><code class="d"><span lang="fr">/gkeep commande liste</span><span lang="en">/gkeep order list</span></code> avec le filtre « Que je peux faire » pour voir les demandes à ta portée.</span><span lang="en"><code class="d"><span lang="fr">/gkeep commande liste</span><span lang="en">/gkeep order list</span></code> with the "I can make" filter to see requests you can handle.</span></li>
+		<li><span lang="fr"><code class="d"><span lang="fr">/gkeep commande proposer</span><span lang="en">/gkeep order offer</span></code> : choisis la demande dans <code><span lang="fr">numero</span><span lang="en">id</span></code>, ajoute une <code>note</code> ; <code><span lang="fr">personnage</span><span lang="en">character</span></code> vaut ton principal par défaut.</span><span lang="en"><code class="d"><span lang="fr">/gkeep commande proposer</span><span lang="en">/gkeep order offer</span></code>: pick the request in <code><span lang="fr">numero</span><span lang="en">id</span></code>, add a <code>note</code>; <code><span lang="fr">personnage</span><span lang="en">character</span></code> defaults to your main.</span></li>
+		<li><span lang="fr">Pour te retirer : <code class="d"><span lang="fr">/gkeep commande retirer</span><span lang="en">/gkeep order withdraw</span></code>.</span><span lang="en">To back out: <code class="d"><span lang="fr">/gkeep commande retirer</span><span lang="en">/gkeep order withdraw</span></code>.</span></li>
+	</ol>
+</div>
+</section>
+
+<section>
+<h2 id="choisir-une-offre"><a class="anchor" href="#choisir-une-offre" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Tutoriel : choisir une offre (demandeur)</span><span lang="en">Tutorial: pick an offer (requester)</span></h2>
+<div class="rights"><span class="badge b-self"><span lang="fr">Le demandeur</span><span lang="en">The requester</span></span></div>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu</span><span lang="en">In game</span></span><span lang="fr">Le bouton Offres</span><span lang="en">The Offres (Offers) button</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Quand un artisan propose, une alerte te prévient et le titre de ta demande passe en vert.</span><span lang="en">When a crafter offers, an alert tells you and your request's title turns green.</span></li>
+		<li><span lang="fr">Clique <span lang="fr"><span class="ui">Offres (1)</span></span><span lang="en"><span class="ui">Offres (1)</span> <span class="gloss">(Offers)</span></span> sur ta demande. Chaque offre montre l'artisan (● s'il est en ligne) et son mot.</span><span lang="en">Click <span lang="fr"><span class="ui">Offres (1)</span></span><span lang="en"><span class="ui">Offres (1)</span> <span class="gloss">(Offers)</span></span> on your request. Each offer shows the crafter (● when online) and their note.</span></li>
+		<li><span lang="fr">Clique <span lang="fr"><span class="ui">Retenir</span></span><span lang="en"><span class="ui">Retenir</span> <span class="gloss">(Pick)</span></span> sur celle qui te convient : la commande passe <em>acceptée</em> avec cet artisan.</span><span lang="en">Click <span lang="fr"><span class="ui">Retenir</span></span><span lang="en"><span class="ui">Retenir</span> <span class="gloss">(Pick)</span></span> on the one you like: the order becomes <em>acceptée</em> (accepted) with that crafter.</span></li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span><span lang="fr">Avec /gkeep commande accepter</span><span lang="en">With /gkeep order accept</span></h3>
+	<ol class="steps">
+		<li><span lang="fr"><code class="d"><span lang="fr">/gkeep commande voir</span><span lang="en">/gkeep order show</span></code> affiche ta demande et ses offres.</span><span lang="en"><code class="d"><span lang="fr">/gkeep commande voir</span><span lang="en">/gkeep order show</span></code> shows your request and its offers.</span></li>
+		<li><span lang="fr"><code class="d"><span lang="fr">/gkeep commande accepter</span><span lang="en">/gkeep order accept</span></code> : choisis la commande, puis l'artisan dans <code><span lang="fr">artisan</span><span lang="en">crafter</span></code>.</span><span lang="en"><code class="d"><span lang="fr">/gkeep commande accepter</span><span lang="en">/gkeep order accept</span></code>: pick the order, then the crafter in <code><span lang="fr">artisan</span><span lang="en">crafter</span></code>.</span></li>
+	</ol>
+</div>
+</section>
+
+<section>
+<h2 id="livraison"><a class="anchor" href="#livraison" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Tutoriel : de l'acceptation à la livraison</span><span lang="en">Tutorial: from acceptance to delivery</span></h2>
+<div class="rights"><span class="badge b-org"><span lang="fr">L'artisan</span><span lang="en">The crafter</span></span> <span class="badge b-self"><span lang="fr">Le demandeur</span><span lang="en">The requester</span></span></div>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu</span><span lang="en">In game</span></span><span lang="fr">Chacun son bouton</span><span lang="en">Each their own button</span></h3>
+	<ol class="steps">
+		<li><span lang="fr"><strong>Artisan</strong>, commande directe : <span lang="fr"><span class="ui">Accepter</span></span><span lang="en"><span class="ui">Accepter</span> <span class="gloss">(Accept)</span></span> ou <span lang="fr"><span class="ui">Refuser</span></span><span lang="en"><span class="ui">Refuser</span> <span class="gloss">(Decline)</span></span>.</span><span lang="en"><strong>Crafter</strong>, direct order: <span lang="fr"><span class="ui">Accepter</span></span><span lang="en"><span class="ui">Accepter</span> <span class="gloss">(Accept)</span></span> or <span lang="fr"><span class="ui">Refuser</span></span><span lang="en"><span class="ui">Refuser</span> <span class="gloss">(Decline)</span></span>.</span></li>
+		<li><span lang="fr"><strong>Artisan</strong>, une fois l'objet fabriqué : <span lang="fr"><span class="ui">Prête</span></span><span lang="en"><span class="ui">Prête</span> <span class="gloss">(Ready)</span></span> si vous allez échanger en main propre, ou <span lang="fr"><span class="ui">Envoyée</span></span><span lang="en"><span class="ui">Envoyée</span> <span class="gloss">(Mailed)</span></span> après l'avoir posté (le filtre <span lang="fr"><span class="ui opt">À fabriquer</span></span><span lang="en"><span class="ui opt">À fabriquer</span> <span class="gloss">(To craft)</span></span> les rassemble).</span><span lang="en"><strong>Crafter</strong>, once the item is crafted: <span lang="fr"><span class="ui">Prête</span></span><span lang="en"><span class="ui">Prête</span> <span class="gloss">(Ready)</span></span> if you'll trade in person, or <span lang="fr"><span class="ui">Envoyée</span></span><span lang="en"><span class="ui">Envoyée</span> <span class="gloss">(Mailed)</span></span> after posting it (the <span lang="fr"><span class="ui opt">À fabriquer</span></span><span lang="en"><span class="ui opt">À fabriquer</span> <span class="gloss">(To craft)</span></span> filter gathers them).</span></li>
+		<li><span lang="fr"><strong>Demandeur</strong>, objet en main : <span lang="fr"><span class="ui">Reçue</span></span><span lang="en"><span class="ui">Reçue</span> <span class="gloss">(Received)</span></span>. La commande est close.</span><span lang="en"><strong>Requester</strong>, item in hand: <span lang="fr"><span class="ui">Reçue</span></span><span lang="en"><span class="ui">Reçue</span> <span class="gloss">(Received)</span></span>. The order is closed.</span></li>
+		<li><span lang="fr">Tant que l'objet n'est pas envoyé, l'un ou l'autre peut <span lang="fr"><span class="ui">Annuler</span></span><span lang="en"><span class="ui">Annuler</span> <span class="gloss">(Cancel)</span></span> (une confirmation est demandée).</span><span lang="en">Until the item is mailed, either side can <span lang="fr"><span class="ui">Annuler</span></span><span lang="en"><span class="ui">Annuler</span> <span class="gloss">(Cancel)</span></span> (you're asked to confirm).</span></li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span><span lang="fr">Les mêmes étapes</span><span lang="en">The same steps</span></h3>
+	<p><span lang="fr"><code class="d"><span lang="fr">/gkeep commande accepter</span><span lang="en">/gkeep order accept</span></code>, <code class="d"><span lang="fr">/gkeep commande prete</span><span lang="en">/gkeep order ready</span></code>, <code class="d"><span lang="fr">/gkeep commande envoyee</span><span lang="en">/gkeep order mailed</span></code>, <code class="d"><span lang="fr">/gkeep commande recu</span><span lang="en">/gkeep order received</span></code>, <code class="d"><span lang="fr">/gkeep commande annuler</span><span lang="en">/gkeep order cancel</span></code> : la commande se choisit dans une liste, rien à retenir. Le demandeur reçoit un message privé à chaque étape.</span><span lang="en"><code class="d"><span lang="fr">/gkeep commande accepter</span><span lang="en">/gkeep order accept</span></code>, <code class="d"><span lang="fr">/gkeep commande prete</span><span lang="en">/gkeep order ready</span></code>, <code class="d"><span lang="fr">/gkeep commande envoyee</span><span lang="en">/gkeep order mailed</span></code>, <code class="d"><span lang="fr">/gkeep commande recu</span><span lang="en">/gkeep order received</span></code>, <code class="d"><span lang="fr">/gkeep commande annuler</span><span lang="en">/gkeep order cancel</span></code>: the order is picked from a list, nothing to remember. The requester gets a direct message at each step.</span></p>
+</div>
+<aside class="callout c-note"><p class="callout-title"><span lang="fr">Bon à savoir</span><span lang="en">Good to know</span></p><p><span lang="fr">Une action faite en jeu est d'abord partagée avec les joueurs connectés, puis envoyée au serveur à ta prochaine déconnexion ou <code>/reload</code> : la ligne affiche « synchro au prochain /reload » en attendant. La case <span lang="fr"><span class="ui opt">Terminées</span></span><span lang="en"><span class="ui opt">Terminées</span> <span class="gloss">(Done)</span></span> affiche aussi les commandes closes.</span><span lang="en">An action taken in game is first shared with online players, then sent to the server at your next logout or <code>/reload</code>: the row reads "synchro au prochain /reload" meanwhile. The <span lang="fr"><span class="ui opt">Terminées</span></span><span lang="en"><span class="ui opt">Terminées</span> <span class="gloss">(Done)</span></span> box also shows closed orders.</span></p></aside>
+</section>
+
+<section>
+<h2 id="catalogue"><a class="anchor" href="#catalogue" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Le catalogue de la guilde</span><span lang="en">The guild catalog</span></h2>
+<p><span lang="fr">Le catalogue, c'est la liste des recettes que la guilde peut viser. Il grandit tout seul : chaque fois qu'un membre ouvre la fenêtre d'un de ses métiers, toutes les recettes affichées y entrent, apprises ou non ; s'y ajoutent les recettes connues de l'annuaire. Plus les membres ouvrent leurs métiers, plus <span lang="fr"><span class="ui">Nouvelle demande</span></span><span lang="en"><span class="ui">Nouvelle demande</span> <span class="gloss">(New request)</span></span> et <code class="d"><span lang="fr">/gkeep commande catalogue</span><span lang="en">/gkeep order catalog</span></code> sont complets.</span><span lang="en">The catalog is the list of recipes the guild can aim for. It grows by itself: whenever a member opens one of their profession windows, every recipe shown goes in, learned or not; known recipes from the directory are added too. The more members open their professions, the more complete <span lang="fr"><span class="ui">Nouvelle demande</span></span><span lang="en"><span class="ui">Nouvelle demande</span> <span class="gloss">(New request)</span></span> and <code class="d"><span lang="fr">/gkeep commande catalogue</span><span lang="en">/gkeep order catalog</span></code> get.</span></p>
+</section>
+<nav class="doc-pager" aria-label="Pages voisines / Adjacent pages">
+<a class="prev" href="/docs/membres.html" rel="prev"><small><span lang="fr">← Précédent</span><span lang="en">← Previous</span></small><b><span lang="fr">Membres</span><span lang="en">Members</span></b></a>
+<a class="next" href="/docs/evenements.html" rel="next"><small><span lang="fr">Suivant →</span><span lang="en">Next →</span></small><b><span lang="fr">Événements</span><span lang="en">Events</span></b></a>
+</nav>
+</main>
+</div>
+
+<footer class="foot">
+	<span><span lang="fr">Outil de guilde pour WoW: Forever</span><span lang="en">Guild tool for WoW: Forever</span></span>
+	<nav aria-label="Pied de page / Footer">
+		<a href="/"><span lang="fr">Accueil</span><span lang="en">Home</span></a>
+		<a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a>
+		<a href="/confidentialite.html"><span lang="fr">Confidentialité</span><span lang="en">Privacy</span></a>
+		<a href="/conditions.html"><span lang="fr">Conditions</span><span lang="en">Terms</span></a>
+		<a href="https://github.com/AntoineRenoux/GuildProfessions" rel="noopener"><span lang="fr">Code source</span><span lang="en">Source code</span></a>
+	</nav>
+	<span class="end">2026</span>
+	<span class="credit"><span lang="fr">World of Warcraft est une marque de Blizzard Entertainment ; Guildkeep n'y est pas affilié.</span><span lang="en">World of Warcraft is a trademark of Blizzard Entertainment; Guildkeep is not affiliated.</span></span>
+</footer>
+
+<script src="/site.js?v=6" defer></script>
+</body>
+</html>

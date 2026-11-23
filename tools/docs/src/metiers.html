@@ -1,0 +1,96 @@
+title: module Métiers
+description: Le module Métiers de Guildkeep : l'annuaire des artisans de la guilde, la recherche de recette, les filtres et le relevé des métiers, en jeu et sur Discord.
+lead: [[L'annuaire des artisans de la guilde : qui a quel métier, à quel niveau, et quelles recettes il connaît. Pour trouver en dix secondes qui peut te fabriquer une pièce.||The guild's crafter directory: who has which profession, at what level, and which recipes they know. To find in ten seconds who can craft you an item.]]
+---
+<section>
+<h2 id="a-quoi-ca-sert">[[À quoi ça sert||What it's for]]</h2>
+<p>[[L'onglet {t:Métiers||Professions} liste chaque métier de chaque membre, avec sa barre de progression, son nombre de recettes et la date du relevé. Tu filtres par recette, par métier et par niveau minimum ; les colonnes {o:Personnage||Character}, {o:Métier||Profession}, {o:Niveau||Level} et {o:Recettes||Recipes} se trient d'un clic sur leur titre.||The {t:Métiers||Professions} tab lists every profession of every member, with its progress bar, number of recipes and scan date. Filter by recipe, profession and minimum level; the {o:Personnage||Character}, {o:Métier||Profession}, {o:Niveau||Level} and {o:Recettes||Recipes} columns sort with a click on their header.]]</p>
+<figure class="mock" data-ui>
+	<div class="wow">
+		<div class="wow-title"><b>Guildkeep</b><small>&lt;La Garde d'Ambre&gt;</small></div>
+		<div style="padding:12px;display:grid;gap:10px;background:rgba(0,0,0,0.25)">
+			<div><div class="soft" style="font-size:12px;margin-bottom:4px">Recherche de patron</div><div class="wow-search">⌕ flacon</div></div>
+			<div><div class="soft" style="font-size:12px;margin-bottom:4px">Niveau minimum</div><div class="wow-search" style="width:64px;justify-content:center">250</div></div>
+			<div style="display:grid;gap:2px"><div class="wow-row" style="padding:4px 8px"><span class="wow-ico">G</span><span>Tous les métiers</span><span class="soft">31</span></div><div class="wow-row is-on" style="padding:4px 8px"><span class="wow-ico">A</span><span class="gold">Alchimie</span><span class="soft">7</span></div></div>
+		</div>
+		<div class="wow-row"><span class="wow-ico ok">●</span><span>Maël Corvin<br><span class="soft" style="font-size:12px">Alchimie · scan 2026-11-22 21:04</span></span><span class="wow-button">Voir (38)</span></div>
+		<div class="wow-row"><span class="wow-ico soft">●</span><span>Elwin Sauge<br><span class="soft" style="font-size:12px">Alchimie · Discord</span></span><span class="wow-button">Voir (21)</span></div>
+		<div class="wow-tabs"><span class="is-on">Métiers</span><span>Membres</span><span>Commandes</span></div>
+	</div>
+	<figcaption>[[Maquette : l'onglet Métiers filtré sur « flacon », Alchimie, niveau 250 et plus.||Mock-up: the Professions tab filtered on "flacon" (flask), Alchemy, level 250 and up.]]</figcaption>
+</figure>
+
+{tip}<p>[[<strong>Tutoriel en jeu.</strong> À la première ouverture de l'onglet {t:Métiers||Professions}, un tutoriel pas à pas encadre chaque bouton et explique à quoi il sert. Tu peux le passer à tout moment, et le revoir avec le bouton {b:?} en haut à droite de la fenêtre ou {g:/gkeep tuto}.||<strong>In-game tutorial.</strong> The first time you open the {t:Métiers||Professions} tab, a step-by-step tutorial highlights every button and explains what it does. You can skip it at any time, and replay it with the {b:?} button at the top right of the window or {g:/gkeep tuto}.]]</p>{/tip}
+</section>
+
+<section>
+<h2 id="trouver-un-artisan">[[Tutoriel : trouver qui sait fabriquer une recette||Tutorial: find who can craft a recipe]]</h2>
+<div class="rights">{who:all}</div>
+<div class="howto">
+	<h3><span class="where">[[En jeu||In game]]</span>[[Dans l'onglet Métiers||In the Professions tab]]</h3>
+	<ol class="steps">
+		<li>[[Ouvre {g:/gkeep} et l'onglet {t:Métiers||Professions}.||Open {g:/gkeep} and the {t:Métiers||Professions} tab.]]</li>
+		<li>[[Dans {o:Recherche de patron||Recipe search}, tape un bout du nom de la recette (« flacon », « bottes »…) : seuls les artisans qui la connaissent restent.||In {o:Recherche de patron||Recipe search}, type part of the recipe's name ("flacon", "bottes"…): only crafters who know it remain.]]</li>
+		<li>[[Au besoin, fixe un {o:Niveau minimum||Minimum level} et choisis un métier dans la liste (le chiffre à côté donne le nombre d'artisans) ; {o:Tous les métiers||All professions} enlève le filtre.||If needed, set a {o:Niveau minimum||Minimum level} and pick a profession in the list (the number next to it is the number of crafters); {o:Tous les métiers||All professions} clears the filter.]]</li>
+		<li>[[Survole une ligne : l'infobulle dit si le métier a été relevé en jeu (avec la date) ou déclaré sur Discord.||Hover a row: the tooltip says whether the profession was scanned in game (with the date) or declared on Discord.]]</li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span>[[Avec /gkeep metier qui||With /gkeep profession who]]</h3>
+	<ol class="steps">
+		<li>[[Tape {d:/gkeep metier qui||/gkeep profession who}.||Type {d:/gkeep metier qui||/gkeep profession who}.]]</li>
+		<li>[[Remplis au moins une option : <code>[[recette||recipe]]</code> (un bout de nom), <code>[[metier||profession]]</code> (proposé dans une liste) ou <code>[[niveau_min||min_level]]</code> (1 à 300).||Fill in at least one option: <code>[[recette||recipe]]</code> (part of a name), <code>[[metier||profession]]</code> (suggested in a list) or <code>[[niveau_min||min_level]]</code> (1 to 300).]]</li>
+		<li>[[Le bot répond avec les artisans trouvés et leur niveau.||The bot replies with the crafters found and their level.]]</li>
+	</ol>
+</div>
+{tip}<p>[[{d:/gkeep metier liste||/gkeep profession list} montre tout l'annuaire d'un coup, ou un seul métier avec l'option <code>[[metier||profession]]</code>.||{d:/gkeep metier liste||/gkeep profession list} shows the whole directory at once, or one profession with the <code>[[metier||profession]]</code> option.]]</p>{/tip}
+</section>
+
+<section>
+<h2 id="voir-les-recettes">[[Tutoriel : voir les recettes d'un artisan et commander||Tutorial: see a crafter's recipes and order]]</h2>
+<div class="rights">{who:all}</div>
+<div class="howto">
+	<h3><span class="where">[[En jeu||In game]]</span>[[Le bouton « Voir »||The "Voir" (View) button]]</h3>
+	<ol class="steps">
+		<li>[[Sur la ligne d'un artisan, clique {b:Voir (38)||Voir (38) — View} (ou n'importe où sur la ligne). « à relever » signifie que ses recettes n'ont pas encore été relevées.||On a crafter's row, click {b:Voir (38)||Voir (38) — View} (or anywhere on the row). "à relever" (to scan) means their recipes haven't been read yet.]]</li>
+		<li>[[La fenêtre des recettes s'ouvre : tape dans {o:Chercher une recette||Search a recipe} pour filtrer. Survole une recette pour son détail ; {k:Maj}+clic met son lien dans le chat.||The recipes window opens: type in {o:Chercher une recette||Search a recipe} to filter. Hover a recipe for its details; {k:Shift}+click puts its link in chat.]]</li>
+		<li>[[Clique {b:Commander||Order} à côté de la recette voulue : la fenêtre de commande s'ouvre (voir <a href="/docs/artisanat.html#commander-a-un-artisan">Artisanat</a>). Ce bouton n'apparaît que si le module Artisanat est actif.||Click {b:Commander||Order} next to the recipe you want: the order window opens (see <a href="/docs/artisanat.html#commander-a-un-artisan">Crafting orders</a>). This button only shows when the Crafting module is on.]]</li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span>[[Avec /gkeep metier recettes||With /gkeep profession recipes]]</h3>
+	<ol class="steps">
+		<li>[[Tape {d:/gkeep metier recettes||/gkeep profession recipes} et choisis le <code>[[personnage||character]]</code> dans la liste.||Type {d:/gkeep metier recettes||/gkeep profession recipes} and pick the <code>[[personnage||character]]</code> from the list.]]</li>
+		<li>[[Facultatif : <code>[[metier||profession]]</code> pour un seul métier, <code>[[recherche||search]]</code> pour filtrer par texte.||Optional: <code>[[metier||profession]]</code> for one profession, <code>[[recherche||search]]</code> to filter by text.]]</li>
+	</ol>
+</div>
+</section>
+
+<section>
+<h2 id="releve">[[Tutoriel : faire relever tes métiers et tes recettes||Tutorial: get your professions and recipes scanned]]</h2>
+<div class="rights">{who:self}</div>
+<p>[[L'addon relève tout seul tes métiers et leur niveau à la connexion. Les recettes, elles, ne sont lisibles que quand la fenêtre du métier est ouverte :||The addon reads your professions and their level by itself at login. Recipes, though, can only be read while the profession window is open:]]</p>
+<div class="howto">
+	<h3><span class="where">[[En jeu||In game]]</span>[[Une fois par métier||Once per profession]]</h3>
+	<ol class="steps">
+		<li>[[Ouvre la fenêtre de chacun de tes métiers (ton livre des sorts, ou la touche du métier), Cuisine et Secourisme compris.||Open the window of each of your professions (from your spellbook, or the profession's key), Cooking and First Aid included.]]</li>
+		<li>[[Le chat confirme : « 41 recettes de Forge relevées. Elles partent vers ta guilde à ta prochaine déconnexion ou /reload. »||Chat confirms: "41 recettes de Forge relevées…" (41 Blacksmithing recipes read; they go to your guild at your next logout or /reload).]]</li>
+		<li>[[Fais un {g:/reload} (ou déconnecte-toi) : le compagnon envoie le relevé à la guilde.||Do a {g:/reload} (or log out): the companion sends the scan to the guild.]]</li>
+	</ol>
+</div>
+{note}<p>[[Recommence après avoir appris de nouvelles recettes. En ouvrant ta fenêtre de métier, tu alimentes aussi le <a href="/docs/artisanat.html#catalogue">catalogue de la guilde</a> (toutes les recettes affichées, apprises ou non). Les fenêtres de métier d'un autre joueur ou d'un PNJ sont ignorées, et un personnage hors guilde n'est jamais relevé.||Do it again after learning new recipes. Opening your profession window also feeds the <a href="/docs/artisanat.html#catalogue">guild catalog</a> (every recipe shown, learned or not). Profession windows of another player or an NPC are ignored, and a character outside the guild is never scanned.]]</p>{/note}
+</section>
+
+<section>
+<h2 id="declarer">[[Tutoriel : déclarer un métier sans l'addon||Tutorial: declare a profession without the addon]]</h2>
+<div class="rights">{who:self}</div>
+<div class="howto">
+	<h3><span class="where">Discord</span>[[Avec /gkeep metier definir||With /gkeep profession set]]</h3>
+	<ol class="steps">
+		<li>[[Tape {d:/gkeep metier definir||/gkeep profession set}.||Type {d:/gkeep metier definir||/gkeep profession set}.]]</li>
+		<li>[[Remplis <code>[[personnage||character]]</code> (nom complet en jeu), <code>[[metier||profession]]</code>, <code>[[niveau||level]]</code>, et si tu veux une <code>note</code> (« dispo le soir, fournir les barres »).||Fill in <code>[[personnage||character]]</code> (full in-game name), <code>[[metier||profession]]</code>, <code>[[niveau||level]]</code>, and optionally a <code>note</code> ("evenings, bring the bars").]]</li>
+		<li>[[Pour l'enlever : {d:/gkeep metier retirer||/gkeep profession remove}.||To remove it: {d:/gkeep metier retirer||/gkeep profession remove}.]]</li>
+	</ol>
+</div>
+{warn}<p>[[Le relevé en jeu prime : dès que l'addon relève ce personnage, ses métiers déclarés sur Discord sont remplacés par ceux du jeu (ta note est gardée).||The in-game scan wins: as soon as the addon scans that character, professions declared on Discord are replaced by the game's (your note is kept).]]</p>{/warn}
+</section>

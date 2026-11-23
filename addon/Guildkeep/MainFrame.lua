@@ -170,6 +170,9 @@ local function SelectTab(index)
 	end
 	PanelTemplates_SetTab(mainFrame, index)
 	GP.RefreshUI()
+	if mainFrame:IsShown() and GP.Tutorial then
+		M.Protect(GP.Tutorial.OnTabShown, def.key)
+	end
 end
 
 local function CreateMainFrame()
@@ -194,6 +197,25 @@ local function CreateMainFrame()
 	exportButton:SetPoint("LEFT", importButton, "RIGHT", 4, 0)
 	exportButton:SetText("Exporter")
 	exportButton:SetScript("OnClick", OpenExportDialog)
+	frame.importButton, frame.exportButton = importButton, exportButton
+
+	-- « ? » : rejoue le tutoriel de l'onglet affiché.
+	frame.helpButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+	frame.helpButton:SetSize(26, 22)
+	frame.helpButton:SetPoint("TOPRIGHT", -10, -28)
+	frame.helpButton:SetText("?")
+	frame.helpButton:SetScript("OnClick", function()
+		if GP.Tutorial and not GP.Tutorial.Replay(state.tab) then
+			GP.Chat("pas de tutoriel pour cet onglet.")
+		end
+	end)
+	frame.helpButton:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_LEFT")
+		GameTooltip:SetText("Tutoriel de cet onglet")
+		GameTooltip:AddLine("Explique chaque bouton. Aussi : /gkeep tuto", 1, 1, 1, true)
+		GameTooltip:Show()
+	end)
+	frame.helpButton:SetScript("OnLeave", GameTooltip_Hide)
 
 	frame.banner = Label(frame, nil, "GameFontHighlightSmall", COLOR.muted)
 	frame.banner:SetPoint("LEFT", exportButton, "RIGHT", 12, 0)
@@ -251,9 +273,18 @@ local function CreateMainFrame()
 		if GP.OnMainFrameVisibilityChanged then
 			GP.OnMainFrameVisibilityChanged()
 		end
+		-- Première ouverture : bienvenue, puis le tutoriel de l'onglet affiché.
+		C_Timer.After(0, function()
+			if frame:IsShown() and GP.Tutorial then
+				M.Protect(GP.Tutorial.OnTabShown, state.tab)
+			end
+		end)
 	end)
 	frame:HookScript("OnHide", function()
 		PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE)
+		if GP.Tutorial then
+			GP.Tutorial.Stop()
+		end
 		if GP.OnMainFrameVisibilityChanged then
 			GP.OnMainFrameVisibilityChanged()
 		end

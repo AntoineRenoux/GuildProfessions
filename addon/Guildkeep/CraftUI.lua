@@ -790,6 +790,8 @@ local function BuildOrdersTab(frame, parent)
 	frame.ordersEmptyText:SetPoint("CENTER", ordersList, "CENTER")
 	frame.ordersEmptyText:SetJustifyH("CENTER")
 	frame.ordersEmptyText:SetWidth(520)
+
+	parent.tutorialTargets = { filters = toolbar, newRequest = newRequest, showClosed = showClosed, list = ordersList }
 end
 
 -- Fenêtres de confirmation, déclarées au chargement du module.
@@ -830,6 +832,23 @@ end
 
 
 GP.Modules.Define("craft", "ui", function(ctx)
+	local function Target(name)
+		return function() return GP.Tutorial.Target("tabOrders", name) end
+	end
+	ctx:Tutorial("craft", {
+		tab = "tabOrders",
+		title = "Artisanat",
+		steps = {
+			{ target = Target("filters"), title = "Filtres",
+				text = "Toutes ; À fabriquer (ce qu'on t'a confié) ; Mes demandes ; Que je peux faire (demandes ouvertes dont tu connais la recette) ; Mes offres." },
+			{ target = Target("newRequest"), title = "Nouvelle demande",
+				text = "Choisis une recette dans le catalogue de la guilde, la quantité et une note : tous les artisans peuvent proposer de la faire. Ceux qui la connaissent sont prévenus. La demande reste ouverte 5 jours." },
+			{ target = Target("list"), title = "Faire avancer une commande",
+				text = "Les boutons de chaque ligne dépendent de ton rôle. Artisan : Accepter ou Refuser, Proposer (ou Retirer l'offre), puis Prête (échange en main propre) ou Envoyée (courrier). Demandeur : Offres (n) pour Retenir un artisan, Reçue une fois l'objet en main, Annuler. Un titre vert = ta demande a reçu des offres." },
+			{ target = Target("showClosed"), title = "Terminées", text = "Coche pour revoir aussi les commandes reçues, annulées ou expirées." },
+			{ title = "Commander à un artisan précis", text = "Onglet Métiers, « Voir » sur l'artisan, puis « Commander » face à la recette : la fenêtre liste les composants à lui envoyer, ce que tu as déjà, et qui peut fabriquer les autres." },
+		},
+	})
 	DefinePopups()
 	ctx:Provide("craft.order", Craft.OpenOrderDialog)
 	-- Sacs modifiés pendant que la fenêtre est ouverte : colonne « Tu as » à jour.

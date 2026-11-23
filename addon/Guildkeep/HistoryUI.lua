@@ -432,6 +432,24 @@ local function RefreshHistory()
 end
 
 GP.Modules.Define("attendance", "ui", function(ctx)
+	ctx:Tutorial("attendance", {
+		tab = "tabHistory",
+		title = "Présence et butin",
+		steps = {
+			{ title = "Une présence réelle", text = "La présence est relevée pendant le raid, minute par minute, dès que 5 membres de la guilde y sont ensemble (15 minutes pour compter). S'inscrire ne vaut pas présence." },
+			{ target = function() return panel and panel.modeButtons and panel.modeButtons[1] end, title = "Joueurs ou Raids",
+				text = "Joueurs : le taux de présence de chacun et sa tendance. Raids : les raids relevés, avec les présents et le butin." },
+			{ target = function() return panel and panel.dayButtons and panel.dayButtons[1] end, title = "30, 60 ou 90 jours",
+				text = "La période du taux affiché. Le chiffre vert ou rouge compare les 30 derniers jours aux 30 d'avant." },
+			{ target = function() return panel and panel.search end, title = "Chercher un joueur", text = "Filtre la liste des joueurs." },
+			{ target = function() return panel and panel.rows end, title = "Le détail",
+				text = "Pour un joueur : ses raids (présent, absent, excusé) et son butin. Pour un raid : les présents avec leurs minutes, et les objets épiques ou mieux reçus.",
+				hint = "Choisis d'abord un joueur ou un raid." },
+			{ target = function() return panel and panel.addButton end, title = "Corrections des officiers",
+				text = "Sur un raid, un officier marque un joueur Présent, Absent ou Excusé (hors calcul), ajoute un oubli avec « Marquer présent », et annule ou rétablit un objet. Le relevé d'origine n'est jamais effacé.",
+				hint = "Réservé aux officiers, dans la vue Raids." },
+		},
+	})
 	ctx:Slash({ "presence", "attendance", "butin", "loot" }, function()
 		GP.ShowTab("tabHistory")
 	end)

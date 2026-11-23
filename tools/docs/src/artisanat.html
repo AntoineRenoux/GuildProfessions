@@ -1,0 +1,138 @@
+title: module Artisanat
+description: Le module Artisanat de Guildkeep : commander un craft à un artisan, demander à toute la guilde, proposer, choisir une offre et suivre la livraison, en jeu et sur Discord.
+h1fr: Artisanat
+h1en: Crafting orders
+lead: [[Les commandes de craft entre membres : à un artisan précis, ou à toute la guilde d'un coup. Les artisans proposent, tu choisis, puis chacun suit la livraison jusqu'à « Reçue ».||Craft orders between members: to a given crafter, or to the whole guild at once. Crafters offer, you choose, then everyone tracks delivery until "Reçue" (received).]]
+---
+<section>
+<h2 id="a-quoi-ca-sert">[[À quoi ça sert||What it's for]]</h2>
+<p>[[L'onglet {t:Commandes||Orders} réunit les commandes que tu as passées et celles que tu peux fabriquer. Le chiffre de l'onglet, par exemple {t:Commandes (2)||Commandes (2)}, compte celles qui attendent ton geste.||The {t:Commandes||Orders} tab gathers the orders you placed and those you can craft. The tab's number, for example {t:Commandes (2)||Commandes (2)}, counts those waiting on you.]]</p>
+<ul>
+	<li>[[<strong>Commande directe</strong> : depuis la liste des recettes d'un artisan, bouton {b:Commander||Order}. Seul cet artisan la reçoit.||<strong>Direct order</strong>: from a crafter's recipe list, {b:Commander||Order} button. Only that crafter gets it.]]</li>
+	<li>[[<strong>Demande ouverte</strong> : {b:Nouvelle demande||New request}, tu choisis la recette dans le catalogue de la guilde ; tous les artisans qui la connaissent sont prévenus et peuvent proposer. Elle reste ouverte <strong>5 jours</strong>, puis expire.||<strong>Open request</strong>: {b:Nouvelle demande||New request}, pick the recipe from the guild catalog; every crafter who knows it is notified and can offer. It stays open <strong>5 days</strong>, then expires.]]</li>
+</ul>
+<p>[[Les étapes d'une commande : <em>ouverte</em> → <em>acceptée</em> → <em>prête à échanger</em> (en main propre) ou <em>envoyée par courrier</em> → <em>reçue</em>. Elle peut aussi être <em>annulée</em> ou <em>expirée</em>. L'échange et le courrier se font toujours à la main, en jeu.||An order's steps: <em>ouverte</em> (open) → <em>acceptée</em> (accepted) → <em>prête à échanger</em> (ready to trade in person) or <em>envoyée par courrier</em> (mailed) → <em>reçue</em> (received). It can also be <em>annulée</em> (cancelled) or <em>expirée</em> (expired). Trading and mailing are always done by hand, in game.]]</p>
+<figure class="mock" data-ui>
+	<div class="wow">
+		<div class="wow-title"><b>Guildkeep</b><small>&lt;La Garde d'Ambre&gt;</small></div>
+		<div class="bar-line"><span class="chip is-on">Toutes</span><span class="chip">À fabriquer</span><span class="chip">Mes demandes</span><span class="chip">Que je peux faire</span><span class="chip">Mes offres</span><span style="margin-left:auto" class="wow-button">Nouvelle demande</span></div>
+		<div class="wow-row"><span class="wow-ico">!</span><span><span class="ok">2× Flacon des Titans</span>   <span class="gold">ouverte</span><br><span class="soft" style="font-size:12px">toi » tous les artisans · #41 · offres : Maël Corvin · expire dans 4 j</span></span><span class="acts"><span class="wow-button">Offres (1)</span><span class="wow-button">Annuler</span></span></div>
+		<div class="wow-row"><span class="wow-ico">?</span><span>1× Robe d'étoffe runique   <span style="color:#6fb6ff">acceptée</span><br><span class="soft" style="font-size:12px">Tamsin Rouage » toi · #38</span></span><span class="acts"><span class="wow-button">Prête</span><span class="wow-button">Envoyée</span><span class="wow-button">Annuler</span></span></div>
+		<div class="wow-tabs"><span>Métiers</span><span>Membres</span><span class="is-on">Commandes (2)</span></div>
+	</div>
+	<figcaption>[[Maquette : l'onglet Commandes, une demande ouverte avec une offre et une commande à fabriquer.||Mock-up: the Orders tab, an open request with one offer and an order to craft.]]</figcaption>
+</figure>
+
+{tip}<p>[[<strong>Tutoriel en jeu.</strong> À la première ouverture de l'onglet {t:Commandes||Orders}, un tutoriel pas à pas encadre chaque bouton et explique à quoi il sert. Tu peux le passer à tout moment, et le revoir avec le bouton {b:?} en haut à droite de la fenêtre ou {g:/gkeep tuto}.||<strong>In-game tutorial.</strong> The first time you open the {t:Commandes||Orders} tab, a step-by-step tutorial highlights every button and explains what it does. You can skip it at any time, and replay it with the {b:?} button at the top right of the window or {g:/gkeep tuto}.]]</p>{/tip}
+</section>
+
+<section>
+<h2 id="commander-a-un-artisan">[[Tutoriel : commander à un artisan précis||Tutorial: order from a given crafter]]</h2>
+<div class="rights">{who:all}</div>
+<div class="howto">
+	<h3><span class="where">[[En jeu||In game]]</span>[[Depuis ses recettes||From their recipes]]</h3>
+	<ol class="steps">
+		<li>[[Onglet {t:Métiers||Professions} : trouve l'artisan (recherche de recette, filtres) et clique {b:Voir (N)||Voir (N) — View}.||{t:Métiers||Professions} tab: find the crafter (recipe search, filters) and click {b:Voir (N)||Voir (N) — View}.]]</li>
+		<li>[[Clique {b:Commander||Order} à côté de la recette. La fenêtre « Commande à <em>artisan</em> » s'ouvre.||Click {b:Commander||Order} next to the recipe. The "Commande à <em>crafter</em>" (order from) window opens.]]</li>
+		<li>[[Règle la {o:Quantité||Quantity} et, si besoin, une {o:Note||Note} (« je fournis le cuir », « avant jeudi »).||Set the {o:Quantité||Quantity} and, if needed, a {o:Note||Note} ("I'll bring the leather", "before Thursday").]]</li>
+		<li>[[Lis la liste « Composants à envoyer à… » : la colonne {o:Tu as||You have} compte ce que tu portes (sacs et banque), le résumé dit s'il te manque quelque chose. Un composant marqué {b:+} est fabricable dans la guilde : clique-le pour voir ses propres composants.||Read the "Composants à envoyer à…" (reagents to send) list: the {o:Tu as||You have} column counts what you carry (bags and bank), the summary says if anything is missing. A reagent marked {b:+} can be crafted in the guild: click it to see its own reagents.]]</li>
+		<li>[[Clique {b:Commander||Order}. Le chat confirme l'envoi ; l'artisan est prévenu en jeu s'il est connecté, et sur Discord en message privé.||Click {b:Commander||Order}. Chat confirms it was sent; the crafter is told in game if online, and by Discord direct message.]]</li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span>[[Avec /gkeep commande nouvelle||With /gkeep order new]]</h3>
+	<ol class="steps">
+		<li>[[Tape {d:/gkeep commande nouvelle||/gkeep order new}.||Type {d:/gkeep commande nouvelle||/gkeep order new}.]]</li>
+		<li>[[Dans <code>[[objet||item]]</code>, commence à taper : le bot propose les recettes du catalogue de la guilde.||In <code>[[objet||item]]</code>, start typing: the bot suggests recipes from the guild catalog.]]</li>
+		<li>[[Dans <code>[[artisan||crafter]]</code>, choisis l'artisan ; ajoute <code>[[quantite||quantity]]</code> (1 à 200) et une <code>note</code> si besoin.||In <code>[[artisan||crafter]]</code>, pick the crafter; add <code>[[quantite||quantity]]</code> (1 to 200) and a <code>note</code> if needed.]]</li>
+	</ol>
+</div>
+</section>
+
+<section>
+<h2 id="demander-a-toute-la-guilde">[[Tutoriel : demander un craft à toute la guilde||Tutorial: ask the whole guild for a craft]]</h2>
+<div class="rights">{who:all}</div>
+<div class="howto">
+	<h3><span class="where">[[En jeu||In game]]</span>[[La demande ouverte||The open request]]</h3>
+	<ol class="steps">
+		<li>[[Onglet {t:Commandes||Orders}, clique {b:Nouvelle demande||New request}. La fenêtre « Nouvelle demande à la guilde » s'ouvre.||{t:Commandes||Orders} tab, click {b:Nouvelle demande||New request}. The "Nouvelle demande à la guilde" window opens.]]</li>
+		<li>[[Tape dans {o:Chercher une recette||Search a recipe}. Chaque ligne indique le métier et le nombre d'artisans qui la connaissent (« personne ne la connaît encore » est possible : la demande reste visible de tous).||Type in {o:Chercher une recette||Search a recipe}. Each row shows the profession and how many crafters know it ("personne ne la connaît encore", nobody knows it yet, is possible: the request stays visible to all).]]</li>
+		<li>[[Clique la recette : la fenêtre « Demande à tous les artisans » s'ouvre, avec les « Composants à prévoir pour l'artisan ».||Click the recipe: the "Demande à tous les artisans" (request to all crafters) window opens, with the "Composants à prévoir" (reagents to plan).]]</li>
+		<li>[[Règle {o:Quantité||Quantity} et {o:Note||Note}, puis {b:Commander||Order}. Le chat confirme : « les artisans connectés sont prévenus, elle reste ouverte 5 jours ».||Set {o:Quantité||Quantity} and {o:Note||Note}, then {b:Commander||Order}. Chat confirms: connected crafters are notified, it stays open 5 days.]]</li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span>[[Avec /gkeep commande nouvelle, sans artisan||With /gkeep order new, no crafter]]</h3>
+	<ol class="steps">
+		<li>[[Tape {d:/gkeep commande nouvelle||/gkeep order new}, remplis <code>[[objet||item]]</code> et laisse <code>[[artisan||crafter]]</code> <strong>vide</strong>.||Type {d:/gkeep commande nouvelle||/gkeep order new}, fill in <code>[[objet||item]]</code> and leave <code>[[artisan||crafter]]</code> <strong>empty</strong>.]]</li>
+		<li>[[Le bot prévient en message privé jusqu'à 10 artisans qui connaissent la recette (ceux dont le personnage est lié à Discord), et l'annonce dans le salon des commandes si l'admin en a choisi un.||The bot DMs up to 10 crafters who know the recipe (those whose character is linked to Discord), and posts it in the orders channel if the admin set one.]]</li>
+	</ol>
+</div>
+{tip}<p>[[Pour savoir avant de demander qui sait faire une recette : {d:/gkeep commande catalogue||/gkeep order catalog} (option <code>[[recherche||search]]</code>).||To check who can make a recipe before asking: {d:/gkeep commande catalogue||/gkeep order catalog} (<code>[[recherche||search]]</code> option).]]</p>{/tip}
+</section>
+
+<section>
+<h2 id="proposer">[[Tutoriel : proposer de faire une demande (artisan)||Tutorial: offer to make a request (crafter)]]</h2>
+<div class="rights">{who:crafter}</div>
+<div class="howto">
+	<h3><span class="where">[[En jeu||In game]]</span>[[Le bouton Proposer||The Proposer (Offer) button]]</h3>
+	<ol class="steps">
+		<li>[[Quand une demande que tu sais faire arrive, une alerte s'affiche : « <em>X</em> cherche quelqu'un pour 2× <em>Y</em>, et tu sais le faire ».||When a request you can make arrives, an alert shows: "<em>X</em> cherche quelqu'un pour 2× <em>Y</em>, et tu sais le faire" (is looking for someone, and you can make it).]]</li>
+		<li>[[Onglet {t:Commandes||Orders}, filtre {o:Que je peux faire||I can make}.||{t:Commandes||Orders} tab, {o:Que je peux faire||I can make} filter.]]</li>
+		<li>[[Clique {b:Proposer||Offer} sur la demande ({b:Proposer…} si tu ne connais pas la recette : tu peux quand même proposer). Écris un mot pour le demandeur (prix, délai…), facultatif, et valide.||Click {b:Proposer||Offer} on the request ({b:Proposer…} if you don't know the recipe: you can still offer). Write a word for the requester (price, delay…), optional, and confirm.]]</li>
+		<li>[[Tu as changé d'avis ? {b:Retirer l'offre||Withdraw offer}. Le filtre {o:Mes offres||My offers} les rassemble.||Changed your mind? {b:Retirer l'offre||Withdraw offer}. The {o:Mes offres||My offers} filter gathers them.]]</li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span>[[Avec /gkeep commande proposer||With /gkeep order offer]]</h3>
+	<ol class="steps">
+		<li>[[{d:/gkeep commande liste||/gkeep order list} avec le filtre « Que je peux faire » pour voir les demandes à ta portée.||{d:/gkeep commande liste||/gkeep order list} with the "I can make" filter to see requests you can handle.]]</li>
+		<li>[[{d:/gkeep commande proposer||/gkeep order offer} : choisis la demande dans <code>[[numero||id]]</code>, ajoute une <code>note</code> ; <code>[[personnage||character]]</code> vaut ton principal par défaut.||{d:/gkeep commande proposer||/gkeep order offer}: pick the request in <code>[[numero||id]]</code>, add a <code>note</code>; <code>[[personnage||character]]</code> defaults to your main.]]</li>
+		<li>[[Pour te retirer : {d:/gkeep commande retirer||/gkeep order withdraw}.||To back out: {d:/gkeep commande retirer||/gkeep order withdraw}.]]</li>
+	</ol>
+</div>
+</section>
+
+<section>
+<h2 id="choisir-une-offre">[[Tutoriel : choisir une offre (demandeur)||Tutorial: pick an offer (requester)]]</h2>
+<div class="rights">{who:requester}</div>
+<div class="howto">
+	<h3><span class="where">[[En jeu||In game]]</span>[[Le bouton Offres||The Offres (Offers) button]]</h3>
+	<ol class="steps">
+		<li>[[Quand un artisan propose, une alerte te prévient et le titre de ta demande passe en vert.||When a crafter offers, an alert tells you and your request's title turns green.]]</li>
+		<li>[[Clique {b:Offres (1)||Offres (1) — Offers} sur ta demande. Chaque offre montre l'artisan (● s'il est en ligne) et son mot.||Click {b:Offres (1)||Offres (1) — Offers} on your request. Each offer shows the crafter (● when online) and their note.]]</li>
+		<li>[[Clique {b:Retenir||Pick} sur celle qui te convient : la commande passe <em>acceptée</em> avec cet artisan.||Click {b:Retenir||Pick} on the one you like: the order becomes <em>acceptée</em> (accepted) with that crafter.]]</li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span>[[Avec /gkeep commande accepter||With /gkeep order accept]]</h3>
+	<ol class="steps">
+		<li>[[{d:/gkeep commande voir||/gkeep order show} affiche ta demande et ses offres.||{d:/gkeep commande voir||/gkeep order show} shows your request and its offers.]]</li>
+		<li>[[{d:/gkeep commande accepter||/gkeep order accept} : choisis la commande, puis l'artisan dans <code>[[artisan||crafter]]</code>.||{d:/gkeep commande accepter||/gkeep order accept}: pick the order, then the crafter in <code>[[artisan||crafter]]</code>.]]</li>
+	</ol>
+</div>
+</section>
+
+<section>
+<h2 id="livraison">[[Tutoriel : de l'acceptation à la livraison||Tutorial: from acceptance to delivery]]</h2>
+<div class="rights">{who:crafter} {who:requester}</div>
+<div class="howto">
+	<h3><span class="where">[[En jeu||In game]]</span>[[Chacun son bouton||Each their own button]]</h3>
+	<ol class="steps">
+		<li>[[<strong>Artisan</strong>, commande directe : {b:Accepter||Accept} ou {b:Refuser||Decline}.||<strong>Crafter</strong>, direct order: {b:Accepter||Accept} or {b:Refuser||Decline}.]]</li>
+		<li>[[<strong>Artisan</strong>, une fois l'objet fabriqué : {b:Prête||Ready} si vous allez échanger en main propre, ou {b:Envoyée||Mailed} après l'avoir posté (le filtre {o:À fabriquer||To craft} les rassemble).||<strong>Crafter</strong>, once the item is crafted: {b:Prête||Ready} if you'll trade in person, or {b:Envoyée||Mailed} after posting it (the {o:À fabriquer||To craft} filter gathers them).]]</li>
+		<li>[[<strong>Demandeur</strong>, objet en main : {b:Reçue||Received}. La commande est close.||<strong>Requester</strong>, item in hand: {b:Reçue||Received}. The order is closed.]]</li>
+		<li>[[Tant que l'objet n'est pas envoyé, l'un ou l'autre peut {b:Annuler||Cancel} (une confirmation est demandée).||Until the item is mailed, either side can {b:Annuler||Cancel} (you're asked to confirm).]]</li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span>[[Les mêmes étapes||The same steps]]</h3>
+	<p>[[{d:/gkeep commande accepter||/gkeep order accept}, {d:/gkeep commande prete||/gkeep order ready}, {d:/gkeep commande envoyee||/gkeep order mailed}, {d:/gkeep commande recu||/gkeep order received}, {d:/gkeep commande annuler||/gkeep order cancel} : la commande se choisit dans une liste, rien à retenir. Le demandeur reçoit un message privé à chaque étape.||{d:/gkeep commande accepter||/gkeep order accept}, {d:/gkeep commande prete||/gkeep order ready}, {d:/gkeep commande envoyee||/gkeep order mailed}, {d:/gkeep commande recu||/gkeep order received}, {d:/gkeep commande annuler||/gkeep order cancel}: the order is picked from a list, nothing to remember. The requester gets a direct message at each step.]]</p>
+</div>
+{note}<p>[[Une action faite en jeu est d'abord partagée avec les joueurs connectés, puis envoyée au serveur à ta prochaine déconnexion ou {g:/reload} : la ligne affiche « synchro au prochain /reload » en attendant. La case {o:Terminées||Done} affiche aussi les commandes closes.||An action taken in game is first shared with online players, then sent to the server at your next logout or {g:/reload}: the row reads "synchro au prochain /reload" meanwhile. The {o:Terminées||Done} box also shows closed orders.]]</p>{/note}
+</section>
+
+<section>
+<h2 id="catalogue">[[Le catalogue de la guilde||The guild catalog]]</h2>
+<p>[[Le catalogue, c'est la liste des recettes que la guilde peut viser. Il grandit tout seul : chaque fois qu'un membre ouvre la fenêtre d'un de ses métiers, toutes les recettes affichées y entrent, apprises ou non ; s'y ajoutent les recettes connues de l'annuaire. Plus les membres ouvrent leurs métiers, plus {b:Nouvelle demande||New request} et {d:/gkeep commande catalogue||/gkeep order catalog} sont complets.||The catalog is the list of recipes the guild can aim for. It grows by itself: whenever a member opens one of their profession windows, every recipe shown goes in, learned or not; known recipes from the directory are added too. The more members open their professions, the more complete {b:Nouvelle demande||New request} and {d:/gkeep commande catalogue||/gkeep order catalog} get.]]</p>
+</section>

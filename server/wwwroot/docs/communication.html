@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guildkeep · module Communication</title>
+<meta name="description" content="Le module Communication de Guildkeep : annonces des officiers et leurs modèles, charte de la guilde, objectifs communs et contributions des membres, en jeu et sur Discord.">
+<link rel="preload" href="/fonts/cinzel-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/alegreya-sans-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/site.css?v=6">
+<script>document.documentElement.classList.add('js');try{var l=localStorage.getItem('gk-lang')||((navigator.language||'fr').toLowerCase().indexOf('fr')===0?'fr':'en');document.documentElement.lang=l}catch(e){}</script>
+</head>
+<body>
+<svg class="sprite" aria-hidden="true" focusable="false"><defs><linearGradient id="gk-gold" gradientUnits="userSpaceOnUse" x1="0" y1="4" x2="0" y2="44"><stop offset="0" stop-color="#fff1bf"/><stop offset=".45" stop-color="#f0c25e"/><stop offset="1" stop-color="#9a6a20"/></linearGradient>
+<symbol id="i-metiers" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M6 15h25c1 5 5 8 11 8v4H31l3 9H14l3-9h-3C9 27 6 22 6 15z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M36 6l4 4M33 9l4 4"/></symbol>
+<symbol id="i-membres" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M24 5c9 0 15 7 15 16v14l-6 6h-4V27h-10v14h-4l-6-6V21C9 12 15 5 24 5z"/><path fill="#1a1208" d="M15 20h18v4H15z"/></symbol>
+<symbol id="i-artisanat" viewBox="0 0 48 48"><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M10 38L36 12"/><ellipse fill="none" stroke="url(#gk-gold)" stroke-width="3.2" cx="37.5" cy="10.5" rx="3.2" ry="1.8" transform="rotate(-45 37.5 10.5)"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="1.8" d="M39 9c6 6-4 12-10 16s-14 10-8 17"/></symbol>
+<symbol id="i-evenements" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M7 11h34v30H7z"/><path fill="#1a1208" d="M10 19h28v19H10z"/><path fill="url(#gk-gold)" d="M13 22h6v5h-6zM21 22h6v5h-6zM29 22h6v5h-6zM13 30h6v5h-6zM21 30h6v5h-6z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M15 6v8M33 6v8"/></symbol>
+<symbol id="i-raid" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M24 4l17 6v12c0 11-7 18-17 22C14 40 7 33 7 22V10z"/><path fill="#1a1208" d="M24 11l11 4v8c0 7-4 12-11 15z"/></symbol>
+<symbol id="i-presence" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M10 6h22l7 7v29H10z"/><path fill="none" stroke="#1a1208" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.4" d="M16 26l5 5 10-11"/></symbol>
+<symbol id="i-quetes" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M20 5h8l-1.5 26h-5zM24 35a4 4 0 1 1 0 8 4 4 0 0 1 0-8z"/></symbol>
+<symbol id="i-communication" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M6 19h8l20-11v32L14 29H6z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M39 17c3 4 3 10 0 14M12 30l3 11h6l-3-11"/></symbol>
+<symbol id="i-install" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M17 12c0-5 3-8 7-8s7 3 7 8h-3c0-3-2-5-4-5s-4 2-4 5z"/><path fill="url(#gk-gold)" d="M10 14h28l4 26a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4z"/><path fill="#1a1208" d="M20 22h8v6h-8z"/></symbol>
+<symbol id="i-compagnon" viewBox="0 0 48 48"><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="4" d="M6 34c6-14 30-14 36 0M12 34V22M24 34V18M36 34V22"/><path fill="url(#gk-gold)" d="M4 34h40v5H4z"/></symbol>
+<symbol id="i-cmd" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M5 9h38v30H5z"/><path fill="#1a1208" d="M8 15h32v21H8z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M14 32l8-13M26 32h8"/></symbol>
+<symbol id="i-faq" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M8 6h26l6 6v30H8z"/><path fill="none" stroke="#1a1208" stroke-linecap="round" stroke-width="3.4" d="M19 19c0-4 3-6 5.5-6s5.5 2 5.5 5.5-5 4-5 8M24.5 32v.5"/></symbol>
+</defs></svg>
+<header class="topbar">
+	<a class="wordmark" href="/">Guildkeep</a>
+	<nav aria-label="Navigation">
+		<a href="/docs/" aria-current="page"><span lang="fr">Documentation</span><span lang="en">Docs</span></a>
+		<a class="hide-phone" href="/docs/faq.html"><span lang="fr">Aide</span><span lang="en">Help</span></a>
+		<div class="lang-switch" role="group" aria-label="Langue / Language">
+			<button type="button" data-set-lang="fr" aria-pressed="true">FR</button>
+			<button type="button" data-set-lang="en" aria-pressed="false">EN</button>
+		</div>
+		<a class="button invite-link hide-phone" href="/#mise-en-place"><span lang="fr">Ajouter à Discord</span><span lang="en">Add to Discord</span></a>
+	</nav>
+</header>
+
+<div class="doc">
+<aside class="doc-nav" aria-label="Sommaire / Contents"><details open><summary><span><span lang="fr">Sommaire</span><span lang="en">Contents</span></span><i class="plus" aria-hidden="true"></i></summary><div>
+<p class="doc-nav-label"><span lang="fr">Démarrer</span><span lang="en">Getting started</span></p><ul>
+<li><a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a>
+</li>
+<li><a href="/docs/installation.html"><span lang="fr">Installer Guildkeep</span><span lang="en">Installing Guildkeep</span></a>
+</li>
+<li><a href="/docs/compagnon.html"><span lang="fr">L'app compagnon</span><span lang="en">The companion app</span></a>
+</li>
+</ul>
+<p class="doc-nav-label"><span lang="fr">Modules</span><span lang="en">Modules</span></p><ul>
+<li><a href="/docs/metiers.html"><span lang="fr">Métiers</span><span lang="en">Professions</span></a>
+</li>
+<li><a href="/docs/membres.html"><span lang="fr">Membres</span><span lang="en">Members</span></a>
+</li>
+<li><a href="/docs/artisanat.html"><span lang="fr">Artisanat</span><span lang="en">Crafting orders</span></a>
+</li>
+<li><a href="/docs/evenements.html"><span lang="fr">Événements</span><span lang="en">Events</span></a>
+</li>
+<li><a href="/docs/soiree-raid.html"><span lang="fr">Soirée de raid</span><span lang="en">Raid night</span></a>
+</li>
+<li><a href="/docs/presence.html"><span lang="fr">Présence et butin</span><span lang="en">Attendance and loot</span></a>
+</li>
+<li><a href="/docs/quetes.html"><span lang="fr">Quêtes</span><span lang="en">Quests</span></a>
+</li>
+<li><a href="/docs/communication.html" aria-current="page"><span lang="fr">Communication</span><span lang="en">Communication</span></a>
+<ul>
+<li><a href="#a-quoi-ca-sert"><span lang="fr">À quoi ça sert</span><span lang="en">What it's for</span></a></li>
+<li><a href="#publier-une-annonce"><span lang="fr">Tutoriel : publier une annonce</span><span lang="en">Tutorial: post an announcement</span></a></li>
+<li><a href="#modeles"><span lang="fr">Tutoriel : préparer des modèles d'annonce</span><span lang="en">Tutorial: prepare announcement templates</span></a></li>
+<li><a href="#salon"><span lang="fr">Tutoriel : choisir le salon des annonces sur Discord</span><span lang="en">Tutorial: choose the Discord announcement channel</span></a></li>
+<li><a href="#charte"><span lang="fr">Tutoriel : écrire la charte de la guilde</span><span lang="en">Tutorial: write the guild handbook</span></a></li>
+<li><a href="#objectifs"><span lang="fr">Tutoriel : lancer un objectif et y contribuer</span><span lang="en">Tutorial: start a goal and contribute</span></a></li>
+</ul>
+</li>
+</ul>
+<p class="doc-nav-label"><span lang="fr">Référence</span><span lang="en">Reference</span></p><ul>
+<li><a href="/docs/commandes.html"><span lang="fr">Commandes Discord</span><span lang="en">Discord commands</span></a>
+</li>
+<li><a href="/docs/faq.html"><span lang="fr">FAQ et dépannage</span><span lang="en">FAQ and troubleshooting</span></a>
+</li>
+</ul>
+</div></details></aside>
+<main class="doc-main" id="contenu">
+<nav class="crumbs" aria-label="Fil d'Ariane / Breadcrumb"><ol class="crumbs-list"><li><a href="/"><span lang="fr">Accueil</span><span lang="en">Home</span></a></li><li><a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a></li><li aria-current="page"><span lang="fr">Communication</span><span lang="en">Communication</span></li></ol></nav>
+<h1><span lang="fr">Communication</span><span lang="en">Communication</span></h1>
+<p class="lead"><span lang="fr">L'onglet Guilde : les annonces des officiers, la charte (règlement, règles de butin…) et les objectifs communs auxquels chacun contribue. Lu en jeu, publié aussi sur Discord.</span><span lang="en">The Guild tab: officers' announcements, the handbook (rules, loot rules…) and shared goals everyone contributes to. Read in game, also posted on Discord.</span></p>
+<div class="rule" aria-hidden="true"><i></i></div>
+<section>
+<h2 id="a-quoi-ca-sert"><a class="anchor" href="#a-quoi-ca-sert" aria-hidden="true" tabindex="-1">#</a><span lang="fr">À quoi ça sert</span><span lang="en">What it's for</span></h2>
+<p><span lang="fr">L'onglet <span lang="fr"><span class="ui tab">Guilde</span></span><span lang="en"><span class="ui tab">Guilde</span> <span class="gloss">(Guild)</span></span> a trois sections : <span lang="fr"><span class="ui opt">Annonces</span></span><span lang="en"><span class="ui opt">Annonces</span> <span class="gloss">(Announcements)</span></span>, <span lang="fr"><span class="ui opt">Charte</span></span><span lang="en"><span class="ui opt">Charte</span> <span class="gloss">(Handbook)</span></span> et <span lang="fr"><span class="ui opt">Objectifs</span></span><span lang="en"><span class="ui opt">Objectifs</span> <span class="gloss">(Goals)</span></span>. Tout le monde lit ; les officiers écrivent. Les contributions aux objectifs sont ouvertes à tous.</span><span lang="en">The <span lang="fr"><span class="ui tab">Guilde</span></span><span lang="en"><span class="ui tab">Guilde</span> <span class="gloss">(Guild)</span></span> tab has three sections: <span lang="fr"><span class="ui opt">Annonces</span></span><span lang="en"><span class="ui opt">Annonces</span> <span class="gloss">(Announcements)</span></span>, <span lang="fr"><span class="ui opt">Charte</span></span><span lang="en"><span class="ui opt">Charte</span> <span class="gloss">(Handbook)</span></span> and <span lang="fr"><span class="ui opt">Objectifs</span></span><span lang="en"><span class="ui opt">Objectifs</span> <span class="gloss">(Goals)</span></span>. Everyone reads; officers write. Contributions to goals are open to all.</span></p>
+<ul>
+	<li><span lang="fr">À la connexion, le chat signale les annonces non lues (« 2 annonces de la guilde non lues — /gkeep guilde ») et l'onglet affiche leur nombre. Une annonce non lue porte un point vert.</span><span lang="en">At login, chat flags unread announcements ("2 annonces de la guilde non lues — /gkeep guilde") and the tab shows their number. An unread announcement has a green dot.</span></li>
+	<li><span lang="fr"><code>/gkeep guilde</code>, <code>/gkeep annonces</code>, <code>/gkeep charte</code> ou <code>/gkeep objectifs</code> ouvrent directement l'onglet.</span><span lang="en"><code>/gkeep guilde</code>, <code>/gkeep annonces</code>, <code>/gkeep charte</code> or <code>/gkeep objectifs</code> open the tab directly.</span></li>
+</ul>
+<figure class="mock" data-ui>
+	<div class="wow">
+		<div class="bar-line"><span class="chip">Annonces</span><span class="chip">Charte</span><span class="chip is-on">Objectifs</span><span style="margin-left:auto" class="wow-button">Nouveau</span></div>
+		<div style="padding:10px 12px"><div class="gold">Flacons pour Naxxramas</div><div class="soft" style="font-size:12px">échéance le 05/12/2026 · créé par Bragg Ferrefond</div>
+		<div class="bar" style="margin-top:8px"><i style="width:62%"></i><span>124 / 200 flacons (62 %)</span></div></div>
+		<div class="wow-row"><span class="wow-ico">+</span><span>Maël Corvin : 40 flacons <span class="soft">— « Titans »</span></span><span></span></div>
+		<div style="padding:8px 12px;display:flex;gap:6px;align-items:center"><span class="wow-search" style="width:50px">20</span><span class="wow-search" style="flex:1">sagesse distillée</span><span class="wow-button">Contribuer</span></div>
+	</div>
+	<figcaption><span lang="fr">Maquette : un objectif de guilde et ses contributions.</span><span lang="en">Mock-up: a guild goal and its contributions.</span></figcaption>
+</figure>
+
+<aside class="callout c-tip"><p class="callout-title"><span lang="fr">Astuce</span><span lang="en">Tip</span></p><p><span lang="fr"><strong>Tutoriel en jeu.</strong> À la première ouverture de l'onglet <span lang="fr"><span class="ui tab">Guilde</span></span><span lang="en"><span class="ui tab">Guilde</span> <span class="gloss">(Guild)</span></span>, un tutoriel pas à pas encadre chaque bouton et explique à quoi il sert. Tu peux le passer à tout moment, et le revoir avec le bouton <span class="ui">?</span> en haut à droite de la fenêtre ou <code>/gkeep tuto</code>.</span><span lang="en"><strong>In-game tutorial.</strong> The first time you open the <span lang="fr"><span class="ui tab">Guilde</span></span><span lang="en"><span class="ui tab">Guilde</span> <span class="gloss">(Guild)</span></span> tab, a step-by-step tutorial highlights every button and explains what it does. You can skip it at any time, and replay it with the <span class="ui">?</span> button at the top right of the window or <code>/gkeep tuto</code>.</span></p></aside>
+</section>
+
+<section>
+<h2 id="publier-une-annonce"><a class="anchor" href="#publier-une-annonce" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Tutoriel : publier une annonce</span><span lang="en">Tutorial: post an announcement</span></h2>
+<div class="rights"><span class="badge b-officer"><span lang="fr">Officier</span><span lang="en">Officer</span></span></div>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu</span><span lang="en">In game</span></span><span lang="fr">Section Annonces</span><span lang="en">Announcements section</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Onglet <span lang="fr"><span class="ui tab">Guilde</span></span><span lang="en"><span class="ui tab">Guilde</span> <span class="gloss">(Guild)</span></span>, section <span lang="fr"><span class="ui opt">Annonces</span></span><span lang="en"><span class="ui opt">Annonces</span> <span class="gloss">(Announcements)</span></span>, clique <span lang="fr"><span class="ui">Nouveau</span></span><span lang="en"><span class="ui">Nouveau</span> <span class="gloss">(New)</span></span>.</span><span lang="en"><span lang="fr"><span class="ui tab">Guilde</span></span><span lang="en"><span class="ui tab">Guilde</span> <span class="gloss">(Guild)</span></span> tab, <span lang="fr"><span class="ui opt">Annonces</span></span><span lang="en"><span class="ui opt">Annonces</span> <span class="gloss">(Announcements)</span></span> section, click <span lang="fr"><span class="ui">Nouveau</span></span><span lang="en"><span class="ui">Nouveau</span> <span class="gloss">(New)</span></span>.</span></li>
+		<li><span lang="fr">Écris le <span lang="fr"><span class="ui opt">Titre</span></span><span lang="en"><span class="ui opt">Titre</span> <span class="gloss">(Title)</span></span> et le <span lang="fr"><span class="ui opt">Texte</span></span><span lang="en"><span class="ui opt">Texte</span> <span class="gloss">(Text)</span></span>. Ou tape le nom d'un modèle dans <span lang="fr"><span class="ui opt">Modèle</span></span><span lang="en"><span class="ui opt">Modèle</span> <span class="gloss">(Template)</span></span> et clique <span lang="fr"><span class="ui">Appliquer</span></span><span lang="en"><span class="ui">Appliquer</span> <span class="gloss">(Apply)</span></span>.</span><span lang="en">Write the <span lang="fr"><span class="ui opt">Titre</span></span><span lang="en"><span class="ui opt">Titre</span> <span class="gloss">(Title)</span></span> and <span lang="fr"><span class="ui opt">Texte</span></span><span lang="en"><span class="ui opt">Texte</span> <span class="gloss">(Text)</span></span>. Or type a template's name in <span lang="fr"><span class="ui opt">Modèle</span></span><span lang="en"><span class="ui opt">Modèle</span> <span class="gloss">(Template)</span></span> and click <span lang="fr"><span class="ui">Appliquer</span></span><span lang="en"><span class="ui">Appliquer</span> <span class="gloss">(Apply)</span></span>.</span></li>
+		<li><span lang="fr">Facultatif : clique <span lang="fr"><span class="ui">Événement : aucun</span></span><span lang="en"><span class="ui">Événement : aucun</span> <span class="gloss">(Event: none)</span></span> autant de fois que nécessaire pour faire défiler les prochains événements et lier l'annonce à l'un d'eux.</span><span lang="en">Optional: click <span lang="fr"><span class="ui">Événement : aucun</span></span><span lang="en"><span class="ui">Événement : aucun</span> <span class="gloss">(Event: none)</span></span> as many times as needed to cycle through upcoming events and tie the announcement to one.</span></li>
+		<li><span lang="fr">Clique <span lang="fr"><span class="ui">Enregistrer</span></span><span lang="en"><span class="ui">Enregistrer</span> <span class="gloss">(Save)</span></span>. Les membres connectés la reçoivent aussitôt ; elle est publiée sur Discord si un salon d'annonces est réglé.</span><span lang="en">Click <span lang="fr"><span class="ui">Enregistrer</span></span><span lang="en"><span class="ui">Enregistrer</span> <span class="gloss">(Save)</span></span>. Online members get it right away; it's posted on Discord if an announcement channel is set.</span></li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span><span lang="fr">Avec /gkeep annonce publier</span><span lang="en">With /gkeep announce post</span></h3>
+	<ol class="steps">
+		<li><span lang="fr"><code class="d"><span lang="fr">/gkeep annonce publier</span><span lang="en">/gkeep announce post</span></code> : <code><span lang="fr">titre</span><span lang="en">title</span></code> et <code><span lang="fr">texte</span><span lang="en">text</span></code>, ou seulement <code><span lang="fr">modele</span><span lang="en">template</span></code> pour partir d'un modèle.</span><span lang="en"><code class="d"><span lang="fr">/gkeep annonce publier</span><span lang="en">/gkeep announce post</span></code>: <code>title</code> and <code>text</code>, or just <code>template</code> to start from a template.</span></li>
+		<li><span lang="fr">Facultatif : <code><span lang="fr">evenement</span><span lang="en">event</span></code>, l'événement concerné.</span><span lang="en">Optional: <code>event</code>, the event it's about.</span></li>
+		<li><span lang="fr"><code class="d"><span lang="fr">/gkeep annonce liste</span><span lang="en">/gkeep announce list</span></code> montre les annonces récentes ; <code class="d"><span lang="fr">/gkeep annonce retirer</span><span lang="en">/gkeep announce delete</span></code> en retire une (en jeu : <span lang="fr"><span class="ui">Retirer</span></span><span lang="en"><span class="ui">Retirer</span> <span class="gloss">(Remove)</span></span>).</span><span lang="en"><code class="d"><span lang="fr">/gkeep annonce liste</span><span lang="en">/gkeep announce list</span></code> shows recent announcements; <code class="d"><span lang="fr">/gkeep annonce retirer</span><span lang="en">/gkeep announce delete</span></code> removes one (in game: <span lang="fr"><span class="ui">Retirer</span></span><span lang="en"><span class="ui">Retirer</span> <span class="gloss">(Remove)</span></span>).</span></li>
+	</ol>
+</div>
+</section>
+
+<section>
+<h2 id="modeles"><a class="anchor" href="#modeles" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Tutoriel : préparer des modèles d'annonce</span><span lang="en">Tutorial: prepare announcement templates</span></h2>
+<div class="rights"><span class="badge b-officer"><span lang="fr">Officier</span><span lang="en">Officer</span></span></div>
+<p><span lang="fr">Un modèle évite de réécrire la même annonce chaque semaine. Dans le titre et le texte, <code>{event}</code> est remplacé par le nom de l'événement lié, <code>{date}</code> par sa date et <code>{guild}</code> par le nom de la guilde.</span><span lang="en">A template saves rewriting the same announcement every week. In the title and text, <code>{event}</code> is replaced by the linked event's name, <code>{date}</code> by its date and <code>{guild}</code> by the guild's name.</span></p>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu</span><span lang="en">In game</span></span><span lang="fr">Enregistrer comme modèle</span><span lang="en">Save as template</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Dans la fenêtre d'annonce, écris un titre et un texte avec les mots-clés, par exemple « Ce soir : {event} » et « Rendez-vous {date}, flacons prêts. »</span><span lang="en">In the announcement window, write a title and text with the keywords, for example "Tonight: {event}" and "Meet {date}, flasks ready."</span></li>
+		<li><span lang="fr">Donne-lui un nom dans <span lang="fr"><span class="ui opt">Modèle</span></span><span lang="en"><span class="ui opt">Modèle</span> <span class="gloss">(Template)</span></span> (« raid-hebdo ») et clique <span lang="fr"><span class="ui">Enregistrer comme modèle</span></span><span lang="en"><span class="ui">Enregistrer comme modèle</span> <span class="gloss">(Save as template)</span></span>.</span><span lang="en">Give it a name in <span lang="fr"><span class="ui opt">Modèle</span></span><span lang="en"><span class="ui opt">Modèle</span> <span class="gloss">(Template)</span></span> ("weekly-raid") and click <span lang="fr"><span class="ui">Enregistrer comme modèle</span></span><span lang="en"><span class="ui">Enregistrer comme modèle</span> <span class="gloss">(Save as template)</span></span>.</span></li>
+		<li><span lang="fr">La semaine suivante : <span lang="fr"><span class="ui">Nouveau</span></span><span lang="en"><span class="ui">Nouveau</span> <span class="gloss">(New)</span></span>, tape « raid-hebdo », choisis l'événement, <span lang="fr"><span class="ui">Appliquer</span></span><span lang="en"><span class="ui">Appliquer</span> <span class="gloss">(Apply)</span></span>, <span lang="fr"><span class="ui">Enregistrer</span></span><span lang="en"><span class="ui">Enregistrer</span> <span class="gloss">(Save)</span></span>.</span><span lang="en">Next week: <span lang="fr"><span class="ui">Nouveau</span></span><span lang="en"><span class="ui">Nouveau</span> <span class="gloss">(New)</span></span>, type "weekly-raid", pick the event, <span lang="fr"><span class="ui">Appliquer</span></span><span lang="en"><span class="ui">Appliquer</span> <span class="gloss">(Apply)</span></span>, <span lang="fr"><span class="ui">Enregistrer</span></span><span lang="en"><span class="ui">Enregistrer</span> <span class="gloss">(Save)</span></span>.</span></li>
+	</ol>
+</div>
+<p><span lang="fr">Sur Discord : <code class="d"><span lang="fr">/gkeep annonce modele-enregistrer</span><span lang="en">/gkeep announce template-save</span></code>, <code class="d"><span lang="fr">/gkeep annonce modele-liste</span><span lang="en">/gkeep announce template-list</span></code> et <code class="d"><span lang="fr">/gkeep annonce modele-supprimer</span><span lang="en">/gkeep announce template-delete</span></code>.</span><span lang="en">On Discord: <code class="d"><span lang="fr">/gkeep annonce modele-enregistrer</span><span lang="en">/gkeep announce template-save</span></code>, <code class="d"><span lang="fr">/gkeep annonce modele-liste</span><span lang="en">/gkeep announce template-list</span></code> and <code class="d"><span lang="fr">/gkeep annonce modele-supprimer</span><span lang="en">/gkeep announce template-delete</span></code>.</span></p>
+</section>
+
+<section>
+<h2 id="salon"><a class="anchor" href="#salon" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Tutoriel : choisir le salon des annonces sur Discord</span><span lang="en">Tutorial: choose the Discord announcement channel</span></h2>
+<div class="rights"><span class="badge b-admin"><span lang="fr">Admin « Gérer le serveur »</span><span lang="en">Admin (“Manage Server”)</span></span></div>
+<ol class="steps">
+	<li><span lang="fr">Tape <code class="d"><span lang="fr">/gkeep annonce salon</span><span lang="en">/gkeep announce channel</span></code> et choisis le salon dans <code><span lang="fr">salon</span><span lang="en">channel</span></code>.</span><span lang="en">Type <code class="d"><span lang="fr">/gkeep annonce salon</span><span lang="en">/gkeep announce channel</span></code> and pick the channel in <code>channel</code>.</span></li>
+	<li><span lang="fr">Vérifie que le bot peut y écrire (droit « Envoyer des messages » dans ce salon).</span><span lang="en">Check the bot can post there ("Send Messages" permission in that channel).</span></li>
+	<li><span lang="fr">Pour ne plus publier sur Discord : relance la commande sans salon.</span><span lang="en">To stop posting on Discord: run the command again without a channel.</span></li>
+</ol>
+<aside class="callout c-note"><p class="callout-title"><span lang="fr">Bon à savoir</span><span lang="en">Good to know</span></p><p><span lang="fr">Ce salon est distinct de celui des <em>annonces de commandes de craft</em>, réglé par <code class="d"><span lang="fr">/gkeep-setup</span><span lang="en">/gkeep-setup</span></code>.</span><span lang="en">This channel is separate from the <em>craft order announcements</em> one, set with <code class="d"><span lang="fr">/gkeep-setup</span><span lang="en">/gkeep-setup</span></code>.</span></p></aside>
+</section>
+
+<section>
+<h2 id="charte"><a class="anchor" href="#charte" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Tutoriel : écrire la charte de la guilde</span><span lang="en">Tutorial: write the guild handbook</span></h2>
+<div class="rights"><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span> <span lang="fr">pour lire ;</span><span lang="en">to read;</span> <span class="badge b-officer"><span lang="fr">Officier</span><span lang="en">Officer</span></span> <span lang="fr">pour écrire</span><span lang="en">to write</span></div>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu</span><span lang="en">In game</span></span><span lang="fr">Section Charte</span><span lang="en">Handbook section</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Section <span lang="fr"><span class="ui opt">Charte</span></span><span lang="en"><span class="ui opt">Charte</span> <span class="gloss">(Handbook)</span></span>, clique <span lang="fr"><span class="ui">Nouveau</span></span><span lang="en"><span class="ui">Nouveau</span> <span class="gloss">(New)</span></span>.</span><span lang="en"><span lang="fr"><span class="ui opt">Charte</span></span><span lang="en"><span class="ui opt">Charte</span> <span class="gloss">(Handbook)</span></span> section, click <span lang="fr"><span class="ui">Nouveau</span></span><span lang="en"><span class="ui">Nouveau</span> <span class="gloss">(New)</span></span>.</span></li>
+		<li><span lang="fr"><span lang="fr"><span class="ui opt">Clé</span></span><span lang="en"><span class="ui opt">Clé</span> <span class="gloss">(Key)</span></span> : un identifiant court de la section (« reglement », « butin ») ; <span lang="fr"><span class="ui opt">Ordre</span></span><span lang="en"><span class="ui opt">Ordre</span> <span class="gloss">(Order)</span></span> : sa place dans la charte (les plus petits en premier).</span><span lang="en"><span lang="fr"><span class="ui opt">Clé</span></span><span lang="en"><span class="ui opt">Clé</span> <span class="gloss">(Key)</span></span>: a short identifier for the section ("rules", "loot"); <span lang="fr"><span class="ui opt">Ordre</span></span><span lang="en"><span class="ui opt">Ordre</span> <span class="gloss">(Order)</span></span>: its place in the handbook (smallest first).</span></li>
+		<li><span lang="fr">Écris le <span lang="fr"><span class="ui opt">Titre</span></span><span lang="en"><span class="ui opt">Titre</span> <span class="gloss">(Title)</span></span> et le <span lang="fr"><span class="ui opt">Texte</span></span><span lang="en"><span class="ui opt">Texte</span> <span class="gloss">(Text)</span></span>, puis <span lang="fr"><span class="ui">Enregistrer</span></span><span lang="en"><span class="ui">Enregistrer</span> <span class="gloss">(Save)</span></span>. <span lang="fr"><span class="ui">Modifier</span></span><span lang="en"><span class="ui">Modifier</span> <span class="gloss">(Edit)</span></span> et <span lang="fr"><span class="ui">Retirer</span></span><span lang="en"><span class="ui">Retirer</span> <span class="gloss">(Remove)</span></span> servent ensuite.</span><span lang="en">Write the <span lang="fr"><span class="ui opt">Titre</span></span><span lang="en"><span class="ui opt">Titre</span> <span class="gloss">(Title)</span></span> and <span lang="fr"><span class="ui opt">Texte</span></span><span lang="en"><span class="ui opt">Texte</span> <span class="gloss">(Text)</span></span>, then <span lang="fr"><span class="ui">Enregistrer</span></span><span lang="en"><span class="ui">Enregistrer</span> <span class="gloss">(Save)</span></span>. <span lang="fr"><span class="ui">Modifier</span></span><span lang="en"><span class="ui">Modifier</span> <span class="gloss">(Edit)</span></span> and <span lang="fr"><span class="ui">Retirer</span></span><span lang="en"><span class="ui">Retirer</span> <span class="gloss">(Remove)</span></span> do the rest.</span></li>
+	</ol>
+</div>
+<p><span lang="fr">Sur Discord : <code class="d"><span lang="fr">/gkeep charte lire</span><span lang="en">/gkeep handbook show</span></code> (toute la charte, ou une <code>section</code>), <code class="d"><span lang="fr">/gkeep charte ecrire</span><span lang="en">/gkeep handbook edit</span></code> (<code>section</code>, <code><span lang="fr">texte</span><span lang="en">text</span></code>, <code><span lang="fr">titre</span><span lang="en">title</span></code>, <code><span lang="fr">ordre</span><span lang="en">order</span></code> de 0 à 100) et <code class="d"><span lang="fr">/gkeep charte retirer</span><span lang="en">/gkeep handbook remove</span></code>.</span><span lang="en">On Discord: <code class="d"><span lang="fr">/gkeep charte lire</span><span lang="en">/gkeep handbook show</span></code> (the whole handbook, or one <code>section</code>), <code class="d"><span lang="fr">/gkeep charte ecrire</span><span lang="en">/gkeep handbook edit</span></code> (<code>section</code>, <code>text</code>, <code>title</code>, <code>order</code> from 0 to 100) and <code class="d"><span lang="fr">/gkeep charte retirer</span><span lang="en">/gkeep handbook remove</span></code>.</span></p>
+</section>
+
+<section>
+<h2 id="objectifs"><a class="anchor" href="#objectifs" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Tutoriel : lancer un objectif et y contribuer</span><span lang="en">Tutorial: start a goal and contribute</span></h2>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu</span><span lang="en">In game</span></span><span lang="fr">Créer l'objectif</span><span lang="en">Create the goal</span></h3>
+	<div class="rights"><span class="badge b-officer"><span lang="fr">Officier</span><span lang="en">Officer</span></span></div>
+	<ol class="steps">
+		<li><span lang="fr">Section <span lang="fr"><span class="ui opt">Objectifs</span></span><span lang="en"><span class="ui opt">Objectifs</span> <span class="gloss">(Goals)</span></span>, <span lang="fr"><span class="ui">Nouveau</span></span><span lang="en"><span class="ui">Nouveau</span> <span class="gloss">(New)</span></span>.</span><span lang="en"><span lang="fr"><span class="ui opt">Objectifs</span></span><span lang="en"><span class="ui opt">Objectifs</span> <span class="gloss">(Goals)</span></span> section, <span lang="fr"><span class="ui">Nouveau</span></span><span lang="en"><span class="ui">Nouveau</span> <span class="gloss">(New)</span></span>.</span></li>
+		<li><span lang="fr"><span lang="fr"><span class="ui opt">Titre</span></span><span lang="en"><span class="ui opt">Titre</span> <span class="gloss">(Title)</span></span> (« Flacons pour Naxxramas »), puis sur la ligne <span lang="fr"><span class="ui opt">Cible</span></span><span lang="en"><span class="ui opt">Cible</span> <span class="gloss">(Target)</span></span> : la quantité visée, l'unité (« flacons », « po ») et une échéance facultative au format jj/mm/aaaa. Ajoute des précisions dans le <span lang="fr"><span class="ui opt">Texte</span></span><span lang="en"><span class="ui opt">Texte</span> <span class="gloss">(Text)</span></span>.</span><span lang="en"><span lang="fr"><span class="ui opt">Titre</span></span><span lang="en"><span class="ui opt">Titre</span> <span class="gloss">(Title)</span></span> ("Flasks for Naxxramas"), then on the <span lang="fr"><span class="ui opt">Cible</span></span><span lang="en"><span class="ui opt">Cible</span> <span class="gloss">(Target)</span></span> row: the target amount, the unit ("flasks", "gold") and an optional deadline as dd/mm/yyyy. Add details in the <span lang="fr"><span class="ui opt">Texte</span></span><span lang="en"><span class="ui opt">Texte</span> <span class="gloss">(Text)</span></span>.</span></li>
+		<li><span lang="fr"><span lang="fr"><span class="ui">Enregistrer</span></span><span lang="en"><span class="ui">Enregistrer</span> <span class="gloss">(Save)</span></span>. Plus tard, <span lang="fr"><span class="ui">Clore</span></span><span lang="en"><span class="ui">Clore</span> <span class="gloss">(Close)</span></span> arrête les contributions, <span lang="fr"><span class="ui">Rouvrir</span></span><span lang="en"><span class="ui">Rouvrir</span> <span class="gloss">(Reopen)</span></span> les relance.</span><span lang="en"><span lang="fr"><span class="ui">Enregistrer</span></span><span lang="en"><span class="ui">Enregistrer</span> <span class="gloss">(Save)</span></span>. Later, <span lang="fr"><span class="ui">Clore</span></span><span lang="en"><span class="ui">Clore</span> <span class="gloss">(Close)</span></span> stops contributions, <span lang="fr"><span class="ui">Rouvrir</span></span><span lang="en"><span class="ui">Rouvrir</span> <span class="gloss">(Reopen)</span></span> restarts them.</span></li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu</span><span lang="en">In game</span></span><span lang="fr">Contribuer</span><span lang="en">Contribute</span></h3>
+	<div class="rights"><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></div>
+	<ol class="steps">
+		<li><span lang="fr">Clique l'objectif : la barre montre l'avancement, la liste qui a apporté quoi.</span><span lang="en">Click the goal: the bar shows progress, the list who brought what.</span></li>
+		<li><span lang="fr">En bas, tape la quantité que tu apportes et, si tu veux, un mot (« Titans »).</span><span lang="en">At the bottom, type the amount you bring and, if you like, a word ("Titans").</span></li>
+		<li><span lang="fr">Clique <span lang="fr"><span class="ui">Contribuer</span></span><span lang="en"><span class="ui">Contribuer</span> <span class="gloss">(Contribute)</span></span>. Ta ligne affiche « en cours d'envoi » jusqu'à la prochaine synchro.</span><span lang="en">Click <span lang="fr"><span class="ui">Contribuer</span></span><span lang="en"><span class="ui">Contribuer</span> <span class="gloss">(Contribute)</span></span>. Your row reads "en cours d'envoi" (sending) until the next sync.</span></li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span><span lang="fr">Les commandes d'objectif</span><span lang="en">Goal commands</span></h3>
+	<ul>
+		<li><span lang="fr"><code class="d"><span lang="fr">/gkeep objectif liste</span><span lang="en">/gkeep goal list</span></code> (option <code><span lang="fr">clos</span><span lang="en">closed</span></code> pour inclure les objectifs clos) et <code class="d"><span lang="fr">/gkeep objectif voir</span><span lang="en">/gkeep goal show</span></code>.</span><span lang="en"><code class="d"><span lang="fr">/gkeep objectif liste</span><span lang="en">/gkeep goal list</span></code> (<code>closed</code> option to include closed goals) and <code class="d"><span lang="fr">/gkeep objectif voir</span><span lang="en">/gkeep goal show</span></code>.</span></li>
+		<li><span lang="fr"><code class="d"><span lang="fr">/gkeep objectif contribuer</span><span lang="en">/gkeep goal contribute</span></code> : l'objectif, la <code><span lang="fr">quantite</span><span lang="en">amount</span></code>, une <code>note</code>, et <code><span lang="fr">personnage</span><span lang="en">character</span></code> (ton principal par défaut).</span><span lang="en"><code class="d"><span lang="fr">/gkeep objectif contribuer</span><span lang="en">/gkeep goal contribute</span></code>: the goal, the <code>amount</code>, a <code>note</code>, and <code>character</code> (your main by default).</span></li>
+		<li><span lang="fr">Officiers : <code class="d"><span lang="fr">/gkeep objectif creer</span><span lang="en">/gkeep goal create</span></code> (<code><span lang="fr">titre</span><span lang="en">title</span></code>, <code><span lang="fr">cible</span><span lang="en">target</span></code>, <code><span lang="fr">unite</span><span lang="en">unit</span></code>, <code><span lang="fr">echeance</span><span lang="en">deadline</span></code>, <code>details</code>), <code class="d"><span lang="fr">/gkeep objectif clore</span><span lang="en">/gkeep goal close</span></code>, <code class="d"><span lang="fr">/gkeep objectif rouvrir</span><span lang="en">/gkeep goal reopen</span></code>.</span><span lang="en">Officers: <code class="d"><span lang="fr">/gkeep objectif creer</span><span lang="en">/gkeep goal create</span></code> (<code>title</code>, <code>target</code>, <code>unit</code>, <code>deadline</code>, <code>details</code>), <code class="d"><span lang="fr">/gkeep objectif clore</span><span lang="en">/gkeep goal close</span></code>, <code class="d"><span lang="fr">/gkeep objectif rouvrir</span><span lang="en">/gkeep goal reopen</span></code>.</span></li>
+	</ul>
+</div>
+<aside class="callout c-warn"><p class="callout-title"><span lang="fr">Attention</span><span lang="en">Watch out</span></p><p><span lang="fr">Ce qu'un officier écrit en jeu n'est retenu par le serveur que si son rang y est enregistré (compagnon avec <a href="/docs/compagnon.html#token">token personnel</a>). Sur Discord, il suffit d'être reconnu officier ou d'avoir « Gérer le serveur ».</span><span lang="en">What an officer writes in game is only kept by the server if their rank is recorded there (companion with a <a href="/docs/compagnon.html#token">personal token</a>). On Discord, being recognized as an officer or having "Manage Server" is enough.</span></p></aside>
+</section>
+<nav class="doc-pager" aria-label="Pages voisines / Adjacent pages">
+<a class="prev" href="/docs/quetes.html" rel="prev"><small><span lang="fr">← Précédent</span><span lang="en">← Previous</span></small><b><span lang="fr">Quêtes</span><span lang="en">Quests</span></b></a>
+<a class="next" href="/docs/commandes.html" rel="next"><small><span lang="fr">Suivant →</span><span lang="en">Next →</span></small><b><span lang="fr">Commandes Discord</span><span lang="en">Discord commands</span></b></a>
+</nav>
+</main>
+</div>
+
+<footer class="foot">
+	<span><span lang="fr">Outil de guilde pour WoW: Forever</span><span lang="en">Guild tool for WoW: Forever</span></span>
+	<nav aria-label="Pied de page / Footer">
+		<a href="/"><span lang="fr">Accueil</span><span lang="en">Home</span></a>
+		<a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a>
+		<a href="/confidentialite.html"><span lang="fr">Confidentialité</span><span lang="en">Privacy</span></a>
+		<a href="/conditions.html"><span lang="fr">Conditions</span><span lang="en">Terms</span></a>
+		<a href="https://github.com/AntoineRenoux/GuildProfessions" rel="noopener"><span lang="fr">Code source</span><span lang="en">Source code</span></a>
+	</nav>
+	<span class="end">2026</span>
+	<span class="credit"><span lang="fr">World of Warcraft est une marque de Blizzard Entertainment ; Guildkeep n'y est pas affilié.</span><span lang="en">World of Warcraft is a trademark of Blizzard Entertainment; Guildkeep is not affiliated.</span></span>
+</footer>
+
+<script src="/site.js?v=6" defer></script>
+</body>
+</html>

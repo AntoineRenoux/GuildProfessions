@@ -1,0 +1,129 @@
+title: module Événements
+description: Le module Événements de Guildkeep : créer un raid, s'inscrire avec son rôle, constituer le roster, inviter les confirmés et les rappels, en jeu et sur Discord.
+lead: [[Raids, donjons, JcJ ou sorties : on crée l'événement, chacun répond avec son rôle, l'organisateur bâtit le roster et invite les confirmés en un clic. Tout se fait en jeu ou sur Discord, au choix.||Raids, dungeons, PvP or outings: create the event, everyone answers with their role, the organizer builds the roster and invites confirmed players in one click. All in game or on Discord, as you like.]]
+---
+<section>
+<h2 id="a-quoi-ca-sert">[[À quoi ça sert||What it's for]]</h2>
+<p>[[L'onglet {t:Événements||Events} affiche les événements à venir en {o:Liste||List} ou en {o:Calendrier||Calendar} (un mois, les flèches pour changer). La case {o:Passés||Past} montre aussi ceux des deux dernières semaines. Le chiffre de l'onglet compte les événements qui attendent ta réponse.||The {t:Événements||Events} tab shows upcoming events as a {o:Liste||List} or a {o:Calendrier||Calendar} (one month, arrows to change). The {o:Passés||Past} box also shows those from the last two weeks. The tab's number counts events awaiting your answer.]]</p>
+<p>[[Cliquer un événement ouvre son détail : ta réponse, la composition par rôle face à l'objectif, puis le roster, rangé en <em>Confirmés</em>, <em>Remplaçants</em>, <em>Banc</em>, <em>Présents, à placer</em>, <em>Peut-être</em> et <em>Absents</em>.||Clicking an event opens its details: your answer, the composition by role against the target, then the roster, sorted into <em>Confirmés</em> (confirmed), <em>Remplaçants</em> (standby), <em>Banc</em> (bench), <em>Présents, à placer</em> (attending, to place), <em>Peut-être</em> (tentative) and <em>Absents</em> (not attending).]]</p>
+<figure class="mock" data-ui>
+	<div class="wow">
+		<div class="wow-title"><b>Cœur du Magma</b><small>Raid · vendredi 29 novembre 2026 à 20:45 · organisé par Bragg Ferrefond</small></div>
+		<div style="padding:10px 12px;background:rgba(255,255,255,0.03)"><div class="gold" style="font-size:13px">Ta réponse <span class="soft">· Ta place : Confirmé</span></div>
+			<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:6px"><span class="wow-button" style="background:#2a2318">Tank</span><span class="wow-button">Soigneur</span><span class="wow-button" style="background:#2a2318">DPS mêlée</span><span class="wow-button" style="background:#2a2318">DPS distance</span><span style="margin-left:auto;display:flex;gap:2px"><span class="wow-button">Présent</span><span class="wow-button" style="background:#2a2318">Peut-être</span><span class="wow-button" style="background:#2a2318">Absent</span></span></div></div>
+		<div style="padding:8px 12px" class="soft">Tank <span class="ok">2/2</span> (3 prés.) · Soigneur <span class="bad">6/8</span> (6 prés.) · Mêlée 9/10 · Distance 11/12</div>
+		<div class="wow-row"><span class="wow-ico">C</span><span><span style="color:#C69B6D">Bragg Ferrefond</span> <span class="soft">· Tank · Protection</span></span><span class="acts"><span class="wow-button">Remplaçant</span><span class="wow-button">Banc</span><span class="wow-button">Retirer</span></span></div>
+		<div class="wow-row"><span class="wow-ico">?</span><span><span style="color:#FFFFFF">Aurèle Vesper</span> <span class="soft">· Soigneur · « en retard de 15 min »</span></span><span class="acts"><span class="wow-button">Confirmer</span><span class="wow-button">Remplaçant</span><span class="wow-button">Banc</span></span></div>
+		<div style="padding:8px 12px;display:flex;gap:4px;flex-wrap:wrap;border-top:1px solid #3a2f1c"><span class="soft" style="margin-right:auto">☐ Me rappeler 30 min avant</span><span class="wow-button">Rappeler</span><span class="wow-button">Copier le roster</span><span class="wow-button">Inviter les confirmés</span></div>
+	</div>
+	<figcaption>[[Maquette : le détail d'un raid vu par l'organisateur, avec des données d'exemple.||Mock-up: a raid's details as the organizer sees them, with sample data.]]</figcaption>
+</figure>
+
+{tip}<p>[[<strong>Tutoriel en jeu.</strong> À la première ouverture de l'onglet {t:Événements||Events}, un tutoriel pas à pas encadre chaque bouton et explique à quoi il sert. Tu peux le passer à tout moment, et le revoir avec le bouton {b:?} en haut à droite de la fenêtre ou {g:/gkeep tuto}.||<strong>In-game tutorial.</strong> The first time you open the {t:Événements||Events} tab, a step-by-step tutorial highlights every button and explains what it does. You can skip it at any time, and replay it with the {b:?} button at the top right of the window or {g:/gkeep tuto}.]]</p>{/tip}
+</section>
+
+<section>
+<h2 id="creer-un-raid">[[Tutoriel : créer un raid et constituer le roster||Tutorial: create a raid and build the roster]]</h2>
+<div class="rights">{who:all} [[pour créer ;||to create;]] {who:org} [[pour le roster||for the roster]]</div>
+<p>[[N'importe quel membre peut créer un événement : il en devient l'organisateur. Ensuite, lui et les officiers sont seuls à pouvoir le modifier et placer les joueurs.||Any member can create an event and becomes its organizer. After that, only they and officers can edit it and place players.]]</p>
+<div class="howto">
+	<h3><span class="where">[[En jeu||In game]]</span>[[Créer l'événement||Create the event]]</h3>
+	<ol class="steps">
+		<li>[[Onglet {t:Événements||Events}, clique {b:Nouveau||New}. (En mode {o:Calendrier||Calendar}, clique d'abord le jour voulu : la date sera pré-remplie.)||{t:Événements||Events} tab, click {b:Nouveau||New}. (In {o:Calendrier||Calendar} mode, click the day first: the date is pre-filled.)]]</li>
+		<li>[[Remplis le {o:Titre||Title} (« Cœur du Magma »), choisis le {o:Type||Type} : {b:Raid}, {b:Donjon||Donjon — Dungeon}, {b:JcJ||JcJ — PvP} ou {b:Autre||Autre — Other}.||Fill in the {o:Titre||Title} ("Molten Core"), pick the {o:Type||Type}: {b:Raid}, {b:Donjon||Donjon — Dungeon}, {b:JcJ||JcJ — PvP} or {b:Autre||Autre — Other}.]]</li>
+		<li>[[{o:Date||Date} : jour / mois / année, puis heure : minutes, <strong>dans ton heure locale</strong>.||{o:Date||Date}: day / month / year, then hour : minutes, <strong>in your local time</strong>.]]</li>
+		<li>[[{o:Composition||Composition} : le nombre visé de tanks, soigneurs, DPS mêlée et DPS distance (0 : pas d'objectif). Ajoute des {o:Détails||Details} si besoin (consommables, point de rendez-vous).||{o:Composition||Composition}: the target number of tanks, healers, melee and ranged DPS (0: no target). Add {o:Détails||Details} if needed (consumables, meeting point).]]</li>
+		<li>[[Clique {b:Enregistrer||Save}. Les membres connectés le voient aussitôt ; les autres à la prochaine synchro.||Click {b:Enregistrer||Save}. Online members see it at once; others at the next sync.]]</li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">[[En jeu||In game]]</span>[[Constituer le roster||Build the roster]]</h3>
+	<ol class="steps">
+		<li>[[Ouvre l'événement. Les inscrits « Présent » arrivent dans <em>Présents, à placer</em>.||Open the event. Players who answered "Présent" land in <em>Présents, à placer</em> (to place).]]</li>
+		<li>[[Sur chaque ligne, clique {b:Confirmer||Confirm}, {b:Remplaçant||Standby} ou {b:Banc||Bench} ; {b:Retirer||Remove} le remet en attente. Survole un joueur pour son rôle, sa spé et sa note.||On each row, click {b:Confirmer||Confirm}, {b:Remplaçant||Standby} or {b:Banc||Bench}; {b:Retirer||Remove} puts them back on hold. Hover a player for their role, spec and note.]]</li>
+		<li>[[Surveille la ligne de composition : <em>confirmés / objectif</em> par rôle, et le nombre de présents inscrits entre parenthèses.||Watch the composition line: <em>confirmed / target</em> per role, and the number of attending sign-ups in brackets.]]</li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span>[[Créer et placer||Create and place]]</h3>
+	<ol class="steps">
+		<li>[[{d:/gkeep evenement creer||/gkeep event create} : <code>[[titre||title]]</code>, <code>date</code> (29/11, 29/11/2026 ou 2026-11-29), <code>[[heure||time]]</code> (20:45 ou 20h45), <code>type</code>, puis <code>tanks</code>, <code>[[soigneurs||healers]]</code>, <code>melee</code>, <code>[[distance||ranged]]</code> et <code>details</code>.||{d:/gkeep evenement creer||/gkeep event create}: <code>title</code>, <code>date</code> (29/11, 29/11/2026 or 2026-11-29), <code>time</code> (20:45 or 20h45), <code>kind</code>, then <code>tanks</code>, <code>healers</code>, <code>melee</code>, <code>ranged</code> and <code>details</code>.]]</li>
+		<li>[[Facultatif : <code>[[organisateur||organizer]]</code> (ton principal par défaut) et <code>[[fuseau||timezone]]</code> (Paris / Bruxelles, Londres, New York…; par défaut celui de la guilde).||Optional: <code>organizer</code> (your main by default) and <code>timezone</code> (Paris / Brussels, London, New York…; the guild's by default).]]</li>
+		<li>[[{d:/gkeep evenement placer||/gkeep event place} : l'événement, le <code>[[personnage||character]]</code> (la liste propose les inscrits) et la <code>place</code> : Confirmé, Remplaçant, Banc ou Retirer.||{d:/gkeep evenement placer||/gkeep event place}: the event, the <code>character</code> (the list suggests sign-ups) and the <code>placement</code>: Confirmed, Standby, Bench or Remove.]]</li>
+		<li>[[{d:/gkeep evenement voir||/gkeep event show} affiche le détail, la composition et le roster.||{d:/gkeep evenement voir||/gkeep event show} displays the details, composition and roster.]]</li>
+	</ol>
+</div>
+{tip}<p>[[Sur Discord, l'heure s'affiche dans le fuseau de chaque lecteur. En jeu, la date saisie est celle de ton ordinateur.||On Discord, the time shows in each reader's own time zone. In game, the date you type is your computer's.]]</p>{/tip}
+</section>
+
+<section>
+<h2 id="s-inscrire">[[Tutoriel : t'inscrire à un événement||Tutorial: sign up for an event]]</h2>
+<div class="rights">{who:self}</div>
+<div class="howto">
+	<h3><span class="where">[[En jeu||In game]]</span>[[Le bloc « Ta réponse »||The "Ta réponse" (your answer) block]]</h3>
+	<ol class="steps">
+		<li>[[Ouvre l'événement dans l'onglet {t:Événements||Events}.||Open the event in the {t:Événements||Events} tab.]]</li>
+		<li>[[Choisis ton rôle : {b:Tank}, {b:Soigneur||Soigneur — Healer}, {b:DPS mêlée||DPS mêlée — Melee}, {b:DPS distance||DPS distance — Ranged}.||Pick your role: {b:Tank}, {b:Soigneur||Soigneur — Healer}, {b:DPS mêlée||DPS mêlée — Melee}, {b:DPS distance||DPS distance — Ranged}.]]</li>
+		<li>[[Facultatif : ta {o:Spé.||Spec} (« Protection ») et une {o:Note||Note} pour l'organisateur (« en retard de 15 min »).||Optional: your {o:Spé.||Spec} ("Protection") and a {o:Note||Note} for the organizer ("15 min late").]]</li>
+		<li>[[Clique {b:Présent||Attending}, {b:Peut-être||Tentative} ou {b:Absent||Not attending}. « Ta place » affiche ensuite où l'organisateur t'a mis.||Click {b:Présent||Attending}, {b:Peut-être||Tentative} or {b:Absent||Not attending}. "Ta place" (your place) then shows where the organizer put you.]]</li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span>[[Avec /gkeep evenement inscription||With /gkeep event signup]]</h3>
+	<ol class="steps">
+		<li>[[{d:/gkeep evenement liste||/gkeep event list} pour voir les événements à venir.||{d:/gkeep evenement liste||/gkeep event list} to see upcoming events.]]</li>
+		<li>[[{d:/gkeep evenement inscription||/gkeep event signup} : l'événement, ta <code>[[reponse||response]]</code> (Présent, Peut-être, Absent), ton <code>role</code> (le précédent par défaut), et si tu veux <code>[[personnage||character]]</code>, <code>[[spe||spec]]</code> et <code>note</code>.||{d:/gkeep evenement inscription||/gkeep event signup}: the event, your <code>response</code> (Attending, Tentative, Not attending), your <code>role</code> (the previous one by default), and optionally <code>character</code>, <code>spec</code> and <code>note</code>.]]</li>
+	</ol>
+</div>
+{note}<p>[[Ta place dans le roster (confirmé, remplaçant, banc) est décidée par l'organisateur : si tu changes d'avis, change ta réponse et préviens-le avec une note. S'inscrire ne vaut jamais présence : la présence réelle est relevée en raid (voir <a href="/docs/presence.html">Présence et butin</a>).||Your place in the roster (confirmed, standby, bench) is the organizer's call: if you change your mind, change your answer and tell them in a note. Signing up never counts as attending: real attendance is recorded in the raid (see <a href="/docs/presence.html">Attendance and loot</a>).]]</p>{/note}
+</section>
+
+<section>
+<h2 id="inviter">[[Tutoriel : inviter les confirmés et partager le roster||Tutorial: invite confirmed players and share the roster]]</h2>
+<div class="rights">{who:org} [[pour inviter ;||to invite;]] {who:all} [[pour copier||to copy]]</div>
+<div class="howto">
+	<h3><span class="where">[[En jeu||In game]]</span>[[Le soir du raid||On raid night]]</h3>
+	<ol class="steps">
+		<li>[[Ouvre l'événement et clique {b:Inviter les confirmés||Invite confirmed}. Tous les confirmés en ligne sont invités ; le groupe passe en raid tout seul au-delà de 5.||Open the event and click {b:Inviter les confirmés||Invite confirmed}. Every confirmed player online is invited; the group turns into a raid by itself beyond 5.]]</li>
+		<li>[[{b:Copier le roster||Copy roster} ouvre une fenêtre avec le roster en texte : {k:Ctrl}+{k:C}, puis colle-le sur Discord. Avec le module Soirée de raid, le bouton devient {b:Copier la soirée||Copy the night} et inclut les réservations et les rôles de soutien.||{b:Copier le roster||Copy roster} opens a window with the roster as text: {k:Ctrl}+{k:C}, then paste it on Discord. With the Raid night module, the button becomes {b:Copier la soirée||Copy the night} and includes reserves and support duties.]]</li>
+	</ol>
+</div>
+{warn}<p>[[Pour inviter, il faut être chef ou assistant du groupe (ou sans groupe), hors combat, et pas dans un groupe de recherche. Les confirmés hors ligne sont signalés dans le chat.||To invite, you must be group leader or assistant (or not grouped), out of combat, and not in a looking-for-group party. Offline confirmed players are reported in chat.]]</p>{/warn}
+</section>
+
+<section>
+<h2 id="rappels">[[Tutoriel : les rappels||Tutorial: reminders]]</h2>
+<div class="howto">
+	<h3><span class="where">[[En jeu||In game]]</span>[[Ton rappel personnel||Your personal reminder]]</h3>
+	<div class="rights">{who:self}</div>
+	<ol class="steps">
+		<li>[[En bas du détail d'un événement, coche {o:Me rappeler||Remind me} et règle le nombre de {o:min avant||min before} (30 par défaut).||At the bottom of an event's details, tick {o:Me rappeler||Remind me} and set the {o:min avant||min before} (30 by default).]]</li>
+		<li>[[Avant chaque événement où tu as répondu « Présent » ou « Peut-être », Guildkeep te prévient : message dans le chat, alerte à l'écran et son. Une seule fois par événement.||Before every event you answered "Attending" or "Tentative", Guildkeep warns you: chat message, on-screen alert and sound. Once per event.]]</li>
+		<li>[[Au clavier : {g:/gkeep rappel 15} pour 15 minutes, {g:/gkeep rappel off} pour couper, {g:/gkeep rappel} pour voir le réglage. Le réglage vaut pour tout ton compte.||By keyboard: {g:/gkeep rappel 15} for 15 minutes, {g:/gkeep rappel off} to stop, {g:/gkeep rappel} to see the setting. It applies to your whole account.]]</li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">[[En jeu + Discord||In game + Discord]]</span>[[Rappeler les inscrits||Remind sign-ups]]</h3>
+	<div class="rights">{who:org}</div>
+	<ol class="steps">
+		<li>[[En jeu, {b:Rappeler||Remind} poste un message dans le canal de guilde avec l'événement et les inscrits. Il n'est jamais automatique : c'est toi qui cliques.||In game, {b:Rappeler||Remind} posts a message in guild chat with the event and the sign-ups. It's never automatic: you click it.]]</li>
+		<li>[[Sur Discord, {d:/gkeep evenement rappel||/gkeep event remind} fait de même dans le salon où tu tapes la commande, avec un <code>message</code> facultatif.||On Discord, {d:/gkeep evenement rappel||/gkeep event remind} does the same in the channel where you type it, with an optional <code>message</code>.]]</li>
+	</ol>
+</div>
+</section>
+
+<section>
+<h2 id="modifier">[[Tutoriel : modifier, annuler ou rétablir un événement||Tutorial: edit, cancel or restore an event]]</h2>
+<div class="rights">{who:org}</div>
+<div class="howto">
+	<h3><span class="where">[[En jeu||In game]]</span>[[Les boutons du détail||The details buttons]]</h3>
+	<ol class="steps">
+		<li>[[{b:Modifier||Edit} rouvre la fenêtre de l'événement : change ce qu'il faut, puis {b:Enregistrer||Save}.||{b:Modifier||Edit} reopens the event window: change what you need, then {b:Enregistrer||Save}.]]</li>
+		<li>[[{b:Annuler l'év.||Cancel event} le marque « ANNULÉ » (après confirmation) : plus personne ne peut répondre. {b:Rétablir||Restore} le remet en place.||{b:Annuler l'év.||Cancel event} marks it "ANNULÉ" (after confirming): nobody can answer anymore. {b:Rétablir||Restore} brings it back.]]</li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span>[[Les commandes||The commands]]</h3>
+	<p>[[{d:/gkeep evenement modifier||/gkeep event edit} (seules les options remplies changent ; un tiret seul dans <code>details</code> efface les précisions), {d:/gkeep evenement annuler||/gkeep event cancel}, {d:/gkeep evenement retablir||/gkeep event restore}.||{d:/gkeep evenement modifier||/gkeep event edit} (only the options you fill in change; a single dash in <code>details</code> clears them), {d:/gkeep evenement annuler||/gkeep event cancel}, {d:/gkeep evenement retablir||/gkeep event restore}.]]</p>
+</div>
+</section>
