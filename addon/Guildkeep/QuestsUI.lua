@@ -272,7 +272,32 @@ local function RefreshQuests()
 	panel.holders:GPSetItems(holders)
 end
 
+-- Carte du tableau de bord : tes quêtes de groupe que d'autres membres ont aussi.
+local function HomeCard(cards)
+	local me = GP.GetPlayerFullName()
+	local shared, mine = 0, 0
+	for _, quest in pairs(Q.GetAll()) do
+		if quest.holders[me] then
+			mine = mine + 1
+			for name in pairs(quest.holders) do
+				if name ~= me then
+					shared = shared + 1
+					break
+				end
+			end
+		end
+	end
+	if mine == 0 then
+		return
+	end
+	cards[#cards + 1] = { id = "quests", order = 60, title = "Quêtes de groupe", tab = "tabQuests", lines = {
+		("Tes quêtes élites, de donjon ou de raid : %d"):format(mine),
+		("Partagées avec d'autres membres : %s"):format(shared > 0 and Paint(COLOR.gold, tostring(shared)) or "0"),
+	} }
+end
+
 GP.Modules.Define("quests", "ui", function(ctx)
+	ctx:On("HOME_CARDS", HomeCard)
 	ctx:Tutorial("quests", {
 		tab = "tabQuests",
 		title = "Quêtes",

@@ -8,6 +8,7 @@ global using GuildProfessions.Server.Modules.Presence.Application;
 global using GuildProfessions.Server.Modules.Quetes.Application;
 global using GuildProfessions.Server.Modules.Communication.Application;
 global using GuildProfessions.Server.Modules.Profils.Application;
+global using GuildProfessions.Server.Modules.Tableau.Application;
 global using GuildProfessions.Server.Shared;
 global using GuildProfessions.Server.Shared.Modules;
 global using GuildProfessions.Server.Services;

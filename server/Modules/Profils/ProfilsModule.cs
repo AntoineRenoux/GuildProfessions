@@ -11,6 +11,7 @@ public static class ProfilsModule
 		services.AddScoped<ProfileService>();
 		services.AddUploadContributor<ProfilsUploadContributor>();
 		services.AddExportContributor<ProfilsExportContributor>();
+		services.AddHomeContributor<ProfilsHomeCard>();
 		return services;
 	}
 }

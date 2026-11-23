@@ -8,7 +8,7 @@ package.path = here .. "/?.lua;" .. package.path
 local T = require("helpers")
 T.addonDir = arg[1] or (here .. "/../addon/Guildkeep")
 
-local files = { "test_chargement", "test_desactivation", "test_echec", "test_fonctionnel", "test_anciens", "test_verification", "test_communication", "test_profils", "test_tutoriels" }
+local files = { "test_chargement", "test_desactivation", "test_echec", "test_fonctionnel", "test_anciens", "test_verification", "test_communication", "test_profils", "test_tableau", "test_tutoriels" }
 local passed, failed = 0, 0
 for _, name in ipairs(files) do
 	local tests = require(name)

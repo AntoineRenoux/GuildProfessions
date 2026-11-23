@@ -21,6 +21,8 @@ local M = {}
 GP.Modules = M
 
 M.LIST = {
+	{ id = "home", label = "Tableau de bord", parts = { "ui" },
+		description = "Premier onglet : un résumé de ce qui arrive et de ce qui t'attend, avec une carte par module." },
 	{ id = "professions", label = "Métiers", parts = { "data", "ui" },
 		description = "Annuaire des artisans de la guilde ; relève tes métiers et tes recettes." },
 	{ id = "members", label = "Membres", parts = { "data", "ui" },
@@ -462,6 +464,10 @@ SlashCmdList.GUILDKEEP = function(msg)
 		M.Fire("DEBUG")
 		return
 	end
+	if (command == "theme" or command == "thème") and GP.Theme then
+		GP.Theme.Slash(rest)
+		return
+	end
 	if command == "tuto" or command == "tutoriel" or command == "tutorial" then
 		GP.Tutorial.Slash(rest)
 		return
@@ -484,6 +490,9 @@ driver:SetScript("OnEvent", function(self, event, arg1)
 		self:UnregisterEvent("ADDON_LOADED")
 		GP.InitDB()
 		M.InitSettings()
+		if GP.Theme then
+			M.Protect(GP.Theme.Init)
+		end
 		M.LoadAll()
 		if M.RegisterSettingsPanel then
 			M.Protect(M.RegisterSettingsPanel)

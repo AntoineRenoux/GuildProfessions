@@ -431,7 +431,22 @@ local function RefreshHistory()
 	panel.addButton:SetShown(raid ~= nil and canCorrect)
 end
 
+-- Carte du tableau de bord : ta présence en raid sur 30 jours.
+local function HomeCard(cards)
+	local me = GP.GetPlayerFullName()
+	local stats = A.Stats(A.GetRaids(), me)
+	if stats.d90.eligible == 0 then
+		return
+	end
+	local rate = stats.d30.percent and ("%d %%"):format(math.floor(stats.d30.percent + 0.5)) or "—"
+	cards[#cards + 1] = { id = "attendance", order = 40, title = "Présence en raid", tab = "tabHistory", lines = {
+		("%s sur 30 jours (%d/%d raids)"):format(rate, stats.d30.attended, stats.d30.eligible),
+		("Butin épique sur 90 jours : %d"):format(stats.loot),
+	} }
+end
+
 GP.Modules.Define("attendance", "ui", function(ctx)
+	ctx:On("HOME_CARDS", HomeCard)
 	ctx:Tutorial("attendance", {
 		tab = "tabHistory",
 		title = "Présence et butin",

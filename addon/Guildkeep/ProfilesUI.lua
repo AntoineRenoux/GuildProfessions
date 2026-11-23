@@ -496,7 +496,42 @@ local function RefreshProfiles()
 	end
 end
 
+-- Carte du tableau de bord : ton profil et ton accueil ; les nouveaux à accueillir pour les officiers.
+local function HomeCard(cards)
+	local data = P.Get()
+	local states = P.Onboarding(data)
+	local me = GP.GetPlayerFullName()
+	local lines = {}
+	if not P.ProfileOf(me, data) then
+		lines[#lines + 1] = Paint(COLOR.gold, "Ton profil est vide : « Mon profil » pour le remplir.")
+	end
+	local mine = states[me]
+	if mine and mine.count < #P.STEPS then
+		lines[#lines + 1] = ("Ton accueil : %d/%d étapes"):format(mine.count, #P.STEPS)
+	end
+	local week = GP.Now() - 7 * 86400
+	local joins = 0
+	for _, change in ipairs(data.journal) do
+		if change.kind == "join" and change.at >= week then
+			joins = joins + 1
+		end
+	end
+	if joins > 0 then
+		lines[#lines + 1] = ("Arrivées cette semaine : %d"):format(joins)
+	end
+	if GP.IsOfficer() then
+		local waiting = #P.Incomplete(states)
+		if waiting > 0 then
+			lines[#lines + 1] = ("Nouveaux à accueillir : %s"):format(Paint(COLOR.gold, tostring(waiting)))
+		end
+	end
+	if #lines > 0 then
+		cards[#cards + 1] = { id = "profiles", order = 50, title = "Profils et accueil", lines = lines, tab = "tabProfiles" }
+	end
+end
+
 GP.Modules.Define("profiles", "ui", function(ctx)
+	ctx:On("HOME_CARDS", HomeCard)
 	local function Section(key)
 		return function()
 			view.section = key

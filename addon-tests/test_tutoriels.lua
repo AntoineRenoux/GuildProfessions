@@ -124,7 +124,7 @@ test("chaque étape de chaque tutoriel désigne un élément qui existe", functi
 		end
 	end
 	table.sort(ids)
-	T.equal(table.concat(ids, ","), "attendance,communication,craft,events,members,professions,profiles,quests,raid,welcome", "un tutoriel par module, plus la bienvenue")
+	T.equal(table.concat(ids, ","), "attendance,communication,craft,events,home,members,professions,profiles,quests,raid,welcome", "un tutoriel par module, plus la bienvenue")
 	T.CheckClean(game)
 end)
 

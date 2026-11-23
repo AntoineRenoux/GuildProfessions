@@ -504,7 +504,30 @@ local function RefreshGuild()
 	end
 end
 
+-- Carte du tableau de bord : annonces non lues et objectifs en cours.
+local function HomeCard(cards)
+	local data = C.Get()
+	local lines = {}
+	local unread = C.UnreadCount()
+	if unread > 0 then
+		lines[#lines + 1] = Paint(COLOR.gold, ("%d annonce%s non lue%s"):format(unread, unread > 1 and "s" or "", unread > 1 and "s" or ""))
+	end
+	if data.announcements[1] then
+		lines[#lines + 1] = "Dernière annonce : " .. data.announcements[1].title
+	end
+	for _, goal in ipairs(data.goals) do
+		if #lines < 4 and not goal.closed then
+			local progress, target, ratio = Progress(goal)
+			lines[#lines + 1] = ("%s : %d/%d (%d %%)"):format(goal.title, progress, target, math.floor(ratio * 100 + 0.5))
+		end
+	end
+	if #lines > 0 then
+		cards[#cards + 1] = { id = "communication", order = 20, title = "Vie de la guilde", lines = lines, tab = "tabGuild" }
+	end
+end
+
 GP.Modules.Define("communication", "ui", function(ctx)
+	ctx:On("HOME_CARDS", HomeCard)
 	local function Section(key)
 		return function()
 			view.section = key

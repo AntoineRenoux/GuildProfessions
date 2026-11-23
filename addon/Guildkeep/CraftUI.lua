@@ -831,7 +831,40 @@ local function DefinePopups()
 end
 
 
+-- Carte du tableau de bord : tes commandes, ce que tu dois fabriquer, ce que tu sais faire.
+local HOME_ACTIVE = { open = true, accepted = true, ready = true, mailed = true }
+
+local function HomeCard(cards)
+	local mine = {}
+	for name in pairs(GuildkeepDB.characters or {}) do
+		if GP.IsInCurrentGuild(name) then
+			mine[name] = true
+		end
+	end
+	mine[GP.GetPlayerFullName()] = true
+	local known = {}
+	known.ids, known.names = Craft.MyKnownRecipes()
+	local requests, toCraft, canMake = 0, 0, 0
+	for _, order in ipairs(Craft.GetOrders()) do
+		if HOME_ACTIVE[order.status] then
+			if mine[order.requester] then
+				requests = requests + 1
+			elseif order.crafter and mine[order.crafter] and (order.status == "accepted" or order.status == "ready") then
+				toCraft = toCraft + 1
+			elseif not order.crafter and order.status == "open" and Craft.CanMake(order, known) then
+				canMake = canMake + 1
+			end
+		end
+	end
+	cards[#cards + 1] = { id = "craft", order = 30, title = "Commandes de craft", tab = "tabOrders", lines = {
+		("Tes commandes en cours : %d"):format(requests),
+		("À fabriquer pour les autres : %s"):format(toCraft > 0 and Paint(COLOR.gold, tostring(toCraft)) or "0"),
+		("Demandes ouvertes que tu sais faire : %d"):format(canMake),
+	} }
+end
+
 GP.Modules.Define("craft", "ui", function(ctx)
+	ctx:On("HOME_CARDS", HomeCard)
 	local function Target(name)
 		return function() return GP.Tutorial.Target("tabOrders", name) end
 	end

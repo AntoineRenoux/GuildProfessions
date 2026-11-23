@@ -25,9 +25,13 @@ site personnel en bas de page, avatar 400×400, journal de modifications à chaq
 
 ## What it adds in game
 
-**A Guildkeep tab in the guild window**, also opened with `/gkeep` (`/gkeep events`, `/gkeep presence`, `/gkeep quests`, `/gkeep guild` and `/gkeep profiles` go straight there). Eight tabs, each one a module you can turn off in the game options:
+**A Guildkeep tab in the guild window**, also opened with `/gkeep` (`/gkeep events`, `/gkeep presence`, `/gkeep quests`, `/gkeep guild` and `/gkeep profiles` go straight there). Nine tabs, each one a module you can turn off in the game options:
 
 Every tab comes with a short, skippable step-by-step tutorial the first time you open it (replay it with the « ? » button or `/gkeep tuto`). The full guide, with step-by-step tutorials for players and officers, is on the website: https://guildkeep.warpvault.com/docs/
+
+**Dashboard**
+- The window opens on a dashboard: upcoming events and your answer, unread announcements and goals, your craft orders, your attendance rate, your onboarding and group quests, one card per module with a button to jump to its tab.
+- Five color themes (guild gold, silver, emerald, arcane, ember) in the options, on the dashboard or with `/gkeep theme`.
 
 **Events**
 - Plan raids, dungeons, PvP or any outing, in a list or a month calendar.
@@ -88,14 +92,13 @@ An addon cannot reach the internet, so guild data travels in one of two ways:
 - **Copy and paste, no extra software.** Export your data from the addon window and send it with the Guildkeep Discord bot (`/gkeep import`); get the guild's data back with `/gkeep export` and paste it into the addon (Import button).
 - **Automatic sync.** Your guild admin sets Guildkeep up on Discord with `/gkeep-setup` and shares the guild's install guide. A small companion app then syncs everything in the background while you play, the way well-known companion apps for other addons do. It never launches or changes the game, and only reads and writes the Guildkeep addon's own files.
 
-On Discord, every command lives under `/gkeep` (in English or French, following each user's Discord language): events (list, details and roster, sign up, and for organizers and officers create, edit, cancel and place players), loot reserves, support duties and the pre-raid checklist, attendance rates and loot history, shared quests, announcements, the handbook and guild goals, player profiles, arrivals and the onboarding checklist, who can craft a recipe, a character's recipes, the whole directory, the recipe catalog, craft orders and open requests with offers and delivery steps, with direct-message notifications.
+On Discord, every command lives under `/gkeep` (in English or French, following each user's Discord language): your dashboard, events (list, details and roster, sign up, and for organizers and officers create, edit, cancel and place players), loot reserves, support duties and the pre-raid checklist, attendance rates and loot history, shared quests, announcements, the handbook and guild goals, player profiles, arrivals and the onboarding checklist, who can craft a recipe, a character's recipes, the whole directory, the recipe catalog, craft orders and open requests with offers and delivery steps, with direct-message notifications.
 
 ## Good to know
 
 - Built for **WoW: Forever** (interface 16001).
 - **The in-game interface is in French for now**; an English translation is planned. The Discord bot already speaks English and French.
 - Each guild's data is isolated from other guilds. Guildkeep never asks for a password, an email or a Battle.net account.
-- Coming next: a home dashboard, minimap button and themes.
 - Bug reports and suggestions: GitHub issues, link below.
 
 ---

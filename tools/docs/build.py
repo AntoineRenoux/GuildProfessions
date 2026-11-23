@@ -24,6 +24,7 @@ PAGES = [
     ("index", "start", "Documentation", "Documentation", "i-faq"),
     ("installation", "start", "Installer Guildkeep", "Installing Guildkeep", "i-install"),
     ("compagnon", "start", "L'app compagnon", "The companion app", "i-compagnon"),
+    ("tableau", "mod", "Tableau de bord et thèmes", "Dashboard and themes", "i-tableau"),
     ("metiers", "mod", "Métiers", "Professions", "i-metiers"),
     ("membres", "mod", "Membres", "Members", "i-membres"),
     ("artisanat", "mod", "Artisanat", "Crafting orders", "i-artisanat"),
@@ -108,6 +109,7 @@ ICONS = """<svg class="sprite" aria-hidden="true" focusable="false"><defs><linea
 <symbol id="i-quetes" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M20 5h8l-1.5 26h-5zM24 35a4 4 0 1 1 0 8 4 4 0 0 1 0-8z"/></symbol>
 <symbol id="i-communication" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M6 19h8l20-11v32L14 29H6z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M39 17c3 4 3 10 0 14M12 30l3 11h6l-3-11"/></symbol>
 <symbol id="i-profils" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M5 10h38v28H5z"/><circle fill="#1a1208" cx="16" cy="21" r="5"/><path fill="#1a1208" d="M8 33c1-5 4-7 8-7s7 2 8 7zM27 17h12v3H27zM27 24h12v3H27zM27 31h8v3h-8z"/></symbol>
+<symbol id="i-tableau" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M6 8h16v14H6zM26 8h16v22H26zM6 26h16v14H6zM26 34h16v6H26z"/></symbol>
 <symbol id="i-install" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M17 12c0-5 3-8 7-8s7 3 7 8h-3c0-3-2-5-4-5s-4 2-4 5z"/><path fill="url(#gk-gold)" d="M10 14h28l4 26a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4z"/><path fill="#1a1208" d="M20 22h8v6h-8z"/></symbol>
 <symbol id="i-compagnon" viewBox="0 0 48 48"><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="4" d="M6 34c6-14 30-14 36 0M12 34V22M24 34V18M36 34V22"/><path fill="url(#gk-gold)" d="M4 34h40v5H4z"/></symbol>
 <symbol id="i-cmd" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M5 9h38v30H5z"/><path fill="#1a1208" d="M8 15h32v21H8z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M14 32l8-13M26 32h8"/></symbol>

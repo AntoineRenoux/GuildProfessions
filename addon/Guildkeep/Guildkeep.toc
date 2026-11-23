@@ -17,12 +17,14 @@ Serialize.lua
 Comm.lua
 Scanner.lua
 UIKit.lua
+Theme.lua
 MainFrame.lua
 Tutorial.lua
 GuildTab.lua
 Settings.lua
 
 # Modules indépendants, activables dans Options > Extensions > Guildkeep
+Home.lua
 Professions.lua
 ProfessionsUI.lua
 Members.lua
