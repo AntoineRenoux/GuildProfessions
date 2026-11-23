@@ -10,6 +10,10 @@ public abstract record LuaValue
 
 	public int? AsInt() => this is LuaNumber n ? (int)n.Value : null;
 
+	public long? AsLong() => this is LuaNumber n ? (long)n.Value : null;
+
+	public bool? AsBool() => (this as LuaBool)?.Value;
+
 	public LuaTable? AsTable() => this as LuaTable;
 }
 
@@ -35,6 +39,10 @@ public sealed record LuaTable : LuaValue
 	public string? GetString(string key) => Get(key)?.AsString();
 
 	public int? GetInt(string key) => Get(key)?.AsInt();
+
+	public long? GetLong(string key) => Get(key)?.AsLong();
+
+	public bool GetBool(string key) => Get(key)?.AsBool() ?? false;
 
 	public LuaTable? GetTable(string key) => Get(key)?.AsTable();
 

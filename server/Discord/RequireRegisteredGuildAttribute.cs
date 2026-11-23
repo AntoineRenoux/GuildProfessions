@@ -1,7 +1,7 @@
 using Discord;
 using Discord.Interactions;
 using GuildProfessions.Server.Data;
-using GuildProfessions.Server.Services;
+using GuildProfessions.Server.Shared;
 
 namespace GuildProfessions.Server.Discord;
 

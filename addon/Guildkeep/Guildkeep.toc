@@ -1,16 +1,38 @@
 ## Interface: 16001
 ## Title: Guildkeep
-## Notes: Guildkeep: your guild's crafter directory and craft orders, synced with Discord.
-## Notes-frFR: Guildkeep : l'annuaire des artisans et les commandes de craft de ta guilde, synchronisés avec Discord.
+## Notes: Guildkeep: guild management for WoW: Forever. Events and raid sign-ups, crafters, craft orders and members, in game and on Discord.
+## Notes-frFR: Guildkeep : la gestion de ta guilde WoW: Forever. Événements et inscriptions aux raids, artisans, commandes de craft et membres, en jeu et sur Discord.
 ## Author: Antoine
 ## Version: 0.1.0
 ## IconTexture: Interface\Icons\INV_Misc_Gear_01
-## SavedVariables: GuildkeepDB
+## SavedVariables: GuildkeepDB, GuildkeepSettings
+## X-Website: https://guildkeep.warpvault.com
+## X-Category: Guild
 
+# Socle commun : données, identité, registre des modules, communication, interface
 Data.lua
 Core.lua
+Modules.lua
 Serialize.lua
-Scanner.lua
 Comm.lua
-UI.lua
+Scanner.lua
+UIKit.lua
+MainFrame.lua
 GuildTab.lua
+Settings.lua
+
+# Modules indépendants, activables dans Options > Extensions > Guildkeep
+Professions.lua
+ProfessionsUI.lua
+Members.lua
+MembersUI.lua
+Craft.lua
+CraftUI.lua
+Events.lua
+EventsUI.lua
+RaidNight.lua
+RaidNightUI.lua
+Attendance.lua
+HistoryUI.lua
+Quests.lua
+QuestsUI.lua

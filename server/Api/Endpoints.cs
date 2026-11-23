@@ -1,6 +1,9 @@
 using GuildProfessions.Server.Contracts;
 using GuildProfessions.Server.Data;
+using GuildProfessions.Server.Modules.Annuaire.Contracts;
 using GuildProfessions.Server.Services;
+using GuildProfessions.Server.Shared;
+using GuildProfessions.Server.Shared.Modules;
 
 namespace GuildProfessions.Server.Api;
 
@@ -70,6 +73,8 @@ public static class Endpoints
 		});
 
 		// Le token de guilde désigne la guilde : l'export ne contient que ses données.
+		// Un module en échec n'empêche pas les autres d'arriver en jeu : 200 avec ses
+		// sections à null, et l'en-tête X-Guildkeep-Failed-Modules pour le signaler.
 		app.MapGet("/api/v1/export", async (HttpRequest request, GuildDirectory guilds, GuildContext guildContext,
 			ExportBuilder exportBuilder, CancellationToken ct) =>
 		{
@@ -79,25 +84,27 @@ public static class Endpoints
 				return Results.Unauthorized();
 			}
 			guildContext.Use(guild);
-			return Results.Ok(await exportBuilder.BuildAsync(ct));
+			return ExportResult(await exportBuilder.BuildAsync(ct), request.HttpContext.Response);
 		});
 
 		app.MapPost("/api/v1/upload", async (HttpRequest request, UploadPayload payload, GuildDirectory guilds,
-			GuildContext guildContext, BotLocalizer localizer, UploadIngestion ingestion, CancellationToken ct) =>
+			GuildContext guildContext, BotLocalizer localizer, IServiceProvider services, UploadIngestion ingestion, CancellationToken ct) =>
 		{
 			// Deux modes : token personnel (un membre, donc sa guilde) ou token
-			// de guilde partagé (compagnon zéro-config, member = null).
-			Member? member = null;
+			// de guilde partagé (compagnon zéro-config, pas de membre).
+			int? memberId = null;
 			Guild? guild;
 			var uploadToken = request.Headers["X-Upload-Token"].ToString();
 			if (!string.IsNullOrEmpty(uploadToken))
 			{
-				var personal = await guilds.FindByUploadTokenAsync(uploadToken, ct);
-				if (personal is null)
+				// Le token personnel est tenu par l'annuaire (socle d'identité), lu par son contrat.
+				var owner = await services.GetRequiredService<IAnnuaire>().UploadTokenOwnerAsync(uploadToken, ct);
+				guild = owner is null ? null : await guilds.FindByIdAsync(owner.GuildId, ct);
+				if (owner is null || guild is null)
 				{
 					return Results.Unauthorized();
 				}
-				(guild, member) = personal.Value;
+				memberId = owner.MemberId;
 			}
 			else
 			{
@@ -109,7 +116,31 @@ public static class Endpoints
 			}
 			guildContext.Use(guild);
 			localizer.Language = BotLocalizer.FromLocale(guild.Locale);
-			return Results.Ok(await ingestion.IngestAsync(member, payload, ct));
+			var source = memberId is null ? UploadSource.GuildToken : UploadSource.PersonalToken;
+			var outcome = await ingestion.IngestAsync(memberId, payload, source, ct);
+			// Un module en échec : 503 avec le même corps, pour que le compagnon ne
+			// mémorise pas l'empreinte de l'envoi et le renvoie au prochain cycle.
+			return outcome.Complete
+				? Results.Ok(outcome.Result)
+				: Results.Json(outcome.Result, statusCode: StatusCodes.Status503ServiceUnavailable);
 		});
+	}
+
+	/// <summary>En-tête qui liste les modules absents d'un export partiel (noms encodés en URL, séparés par des virgules).</summary>
+	public const string FailedModulesHeader = "X-Guildkeep-Failed-Modules";
+
+	/// <summary>
+	/// Réponse de GET /api/v1/export : toujours 200 avec la même forme JSON. Un
+	/// export partiel (sections des modules en échec à null) est signalé par
+	/// l'en-tête.
+	/// </summary>
+	public static IResult ExportResult(ExportBuild build, HttpResponse response)
+	{
+		if (!build.Complete)
+		{
+			// Encodé : les noms de modules sont accentués, une valeur d'en-tête doit rester ASCII.
+			response.Headers[FailedModulesHeader] = string.Join(",", build.FailedModules.Select(Uri.EscapeDataString));
+		}
+		return Results.Ok(build.Export);
 	}
 }

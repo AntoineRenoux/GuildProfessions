@@ -3,8 +3,11 @@ using Discord;
 using Discord.Interactions;
 using GuildProfessions.Server.Contracts;
 using GuildProfessions.Server.Data;
+using GuildProfessions.Server.Modules.Annuaire.Application;
+using GuildProfessions.Server.Modules.Annuaire.Contracts;
 using GuildProfessions.Server.Services;
-using Microsoft.EntityFrameworkCore;
+using GuildProfessions.Server.Shared;
+using GuildProfessions.Server.Shared.Modules;
 
 namespace GuildProfessions.Server.Discord;
 
@@ -14,12 +17,15 @@ namespace GuildProfessions.Server.Discord;
 /// français par Localization/commands.fr.json ; réponses dans la langue de
 /// l'utilisateur, toujours éphémères pour ne pas encombrer les salons.
 /// L'administration est à part (/gkeep-setup), réservée au droit « Gérer le serveur ».
+/// Ce fichier ne garde que les commandes racines (aide, compte, export et
+/// import) ; chaque groupe vit dans le dossier Presentation de son module
+/// (Modules/{Module}/Presentation/*Commands.cs).
 /// </summary>
-[Group("gkeep", "Guildkeep: your guild's professions, crafters and orders")]
+[Group("gkeep", "Guildkeep: your guild's events, reserves, attendance, professions and orders")]
 [CommandContextType(InteractionContextType.Guild)]
-public sealed class GkeepModule(RosterService roster, NicknameSync nicknames, GuildContext guildContext,
-	BotLocalizer l, ExportBuilder exportBuilder, UploadIngestion ingestion)
-	: InteractionModuleBase<SocketInteractionContext>
+public sealed partial class GkeepModule(RosterService roster, NicknameSync nicknames, GuildContext guildContext,
+	BotLocalizer l, IServiceProvider services)
+	: GuildkeepGroup
 {
 	internal static readonly Color Green = new(0x3F, 0xB9, 0x7A);
 	internal static readonly Color Amber = new(0xE0, 0x9A, 0x2B);
@@ -48,8 +54,17 @@ public sealed class GkeepModule(RosterService roster, NicknameSync nicknames, Gu
 				"`/gkeep metier qui` cherche par métier, niveau ou recette · `/gkeep metier recettes` liste les recettes d'un personnage · `/gkeep metier liste` montre tout l'annuaire",
 				"`/gkeep profession who` searches by profession, level or recipe · `/gkeep profession recipes` lists a character's recipes · `/gkeep profession list` shows the whole directory"))
 			.AddField(l.T("Commandes de craft", "Craft orders"), l.T(
-				"`/gkeep commande nouvelle` commande à un artisan · `/gkeep commande liste` les commandes en cours · `accepter`, `terminer`, `annuler` pour les faire avancer",
-				"`/gkeep order new` orders from a crafter · `/gkeep order list` shows open orders · `accept`, `done`, `cancel` move them along"))
+				"`/gkeep commande nouvelle` demande à tous les artisans ou à l'un d'eux · `liste` avec filtres (que je peux faire, mes offres…) · `proposer` pour un artisan · `accepter`, `prete`, `envoyee`, `recu`, `annuler` pour avancer · `catalogue` cherche une recette",
+				"`/gkeep order new` asks every crafter or one of them · `list` with filters (I can make, my offers…) · `offer` for crafters · `accept`, `ready`, `mailed`, `received`, `cancel` move it along · `catalog` finds a recipe"))
+			.AddField(l.T("Événements", "Events"), l.T(
+				"`/gkeep quete liste` les quêtes élites, de donjon et de raid des membres · `qui` a une quête · `miennes` tes quêtes et qui les a aussi\n" +
+				"`/gkeep presence resume`, `joueur`, `raids`, `raid` la présence réelle en raid (30, 60, 90 jours) · `/gkeep butin liste` l'historique du butin · `corriger`, `annuler` pour les officiers\n" +
+				"`/gkeep reserve poser`, `retirer`, `liste` tes réservations de butin (haute, normale, basse) · `ferme`, `verrouiller` pour les officiers · `/gkeep evenement soutien` et `checklist` pour préparer la soirée\n" +
+				"`/gkeep evenement liste` les raids et sorties à venir · `voir` le détail et le roster · `inscription` pour répondre (rôle, spé, personnage) · `creer`, `modifier`, `annuler`, `retablir` et `placer` (confirmé, remplaçant, banc) pour l'organisateur et les officiers",
+				"`/gkeep quest list` members' elite, dungeon and raid quests · `who` has a quest · `mine` your quests and who else has them\n" +
+				"`/gkeep attendance summary`, `player`, `raids`, `raid` real raid attendance (30, 60, 90 days) · `/gkeep loot list` the loot history · `correct`, `void` for officers\n" +
+				"`/gkeep reserve set`, `clear`, `list` your loot reserves (high, normal, low) · `hard`, `lock` for officers · `/gkeep event duty` and `checklist` to prepare the night\n" +
+				"`/gkeep event list` shows upcoming raids and outings · `show` the details and roster · `signup` to answer (role, spec, character) · `create`, `edit`, `cancel`, `restore` and `place` (confirmed, standby, bench) for the organizer and officers"))
 			.AddField(l.T("En jeu", "In game"), l.T(
 				"Installe le pack de la guilde depuis le lien donné par un administrateur : l'addon s'ouvre avec `/gkeep` ou par l'onglet dans la fenêtre de guilde.",
 				"Install your guild's pack from the link an admin shares: open the addon with `/gkeep` or from the tab in the guild window."));
@@ -63,10 +78,10 @@ public sealed class GkeepModule(RosterService roster, NicknameSync nicknames, Gu
 	public async Task LinkAsync([Summary("character", "Character name in game")] string character)
 	{
 		await DeferAsync(ephemeral: true);
-		var discordId = Context.User.Id.ToString();
+		var discordId = DiscordId;
 		var result = await roster.LinkCharacterAsync(discordId, Context.User.Username, character.Trim());
 		var nicknameNote = "";
-		if (result.Success && await roster.GetMainCharacterNameAsync(discordId) is { } main)
+		if (result.IsSuccess && await roster.GetMainCharacterNameAsync(discordId) is { } main)
 		{
 			nicknameNote = NicknameSync.Describe(await nicknames.SyncAsync(guildContext.Required, discordId, main), main, l);
 		}
@@ -79,10 +94,10 @@ public sealed class GkeepModule(RosterService roster, NicknameSync nicknames, Gu
 		[Summary("character", "One of your linked characters"), Autocomplete(typeof(OwnCharacterAutocompleteHandler))] string character)
 	{
 		await DeferAsync(ephemeral: true);
-		var discordId = Context.User.Id.ToString();
+		var discordId = DiscordId;
 		var result = await roster.SetMainCharacterAsync(discordId, character.Trim());
 		var nicknameNote = "";
-		if (result.Success && await roster.GetMainCharacterNameAsync(discordId) is { } main)
+		if (result.IsSuccess && await roster.GetMainCharacterNameAsync(discordId) is { } main)
 		{
 			nicknameNote = NicknameSync.Describe(await nicknames.SyncAsync(guildContext.Required, discordId, main), main, l) +
 				(guildContext.Required.SyncNicknames
@@ -98,7 +113,7 @@ public sealed class GkeepModule(RosterService roster, NicknameSync nicknames, Gu
 	public async Task TokenAsync()
 	{
 		await DeferAsync(ephemeral: true);
-		var token = await roster.GetOrCreateUploadTokenAsync(Context.User.Id.ToString(), Context.User.Username);
+		var token = await roster.GetOrCreateUploadTokenAsync(DiscordId, Context.User.Username);
 		await FollowupAsync(l.T(
 			"Ton token personnel pour l'app compagnon (facultatif : le pack de la guilde fonctionne sans). " +
 				$"À coller dans son `config.json` sous `uploadToken`, ne le partage pas :\n```\n{token}\n```",
@@ -113,15 +128,25 @@ public sealed class GkeepModule(RosterService roster, NicknameSync nicknames, Gu
 	public async Task ExportAsync()
 	{
 		await DeferAsync(ephemeral: true);
-		var export = await exportBuilder.BuildAsync();
+		// Résolu à la demande : les autres commandes racines ne construisent pas tous les modules.
+		var build = await services.GetRequiredService<ExportBuilder>().BuildAsync();
+		var export = build.Export;
 		var encoded = StringCodec.Encode(export);
+		// Un module en panne ne prive pas les autres : la chaîne contient les sections disponibles,
+		// celles du module en échec en sont absentes (l'addon les traite comme « pas de données »).
+		var warning = build.Complete ? "" : l.T(
+			$"\n⚠ Module(s) indisponible(s) : {string.Join(", ", build.FailedModules)}. Leurs données ne sont pas dans ce fichier ; " +
+				"le reste est à jour. Refais l'export plus tard pour les récupérer.",
+			$"\n⚠ Unavailable module(s): {string.Join(", ", build.FailedModules)}. Their data is not in this file; " +
+				"the rest is up to date. Export again later to get it.");
+		var characters = export.Characters?.Count ?? 0;
 		// En pièce jointe : pas de limite des 2000 caractères d'un message.
 		using var stream = new MemoryStream(Encoding.UTF8.GetBytes(encoded));
 		await FollowupWithFileAsync(new FileAttachment(stream, "guildkeep-import.txt"), l.T(
-			$"Données de la guilde (version {export.Version}, {export.Characters.Count} personnages). " +
+			$"Données de la guilde (version {export.Version}, {characters} personnages). " +
 				"Ouvre le fichier, copie tout, puis en jeu : `/gkeep` → **Importer**.",
-			$"Guild data (version {export.Version}, {export.Characters.Count} characters). " +
-				"Open the file, copy everything, then in game: `/gkeep` → **Import**."), ephemeral: true);
+			$"Guild data (version {export.Version}, {characters} characters). " +
+				"Open the file, copy everything, then in game: `/gkeep` → **Import**.") + warning, ephemeral: true);
 	}
 
 	[SlashCommand("import", "Send the string exported in game (/gkeep, Export)")]
@@ -151,11 +176,14 @@ public sealed class GkeepModule(RosterService roster, NicknameSync nicknames, Gu
 			return;
 		}
 
-		var member = await roster.GetOrCreateMemberAsync(Context.User.Id.ToString(), Context.User.Username);
-		var result = await ingestion.IngestAsync(member, payload);
+		// L'annuaire est le socle d'identité : sans lui, l'import ne peut pas savoir qui l'envoie.
+		var memberId = await services.GetRequiredService<IAnnuaire>().EnsureMemberAsync(DiscordId, Context.User.Username);
+		// Chaîne collée à la main : rien ne garantit son contenu, le rang d'officier déclaré n'est pas retenu.
+		var outcome = await services.GetRequiredService<UploadIngestion>().IngestAsync(memberId, payload, UploadSource.DiscordImport);
+		var result = outcome.Result;
 		var summary = new StringBuilder(l.T(
-			$"Import appliqué : {payload.Characters.Count} personnage(s), {payload.Orders?.Count ?? 0} commande(s).",
-			$"Import applied: {payload.Characters.Count} character(s), {payload.Orders?.Count ?? 0} order(s)."));
+			$"Import appliqué : {payload.Characters?.Count ?? 0} personnage(s), {payload.Orders?.Count ?? 0} commande(s).",
+			$"Import applied: {payload.Characters?.Count ?? 0} character(s), {payload.Orders?.Count ?? 0} order(s)."));
 		foreach (var warning in result.Warnings)
 		{
 			summary.Append("\n⚠ ").Append(warning);
@@ -172,257 +200,5 @@ public sealed class GkeepModule(RosterService roster, NicknameSync nicknames, Gu
 		public string Payload { get; set; } = "";
 	}
 
-	// ---- Métiers ------------------------------------------------------------------------------
-
-	[Group("profession", "Who can craft what in the guild")]
-	[RequireRegisteredGuild]
-	public sealed class ProfessionGroup(RosterService roster, AppDbContext db, BotLocalizer l)
-		: InteractionModuleBase<SocketInteractionContext>
-	{
-		[SlashCommand("who", "Who can craft it? Search by profession, level or recipe")]
-		public async Task WhoAsync(
-			[Summary("recipe", "Text to look for in known recipes")] string? recipe = null,
-			[Summary("profession", "Profession"), Autocomplete(typeof(ProfessionAutocompleteHandler))] string? profession = null,
-			[Summary("min_level", "Minimum skill level"), MinValue(1), MaxValue(300)] int? minLevel = null)
-		{
-			await DeferAsync(ephemeral: true);
-			var query = db.Professions.AsNoTracking().Include(p => p.Character).Include(p => p.Recipes).AsQueryable();
-			if (profession is not null)
-			{
-				query = query.Where(p => p.Name == profession);
-			}
-			if (minLevel is not null)
-			{
-				query = query.Where(p => p.SkillLevel >= minLevel);
-			}
-			var search = recipe?.Trim();
-			if (!string.IsNullOrEmpty(search))
-			{
-				var pattern = $"%{search}%";
-				query = query.Where(p => p.Recipes.Any(r => r.Name != null && EF.Functions.Like(r.Name, pattern)));
-			}
-			var professions = await query.OrderByDescending(p => p.SkillLevel).Take(20).ToListAsync();
-			if (professions.Count == 0)
-			{
-				await FollowupAsync(l.T(
-					"Personne ne correspond. Essaie un mot plus court, ou retire le métier ou le niveau.",
-					"Nobody matches. Try a shorter word, or drop the profession or level."), ephemeral: true);
-				return;
-			}
-
-			var embed = new EmbedBuilder().WithColor(Green).WithTitle(l.T("Qui peut le fabriquer ?", "Who can craft it?"));
-			foreach (var p in professions)
-			{
-				var matched = string.IsNullOrEmpty(search) ? "" : "\n" + string.Join("\n", p.Recipes
-					.Where(r => r.Name is not null && r.Name.Contains(search, StringComparison.OrdinalIgnoreCase))
-					.Take(5)
-					.Select(r => $"• {r.Name}"));
-				embed.AddField($"{p.Character.Name} · {p.Name} {p.SkillLevel}/{p.MaxSkill}",
-					(string.IsNullOrEmpty(p.Note) ? l.T("_pas de note_", "_no note_") : $"_{p.Note}_") + matched);
-			}
-			embed.WithFooter(l.T("Pour commander : /gkeep commande nouvelle", "To order: /gkeep order new"));
-			await FollowupAsync(embed: embed.Build(), ephemeral: true);
-		}
-
-		[SlashCommand("recipes", "Recipes known by a character")]
-		public async Task RecipesAsync(
-			[Summary("character", "Character"), Autocomplete(typeof(CharacterAutocompleteHandler))] string character,
-			[Summary("profession", "Only this profession"), Autocomplete(typeof(ProfessionAutocompleteHandler))] string? profession = null,
-			[Summary("search", "Filter recipes by text")] string? search = null)
-		{
-			await DeferAsync(ephemeral: true);
-			var name = character.Trim().ToLower();
-			var found = await db.Characters.AsNoTracking()
-				.Include(c => c.Professions).ThenInclude(p => p.Recipes)
-				.FirstOrDefaultAsync(c => c.Name.ToLower() == name);
-			if (found is null)
-			{
-				await FollowupAsync(l.T($"Personnage **{character}** inconnu de l'annuaire.", $"No character named **{character}** in the directory."), ephemeral: true);
-				return;
-			}
-
-			var filter = search?.Trim();
-			var professions = found.Professions
-				.Where(p => profession is null || p.Name == profession)
-				.OrderBy(p => p.Name)
-				.Select(p => (Profession: p.Name, Recipes: (IReadOnlyList<string>)p.Recipes
-					.Select(r => r.Name ?? l.T($"Recette #{r.SpellId}", $"Recipe #{r.SpellId}"))
-					.Where(n => string.IsNullOrEmpty(filter) || n.Contains(filter, StringComparison.OrdinalIgnoreCase))
-					.ToList()))
-				.Where(p => p.Recipes.Count > 0)
-				.ToList();
-			if (professions.Count == 0)
-			{
-				await FollowupAsync(!string.IsNullOrEmpty(filter)
-					? l.T($"**{found.Name}** : aucune recette ne contient « {filter} ».", $"**{found.Name}**: no recipe contains \"{filter}\".")
-					: l.T($"**{found.Name}** : aucune recette relevée. Il faut ouvrir la fenêtre du métier en jeu, avec l'addon installé.",
-						$"**{found.Name}**: no recipes scanned yet. Open the profession window in game with the addon installed."), ephemeral: true);
-				return;
-			}
-
-			var layout = RecipeListFormatter.Layout(professions, l.T("suite", "continued"));
-			var total = professions.Sum(p => p.Recipes.Count);
-			var embed = new EmbedBuilder()
-				.WithColor(Green)
-				.WithTitle(l.T($"Recettes de {found.Name}", $"{found.Name}'s recipes"))
-				.WithDescription(l.T($"{total} recette(s)", $"{total} recipe(s)") + (string.IsNullOrEmpty(filter) ? "" : $" · « {filter} »"));
-			foreach (var field in layout.Fields)
-			{
-				embed.AddField(field.Title, field.Body);
-			}
-			embed.WithFooter(layout.HiddenCount > 0
-				? l.T($"… et {layout.HiddenCount} autres : affine avec metier ou recherche", $"… and {layout.HiddenCount} more: narrow with profession or search")
-				: l.T("Relevé en jeu par l'addon", "Scanned in game by the addon"));
-			await FollowupAsync(embed: embed.Build(), ephemeral: true);
-		}
-
-		[SlashCommand("list", "The guild's whole profession directory")]
-		public async Task ListAsync(
-			[Summary("profession", "Only this profession"), Autocomplete(typeof(ProfessionAutocompleteHandler))] string? profession = null)
-		{
-			await DeferAsync(ephemeral: true);
-			var query = db.Professions.AsNoTracking().Include(p => p.Character).AsQueryable();
-			if (profession is not null)
-			{
-				query = query.Where(p => p.Name == profession);
-			}
-			var professions = await query.OrderBy(p => p.Name).ThenByDescending(p => p.SkillLevel).ToListAsync();
-			var recipeCounts = await db.Recipes.AsNoTracking()
-				.GroupBy(r => r.ProfessionId)
-				.Select(g => new { ProfessionId = g.Key, Count = g.Count() })
-				.ToDictionaryAsync(x => x.ProfessionId, x => x.Count);
-			if (professions.Count == 0)
-			{
-				await FollowupAsync(l.T(
-					"L'annuaire est vide. Installe le pack de la guilde et ouvre tes métiers en jeu, ou déclare-les avec `/gkeep metier definir`.",
-					"The directory is empty. Install the guild pack and open your professions in game, or declare them with `/gkeep profession set`."), ephemeral: true);
-				return;
-			}
-
-			var embed = new EmbedBuilder().WithColor(Green)
-				.WithTitle(profession is null ? l.T("Métiers de la guilde", "Guild professions") : profession);
-			foreach (var group in professions.GroupBy(p => p.Name).Take(25))
-			{
-				var lines = group.Take(15).Select(p =>
-					$"**{p.Character.Name}** {p.SkillLevel}/{p.MaxSkill}" +
-					(p.Source == DataSource.Addon ? " ✓" : "") +
-					(recipeCounts.TryGetValue(p.Id, out var count) ? l.T($" · {count} recette(s)", $" · {count} recipe(s)") : "") +
-					(string.IsNullOrEmpty(p.Note) ? "" : $" · _{p.Note}_"));
-				var more = group.Count() > 15 ? l.T($"\n… et {group.Count() - 15} autres", $"\n… and {group.Count() - 15} more") : "";
-				embed.AddField(group.Key, string.Join("\n", lines) + more);
-			}
-			embed.WithFooter(l.T("✓ = relevé en jeu par l'addon", "✓ = scanned in game by the addon"));
-			await FollowupAsync(embed: embed.Build(), ephemeral: true);
-		}
-
-		[SlashCommand("set", "Declare or update one of your character's professions")]
-		public async Task SetAsync(
-			[Summary("character", "Character name in game")] string character,
-			[Summary("profession", "Profession"), Autocomplete(typeof(ProfessionAutocompleteHandler))] string profession,
-			[Summary("level", "Current skill level"), MinValue(1), MaxValue(300)] int level,
-			[Summary("note", "Free note (availability, conditions...)")] string? note = null)
-		{
-			await DeferAsync(ephemeral: true);
-			if (!await ProfessionChoices.IsKnownAsync(profession, db))
-			{
-				await FollowupAsync(l.T($"Métier inconnu : **{profession}**. Choisis-le dans la liste proposée.",
-					$"Unknown profession: **{profession}**. Pick one from the suggestions."), ephemeral: true);
-				return;
-			}
-			var result = await roster.SetProfessionFromDiscordAsync(
-				Context.User.Id.ToString(), Context.User.Username, character.Trim(), profession, level, 300, note);
-			await FollowupAsync(result.Message, ephemeral: true);
-		}
-
-		[SlashCommand("remove", "Remove a profession from one of your characters")]
-		public async Task RemoveAsync(
-			[Summary("character", "Character name in game"), Autocomplete(typeof(OwnCharacterAutocompleteHandler))] string character,
-			[Summary("profession", "Profession to remove"), Autocomplete(typeof(ProfessionAutocompleteHandler))] string profession)
-		{
-			await DeferAsync(ephemeral: true);
-			var result = await roster.RemoveProfessionAsync(Context.User.Id.ToString(), character.Trim(), profession);
-			await FollowupAsync(result.Message, ephemeral: true);
-		}
-	}
-
-	// ---- Commandes de craft -----------------------------------------------------------------
-
-	[Group("order", "Craft orders between members")]
-	[RequireRegisteredGuild]
-	public sealed class OrderGroup(CraftOrderService orders, AppDbContext db, BotLocalizer l)
-		: InteractionModuleBase<SocketInteractionContext>
-	{
-		[SlashCommand("new", "Order a craft from a crafter")]
-		public async Task NewAsync(
-			[Summary("crafter", "Crafter's character"), Autocomplete(typeof(CharacterAutocompleteHandler))] string crafter,
-			[Summary("item", "Item or recipe you want")] string item,
-			[Summary("quantity", "Quantity"), MinValue(1), MaxValue(200)] int quantity = 1,
-			[Summary("note", "Details (materials provided, deadline...)")] string? note = null)
-		{
-			await DeferAsync(ephemeral: true);
-			var result = await orders.CreateFromDiscordAsync(
-				Context.User.Id.ToString(), Context.User.Username, crafter.Trim(), item.Trim(), quantity, note);
-			await FollowupAsync(result.Message + (result.Success
-				? l.T("\nL'artisan est prévenu en message privé.", "\nThe crafter was notified by direct message.")
-				: ""), ephemeral: true);
-		}
-
-		[SlashCommand("list", "Open craft orders")]
-		public async Task ListAsync(
-			[Summary("filter", "Only the orders that concern me")]
-			[Choice("All / Toutes", "all"), Choice("Mine / Les miennes", "mine"), Choice("To craft for me / À fabriquer", "for-me")]
-			string filter = "all")
-		{
-			await DeferAsync(ephemeral: true);
-			var discordId = Context.User.Id.ToString();
-			var memberCharacters = await db.Characters
-				.Where(c => c.Member!.DiscordId == discordId)
-				.Select(c => c.Name)
-				.ToListAsync();
-			var query = db.CraftOrders.AsNoTracking()
-				.Where(o => o.Status == CraftOrderStatus.Open || o.Status == CraftOrderStatus.Accepted);
-			query = filter switch
-			{
-				"mine" => query.Where(o => memberCharacters.Contains(o.RequesterCharacter) || o.RequesterCharacter == Context.User.Username),
-				"for-me" => query.Where(o => memberCharacters.Contains(o.CrafterCharacter)),
-				_ => query,
-			};
-			var list = await query.OrderBy(o => o.Id).Take(25).ToListAsync();
-			if (list.Count == 0)
-			{
-				await FollowupAsync(l.T("Aucune commande en cours.", "No open orders."), ephemeral: true);
-				return;
-			}
-
-			var embed = new EmbedBuilder().WithColor(Amber).WithTitle(l.T("Commandes en cours", "Open orders"));
-			foreach (var order in list)
-			{
-				embed.AddField(
-					$"#{order.Id} · {order.Quantity}× {order.Item} ({CraftOrderService.Label(order.Status, l)})",
-					l.T($"de **{order.RequesterCharacter}** pour **{order.CrafterCharacter}**", $"from **{order.RequesterCharacter}** to **{order.CrafterCharacter}**") +
-					(string.IsNullOrEmpty(order.Note) ? "" : $"\n_{order.Note}_"));
-			}
-			embed.WithFooter(l.T("Faire avancer : /gkeep commande accepter, terminer ou annuler", "Move along: /gkeep order accept, done or cancel"));
-			await FollowupAsync(embed: embed.Build(), ephemeral: true);
-		}
-
-		[SlashCommand("accept", "Accept an order (crafter)")]
-		public Task AcceptAsync([Summary("id", "The order"), Autocomplete(typeof(OrderAutocompleteHandler))] int id) =>
-			UpdateAsync(id, CraftOrderStatus.Accepted);
-
-		[SlashCommand("done", "Mark an order as done (crafter)")]
-		public Task DoneAsync([Summary("id", "The order"), Autocomplete(typeof(OrderAutocompleteHandler))] int id) =>
-			UpdateAsync(id, CraftOrderStatus.Done);
-
-		[SlashCommand("cancel", "Cancel an order (crafter or requester)")]
-		public Task CancelAsync([Summary("id", "The order"), Autocomplete(typeof(OrderAutocompleteHandler))] int id) =>
-			UpdateAsync(id, CraftOrderStatus.Cancelled);
-
-		private async Task UpdateAsync(int id, CraftOrderStatus status)
-		{
-			await DeferAsync(ephemeral: true);
-			var result = await orders.UpdateStatusFromDiscordAsync(Context.User.Id.ToString(), id, status);
-			await FollowupAsync(result.Message, ephemeral: true);
-		}
-	}
+	internal static string Clip(string text, int max) => Text.Ellipsize(text, max);
 }

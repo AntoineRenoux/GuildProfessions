@@ -9,6 +9,8 @@ namespace GuildProfessions.Server.Services;
 /// guilde). Les noms listés par le compagnon dans DepartedCharacters (le
 /// joueur les joue désormais dans une autre guilde) sont traités de même.
 /// Sans info de guilde (vieil addon), le personnage est accepté.
+/// Un personnage présent deux fois dans l'envoi (deux comptes sur le même
+/// poste, import fusionné) n'est gardé qu'une fois : le dernier relevé.
 /// </summary>
 public static class GuildFilter
 {
@@ -20,7 +22,8 @@ public static class GuildFilter
 	{
 		var rejected = new List<Rejection>();
 		var departed = new List<string>();
-		var kept = payload.Characters.Where(character =>
+		// System.Text.Json laisse passer null : un envoi sans liste de personnages vaut une liste vide.
+		var kept = (payload.Characters ?? []).Where(character =>
 		{
 			if (character.Guild is null || SameGuild(character.Guild, guildName))
 			{
@@ -29,7 +32,10 @@ public static class GuildFilter
 			rejected.Add(new Rejection(character.Name, character.Guild));
 			departed.Add(character.Name);
 			return false;
-		}).ToList();
+		})
+			.GroupBy(character => character.Name)
+			.Select(group => group.Last())
+			.ToList();
 
 		var keptNames = kept.Select(c => c.Name).ToHashSet();
 		foreach (var name in payload.DepartedCharacters ?? [])

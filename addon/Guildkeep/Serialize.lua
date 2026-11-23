@@ -76,7 +76,8 @@ function GP.DecodeString(text)
 end
 
 -- Export jeu -> Discord : même forme JSON que l'upload du compagnon
--- (UploadPayload côté serveur, clés camelCase).
+-- (UploadPayload côté serveur, clés camelCase). Le socle fournit les
+-- personnages ; chaque module actif ajoute ses propres données.
 function GP.BuildExportPayload()
 	local characters = {}
 	for name, char in pairs(GuildkeepDB.characters) do
@@ -89,12 +90,21 @@ function GP.BuildExportPayload()
 					recipes[#recipes + 1] = { id = id, name = GP.GetRecipeName(id) }
 				end
 			end
+			local catalog
+			for _, id in ipairs(prof.catalog or {}) do
+				local recipeName = GP.GetRecipeName(id)
+				if recipeName then
+					catalog = catalog or {}
+					catalog[#catalog + 1] = { id = id, name = recipeName }
+				end
+			end
 			professions[#professions + 1] = {
 				name = profName,
 				level = prof.level or 0,
 				max = prof.max or 0,
 				scannedAt = prof.scannedAt,
 				recipes = recipes,
+				catalog = catalog,
 			}
 		end
 		characters[#characters + 1] = {
@@ -106,36 +116,18 @@ function GP.BuildExportPayload()
 			level = char.level,
 			guild = char.guild,
 			equipment = char.equipment,
+			officer = char.officer and true or false,
+			-- Journal vide : rien à envoyer (une liste vide se sérialiserait en objet JSON).
+			quests = char.quests and #char.quests > 0 and char.quests or nil,
 			professions = professions,
 		}
 	end
 
-	local orders
-	for localId, order in pairs(GuildkeepDB.orders) do
-		orders = orders or {}
-		orders[#orders + 1] = {
-			clientId = localId,
-			requester = order.requester,
-			crafter = order.crafter,
-			item = order.item,
-			quantity = order.qty or 1,
-			note = order.note,
-			createdAt = order.createdAt,
-		}
-	end
-
-	local orderActions
-	for key, action in pairs(GuildkeepDB.orderActions) do
-		orderActions = orderActions or {}
-		local serverId = tonumber(key)
-		if serverId then
-			orderActions[#orderActions + 1] = { serverId = serverId, status = action.status }
-		else
-			orderActions[#orderActions + 1] = { clientId = key, status = action.status }
-		end
-	end
-
-	return { characters = characters, orders = orders, orderActions = orderActions }
+	-- Le reste (commandes, événements, présence…) vient des modules actifs,
+	-- chacun sous ses propres clés : crochet EXPORT.
+	local payload = { characters = characters }
+	GP.Modules.Fire("EXPORT", payload)
+	return payload
 end
 
 function GP.BuildExportString()
@@ -149,8 +141,10 @@ function GP.ImportString(text)
 	if not data then
 		return false, err
 	end
-	if type(data.characters) ~= "table" then
-		return false, "contenu inattendu (pas de roster dans la chaîne)"
+	-- Export partiel du bot (un module en panne côté serveur) : sa section est
+	-- absente, les autres sont prises (« pas de données » pour ce module seulement).
+	if type(data.characters) ~= "table" and type(data.version) ~= "number" then
+		return false, "contenu inattendu (ni roster ni version dans la chaîne)"
 	end
 	-- Rangé sous la guilde de la chaîne (repli : celle du personnage).
 	local guild = data.guildName or GP.GetPlayerGuildName()

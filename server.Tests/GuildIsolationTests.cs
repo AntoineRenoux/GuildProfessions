@@ -1,6 +1,7 @@
 using GuildProfessions.Server.Contracts;
 using GuildProfessions.Server.Data;
 using GuildProfessions.Server.Services;
+using GuildProfessions.Server.Shared.Modules;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
@@ -31,13 +32,13 @@ public sealed class GuildIsolationTests : IDisposable
 
 	public void Dispose() => _connection.Dispose();
 
-	private (AppDbContext Db, RosterService Roster, CraftOrderService Orders) For(Guild guild)
+	private (AppDbContext Db, RosterService Roster, CraftOrderService Orders, IDataVersion Version, IAnnuaire Annuaire) For(Guild guild)
 	{
 		var context = new GuildContext();
 		context.Use(guild);
 		var db = new AppDbContext(_options, context);
-		var roster = new RosterService(db, context);
-		return (db, roster, new CraftOrderService(db, roster, new NullCraftOrderNotifier()));
+		var modules = TestModules.For(db, context);
+		return (db, modules.Roster, modules.Orders, modules.DataVersion, modules.Get<IAnnuaire>());
 	}
 
 	private static UploadPayload Upload(string character, string guild, params int[] recipes) => new(
@@ -92,8 +93,8 @@ public sealed class GuildIsolationTests : IDisposable
 		await For(_guildA).Roster.ApplyUploadAsync(null, Upload("Aldrin Lupercal", "FORMER HOPE"));
 		await For(_guildA).Roster.ApplyUploadAsync(null, Upload("Aldrin Lupercal", "FORMER HOPE"));
 
-		Assert.Equal(2, await For(_guildA).Roster.GetDataVersionAsync());
-		Assert.Equal(0, await For(_guildB).Roster.GetDataVersionAsync());
+		Assert.Equal(2, await For(_guildA).Version.CurrentAsync());
+		Assert.Equal(0, await For(_guildB).Version.CurrentAsync());
 	}
 
 	[Fact]
@@ -137,13 +138,36 @@ public sealed class GuildIsolationTests : IDisposable
 		var context = new GuildContext();
 		context.Use(_guildA);
 		using var db = new AppDbContext(_options, context);
-		var roster = new RosterService(db, context);
-		var ingestion = new UploadIngestion(roster, new CraftOrderService(db, roster, new NullCraftOrderNotifier()), context);
-		var result = await ingestion.IngestAsync(null, new UploadPayload([], DepartedCharacters: ["Mira Solen"]));
+		using var modules = TestModules.For(db, context);
+		var roster = modules.Roster;
+		var memberId = (await roster.GetOrCreateMemberAsync("42", "anto")).Id;
+		var outcome = await modules.Ingestion.IngestAsync(memberId, new UploadPayload([], DepartedCharacters: ["Mira Solen"]), UploadSource.PersonalToken);
 
 		Assert.Empty(await db.Characters.ToListAsync());
 		Assert.Null(await roster.GetMainCharacterNameAsync("42"));
-		Assert.Contains(result.Warnings, w => w.Contains("autre guilde"));
+		Assert.Contains(outcome.Result.Warnings, w => w.Contains("autre guilde"));
+	}
+
+	[Theory]
+	[InlineData(UploadSource.DiscordImport)]
+	[InlineData(UploadSource.GuildToken)]
+	[InlineData(UploadSource.PersonalToken)]
+	public async Task Ingestion_Should_NotRemove_AnotherMembersCharacter(UploadSource source)
+	{
+		var a = For(_guildA);
+		await a.Roster.ApplyUploadAsync(null, Upload("Mira Solen", "FORMER HOPE"));
+		await a.Roster.LinkCharacterAsync("42", "anto", "Mira Solen");
+
+		// Un autre membre (sans token, par /gkeep import, ou avec le pack partagé) signale Mira comme partie.
+		var context = new GuildContext();
+		context.Use(_guildA);
+		using var db = new AppDbContext(_options, context);
+		using var modules = TestModules.For(db, context);
+		var intruder = source == UploadSource.GuildToken ? (int?)null : (await modules.Roster.GetOrCreateMemberAsync("7", "intrus")).Id;
+		await modules.Ingestion.IngestAsync(intruder, new UploadPayload([], DepartedCharacters: ["Mira Solen"]), source);
+
+		Assert.Equal("Mira Solen", (await db.Characters.SingleAsync()).Name);
+		Assert.Equal("Mira Solen", await modules.Roster.GetMainCharacterNameAsync("42"));
 	}
 
 	[Fact]
@@ -169,10 +193,11 @@ public sealed class GuildIsolationTests : IDisposable
 	{
 		var token = await For(_guildB).Roster.GetOrCreateUploadTokenAsync("42", "anto");
 
-		using var db = new AppDbContext(_options);
-		var found = await new GuildDirectory(db).FindByUploadTokenAsync(token);
+		// Lu depuis une autre guilde courante : le propriétaire du token est trouvé toutes guildes confondues.
+		var owner = await For(_guildA).Annuaire.UploadTokenOwnerAsync(token);
 
-		Assert.Equal(_guildB.Id, found!.Value.Guild.Id);
+		Assert.Equal(_guildB.Id, owner!.GuildId);
+		Assert.Null(await For(_guildA).Annuaire.UploadTokenOwnerAsync("inconnu"));
 	}
 
 	[Fact]

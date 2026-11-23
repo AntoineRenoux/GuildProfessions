@@ -79,6 +79,14 @@ public sealed class SyncService : IDisposable
 				response.EnsureSuccessStatusCode();
 				var export = await response.Content.ReadFromJsonAsync<ExportDto>(JsonOptions, ct)
 					?? throw new InvalidOperationException("Export vide.");
+				// Export partiel : un module est en panne côté serveur, les autres sont à jour.
+				var failed = FailedModules(response);
+				if (failed.Count > 0)
+				{
+					export = export with { FailedModules = failed };
+					Log($"Guilde « {Display(guild)} » : module(s) indisponible(s) côté serveur ({string.Join(", ", failed)}), " +
+						"leurs données sont absentes de Data.lua ; le reste est à jour. Nouvel essai au prochain cycle.");
+				}
 				if (export.GuildName is { Length: > 0 } name)
 				{
 					_guilds.SetName(guild.Token, name);
@@ -94,7 +102,10 @@ public sealed class SyncService : IDisposable
 		}
 
 		var versions = exports.ToDictionary(e => e.GuildName ?? "", e => e.Version);
-		if (File.Exists(AddonDataPath) && SameVersions(versions, _state.GuildVersions))
+		// Le contenu du fichier fait foi, pas la mémoire du compagnon : une mise à jour
+		// de l'addon (CurseForge, zip) remet un Data.lua vide qu'il faut réécrire.
+		// La signature marque les exports partiels : l'export complet suivant réécrit le fichier.
+		if (DataLuaWriter.IsCurrent(AddonDataPath, exports))
 		{
 			Log("Down-sync : rien de nouveau.");
 			return;
@@ -103,11 +114,16 @@ public sealed class SyncService : IDisposable
 		await File.WriteAllTextAsync(AddonDataPath, DataLuaWriter.Build(exports), ct);
 		_state = _state with { GuildVersions = versions };
 		SaveState();
-		Log($"Down-sync : Data.lua écrit ({string.Join(", ", exports.Select(e => $"{e.GuildName} : {e.Characters.Count} personnages"))}). /reload en jeu pour charger.");
+		Log($"Down-sync : Data.lua écrit ({string.Join(", ", exports.Select(e => $"{e.GuildName} : {e.Characters?.Count ?? 0} personnages"))}). /reload en jeu pour charger.");
 	}
 
-	private static bool SameVersions(Dictionary<string, long> a, Dictionary<string, long> b) =>
-		a.Count == b.Count && a.All(entry => b.TryGetValue(entry.Key, out var version) && version == entry.Value);
+	/// <summary>En-tête X-Guildkeep-Failed-Modules : noms de modules encodés en URL, séparés par des virgules.</summary>
+	public static IReadOnlyList<string> FailedModules(HttpResponseMessage response) =>
+		response.Headers.TryGetValues("X-Guildkeep-Failed-Modules", out var values)
+			? values.SelectMany(v => v.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+				.Select(Uri.UnescapeDataString)
+				.ToList()
+			: [];
 
 	private static string Display(GuildEntry guild) => guild.Name.Length > 0 ? guild.Name : "guilde sans nom";
 

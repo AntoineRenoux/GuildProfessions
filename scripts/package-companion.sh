@@ -9,9 +9,13 @@
 # - companion-manifest.json : versions et SHA-256, consulté par les compagnons
 #   installés pour se mettre à jour seuls (exécutable et addon).
 #
-# Usage : scripts/package-companion.sh [--deploy]
-#   --deploy : envoie zips + manifeste sur le VPS → mise à jour auto des compagnons.
-# Prérequis : SDK .NET 10 (DOTNET_ROOT), accès SSH au VPS pour --deploy.
+# Usage : scripts/package-companion.sh [--deploy] [--curseforge]
+#   --deploy     : envoie zips + manifeste sur le VPS → mise à jour auto des compagnons.
+#   --curseforge : publie aussi Guildkeep-addon.zip sur CurseForge (saveur WoW: Forever).
+#                  Jeton : variable CURSEFORGE_TOKEN ou fichier ~/.config/guildkeep/curseforge-token ;
+#                  projet : CURSEFORGE_PROJECT_ID ou ~/.config/guildkeep/curseforge-project-id.
+#                  Version de jeu ciblée : CURSEFORGE_GAME_VERSION (défaut 1.60.1, WoW: Forever).
+# Prérequis : SDK .NET 10 (DOTNET_ROOT), accès SSH au VPS pour --deploy, curl et jq pour --curseforge.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -19,7 +23,28 @@ cd "$(dirname "$0")/.."
 SITE_URL="${GP_SITE_URL:-https://guildkeep.warpvault.com}"
 VPS="${GP_VPS:-root@195.200.15.142}"
 DEPLOY=false
-[ "${1:-}" = "--deploy" ] && DEPLOY=true
+CURSEFORGE=false
+for arg in "$@"; do
+	case "$arg" in
+		--deploy) DEPLOY=true ;;
+		--curseforge) CURSEFORGE=true ;;
+		*) echo "Option inconnue : $arg" >&2; exit 1 ;;
+	esac
+done
+
+# Identifiants CurseForge vérifiés avant de construire quoi que ce soit (jamais affichés).
+if $CURSEFORGE; then
+	CF_DIR="$HOME/.config/guildkeep"
+	read_secret() { [ -f "$1" ] && tr -d '[:space:]' < "$1" || true; }
+	CF_TOKEN="${CURSEFORGE_TOKEN:-$(read_secret "$CF_DIR/curseforge-token")}"
+	CF_PROJECT="${CURSEFORGE_PROJECT_ID:-$(read_secret "$CF_DIR/curseforge-project-id")}"
+	CF_GAME_VERSION="${CURSEFORGE_GAME_VERSION:-1.60.1}"
+	if [ -z "$CF_TOKEN" ] || [ -z "$CF_PROJECT" ]; then
+		echo "⚠ --curseforge : jeton ou identifiant de projet CurseForge manquant (voir l'en-tête du script)." >&2
+		exit 1
+	fi
+	command -v jq >/dev/null || { echo "⚠ --curseforge : jq est requis." >&2; exit 1; }
+fi
 
 # Version monotone : 1.0.<nombre de commits>. Un commit = une version plus récente.
 VERSION="1.0.$(git rev-list --count HEAD)"
@@ -154,6 +179,31 @@ cat > "$OUT/companion-manifest.json" <<EOF
 EOF
 echo "  → $OUT/companion-manifest.json (v$VERSION)"
 
+
+if $CURSEFORGE; then
+	echo "— publication CurseForge (projet $CF_PROJECT, jeu $CF_GAME_VERSION)..."
+	CF_API="https://wow.curseforge.com/api"
+	VERSIONS_JSON=$(curl -sf -H "X-Api-Token: $CF_TOKEN" "$CF_API/game/versions") \
+		|| { echo "⚠ CurseForge : liste des versions de jeu inaccessible (jeton refusé ?)." >&2; exit 1; }
+	CF_GAME_ID=$(printf '%s' "$VERSIONS_JSON" | jq -r --arg v "$CF_GAME_VERSION" '[.[] | select(.name == $v)][0].id // empty')
+	if [ -z "$CF_GAME_ID" ]; then
+		echo "⚠ CurseForge : version de jeu « $CF_GAME_VERSION » introuvable. Versions proches :" >&2
+		printf '%s' "$VERSIONS_JSON" | jq -r '.[] | select(.name | startswith("1.6")) | "  \(.name) (id \(.id))"' >&2
+		exit 1
+	fi
+	CHANGELOG=$(git log -n 8 --format='- %s' -- addon)
+	METADATA=$(jq -n --arg log "$CHANGELOG" --arg name "Guildkeep v$VERSION" --argjson game "$CF_GAME_ID" \
+		'{changelog: $log, changelogType: "markdown", displayName: $name, gameVersions: [$game], releaseType: "release"}')
+	RESPONSE=$(curl -s -w '\n%{http_code}' -H "X-Api-Token: $CF_TOKEN" \
+		-F "metadata=$METADATA" -F "file=@$OUT/Guildkeep-addon.zip" \
+		"$CF_API/projects/$CF_PROJECT/upload-file")
+	CODE=$(printf '%s' "$RESPONSE" | tail -n1)
+	if [ "$CODE" != "200" ]; then
+		echo "⚠ CurseForge : envoi refusé (HTTP $CODE) : $(printf '%s' "$RESPONSE" | sed '$d' | head -c 400)" >&2
+		exit 1
+	fi
+	echo "  → CurseForge : v$VERSION envoyée (fichier $(printf '%s' "$RESPONSE" | sed '$d' | jq -r '.id // "?"')), en attente de validation."
+fi
 
 if $DEPLOY; then
 	echo "— envoi sur le VPS..."

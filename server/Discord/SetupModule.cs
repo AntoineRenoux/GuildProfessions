@@ -2,9 +2,11 @@ using System.Collections.Concurrent;
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
+using Discord.Net;
 using GuildProfessions.Server.Data;
+using GuildProfessions.Server.Modules.Annuaire.Contracts;
 using GuildProfessions.Server.Services;
-using Microsoft.EntityFrameworkCore;
+using GuildProfessions.Server.Shared;
 
 namespace GuildProfessions.Server.Discord;
 
@@ -17,7 +19,8 @@ namespace GuildProfessions.Server.Discord;
 /// anglais selon sa langue Discord.
 /// </summary>
 [CommandContextType(InteractionContextType.Guild)]
-public sealed class SetupModule(GuildDirectory guilds, GuildContext guildContext, AppDbContext db, SiteLinks links, BotLocalizer l)
+public sealed class SetupModule(GuildDirectory guilds, GuildContext guildContext, IAnnuaire annuaire, SiteLinks links,
+	BotLocalizer l, ILogger<SetupModule> logger)
 	: InteractionModuleBase<SocketInteractionContext>
 {
 	private static readonly Color Gold = new(0xC9, 0xA2, 0x27);
@@ -26,8 +29,12 @@ public sealed class SetupModule(GuildDirectory guilds, GuildContext guildContext
 	/// <summary>Brouillons d'assistant en cours, par (serveur, administrateur). Perdus au redémarrage : l'assistant se relance.</summary>
 	private static readonly ConcurrentDictionary<string, SetupDraft> Drafts = new();
 
+	/// <summary>Un assistant abandonné plus longtemps que ça est oublié.</summary>
+	private static readonly TimeSpan DraftLifetime = TimeSpan.FromHours(1);
+
 	private sealed class SetupDraft
 	{
+		public DateTime StartedUtc { get; } = DateTime.UtcNow;
 		public required string Name { get; set; }
 		public bool SyncNicknames { get; set; }
 		public ulong? OrdersChannelId { get; set; }
@@ -63,7 +70,9 @@ public sealed class SetupModule(GuildDirectory guilds, GuildContext guildContext
 		var label = modal.Components.OfType<LabelBuilder>()
 			.FirstOrDefault(c => c.Component is TextInputBuilder { CustomId: "guild_name" });
 		if (label is not null)
+		{
 			label.Label = l.T("Nom exact de la guilde en jeu", "Exact in-game guild name");
+		}
 		modal.UpdateTextInput("guild_name", input =>
 		{
 			input.Label = null;
@@ -94,11 +103,25 @@ public sealed class SetupModule(GuildDirectory guilds, GuildContext guildContext
 			return;
 		}
 		var name = modal.Name.Trim();
+		PurgeStaleDrafts();
 		var draft = Drafts.AddOrUpdate(DraftKey,
 			_ => new SetupDraft { Name = name },
 			(_, existing) => { existing.Name = name; return existing; });
 		var (embed, components) = OptionsStep(draft);
 		await RespondAsync(embed: embed, components: components, ephemeral: true);
+	}
+
+	// Les assistants abandonnés ne restent pas en mémoire jusqu'au redémarrage.
+	private static void PurgeStaleDrafts()
+	{
+		var threshold = DateTime.UtcNow - DraftLifetime;
+		foreach (var (key, draft) in Drafts)
+		{
+			if (draft.StartedUtc < threshold)
+			{
+				Drafts.TryRemove(key, out _);
+			}
+		}
 	}
 
 	// ---- Assistant : étape 2, les options -----------------------------------------------
@@ -292,10 +315,19 @@ public sealed class SetupModule(GuildDirectory guilds, GuildContext guildContext
 				.Build());
 			await RespondAsync(l.T("Annonce publiée.", "Announcement posted."), ephemeral: true);
 		}
-		catch (Exception)
+		catch (HttpException exception) when (exception.HttpCode is System.Net.HttpStatusCode.Forbidden ||
+			exception.DiscordCode is DiscordErrorCode.MissingPermissions or DiscordErrorCode.InsufficientPermissions)
 		{
+			logger.LogInformation(exception, "Annonce de « {Guild} » impossible : permissions du salon.", guild.Name);
 			await RespondAsync(l.T("Je ne peux pas écrire dans ce salon : vérifie mes permissions, ou copie le lien toi-même.",
 				"I can't post in this channel: check my permissions, or copy the link yourself."), ephemeral: true);
+		}
+		catch (Exception exception) when (!Context.Interaction.HasResponded)
+		{
+			// Autre panne que les permissions : on la journalise au lieu de la faire passer pour un problème de droits.
+			logger.LogError(exception, "Annonce de « {Guild} » en échec.", guild.Name);
+			await RespondAsync(l.T("L'annonce a échoué (erreur inattendue) : copie le lien toi-même, et préviens l'administrateur du bot si ça se reproduit.",
+				"The announcement failed (unexpected error): copy the link yourself, and tell the bot's administrator if it happens again."), ephemeral: true);
 		}
 	}
 
@@ -303,8 +335,7 @@ public sealed class SetupModule(GuildDirectory guilds, GuildContext guildContext
 
 	private async Task<(Embed, MessageComponent)> AdminPanelAsync(Guild guild, string? notice = null)
 	{
-		var characters = await db.Characters.CountAsync();
-		var members = await db.Members.CountAsync();
+		var (members, characters) = await annuaire.SizeAsync();
 		var embed = new EmbedBuilder()
 			.WithColor(Gold)
 			.WithTitle($"Guildkeep · {guild.Name}")
@@ -350,8 +381,7 @@ public sealed class SetupModule(GuildDirectory guilds, GuildContext guildContext
 	public async Task AdminNicknamesAsync()
 	{
 		var guild = guildContext.Required;
-		guild.SyncNicknames = !guild.SyncNicknames;
-		await db.SaveChangesAsync();
+		await guilds.SetSyncNicknamesAsync(guild, !guild.SyncNicknames);
 		await RefreshPanelAsync(guild, guild.SyncNicknames
 			? l.T("Les membres seront renommés avec leur personnage principal (à leur prochain `/gkeep lier` ou `/gkeep principal`, et au redémarrage du bot).",
 				"Members will be renamed after their main character (on their next `/gkeep link` or `/gkeep main`, and when the bot restarts).")
@@ -363,8 +393,7 @@ public sealed class SetupModule(GuildDirectory guilds, GuildContext guildContext
 	public async Task AdminChannelAsync(string[] values)
 	{
 		var guild = guildContext.Required;
-		guild.OrdersChannelId = ulong.TryParse(values.FirstOrDefault(), out var id) ? id.ToString() : null;
-		await db.SaveChangesAsync();
+		await guilds.SetOrdersChannelAsync(guild, ulong.TryParse(values.FirstOrDefault(), out var id) ? id.ToString() : null);
 		await RefreshPanelAsync(guild, guild.OrdersChannelId is null
 			? l.T("Les nouvelles commandes ne sont plus annoncées.", "New orders are no longer announced.")
 			: l.T($"Les nouvelles commandes seront annoncées dans <#{guild.OrdersChannelId}>.", $"New orders will be announced in <#{guild.OrdersChannelId}>."));

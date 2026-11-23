@@ -13,6 +13,7 @@ public sealed class RosterServiceTests : IDisposable
 	private readonly SqliteConnection _connection;
 	private readonly AppDbContext _db;
 	private readonly GuildContext _guild = new();
+	private readonly TestModules _modules;
 	private readonly RosterService _roster;
 
 	public RosterServiceTests()
@@ -27,11 +28,13 @@ public sealed class RosterServiceTests : IDisposable
 		_db = new AppDbContext(options, _guild);
 		_db.Database.EnsureCreated();
 		_guild.Use(TestGuilds.Create(_db, "FORMER HOPE", "former-hope"));
-		_roster = new RosterService(_db, _guild);
+		_modules = TestModules.For(_db, _guild);
+		_roster = _modules.Roster;
 	}
 
 	public void Dispose()
 	{
+		_modules.Dispose();
 		_db.Dispose();
 		_connection.Dispose();
 	}
@@ -41,7 +44,7 @@ public sealed class RosterServiceTests : IDisposable
 	{
 		var result = await _roster.SetProfessionFromDiscordAsync("42", "anto", "Thorgal", "Forge", 300, 300, "dispo mardi");
 
-		Assert.True(result.Success);
+		Assert.True(result.IsSuccess);
 		var profession = await _db.Professions.Include(p => p.Character).SingleAsync();
 		Assert.Equal("Thorgal", profession.Character.Name);
 		Assert.Equal("Forge", profession.Name);
@@ -58,7 +61,7 @@ public sealed class RosterServiceTests : IDisposable
 
 		var result = await _roster.SetProfessionFromDiscordAsync("42", "anto", "Thorgal", "Forge", 150, 300, "note discord");
 
-		Assert.True(result.Success);
+		Assert.True(result.IsSuccess);
 		var profession = await _db.Professions.SingleAsync();
 		Assert.Equal(287, profession.SkillLevel); // le scan prime, le 150 déclaré est ignoré
 		Assert.Equal("note discord", profession.Note); // la note reste éditable via Discord
@@ -72,7 +75,7 @@ public sealed class RosterServiceTests : IDisposable
 
 		var result = await _roster.SetProfessionFromDiscordAsync("99", "intrus", "Thorgal", "Forge", 300, 300, null);
 
-		Assert.False(result.Success);
+		Assert.False(result.IsSuccess);
 		Assert.Empty(_db.Professions);
 	}
 
@@ -127,7 +130,7 @@ public sealed class RosterServiceTests : IDisposable
 	public async Task ApplyUpload_Should_StoreRecipes_AndBumpVersion()
 	{
 		var member = await _roster.GetOrCreateMemberAsync("42", "anto");
-		var before = await _roster.GetDataVersionAsync();
+		var before = await _modules.DataVersion.CurrentAsync();
 
 		var payload = new UploadPayload([
 			new UploadCharacter("Grimbart", "PALADIN", "Human", 1, 2, 60, [
@@ -157,7 +160,7 @@ public sealed class RosterServiceTests : IDisposable
 		]));
 		await _roster.SetProfessionFromDiscordAsync("42", "anto", "Nayra", "Couture", 240, 300, null);
 
-		var export = await new ExportBuilder(_db, _roster, _guild).BuildAsync();
+		var export = (await _modules.Export.BuildAsync()).Export;
 
 		Assert.Equal(2, export.Characters.Count);
 		Assert.Equal("Flacon des Titans", export.RecipeNames[17635]);
@@ -177,7 +180,7 @@ public sealed class RosterServiceTests : IDisposable
 		]);
 
 		await _roster.ApplyUploadAsync(member, payload);
-		var export = await new ExportBuilder(_db, _roster, _guild).BuildAsync();
+		var export = (await _modules.Export.BuildAsync()).Export;
 
 		var equipment = export.Characters.Single().Equipment!;
 		Assert.Equal(2, equipment.Count);
@@ -201,7 +204,7 @@ public sealed class RosterServiceTests : IDisposable
 
 		var result = await _roster.SetMainCharacterAsync("42", "sallymarow vect");
 
-		Assert.True(result.Success);
+		Assert.True(result.IsSuccess);
 		Assert.Equal("Sallymarow Vect", await _roster.GetMainCharacterNameAsync("42"));
 	}
 
@@ -214,8 +217,8 @@ public sealed class RosterServiceTests : IDisposable
 		var unknown = await _roster.SetMainCharacterAsync("42", "Inconnu");
 		var foreign = await _roster.SetMainCharacterAsync("42", "Thorgal");
 
-		Assert.False(unknown.Success);
-		Assert.False(foreign.Success);
+		Assert.False(unknown.IsSuccess);
+		Assert.False(foreign.IsSuccess);
 		Assert.Equal("Asdubral Vect", await _roster.GetMainCharacterNameAsync("42"));
 	}
 

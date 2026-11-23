@@ -79,7 +79,7 @@ public sealed partial class NicknameSync(DiscordSocketClient client, ILogger<Nic
 	}
 
 	/// <summary>Phrase à ajouter à la réponse d'une commande, vide si rien à dire.</summary>
-	public static string Describe(IReadOnlyCollection<NicknameOutcome> outcomes, string characterName, Services.BotLocalizer l)
+	public static string Describe(IReadOnlyCollection<NicknameOutcome> outcomes, string characterName, Shared.BotLocalizer l)
 	{
 		if (outcomes.Contains(NicknameOutcome.Updated))
 		{
