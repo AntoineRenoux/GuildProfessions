@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guildkeep · tableau de bord et thèmes</title>
+<meta name="description" content="Le tableau de bord de Guildkeep : un résumé de ce qui arrive et de ce qui t&#x27;attend (événements, annonces, commandes, présence, accueil), en jeu et sur Discord, et les thèmes de couleur de la fenêtre.">
+<link rel="preload" href="/fonts/cinzel-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/alegreya-sans-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/site.css?v=6">
+<script>document.documentElement.classList.add('js');try{var l=localStorage.getItem('gk-lang')||((navigator.language||'fr').toLowerCase().indexOf('fr')===0?'fr':'en');document.documentElement.lang=l}catch(e){}</script>
+</head>
+<body>
+<svg class="sprite" aria-hidden="true" focusable="false"><defs><linearGradient id="gk-gold" gradientUnits="userSpaceOnUse" x1="0" y1="4" x2="0" y2="44"><stop offset="0" stop-color="#fff1bf"/><stop offset=".45" stop-color="#f0c25e"/><stop offset="1" stop-color="#9a6a20"/></linearGradient>
+<symbol id="i-metiers" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M6 15h25c1 5 5 8 11 8v4H31l3 9H14l3-9h-3C9 27 6 22 6 15z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M36 6l4 4M33 9l4 4"/></symbol>
+<symbol id="i-membres" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M24 5c9 0 15 7 15 16v14l-6 6h-4V27h-10v14h-4l-6-6V21C9 12 15 5 24 5z"/><path fill="#1a1208" d="M15 20h18v4H15z"/></symbol>
+<symbol id="i-artisanat" viewBox="0 0 48 48"><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M10 38L36 12"/><ellipse fill="none" stroke="url(#gk-gold)" stroke-width="3.2" cx="37.5" cy="10.5" rx="3.2" ry="1.8" transform="rotate(-45 37.5 10.5)"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="1.8" d="M39 9c6 6-4 12-10 16s-14 10-8 17"/></symbol>
+<symbol id="i-evenements" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M7 11h34v30H7z"/><path fill="#1a1208" d="M10 19h28v19H10z"/><path fill="url(#gk-gold)" d="M13 22h6v5h-6zM21 22h6v5h-6zM29 22h6v5h-6zM13 30h6v5h-6zM21 30h6v5h-6z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M15 6v8M33 6v8"/></symbol>
+<symbol id="i-raid" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M24 4l17 6v12c0 11-7 18-17 22C14 40 7 33 7 22V10z"/><path fill="#1a1208" d="M24 11l11 4v8c0 7-4 12-11 15z"/></symbol>
+<symbol id="i-presence" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M10 6h22l7 7v29H10z"/><path fill="none" stroke="#1a1208" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.4" d="M16 26l5 5 10-11"/></symbol>
+<symbol id="i-quetes" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M20 5h8l-1.5 26h-5zM24 35a4 4 0 1 1 0 8 4 4 0 0 1 0-8z"/></symbol>
+<symbol id="i-communication" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M6 19h8l20-11v32L14 29H6z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M39 17c3 4 3 10 0 14M12 30l3 11h6l-3-11"/></symbol>
+<symbol id="i-profils" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M5 10h38v28H5z"/><circle fill="#1a1208" cx="16" cy="21" r="5"/><path fill="#1a1208" d="M8 33c1-5 4-7 8-7s7 2 8 7zM27 17h12v3H27zM27 24h12v3H27zM27 31h8v3h-8z"/></symbol>
+<symbol id="i-tableau" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M6 8h16v14H6zM26 8h16v22H26zM6 26h16v14H6zM26 34h16v6H26z"/></symbol>
+<symbol id="i-install" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M17 12c0-5 3-8 7-8s7 3 7 8h-3c0-3-2-5-4-5s-4 2-4 5z"/><path fill="url(#gk-gold)" d="M10 14h28l4 26a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4z"/><path fill="#1a1208" d="M20 22h8v6h-8z"/></symbol>
+<symbol id="i-compagnon" viewBox="0 0 48 48"><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="4" d="M6 34c6-14 30-14 36 0M12 34V22M24 34V18M36 34V22"/><path fill="url(#gk-gold)" d="M4 34h40v5H4z"/></symbol>
+<symbol id="i-cmd" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M5 9h38v30H5z"/><path fill="#1a1208" d="M8 15h32v21H8z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M14 32l8-13M26 32h8"/></symbol>
+<symbol id="i-faq" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M8 6h26l6 6v30H8z"/><path fill="none" stroke="#1a1208" stroke-linecap="round" stroke-width="3.4" d="M19 19c0-4 3-6 5.5-6s5.5 2 5.5 5.5-5 4-5 8M24.5 32v.5"/></symbol>
+</defs></svg>
+<header class="topbar">
+	<a class="wordmark" href="/">Guildkeep</a>
+	<nav aria-label="Navigation">
+		<a href="/docs/" aria-current="page"><span lang="fr">Documentation</span><span lang="en">Docs</span></a>
+		<a class="hide-phone" href="/docs/faq.html"><span lang="fr">Aide</span><span lang="en">Help</span></a>
+		<div class="lang-switch" role="group" aria-label="Langue / Language">
+			<button type="button" data-set-lang="fr" aria-pressed="true">FR</button>
+			<button type="button" data-set-lang="en" aria-pressed="false">EN</button>
+		</div>
+		<a class="button invite-link hide-phone" href="/#mise-en-place"><span lang="fr">Ajouter à Discord</span><span lang="en">Add to Discord</span></a>
+	</nav>
+</header>
+
+<div class="doc">
+<aside class="doc-nav" aria-label="Sommaire / Contents"><details open><summary><span><span lang="fr">Sommaire</span><span lang="en">Contents</span></span><i class="plus" aria-hidden="true"></i></summary><div>
+<p class="doc-nav-label"><span lang="fr">Démarrer</span><span lang="en">Getting started</span></p><ul>
+<li><a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a>
+</li>
+<li><a href="/docs/installation.html"><span lang="fr">Installer Guildkeep</span><span lang="en">Installing Guildkeep</span></a>
+</li>
+<li><a href="/docs/compagnon.html"><span lang="fr">L'app compagnon</span><span lang="en">The companion app</span></a>
+</li>
+</ul>
+<p class="doc-nav-label"><span lang="fr">Modules</span><span lang="en">Modules</span></p><ul>
+<li><a href="/docs/tableau.html" aria-current="page"><span lang="fr">Tableau de bord et thèmes</span><span lang="en">Dashboard and themes</span></a>
+<ul>
+<li><a href="#a-quoi-ca-sert"><span lang="fr">À quoi ça sert</span><span lang="en">What it's for</span></a></li>
+<li><a href="#tutoriel"><span lang="fr">Tutoriel : commencer sa soirée par le tableau</span><span lang="en">Tutorial: start your evening with the dashboard</span></a></li>
+<li><a href="#themes"><span lang="fr">Tutoriel : changer de thème</span><span lang="en">Tutorial: change the theme</span></a></li>
+</ul>
+</li>
+<li><a href="/docs/metiers.html"><span lang="fr">Métiers</span><span lang="en">Professions</span></a>
+</li>
+<li><a href="/docs/membres.html"><span lang="fr">Membres</span><span lang="en">Members</span></a>
+</li>
+<li><a href="/docs/artisanat.html"><span lang="fr">Artisanat</span><span lang="en">Crafting orders</span></a>
+</li>
+<li><a href="/docs/evenements.html"><span lang="fr">Événements</span><span lang="en">Events</span></a>
+</li>
+<li><a href="/docs/soiree-raid.html"><span lang="fr">Soirée de raid</span><span lang="en">Raid night</span></a>
+</li>
+<li><a href="/docs/presence.html"><span lang="fr">Présence et butin</span><span lang="en">Attendance and loot</span></a>
+</li>
+<li><a href="/docs/quetes.html"><span lang="fr">Quêtes</span><span lang="en">Quests</span></a>
+</li>
+<li><a href="/docs/communication.html"><span lang="fr">Communication</span><span lang="en">Communication</span></a>
+</li>
+<li><a href="/docs/profils.html"><span lang="fr">Profils et accueil</span><span lang="en">Profiles and onboarding</span></a>
+</li>
+</ul>
+<p class="doc-nav-label"><span lang="fr">Référence</span><span lang="en">Reference</span></p><ul>
+<li><a href="/docs/commandes.html"><span lang="fr">Commandes Discord</span><span lang="en">Discord commands</span></a>
+</li>
+<li><a href="/docs/faq.html"><span lang="fr">FAQ et dépannage</span><span lang="en">FAQ and troubleshooting</span></a>
+</li>
+</ul>
+</div></details></aside>
+<main class="doc-main" id="contenu">
+<nav class="crumbs" aria-label="Fil d'Ariane / Breadcrumb"><ol class="crumbs-list"><li><a href="/"><span lang="fr">Accueil</span><span lang="en">Home</span></a></li><li><a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a></li><li aria-current="page"><span lang="fr">Tableau de bord et thèmes</span><span lang="en">Dashboard and themes</span></li></ol></nav>
+<h1><span lang="fr">Tableau de bord et thèmes</span><span lang="en">Dashboard and themes</span></h1>
+<p class="lead"><span lang="fr">Le premier onglet de la fenêtre : en un coup d'œil, les prochains événements et ta réponse, les annonces non lues, tes commandes, ta présence et ton accueil. Et des thèmes pour changer les couleurs de la fenêtre.</span><span lang="en">The window's first tab: at a glance, upcoming events and your answer, unread announcements, your orders, your attendance and your onboarding. And themes to change the window's colors.</span></p>
+<div class="rule" aria-hidden="true"><i></i></div>
+<section>
+<h2 id="a-quoi-ca-sert"><a class="anchor" href="#a-quoi-ca-sert" aria-hidden="true" tabindex="-1">#</a><span lang="fr">À quoi ça sert</span><span lang="en">What it's for</span></h2>
+<p><span lang="fr">La fenêtre Guildkeep s'ouvre sur l'onglet <span lang="fr"><span class="ui tab">Tableau</span></span><span lang="en"><span class="ui tab">Tableau</span> <span class="gloss">(Dashboard)</span></span>. Chaque module activé y pose sa carte, avec un bouton <span lang="fr"><span class="ui">Ouvrir</span></span><span lang="en"><span class="ui">Ouvrir</span> <span class="gloss">(Open)</span></span> qui mène à son onglet pour agir.</span><span lang="en">The Guildkeep window opens on the <span lang="fr"><span class="ui tab">Tableau</span></span><span lang="en"><span class="ui tab">Tableau</span> <span class="gloss">(Dashboard)</span></span> tab. Each enabled module puts its card there, with an <span lang="fr"><span class="ui">Ouvrir</span></span><span lang="en"><span class="ui">Ouvrir</span> <span class="gloss">(Open)</span></span> button leading to its tab to act.</span></p>
+<div class="table-wrap"><table class="doc-table">
+	<thead><tr><th scope="col"><span lang="fr">Carte</span><span lang="en">Card</span></th><th scope="col"><span lang="fr">Ce qu'elle montre</span><span lang="en">What it shows</span></th></tr></thead>
+	<tbody>
+		<tr><td><span lang="fr">Prochains événements</span><span lang="en">Upcoming events</span></td><td><span lang="fr">Les trois prochains, avec ta réponse ; « à répondre » quand tu n'as pas encore répondu.</span><span lang="en">The next three, with your answer; "à répondre" (to answer) when you haven't answered yet.</span></td></tr>
+		<tr><td><span lang="fr">Vie de la guilde</span><span lang="en">Guild news</span></td><td><span lang="fr">Les annonces non lues, la dernière annonce et l'avancement des objectifs en cours.</span><span lang="en">Unread announcements, the latest announcement and the progress of ongoing goals.</span></td></tr>
+		<tr><td><span lang="fr">Commandes de craft</span><span lang="en">Craft orders</span></td><td><span lang="fr">Tes commandes en cours, ce que tu dois fabriquer pour les autres, les demandes ouvertes que tu sais faire.</span><span lang="en">Your active orders, what you have to craft for others, the open requests you can make.</span></td></tr>
+		<tr><td><span lang="fr">Présence en raid</span><span lang="en">Raid attendance</span></td><td><span lang="fr">Ton taux sur 30 jours et ton butin épique sur 90 jours (dès ton premier raid de guilde relevé).</span><span lang="en">Your 30-day rate and your epic loot over 90 days (from your first recorded guild raid).</span></td></tr>
+		<tr><td><span lang="fr">Profils et accueil</span><span lang="en">Profiles and onboarding</span></td><td><span lang="fr">Ton profil s'il est vide, ton accueil s'il n'est pas fini, les arrivées de la semaine ; pour les officiers, les nouveaux à accueillir.</span><span lang="en">Your profile if it's empty, your onboarding if it isn't finished, this week's arrivals; for officers, the newcomers to welcome.</span></td></tr>
+		<tr><td><span lang="fr">Quêtes de groupe</span><span lang="en">Group quests</span></td><td><span lang="fr">Tes quêtes élites, de donjon ou de raid, et combien d'entre elles d'autres membres ont aussi.</span><span lang="en">Your elite, dungeon or raid quests, and how many other members also have.</span></td></tr>
+	</tbody>
+</table></div>
+<aside class="callout c-note"><p class="callout-title"><span lang="fr">Bon à savoir</span><span lang="en">Good to know</span></p><p><span lang="fr">Une carte n'apparaît que si son module est activé et a quelque chose à dire. Si un module tombe en panne, sa carte manque simplement : les autres s'affichent.</span><span lang="en">A card only shows if its module is enabled and has something to say. If a module fails, its card is simply missing: the others still show.</span></p></aside>
+<figure class="mock" data-ui>
+	<div class="wow">
+		<div class="bar-line"><span class="gold">Bonjour Maël</span><span style="margin-left:auto" class="wow-button">Thème : Or de guilde</span></div>
+		<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 12px">
+			<div style="border-left:2px solid #f0c25e;padding:6px 10px"><div class="gold">Prochains événements</div><div class="soft" style="font-size:12px">28/11 20:30 · Cœur du Magma · Présent<br>30/11 21:00 · Onyxia · à répondre</div></div>
+			<div style="border-left:2px solid #f0c25e;padding:6px 10px"><div class="gold">Vie de la guilde</div><div class="soft" style="font-size:12px">1 annonce non lue<br>Flacons : 124/200 (62 %)</div></div>
+		</div>
+	</div>
+	<figcaption><span lang="fr">Maquette : deux cartes du tableau de bord.</span><span lang="en">Mock-up: two dashboard cards.</span></figcaption>
+</figure>
+<aside class="callout c-tip"><p class="callout-title"><span lang="fr">Astuce</span><span lang="en">Tip</span></p><p><span lang="fr"><strong>Tutoriel en jeu.</strong> À la première ouverture du <span lang="fr"><span class="ui tab">Tableau</span></span><span lang="en"><span class="ui tab">Tableau</span> <span class="gloss">(Dashboard)</span></span>, un tutoriel pas à pas présente les cartes, le bouton <span lang="fr"><span class="ui">Ouvrir</span></span><span lang="en"><span class="ui">Ouvrir</span> <span class="gloss">(Open)</span></span> et le bouton de thème. Tu peux le passer, et le revoir avec <span class="ui">?</span> ou <code>/gkeep tuto</code>.</span><span lang="en"><strong>In-game tutorial.</strong> The first time you open the <span lang="fr"><span class="ui tab">Tableau</span></span><span lang="en"><span class="ui tab">Tableau</span> <span class="gloss">(Dashboard)</span></span>, a step-by-step tutorial presents the cards, the <span lang="fr"><span class="ui">Ouvrir</span></span><span lang="en"><span class="ui">Ouvrir</span> <span class="gloss">(Open)</span></span> button and the theme button. You can skip it, and replay it with <span class="ui">?</span> or <code>/gkeep tuto</code>.</span></p></aside>
+</section>
+
+<section>
+<h2 id="tutoriel"><a class="anchor" href="#tutoriel" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Tutoriel : commencer sa soirée par le tableau</span><span lang="en">Tutorial: start your evening with the dashboard</span></h2>
+<div class="rights"><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></div>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu</span><span lang="en">In game</span></span><span lang="fr">Onglet Tableau</span><span lang="en">Dashboard tab</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Tape <code>/gkeep</code> (ou <code>/gkeep tableau</code>) : la fenêtre s'ouvre sur le <span lang="fr"><span class="ui tab">Tableau</span></span><span lang="en"><span class="ui tab">Tableau</span> <span class="gloss">(Dashboard)</span></span>.</span><span lang="en">Type <code>/gkeep</code> (or <code>/gkeep tableau</code>): the window opens on the <span lang="fr"><span class="ui tab">Tableau</span></span><span lang="en"><span class="ui tab">Tableau</span> <span class="gloss">(Dashboard)</span></span>.</span></li>
+		<li><span lang="fr">Un événement marqué « à répondre » ? Clique <span lang="fr"><span class="ui">Ouvrir</span></span><span lang="en"><span class="ui">Ouvrir</span> <span class="gloss">(Open)</span></span> sur la carte <span lang="fr"><span class="ui opt">Prochains événements</span></span><span lang="en"><span class="ui opt">Prochains événements</span> <span class="gloss">(Upcoming events)</span></span> et réponds.</span><span lang="en">An event marked "à répondre" (to answer)? Click <span lang="fr"><span class="ui">Ouvrir</span></span><span lang="en"><span class="ui">Ouvrir</span> <span class="gloss">(Open)</span></span> on the <span lang="fr"><span class="ui opt">Prochains événements</span></span><span lang="en"><span class="ui opt">Prochains événements</span> <span class="gloss">(Upcoming events)</span></span> card and answer.</span></li>
+		<li><span lang="fr">Des annonces non lues ? <span lang="fr"><span class="ui">Ouvrir</span></span><span lang="en"><span class="ui">Ouvrir</span> <span class="gloss">(Open)</span></span> sur <span lang="fr"><span class="ui opt">Vie de la guilde</span></span><span lang="en"><span class="ui opt">Vie de la guilde</span> <span class="gloss">(Guild news)</span></span>. Une commande à fabriquer ? <span lang="fr"><span class="ui">Ouvrir</span></span><span lang="en"><span class="ui">Ouvrir</span> <span class="gloss">(Open)</span></span> sur <span lang="fr"><span class="ui opt">Commandes de craft</span></span><span lang="en"><span class="ui opt">Commandes de craft</span> <span class="gloss">(Craft orders)</span></span>.</span><span lang="en">Unread announcements? <span lang="fr"><span class="ui">Ouvrir</span></span><span lang="en"><span class="ui">Ouvrir</span> <span class="gloss">(Open)</span></span> on <span lang="fr"><span class="ui opt">Vie de la guilde</span></span><span lang="en"><span class="ui opt">Vie de la guilde</span> <span class="gloss">(Guild news)</span></span>. An order to craft? <span lang="fr"><span class="ui">Ouvrir</span></span><span lang="en"><span class="ui">Ouvrir</span> <span class="gloss">(Open)</span></span> on <span lang="fr"><span class="ui opt">Commandes de craft</span></span><span lang="en"><span class="ui opt">Commandes de craft</span> <span class="gloss">(Craft orders)</span></span>.</span></li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span><span lang="fr">Avec /gkeep tableau voir</span><span lang="en">With /gkeep home show</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Tape <code class="d"><span lang="fr">/gkeep tableau voir</span><span lang="en">/gkeep home show</span></code> : le même résumé, visible de toi seul, pour tes personnages liés.</span><span lang="en">Type <code class="d"><span lang="fr">/gkeep tableau voir</span><span lang="en">/gkeep home show</span></code>: the same summary, visible only to you, for your linked characters.</span></li>
+		<li><span lang="fr">Chaque section indique la commande pour aller plus loin, par exemple <code class="d"><span lang="fr">/gkeep evenement inscription</span><span lang="en">/gkeep event signup</span></code>.</span><span lang="en">Each section gives the command to go further, for example <code class="d"><span lang="fr">/gkeep evenement inscription</span><span lang="en">/gkeep event signup</span></code>.</span></li>
+	</ol>
+</div>
+</section>
+
+<section>
+<h2 id="themes"><a class="anchor" href="#themes" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Tutoriel : changer de thème</span><span lang="en">Tutorial: change the theme</span></h2>
+<div class="rights"><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></div>
+<p><span lang="fr">Cinq thèmes : <span lang="fr"><span class="ui opt">Or de guilde</span></span><span lang="en"><span class="ui opt">Or de guilde</span> <span class="gloss">(Guild gold)</span></span> (par défaut), <span lang="fr"><span class="ui opt">Argent</span></span><span lang="en"><span class="ui opt">Argent</span> <span class="gloss">(Silver)</span></span>, <span lang="fr"><span class="ui opt">Émeraude</span></span><span lang="en"><span class="ui opt">Émeraude</span> <span class="gloss">(Emerald)</span></span>, <span lang="fr"><span class="ui opt">Arcanes</span></span><span lang="en"><span class="ui opt">Arcanes</span> <span class="gloss">(Arcane)</span></span> et <span lang="fr"><span class="ui opt">Braise</span></span><span lang="en"><span class="ui opt">Braise</span> <span class="gloss">(Ember)</span></span>. Ils changent la couleur d'accent (titres, onglet choisi, soulignements), la surbrillance et les barres d'avancement. Les couleurs qui ont un sens (classes, qualité des objets, vert pour « fait », rouge pour « absent ») ne changent pas.</span><span lang="en">Five themes: <span lang="fr"><span class="ui opt">Or de guilde</span></span><span lang="en"><span class="ui opt">Or de guilde</span> <span class="gloss">(Guild gold)</span></span> (default), <span lang="fr"><span class="ui opt">Argent</span></span><span lang="en"><span class="ui opt">Argent</span> <span class="gloss">(Silver)</span></span>, <span lang="fr"><span class="ui opt">Émeraude</span></span><span lang="en"><span class="ui opt">Émeraude</span> <span class="gloss">(Emerald)</span></span>, <span lang="fr"><span class="ui opt">Arcanes</span></span><span lang="en"><span class="ui opt">Arcanes</span> <span class="gloss">(Arcane)</span></span> and <span lang="fr"><span class="ui opt">Braise</span></span><span lang="en"><span class="ui opt">Braise</span> <span class="gloss">(Ember)</span></span>. They change the accent color (titles, selected tab, underlines), the highlight and the progress bars. Colors that carry meaning (classes, item quality, green for "done", red for "absent") don't change.</span></p>
+<ol class="steps">
+	<li><span lang="fr">Sur le <span lang="fr"><span class="ui tab">Tableau</span></span><span lang="en"><span class="ui tab">Tableau</span> <span class="gloss">(Dashboard)</span></span>, clique <span lang="fr"><span class="ui">Thème : …</span></span><span lang="en"><span class="ui">Thème : …</span> <span class="gloss">(Theme: …)</span></span> en haut à droite : chaque clic passe au thème suivant.</span><span lang="en">On the <span lang="fr"><span class="ui tab">Tableau</span></span><span lang="en"><span class="ui tab">Tableau</span> <span class="gloss">(Dashboard)</span></span>, click <span lang="fr"><span class="ui">Thème : …</span></span><span lang="en"><span class="ui">Thème : …</span> <span class="gloss">(Theme: …)</span></span> at the top right: each click moves to the next theme.</span></li>
+	<li><span lang="fr">Ou choisis-le dans Options &gt; Extensions &gt; Guildkeep, section <span lang="fr"><span class="ui opt">Apparence</span></span><span lang="en"><span class="ui opt">Apparence</span> <span class="gloss">(Appearance)</span></span>, ou tape <code>/gkeep theme arcanes</code> (sans nom : le thème actuel et la liste).</span><span lang="en">Or pick it in Options &gt; AddOns &gt; Guildkeep, <span lang="fr"><span class="ui opt">Apparence</span></span><span lang="en"><span class="ui opt">Apparence</span> <span class="gloss">(Appearance)</span></span> section, or type <code>/gkeep theme arcanes</code> (with no name: the current theme and the list).</span></li>
+	<li><span lang="fr">Le thème s'applique aussitôt aux textes ; fais un <code>/reload</code> pour repeindre aussi les cadres déjà dessinés.</span><span lang="en">The theme applies right away to texts; do a <code>/reload</code> to repaint frames already drawn too.</span></li>
+</ol>
+<aside class="callout c-note"><p class="callout-title"><span lang="fr">Bon à savoir</span><span lang="en">Good to know</span></p><p><span lang="fr">Le thème est un réglage d'affichage propre à chaque joueur : il reste dans ton jeu (pour tous tes personnages du compte) et n'est jamais envoyé. Il n'a donc pas de commande Discord.</span><span lang="en">The theme is a display setting of each player: it stays in your game (for all your characters on the account) and is never sent. So it has no Discord command.</span></p></aside>
+</section>
+<nav class="doc-pager" aria-label="Pages voisines / Adjacent pages">
+<a class="prev" href="/docs/compagnon.html" rel="prev"><small><span lang="fr">← Précédent</span><span lang="en">← Previous</span></small><b><span lang="fr">L'app compagnon</span><span lang="en">The companion app</span></b></a>
+<a class="next" href="/docs/metiers.html" rel="next"><small><span lang="fr">Suivant →</span><span lang="en">Next →</span></small><b><span lang="fr">Métiers</span><span lang="en">Professions</span></b></a>
+</nav>
+</main>
+</div>
+
+<footer class="foot">
+	<span><span lang="fr">Outil de guilde pour WoW: Forever</span><span lang="en">Guild tool for WoW: Forever</span></span>
+	<nav aria-label="Pied de page / Footer">
+		<a href="/"><span lang="fr">Accueil</span><span lang="en">Home</span></a>
+		<a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a>
+		<a href="/confidentialite.html"><span lang="fr">Confidentialité</span><span lang="en">Privacy</span></a>
+		<a href="/conditions.html"><span lang="fr">Conditions</span><span lang="en">Terms</span></a>
+		<a href="https://github.com/AntoineRenoux/GuildProfessions" rel="noopener"><span lang="fr">Code source</span><span lang="en">Source code</span></a>
+	</nav>
+	<span class="end">2026</span>
+	<span class="credit"><span lang="fr">World of Warcraft est une marque de Blizzard Entertainment ; Guildkeep n'y est pas affilié.</span><span lang="en">World of Warcraft is a trademark of Blizzard Entertainment; Guildkeep is not affiliated.</span></span>
+</footer>
+
+<script src="/site.js?v=6" defer></script>
+</body>
+</html>

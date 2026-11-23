@@ -49,6 +49,7 @@ internal sealed class TestModules : IDisposable
 	public QuestService Quests => Get<QuestService>();
 	public CommunicationService Communication => Get<CommunicationService>();
 	public ProfileService Profiles => Get<ProfileService>();
+	public HomeDashboard Home => Get<HomeDashboard>();
 	public UploadIngestion Ingestion => Get<UploadIngestion>();
 	public ExportBuilder Export => Get<ExportBuilder>();
 	public IDataVersion DataVersion => Get<IDataVersion>();

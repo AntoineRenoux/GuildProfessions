@@ -1169,7 +1169,24 @@ local function RefreshEvents()
 	RefreshDetail(selected)
 end
 
+-- Carte du tableau de bord : les trois prochains événements et ta réponse.
+local function HomeCard(cards)
+	local lines = {}
+	for _, event in ipairs(E.GetEvents()) do
+		if #lines < 3 and E.IsUpcoming(event) then
+			local response = event.mine and event.mine.response or "none"
+			local answer = response == "none" and Paint(COLOR.gold, "à répondre") or E.RESPONSE_LABELS[response]
+			lines[#lines + 1] = ("%s · %s · %s"):format(date("%d/%m %H:%M", event.startsAt or 0), event.title or "?", answer)
+		end
+	end
+	if #lines == 0 then
+		lines[1] = "Aucun événement à venir."
+	end
+	cards[#cards + 1] = { id = "events", order = 10, title = "Prochains événements", lines = lines, tab = "tabEvents" }
+end
+
 GP.Modules.Define("events", "ui", function(ctx)
+	ctx:On("HOME_CARDS", HomeCard)
 	DefinePopups()
 	ctx:Slash({ "events", "event", "evenements" }, function()
 		GP.ShowTab("tabEvents")

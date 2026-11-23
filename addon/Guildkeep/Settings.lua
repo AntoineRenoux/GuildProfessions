@@ -60,6 +60,29 @@ local function CreateSetting(cat, def)
 	return setting
 end
 
+-- Thème de couleur : une liste déroulante, appliquée aussitôt (complet après /reload).
+local function AddThemeDropdown(cat, layout)
+	local createDropdown = Settings.CreateDropdown or Settings.CreateDropDown
+	if not (GP.Theme and createDropdown and Settings.RegisterProxySetting and Settings.CreateControlTextContainer) then
+		return
+	end
+	if layout and CreateSettingsListSectionHeaderInitializer then
+		layout:AddInitializer(CreateSettingsListSectionHeaderInitializer("Apparence", "Couleurs de la fenêtre Guildkeep."))
+	end
+	local stringType = Settings.VarType and Settings.VarType.String or "string"
+	local setting = Settings.RegisterProxySetting(cat, "GUILDKEEP_THEME", stringType, "Thème", GP.Theme.DEFAULT,
+		function() return GP.Theme.Current().id end,
+		function(value) GP.Theme.Set(value) end)
+	local function Options()
+		local container = Settings.CreateControlTextContainer()
+		for _, def in ipairs(GP.Theme.LIST) do
+			container:Add(def.id, def.label)
+		end
+		return container:GetData()
+	end
+	createDropdown(cat, setting, Options, "Couleur d'accent, surbrillance et barres de la fenêtre Guildkeep.")
+end
+
 local function RegisterModernPanel()
 	local createCheckbox = Settings and (Settings.CreateCheckbox or Settings.CreateCheckBox)
 	if not (Settings and Settings.RegisterVerticalLayoutCategory and Settings.RegisterAddOnCategory and createCheckbox) then
@@ -87,6 +110,7 @@ local function RegisterModernPanel()
 			end
 		end
 	end
+	pcall(AddThemeDropdown, cat, layout)
 	if layout and CreateSettingsButtonInitializer then
 		pcall(function()
 			layout:AddInitializer(CreateSettingsButtonInitializer("Appliquer les changements", "Recharger l'interface",
@@ -147,9 +171,23 @@ local function BuildPanel()
 		previous = check
 	end
 
+	local theme = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
+	theme:SetSize(180, 22)
+	theme:SetPoint("TOPLEFT", previous, "BOTTOMLEFT", 2, -16)
+	local function ThemeText()
+		theme:SetText("Thème : " .. (GP.Theme and GP.Theme.Current().label or "?"))
+	end
+	theme:SetScript("OnClick", function()
+		if GP.Theme then
+			GP.Theme.Next()
+			ThemeText()
+		end
+	end)
+	ThemeText()
+
 	local reload = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
 	reload:SetSize(180, 22)
-	reload:SetPoint("TOPLEFT", previous, "BOTTOMLEFT", 2, -16)
+	reload:SetPoint("TOPLEFT", theme, "BOTTOMLEFT", 0, -8)
 	reload:SetText("Recharger l'interface")
 	reload:SetScript("OnClick", ReloadInterface)
 

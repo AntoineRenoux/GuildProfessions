@@ -14,6 +14,7 @@ public static class ArtisanatModule
 		services.AddSingleton<ICraftOrderNotifier, DiscordCraftOrderNotifier>();
 		services.AddUploadContributor<ArtisanatUploadContributor>();
 		services.AddExportContributor<ArtisanatExportContributor>();
+		services.AddHomeContributor<ArtisanatHomeCard>();
 		return services;
 	}
 }

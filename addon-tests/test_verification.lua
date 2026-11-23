@@ -200,7 +200,7 @@ end
 -- 1. Matrice d'échec ------------------------------------------------------------------------
 
 for _, id in ipairs(T.MODULES) do
-	for _, part in ipairs({ "data", "ui" }) do
+	for _, part in ipairs(T.PARTS[id] or { "data", "ui" }) do
 		for _, when in ipairs({ "après", "avant" }) do
 			test(("échec de %s/%s %s branchement : message, retrait complet, les autres fonctionnent"):format(id, part, when), function()
 				local game = T.Game(Options())

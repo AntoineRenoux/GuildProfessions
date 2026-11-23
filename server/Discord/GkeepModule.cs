@@ -68,8 +68,10 @@ public sealed partial class GkeepModule(RosterService roster, NicknameSync nickn
 				"`/gkeep reserve set`, `clear`, `list` your loot reserves (high, normal, low) · `hard`, `lock` for officers · `/gkeep event duty` and `checklist` to prepare the night\n" +
 				"`/gkeep event list` shows upcoming raids and outings · `show` the details and roster · `signup` to answer (role, spec, character) · `create`, `edit`, `cancel`, `restore` and `place` (confirmed, standby, bench) for the organizer and officers"))
 			.AddField(l.T("Profils et accueil", "Profiles and onboarding"), l.T(
+				"`/gkeep tableau voir` ton tableau de bord : événements, annonces, commandes, présence et accueil\n" +
 				"`/gkeep profil voir` le profil d'un joueur · `modifier` rôles, disponibilités, note · `arrivees` arrivées et départs · `versions` versions de l'addon (officier)\n" +
 				"`/gkeep accueil etat` ta liste d'accueil · `fait` / `annuler` une étape · `liste` et `relancer` les nouveaux (officier)",
+				"`/gkeep home show` your dashboard: events, announcements, orders, attendance and onboarding\n" +
 				"`/gkeep profile show` a player's profile · `edit` roles, availability, note · `arrivals` arrivals and departures · `versions` addon versions (officer)\n" +
 				"`/gkeep welcome status` your onboarding checklist · `done` / `undo` a step · `list` and `remind` newcomers (officer)"))
 			.AddField(l.T("En jeu", "In game"), l.T(

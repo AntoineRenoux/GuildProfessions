@@ -941,6 +941,14 @@
 				"name": "relancer",
 				"description": "Publier un rappel qui mentionne les nouveaux en retard (officier)"
 			}
+		},
+		"home": {
+			"name": "tableau",
+			"description": "Ton tableau de bord : ce qui arrive et ce qui t'attend",
+			"show": {
+				"name": "voir",
+				"description": "Événements à venir, vie de la guilde, tes commandes, ta présence et ton accueil"
+			}
 		}
 	}
 }

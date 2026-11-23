@@ -11,6 +11,7 @@ public static class PresenceModule
 		services.AddScoped<AttendanceService>();
 		services.AddUploadContributor<PresenceUploadContributor>();
 		services.AddExportContributor<PresenceExportContributor>();
+		services.AddHomeContributor<PresenceHomeCard>();
 		return services;
 	}
 }

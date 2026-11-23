@@ -13,6 +13,7 @@ public static class EvenementsModule
 		services.AddScoped<IEvenements, EvenementsQueries>();
 		services.AddUploadContributor<EvenementsUploadContributor>();
 		services.AddExportContributor<EvenementsExportContributor>();
+		services.AddHomeContributor<EvenementsHomeCard>();
 		return services;
 	}
 }

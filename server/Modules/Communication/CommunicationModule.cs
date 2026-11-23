@@ -13,6 +13,7 @@ public static class CommunicationModule
 		services.AddSingleton<IAnnouncementPublisher, DiscordAnnouncementPublisher>();
 		services.AddUploadContributor<CommunicationUploadContributor>();
 		services.AddExportContributor<CommunicationExportContributor>();
+		services.AddHomeContributor<CommunicationHomeCard>();
 		return services;
 	}
 }
