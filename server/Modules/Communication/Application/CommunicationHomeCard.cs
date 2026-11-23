@@ -27,6 +27,6 @@ public sealed class CommunicationHomeCard(CommunicationService communication, Bo
 		{
 			return null;
 		}
-		return new HomeCard(l.T("Vie de la guilde", "Guild news"), lines, l.T("/gkeep annonce liste", "/gkeep announce list"));
+		return new HomeCard(l.T("Vie de la guilde", "Guild news"), lines, l.T("/gkeep-guilde annonce liste", "/gkeep-guild announce list"));
 	}
 }

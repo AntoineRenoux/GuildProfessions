@@ -27,6 +27,6 @@ public sealed class EvenementsHomeCard(EventService events, IAnnuaire annuaire, 
 		{
 			lines.Add(l.T("Aucun événement à venir.", "No upcoming event."));
 		}
-		return new HomeCard(l.T("Prochains événements", "Upcoming events"), lines, l.T("/gkeep evenement inscription", "/gkeep event signup"));
+		return new HomeCard(l.T("Prochains événements", "Upcoming events"), lines, l.T("/gkeep-raid evenement inscription", "/gkeep-raid event signup"));
 	}
 }

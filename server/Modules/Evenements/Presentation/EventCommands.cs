@@ -8,11 +8,11 @@ using GuildProfessions.Server.Shared;
 
 namespace GuildProfessions.Server.Discord;
 
-// Commandes Discord du module Événements : /gkeep event (événements, roster, soirée) ; /gkeep reserve est dans ReserveCommands.cs.
+// Commandes Discord du module Événements : /gkeep-raid event (événements, roster, soirée) ; /gkeep-raid reserve est dans ReserveCommands.cs.
 // Le groupe reste imbriqué dans GkeepModule (Discord ne connaît les sous-commandes que
 // par imbrication) et garde son namespace : même hiérarchie /gkeep <groupe> <commande>,
 // mêmes clés de traduction dans commands.fr.json. Il ne dépend que de son module.
-public sealed partial class GkeepModule
+public sealed partial class GkeepRaidModule
 {
 	// ---- Événements -------------------------------------------------------------------------
 
@@ -29,8 +29,8 @@ public sealed partial class GkeepModule
 			if (list.Count == 0)
 			{
 				await FollowupAsync(l.T(
-					"Aucun événement à venir. Crées-en un avec `/gkeep evenement creer` ou en jeu (`/gkeep events`).",
-					"No upcoming events. Create one with `/gkeep event create` or in game (`/gkeep events`)."), ephemeral: true);
+					"Aucun événement à venir. Crées-en un avec `/gkeep-raid evenement creer` ou en jeu (`/gkeep events`).",
+					"No upcoming events. Create one with `/gkeep-raid event create` or in game (`/gkeep events`)."), ephemeral: true);
 				return;
 			}
 			var embed = new EmbedBuilder().WithColor(Green).WithTitle(l.T("Événements à venir", "Upcoming events"));
@@ -38,8 +38,8 @@ public sealed partial class GkeepModule
 			{
 				embed.AddField($"#{e.Id} · {e.Title}", Describe(e, l));
 			}
-			embed.WithFooter(l.T("Détail et roster : /gkeep evenement voir · s'inscrire : /gkeep evenement inscription",
-				"Details and roster: /gkeep event show · sign up: /gkeep event signup"));
+			embed.WithFooter(l.T("Détail et roster : /gkeep-raid evenement voir · s'inscrire : /gkeep-raid evenement inscription",
+				"Details and roster: /gkeep-raid event show · sign up: /gkeep-raid event signup"));
 			await FollowupAsync(embed: embed.Build(), ephemeral: true);
 		}
 
@@ -295,11 +295,11 @@ public sealed partial class GkeepModule
 			if (reserves.Count > 0 || e.HardReserves.Any(h => h.Active))
 			{
 				embed.AddField(l.T("Réservations", "Reserves"), l.T(
-					$"{reserves.Count} réservation(s){(e.ReservesLocked ? " · 🔒 verrouillées" : "")} — détail : /gkeep reserve liste",
-					$"{reserves.Count} reserve(s){(e.ReservesLocked ? " · 🔒 locked" : "")} — details: /gkeep reserve list"));
+					$"{reserves.Count} réservation(s){(e.ReservesLocked ? " · 🔒 verrouillées" : "")} — détail : /gkeep-raid reserve liste",
+					$"{reserves.Count} reserve(s){(e.ReservesLocked ? " · 🔒 locked" : "")} — details: /gkeep-raid reserve list"));
 			}
-			embed.WithFooter(l.T($"{EventLabels.KindLabel(e.Kind, l)} · placer : /gkeep evenement placer · inviter le raid : en jeu",
-				$"{EventLabels.KindLabel(e.Kind, l)} · place players: /gkeep event place · invite the raid: in game"));
+			embed.WithFooter(l.T($"{EventLabels.KindLabel(e.Kind, l)} · placer : /gkeep-raid evenement placer · inviter le raid : en jeu",
+				$"{EventLabels.KindLabel(e.Kind, l)} · place players: /gkeep-raid event place · invite the raid: in game"));
 			return embed;
 		}
 

@@ -150,19 +150,19 @@ public sealed class ArchitectureTests
 		Assert.True(leaks.Count == 0, $"{host} dépend des internes d'un module : {string.Join(", ", leaks)}");
 	}
 
-	/// <summary>Groupe Discord imbriqué dans /gkeep → module auquel il appartient.</summary>
+	/// <summary>Groupe Discord imbriqué dans /gkeep, /gkeep-raid ou /gkeep-guild → module auquel il appartient.</summary>
 	private static readonly Dictionary<string, string> GroupModules = new()
 	{
 		[nameof(GkeepModule.ProfessionGroup)] = "Annuaire",
 		[nameof(GkeepModule.OrderGroup)] = "Artisanat",
-		[nameof(GkeepModule.EventGroup)] = "Evenements",
-		[nameof(GkeepModule.ReserveGroup)] = "Evenements",
-		[nameof(GkeepModule.AttendanceGroup)] = "Presence",
-		[nameof(GkeepModule.LootGroup)] = "Presence",
+		[nameof(GkeepRaidModule.EventGroup)] = "Evenements",
+		[nameof(GkeepRaidModule.ReserveGroup)] = "Evenements",
+		[nameof(GkeepRaidModule.AttendanceGroup)] = "Presence",
+		[nameof(GkeepRaidModule.LootGroup)] = "Presence",
 		[nameof(GkeepModule.QuestGroup)] = "Quetes",
-		[nameof(GkeepModule.AnnounceGroup)] = "Communication",
-		[nameof(GkeepModule.HandbookGroup)] = "Communication",
-		[nameof(GkeepModule.GoalGroup)] = "Communication",
+		[nameof(GkeepGuildModule.AnnounceGroup)] = "Communication",
+		[nameof(GkeepGuildModule.HandbookGroup)] = "Communication",
+		[nameof(GkeepGuildModule.GoalGroup)] = "Communication",
 		[nameof(GkeepModule.ProfileGroup)] = "Profils",
 		[nameof(GkeepModule.WelcomeGroup)] = "Profils",
 		[nameof(GkeepModule.HomeGroup)] = "Tableau",
@@ -190,7 +190,7 @@ public sealed class ArchitectureTests
 	[MemberData(nameof(DiscordGroups))]
 	public void DiscordGroup_Should_OnlyUseItsOwnModule(string group, string module)
 	{
-		var type = typeof(GkeepModule).GetNestedType(group)!;
+		var type = DiscordRoots.Group(group);
 		var services = type.GetConstructors().SelectMany(c => c.GetParameters()).Select(p => p.ParameterType);
 		var handlers = type.GetMethods()
 			.SelectMany(m => m.GetParameters())
@@ -214,8 +214,7 @@ public sealed class ArchitectureTests
 	[Fact]
 	public void EveryDiscordGroup_Should_BeMappedToAModule()
 	{
-		var groups = typeof(GkeepModule).GetNestedTypes()
-			.Where(t => typeof(IInteractionModuleBase).IsAssignableFrom(t))
+		var groups = DiscordRoots.Groups()
 			.Select(t => t.Name)
 			.Order();
 

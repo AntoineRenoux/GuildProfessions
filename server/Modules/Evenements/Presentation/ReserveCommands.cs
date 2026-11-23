@@ -7,11 +7,11 @@ using GuildProfessions.Server.Shared;
 
 namespace GuildProfessions.Server.Discord;
 
-// Commandes Discord du module Événements : /gkeep reserve (réservations de butin).
+// Commandes Discord du module Événements : /gkeep-raid reserve (réservations de butin).
 // Le groupe reste imbriqué dans GkeepModule (Discord ne connaît les sous-commandes que
 // par imbrication) et garde son namespace : même hiérarchie /gkeep <groupe> <commande>,
 // mêmes clés de traduction dans commands.fr.json. Il ne dépend que de son module.
-public sealed partial class GkeepModule
+public sealed partial class GkeepRaidModule
 {
 	// ---- Réservations de butin --------------------------------------------------------------
 
@@ -90,7 +90,7 @@ public sealed partial class GkeepModule
 			}
 			if (groups.Count == 0 && hard.Count == 0)
 			{
-				embed.WithDescription(l.T("Aucune réservation pour l'instant : `/gkeep reserve poser`.", "No reserves yet: `/gkeep reserve set`."));
+				embed.WithDescription(l.T("Aucune réservation pour l'instant : `/gkeep-raid reserve poser`.", "No reserves yet: `/gkeep-raid reserve set`."));
 			}
 			else if (e.ReservesLocked)
 			{
