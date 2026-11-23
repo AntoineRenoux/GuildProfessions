@@ -438,9 +438,32 @@ local function BuildProfessionsTab(frame, parent)
 	frame.emptyHint:SetPoint("TOP", frame.emptyText, "BOTTOM", 0, -6)
 	frame.emptyHint:SetWidth(380)
 	frame.emptyHint:SetJustifyH("CENTER")
+
+	parent.tutorialTargets = { search = searchBox, level = levelBox, professions = profLabel, headers = headerBar, list = professionsList }
 end
 
 GP.Modules.Define("professions", "ui", function(ctx)
+	local function Target(name)
+		return function() return GP.Tutorial.Target("tabProfessions", name) end
+	end
+	ctx:Tutorial("professions", {
+		tab = "tabProfessions",
+		title = "Métiers",
+		steps = {
+			{ title = "L'annuaire des artisans", text = "Chaque ligne est un personnage de la guilde et l'un de ses métiers, avec son niveau et ses recettes connues." },
+			{ target = Target("search"), title = "Recherche de patron",
+				text = "Tape une partie du nom d'une recette (« flacon », « robe ») : seuls les artisans qui la connaissent restent dans la liste." },
+			{ target = Target("level"), title = "Niveau minimum",
+				text = "Ne garde que les artisans à partir de ce niveau de métier. Laisse vide pour tout voir." },
+			{ target = Target("professions"), title = "Métier",
+				text = "La liste des métiers de la guilde, avec le nombre d'artisans : clique sur l'un d'eux pour filtrer, reclique pour tout réafficher." },
+			{ target = Target("headers"), title = "Trier",
+				text = "Clique sur un en-tête (Personnage, Métier, Niveau, Recettes) pour trier ; un second clic inverse l'ordre." },
+			{ target = Target("list"), title = "Voir et Commander",
+				text = "« Voir » (ou un clic sur la ligne) ouvre les recettes de l'artisan. Shift-clic sur une recette la colle dans le chat ; « Commander » prépare une commande avec les composants à lui envoyer." },
+			{ title = "Tes propres métiers", text = "Tes métiers sont relevés à la connexion, tes recettes quand tu ouvres ta fenêtre de métier. Ils partent vers la guilde à ta prochaine déconnexion ou /reload." },
+		},
+	})
 	ctx:AddTab({
 		label = "Métiers",
 		key = "tabProfessions",

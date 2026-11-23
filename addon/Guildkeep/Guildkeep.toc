@@ -18,6 +18,7 @@ Comm.lua
 Scanner.lua
 UIKit.lua
 MainFrame.lua
+Tutorial.lua
 GuildTab.lua
 Settings.lua
 

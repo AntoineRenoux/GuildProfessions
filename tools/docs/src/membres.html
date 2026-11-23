@@ -1,0 +1,54 @@
+title: module Membres
+description: Le module Membres de Guildkeep : le roster de la guilde, qui est en ligne, et la fiche de chaque membre avec son équipement et un aperçu 3D.
+lead: [[Le roster de la guilde et la fiche de chaque membre : classe, niveau, métiers, équipement relevé et aperçu 3D. Pour préparer un raid ou conseiller un nouveau.||The guild roster and every member's sheet: class, level, professions, scanned gear and a 3D preview. To prepare a raid or advise a newcomer.]]
+---
+<section>
+<h2 id="a-quoi-ca-sert">[[À quoi ça sert||What it's for]]</h2>
+<p>[[L'onglet {t:Membres||Members} montre à gauche la liste des personnages de la guilde (icône de classe, point vert s'il est en ligne, niveau), et à droite la fiche du membre choisi : son niveau, sa classe, son niveau d'objet moyen, ses métiers et les 19 emplacements de son équipement autour d'un aperçu 3D.||The {t:Membres||Members} tab shows the guild's characters on the left (class icon, a green dot when online, level), and on the right the chosen member's sheet: level, class, average item level, professions and the 19 gear slots around a 3D preview.]]</p>
+<figure class="mock" data-ui>
+	<div class="wow">
+		<div class="wow-title"><b>Maël Corvin</b><small>Niveau 60 · Mage · ilvl moyen 71 · en ligne</small></div>
+		<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:12px">
+			<span class="wow-ico" style="width:auto;height:40px;border:1px solid #a335ee">T</span><span class="wow-ico" style="width:auto;height:40px;border:1px solid #0070dd">C</span><span class="wow-ico" style="width:auto;height:40px;border:1px solid #a335ee">É</span><span class="wow-ico" style="width:auto;height:40px;border:1px solid #1eff00">D</span>
+		</div>
+		<div style="padding:0 12px 12px" class="soft">Alchimie 300 · Herboristerie 286 · modèle générique + équipement relevé · glisser pour tourner</div>
+	</div>
+	<figcaption>[[Maquette : la fiche d'un membre (quelques emplacements d'équipement).||Mock-up: a member's sheet (a few gear slots).]]</figcaption>
+</figure>
+
+{tip}<p>[[<strong>Tutoriel en jeu.</strong> À la première ouverture de l'onglet {t:Membres||Members}, un tutoriel pas à pas encadre chaque bouton et explique à quoi il sert. Tu peux le passer à tout moment, et le revoir avec le bouton {b:?} en haut à droite de la fenêtre ou {g:/gkeep tuto}.||<strong>In-game tutorial.</strong> The first time you open the {t:Membres||Members} tab, a step-by-step tutorial highlights every button and explains what it does. You can skip it at any time, and replay it with the {b:?} button at the top right of the window or {g:/gkeep tuto}.]]</p>{/tip}
+</section>
+
+<section>
+<h2 id="consulter-une-fiche">[[Tutoriel : consulter la fiche d'un membre||Tutorial: look at a member's sheet]]</h2>
+<div class="rights">{who:all}</div>
+<div class="howto">
+	<h3><span class="where">[[En jeu||In game]]</span>[[Dans l'onglet Membres||In the Members tab]]</h3>
+	<ol class="steps">
+		<li>[[Ouvre {g:/gkeep}, onglet {t:Membres||Members}.||Open {g:/gkeep}, {t:Membres||Members} tab.]]</li>
+		<li>[[Tape un bout de nom dans {o:Chercher un membre||Search a member}, puis clique sur le personnage.||Type part of a name in {o:Chercher un membre||Search a member}, then click the character.]]</li>
+		<li>[[Survole un emplacement d'équipement pour l'infobulle de l'objet. {k:Maj}+clic met son lien dans le chat, {k:Ctrl}+clic l'essaie dans la cabine d'essayage.||Hover a gear slot for the item's tooltip. {k:Shift}+click links it in chat, {k:Ctrl}+click tries it on in the dressing room.]]</li>
+		<li>[[Clique sur un métier de la fiche pour ouvrir la liste de ses recettes.||Click a profession on the sheet to open its recipe list.]]</li>
+		<li>[[Fais glisser l'aperçu 3D pour le tourner.||Drag the 3D preview to rotate it.]]</li>
+	</ol>
+</div>
+{tip}<p>[[Pour un rendu fidèle (race, visage, coiffure), cible le joueur en jeu avant d'ouvrir sa fiche : la mention devient « rendu fidèle (cible) ». Sinon l'aperçu montre un modèle générique habillé de l'équipement relevé.||For a faithful render (race, face, hair), target the player in game before opening their sheet: the note becomes "rendu fidèle (cible)" (faithful render). Otherwise the preview shows a generic model wearing the scanned gear.]]</p>{/tip}
+</section>
+
+<section>
+<h2 id="releve-equipement">[[Tutoriel : mettre ton équipement à jour||Tutorial: update your gear]]</h2>
+<div class="rights">{who:self}</div>
+<div class="howto">
+	<h3><span class="where">[[En jeu||In game]]</span>[[Automatique||Automatic]]</h3>
+	<ol class="steps">
+		<li>[[Rien à faire : l'addon relève ce que tu portes à la connexion et à chaque changement d'équipement.||Nothing to do: the addon reads what you wear at login and at every gear change.]]</li>
+		<li>[[Le relevé part vers la guilde à ta déconnexion ou à un {g:/reload} (par le compagnon ou le canal manuel).||The scan goes to the guild at logout or on a {g:/reload} (through the companion or the manual channel).]]</li>
+	</ol>
+</div>
+{note}<p>[[Les autres membres voient donc ton équipement tel qu'il était à ta dernière déconnexion. « Vide ou pas encore relevé » sur un emplacement veut dire que rien n'y était, ou que ce membre n'a pas encore l'addon.||Other members therefore see your gear as it was at your last logout. "Vide ou pas encore relevé" (empty or not scanned yet) on a slot means nothing was there, or that member doesn't have the addon yet.]]</p>{/note}
+</section>
+
+<section>
+<h2 id="discord">[[Sur Discord||On Discord]]</h2>
+<p>[[Le roster n'a pas de commande propre ; on retrouve les personnages par leurs métiers ({d:/gkeep metier liste||/gkeep profession list}), leur présence ({d:/gkeep presence joueur||/gkeep attendance player}) ou leurs quêtes. Ce qui relie un membre Discord à ses personnages, c'est {d:/gkeep lier||/gkeep link} et {d:/gkeep principal||/gkeep main} : voir <a href="/docs/installation.html#lier">Relier ton compte Discord</a>.||The roster has no command of its own; you find characters through their professions ({d:/gkeep metier liste||/gkeep profession list}), attendance ({d:/gkeep presence joueur||/gkeep attendance player}) or quests. What ties a Discord member to their characters is {d:/gkeep lier||/gkeep link} and {d:/gkeep principal||/gkeep main}: see <a href="/docs/installation.html#lier">Link your Discord account</a>.]]</p>
+</section>

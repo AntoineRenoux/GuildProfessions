@@ -410,6 +410,7 @@ local function BuildMembersTab(frame, parent)
 	detail:SetPoint("BOTTOMRIGHT", -4, 4)
 	detail:Hide()
 	frame.memberDetail = detail
+	parent.tutorialTargets = { search = search, list = membersList, detail = detail }
 
 	detail.title = Label(detail, nil, "GameFontNormalLarge")
 	detail.title:SetPoint("TOPLEFT", 14, -10)
@@ -461,6 +462,22 @@ local function BuildMembersTab(frame, parent)
 end
 
 GP.Modules.Define("members", "ui", function(ctx)
+	local function Target(name)
+		return function() return GP.Tutorial.Target("tabMembers", name) end
+	end
+	ctx:Tutorial("members", {
+		tab = "tabMembers",
+		title = "Membres",
+		steps = {
+			{ target = Target("search"), title = "Chercher un membre", text = "Tape une partie du nom d'un personnage pour filtrer la liste." },
+			{ target = Target("list"), title = "La liste des membres",
+				text = "Classe, niveau et présence : point vert en ligne, gris hors ligne. Clique sur un membre pour ouvrir sa fiche." },
+			{ target = Target("detail"), title = "La fiche du membre",
+				text = "L'équipement relevé à sa dernière déconnexion, emplacement par emplacement (survole un objet pour le détail), et son apparence en 3D : fais glisser pour la tourner.",
+				hint = "Sélectionne d'abord un membre dans la liste pour voir sa fiche." },
+			{ title = "Ton équipement", text = "Le tien est relevé automatiquement, et mis à jour dès que tu changes d'objet." },
+		},
+	})
 	ctx:AddTab({
 		label = "Membres",
 		key = "tabMembers",

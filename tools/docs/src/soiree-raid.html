@@ -1,0 +1,122 @@
+title: module Soirée de raid
+description: Le module Soirée de raid de Guildkeep : réservations de butin haute, normale et basse, réservations d'office, verrouillage, maître du butin, rôles de soutien et checklist.
+lead: [[Tout ce qui se prépare avant de lancer le premier boss : les réservations de butin, les rôles de soutien et une liste de ce qui manque encore. Ce module s'ajoute au détail de chaque événement.||Everything you prepare before pulling the first boss: loot reserves, support duties and a list of what's still missing. This module plugs into each event's details.]]
+---
+<section>
+<h2 id="a-quoi-ca-sert">[[À quoi ça sert||What it's for]]</h2>
+<p>[[La Soirée de raid n'a pas d'onglet à elle : elle ajoute deux sections au bas du détail d'un événement, à côté de {o:Roster} : {o:Réserves||Reserves} et {o:Soirée||Night}. Elle nécessite le module <a href="/docs/evenements.html">Événements</a>.||Raid night has no tab of its own: it adds two sections at the bottom of an event's details, next to {o:Roster}: {o:Réserves||Reserves} and {o:Soirée||Night}. It needs the <a href="/docs/evenements.html">Events</a> module.]]</p>
+<ul>
+	<li>[[<strong>Réservations</strong> : chaque joueur réserve <strong>un objet par priorité</strong>, haute, normale et basse. La section affiche ensuite toutes les réservations, objet par objet, avec les conflits (« 2 sur l'objet »).||<strong>Reserves</strong>: each player reserves <strong>one item per priority</strong>, high, normal and low. The section then shows every reserve, item by item, with conflicts ("2 sur l'objet", 2 on the item).]]</li>
+	<li>[[<strong>Réservation d'office</strong> : l'organisateur ou un officier peut réserver un objet pour la guilde ou pour quelqu'un ; plus personne ne peut alors le réserver.||<strong>Hard reserve</strong>: the organizer or an officer can reserve an item for the guild or for someone; nobody else can reserve it then.]]</li>
+	<li>[[<strong>Verrouillage</strong> : une fois verrouillées, les réservations sont figées et <strong>seules celles des joueurs confirmés comptent</strong>.||<strong>Locking</strong>: once locked, reserves are frozen and <strong>only confirmed players' reserves count</strong>.]]</li>
+	<li>[[<strong>Rôles de soutien</strong> : chef de raid, invocateur, consommables, robot de réparation ; et la <strong>checklist</strong> « Avant le raid ».||<strong>Support duties</strong>: raid lead, summoner, consumables, repair bot; and the "Avant le raid" (before the raid) <strong>checklist</strong>.]]</li>
+</ul>
+<figure class="mock" data-ui>
+	<div class="wow">
+		<div class="bar-line"><span class="chip">Roster</span><span class="chip is-on">Réserves (14)</span><span class="chip">Soirée</span></div>
+		<div style="padding:8px 12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="gold">Mes réservations</span><span class="soft" style="font-size:12px">Un objet par priorité. Les officiers verrouillent avant le raid.</span><span style="margin-left:auto" class="wow-button">Verrouiller</span></div>
+		<div class="wow-row"><span class="wow-ico">H</span><span>Haute · <span class="q-epic">Lame du vent sanglant</span></span><span class="acts"><span class="wow-button">Réserver</span><span class="wow-button">Retirer</span></span></div>
+		<div class="wow-row"><span class="wow-ico">N</span><span>Normale · <span class="soft">shift-clic sur un objet</span></span><span class="acts"><span class="wow-button">Réserver</span><span class="wow-button">Retirer</span></span></div>
+		<div style="padding:8px 12px 4px" class="gold">Toutes les réservations</div>
+		<div class="wow-row"><span class="wow-ico">⚔</span><span><span class="q-epic">Lame du vent sanglant</span><br><span class="soft" style="font-size:12px"><span class="bad">2 sur l'objet · </span>Tamsin Rouage (haute), Sorcha Tanne (normale)</span></span><span class="wow-button">D'office</span></div>
+	</div>
+	<figcaption>[[Maquette : la section Réserves d'un raid, vue par un officier (noms d'objets inventés).||Mock-up: a raid's Reserves section, as an officer sees it (made-up item names).]]</figcaption>
+</figure>
+
+{tip}<p>[[<strong>Tutoriel en jeu.</strong> À la première ouverture de l'onglet {t:Événements||Events}, un tutoriel pas à pas encadre chaque bouton et explique à quoi il sert. Tu peux le passer à tout moment, et le revoir avec le bouton {b:?} en haut à droite de la fenêtre ou {g:/gkeep tuto}. Celui de la soirée de raid suit celui des événements et ouvre lui-même les sections Réserves et Soirée.||<strong>In-game tutorial.</strong> The first time you open the {t:Événements||Events} tab, a step-by-step tutorial highlights every button and explains what it does. You can skip it at any time, and replay it with the {b:?} button at the top right of the window or {g:/gkeep tuto}. The raid night one follows the events one and opens the Reserves and Raid night sections itself.]]</p>{/tip}
+</section>
+
+<section>
+<h2 id="reserver">[[Tutoriel : réserver un objet||Tutorial: reserve an item]]</h2>
+<div class="rights">{who:self}</div>
+<div class="howto">
+	<h3><span class="where">[[En jeu||In game]]</span>[[Section Réserves||Reserves section]]</h3>
+	<ol class="steps">
+		<li>[[Onglet {t:Événements||Events}, ouvre le raid, puis la section {o:Réserves||Reserves} en bas du détail.||{t:Événements||Events} tab, open the raid, then the {o:Réserves||Reserves} section at the bottom of the details.]]</li>
+		<li>[[Clique dans le champ de la priorité voulue (Haute, Normale ou Basse), puis fais {k:Maj}+clic sur l'objet : dans tes sacs, le chat, une fenêtre de butin ou un atlas de donjon. Tu peux aussi taper son numéro (par exemple 19019).||Click in the field of the priority you want (Haute, Normale or Basse: high, normal, low), then {k:Shift}+click the item: in your bags, chat, a loot window or a dungeon atlas. You can also type its number (for example 19019).]]</li>
+		<li>[[Clique {b:Réserver||Reserve}. Un « ! » rouge signale un objet que ta classe ne peut pas utiliser.||Click {b:Réserver||Reserve}. A red "!" flags an item your class can't use.]]</li>
+		<li>[[Pour changer d'avis : {b:Retirer||Remove} sur la ligne, tant que ce n'est pas verrouillé.||To change your mind: {b:Retirer||Remove} on the row, as long as it isn't locked.]]</li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span>[[Avec /gkeep reserve poser||With /gkeep reserve set]]</h3>
+	<ol class="steps">
+		<li>[[{d:/gkeep reserve poser||/gkeep reserve set} : l'événement, la <code>[[priorite||priority]]</code> (Haute, Normale, Basse) et l'<code>[[objet||item]]</code> : son numéro, un lien contenant <code>item=19019</code>, ou une suggestion de la liste.||{d:/gkeep reserve poser||/gkeep reserve set}: the event, the <code>priority</code> (High, Normal, Low) and the <code>item</code>: its number, a link containing <code>item=19019</code>, or a suggestion from the list.]]</li>
+		<li>[[{d:/gkeep reserve liste||/gkeep reserve list} montre toutes les réservations de l'événement, avec les conflits ; {d:/gkeep reserve retirer||/gkeep reserve clear} retire la tienne.||{d:/gkeep reserve liste||/gkeep reserve list} shows all the event's reserves, with conflicts; {d:/gkeep reserve retirer||/gkeep reserve clear} removes yours.]]</li>
+	</ol>
+</div>
+{warn}<p>[[Un seul objet par priorité, et pas le même objet à deux priorités. Un objet réservé d'office ne peut plus être réservé. Une fois verrouillées, seul un officier ou l'organisateur peut encore corriger.||One item per priority, and not the same item at two priorities. A hard-reserved item can't be reserved anymore. Once locked, only an officer or the organizer can still correct things.]]</p>{/warn}
+</section>
+
+<section>
+<h2 id="pour-un-autre">[[Tutoriel : réserver pour un joueur sans addon||Tutorial: reserve for a player without the addon]]</h2>
+<div class="rights">{who:org}</div>
+<div class="howto">
+	<h3><span class="where">[[En jeu||In game]]</span>[[Le champ « Pour »||The "Pour" (for) field]]</h3>
+	<ol class="steps">
+		<li>[[Dans la section {o:Réserves||Reserves}, écris le nom du joueur dans le champ {o:Pour||For}, à côté de {b:Verrouiller||Lock}.||In the {o:Réserves||Reserves} section, type the player's name in the {o:Pour||For} field, next to {b:Verrouiller||Lock}.]]</li>
+		<li>[[Les lignes Haute / Normale / Basse montrent maintenant ses réservations : réserve ou retire comme pour toi.||The High / Normal / Low rows now show their reserves: reserve or remove as you would for yourself.]]</li>
+		<li>[[Vide le champ {o:Pour||For} pour revenir à tes propres réservations.||Clear the {o:Pour||For} field to go back to your own reserves.]]</li>
+	</ol>
+</div>
+<p>[[Sur Discord : l'option <code>[[personnage||character]]</code> de {d:/gkeep reserve poser||/gkeep reserve set} et {d:/gkeep reserve retirer||/gkeep reserve clear}. Ça marche même verrouillé.||On Discord: the <code>character</code> option of {d:/gkeep reserve poser||/gkeep reserve set} and {d:/gkeep reserve retirer||/gkeep reserve clear}. It works even when locked.]]</p>
+</section>
+
+<section>
+<h2 id="d-office">[[Tutoriel : réserver un objet d'office||Tutorial: hard-reserve an item]]</h2>
+<div class="rights">{who:org}</div>
+<div class="howto">
+	<h3><span class="where">[[En jeu||In game]]</span>[[Le bouton D'office||The D'office (hard) button]]</h3>
+	<ol class="steps">
+		<li>[[Dans {o:Toutes les réservations||All reserves}, clique {b:D'office||Hard} sur la ligne de l'objet. Elle affiche « Réservé d'office » et les réservations des joueurs sur cet objet ne comptent plus.||In {o:Toutes les réservations||All reserves}, click {b:D'office||Hard} on the item's row. It now reads "Réservé d'office" (hard-reserved) and players' reserves on that item no longer count.]]</li>
+		<li>[[{b:Lever||Lift} annule la réservation d'office.||{b:Lever||Lift} cancels the hard reserve.]]</li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span>[[Avec /gkeep reserve ferme||With /gkeep reserve hard]]</h3>
+	<p>[[{d:/gkeep reserve ferme||/gkeep reserve hard} : l'événement, l'<code>[[objet||item]]</code>, et un <code>[[destinataire||holder]]</code> facultatif (qui le reçoit). Cela permet aussi de réserver d'office un objet que personne n'a encore réservé. {d:/gkeep reserve lever||/gkeep reserve unhard} lève la réservation.||{d:/gkeep reserve ferme||/gkeep reserve hard}: the event, the <code>item</code>, and an optional <code>holder</code> (who gets it). It also lets you hard-reserve an item nobody has reserved yet. {d:/gkeep reserve lever||/gkeep reserve unhard} lifts it.]]</p>
+</div>
+</section>
+
+<section>
+<h2 id="verrouiller">[[Tutoriel : verrouiller avant le raid||Tutorial: lock before the raid]]</h2>
+<div class="rights">{who:org}</div>
+<div class="howto">
+	<h3><span class="where">[[En jeu||In game]]</span>[[Le bouton Verrouiller||The Verrouiller (Lock) button]]</h3>
+	<ol class="steps">
+		<li>[[Confirme d'abord ton roster (voir <a href="/docs/evenements.html#creer-un-raid">Événements</a>) : au verrouillage, seules les réservations des confirmés comptent ; les autres sont marquées « ne compte pas : non confirmé ».||Confirm your roster first (see <a href="/docs/evenements.html#creer-un-raid">Events</a>): once locked, only confirmed players' reserves count; others are marked "ne compte pas : non confirmé" (doesn't count: not confirmed).]]</li>
+		<li>[[Clique {b:Verrouiller||Lock} dans la section {o:Réserves||Reserves}. Un cadenas apparaît sur le nom de la section.||Click {b:Verrouiller||Lock} in the {o:Réserves||Reserves} section. A padlock appears on the section name.]]</li>
+		<li>[[Si tu mènes déjà le raid, Guildkeep propose : « Passer le raid en maître du butin (toi) ? ». {b:Oui||Yes} te donne le butin à distribuer.||If you already lead the raid, Guildkeep asks: "Passer le raid en maître du butin (toi) ?" (switch to master looter, you). {b:Oui||Yes} hands you the loot to distribute.]]</li>
+		<li>[[{b:Déverrouiller||Unlock} rouvre les réservations.||{b:Déverrouiller||Unlock} reopens reserves.]]</li>
+	</ol>
+</div>
+<p>[[Sur Discord : {d:/gkeep reserve verrouiller||/gkeep reserve lock} et {d:/gkeep reserve deverrouiller||/gkeep reserve unlock}.||On Discord: {d:/gkeep reserve verrouiller||/gkeep reserve lock} and {d:/gkeep reserve deverrouiller||/gkeep reserve unlock}.]]</p>
+</section>
+
+<section>
+<h2 id="soutien">[[Tutoriel : confier les rôles de soutien||Tutorial: assign support duties]]</h2>
+<div class="rights">{who:org}</div>
+<div class="howto">
+	<h3><span class="where">[[En jeu||In game]]</span>[[Section Soirée||Night section]]</h3>
+	<ol class="steps">
+		<li>[[Ouvre la section {o:Soirée||Night}. Sous « Rôles de soutien » : {o:Chef de raid||Raid lead}, {o:Invocateur||Summoner}, {o:Consommables||Consumables}, {o:Robot de réparation||Repair bot}, chacun avec son titulaire ou « personne ».||Open the {o:Soirée||Night} section. Under "Rôles de soutien" (support duties): {o:Chef de raid||Raid lead}, {o:Invocateur||Summoner}, {o:Consommables||Consumables}, {o:Robot de réparation||Repair bot}, each with its holder or "personne" (nobody).]]</li>
+		<li>[[Tape le nom (ou le début du prénom) d'un inscrit dans le champ de la ligne, puis {b:Confier||Assign}.||Type a sign-up's name (or the start of the first name) in the row's field, then {b:Confier||Assign}.]]</li>
+		<li>[[{b:Libérer||Free} retire la personne. Un titulaire qui n'est plus confirmé est signalé « (non confirmé) ».||{b:Libérer||Free} removes the person. A holder who's no longer confirmed is flagged "(non confirmé)".]]</li>
+	</ol>
+</div>
+<p>[[Sur Discord : {d:/gkeep evenement soutien||/gkeep event duty} : l'événement, le <code>role</code> de soutien et le <code>[[personnage||character]]</code> (vide pour libérer le poste).||On Discord: {d:/gkeep evenement soutien||/gkeep event duty}: the event, the <code>duty</code> and the <code>character</code> (empty to free the post).]]</p>
+</section>
+
+<section>
+<h2 id="checklist">[[Tutoriel : vérifier la checklist « Avant le raid »||Tutorial: check the "before the raid" checklist]]</h2>
+<div class="rights">{who:all}</div>
+<p>[[Dans la section {o:Soirée||Night}, « Avant le raid » liste ce qui manque encore, les points bloquants en premier :||In the {o:Soirée||Night} section, "Avant le raid" lists what's still missing, blocking points first:]]</p>
+<ul>
+	<li>[[un rôle sous son objectif (« Il manque 2 soigneurs confirmés (6/8) ») ;||a role below its target ("Il manque 2 soigneurs confirmés (6/8)", 2 confirmed healers missing);]]</li>
+	<li>[[des présents pas encore placés, des « peut-être », des confirmés hors ligne ;||attending players not placed yet, tentatives, confirmed players offline;]]</li>
+	<li>[[des objets réservés par plusieurs joueurs ;||items reserved by several players;]]</li>
+	<li>[[un rôle de soutien vide (le chef de raid est bloquant) ou tenu par un non-confirmé ;||an empty support duty (raid lead is blocking) or held by someone not confirmed;]]</li>
+	<li>[[des réservations pas encore verrouillées.||reserves not locked yet.]]</li>
+</ul>
+<p>[[Quand tout va bien : « Tout est prêt. ». Sur Discord : {d:/gkeep evenement checklist||/gkeep event checklist}. Pour poster le résumé sur Discord, {b:Copier la soirée||Copy the night} met le roster, les rôles de soutien et les réservations en texte.||When all is well: "Tout est prêt." (all set). On Discord: {d:/gkeep evenement checklist||/gkeep event checklist}. To post the summary on Discord, {b:Copier la soirée||Copy the night} puts the roster, support duties and reserves into text.]]</p>
+</section>

@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guildkeep · module Événements</title>
+<meta name="description" content="Le module Événements de Guildkeep : créer un raid, s&#x27;inscrire avec son rôle, constituer le roster, inviter les confirmés et les rappels, en jeu et sur Discord.">
+<link rel="preload" href="/fonts/cinzel-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/alegreya-sans-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/site.css?v=6">
+<script>document.documentElement.classList.add('js');try{var l=localStorage.getItem('gk-lang')||((navigator.language||'fr').toLowerCase().indexOf('fr')===0?'fr':'en');document.documentElement.lang=l}catch(e){}</script>
+</head>
+<body>
+<svg class="sprite" aria-hidden="true" focusable="false"><defs><linearGradient id="gk-gold" gradientUnits="userSpaceOnUse" x1="0" y1="4" x2="0" y2="44"><stop offset="0" stop-color="#fff1bf"/><stop offset=".45" stop-color="#f0c25e"/><stop offset="1" stop-color="#9a6a20"/></linearGradient>
+<symbol id="i-metiers" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M6 15h25c1 5 5 8 11 8v4H31l3 9H14l3-9h-3C9 27 6 22 6 15z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M36 6l4 4M33 9l4 4"/></symbol>
+<symbol id="i-membres" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M24 5c9 0 15 7 15 16v14l-6 6h-4V27h-10v14h-4l-6-6V21C9 12 15 5 24 5z"/><path fill="#1a1208" d="M15 20h18v4H15z"/></symbol>
+<symbol id="i-artisanat" viewBox="0 0 48 48"><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M10 38L36 12"/><ellipse fill="none" stroke="url(#gk-gold)" stroke-width="3.2" cx="37.5" cy="10.5" rx="3.2" ry="1.8" transform="rotate(-45 37.5 10.5)"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="1.8" d="M39 9c6 6-4 12-10 16s-14 10-8 17"/></symbol>
+<symbol id="i-evenements" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M7 11h34v30H7z"/><path fill="#1a1208" d="M10 19h28v19H10z"/><path fill="url(#gk-gold)" d="M13 22h6v5h-6zM21 22h6v5h-6zM29 22h6v5h-6zM13 30h6v5h-6zM21 30h6v5h-6z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M15 6v8M33 6v8"/></symbol>
+<symbol id="i-raid" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M24 4l17 6v12c0 11-7 18-17 22C14 40 7 33 7 22V10z"/><path fill="#1a1208" d="M24 11l11 4v8c0 7-4 12-11 15z"/></symbol>
+<symbol id="i-presence" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M10 6h22l7 7v29H10z"/><path fill="none" stroke="#1a1208" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.4" d="M16 26l5 5 10-11"/></symbol>
+<symbol id="i-quetes" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M20 5h8l-1.5 26h-5zM24 35a4 4 0 1 1 0 8 4 4 0 0 1 0-8z"/></symbol>
+<symbol id="i-communication" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M6 19h8l20-11v32L14 29H6z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M39 17c3 4 3 10 0 14M12 30l3 11h6l-3-11"/></symbol>
+<symbol id="i-install" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M17 12c0-5 3-8 7-8s7 3 7 8h-3c0-3-2-5-4-5s-4 2-4 5z"/><path fill="url(#gk-gold)" d="M10 14h28l4 26a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4z"/><path fill="#1a1208" d="M20 22h8v6h-8z"/></symbol>
+<symbol id="i-compagnon" viewBox="0 0 48 48"><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="4" d="M6 34c6-14 30-14 36 0M12 34V22M24 34V18M36 34V22"/><path fill="url(#gk-gold)" d="M4 34h40v5H4z"/></symbol>
+<symbol id="i-cmd" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M5 9h38v30H5z"/><path fill="#1a1208" d="M8 15h32v21H8z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M14 32l8-13M26 32h8"/></symbol>
+<symbol id="i-faq" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M8 6h26l6 6v30H8z"/><path fill="none" stroke="#1a1208" stroke-linecap="round" stroke-width="3.4" d="M19 19c0-4 3-6 5.5-6s5.5 2 5.5 5.5-5 4-5 8M24.5 32v.5"/></symbol>
+</defs></svg>
+<header class="topbar">
+	<a class="wordmark" href="/">Guildkeep</a>
+	<nav aria-label="Navigation">
+		<a href="/docs/" aria-current="page"><span lang="fr">Documentation</span><span lang="en">Docs</span></a>
+		<a class="hide-phone" href="/docs/faq.html"><span lang="fr">Aide</span><span lang="en">Help</span></a>
+		<div class="lang-switch" role="group" aria-label="Langue / Language">
+			<button type="button" data-set-lang="fr" aria-pressed="true">FR</button>
+			<button type="button" data-set-lang="en" aria-pressed="false">EN</button>
+		</div>
+		<a class="button invite-link hide-phone" href="/#mise-en-place"><span lang="fr">Ajouter à Discord</span><span lang="en">Add to Discord</span></a>
+	</nav>
+</header>
+
+<div class="doc">
+<aside class="doc-nav" aria-label="Sommaire / Contents"><details open><summary><span><span lang="fr">Sommaire</span><span lang="en">Contents</span></span><i class="plus" aria-hidden="true"></i></summary><div>
+<p class="doc-nav-label"><span lang="fr">Démarrer</span><span lang="en">Getting started</span></p><ul>
+<li><a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a>
+</li>
+<li><a href="/docs/installation.html"><span lang="fr">Installer Guildkeep</span><span lang="en">Installing Guildkeep</span></a>
+</li>
+<li><a href="/docs/compagnon.html"><span lang="fr">L'app compagnon</span><span lang="en">The companion app</span></a>
+</li>
+</ul>
+<p class="doc-nav-label"><span lang="fr">Modules</span><span lang="en">Modules</span></p><ul>
+<li><a href="/docs/metiers.html"><span lang="fr">Métiers</span><span lang="en">Professions</span></a>
+</li>
+<li><a href="/docs/membres.html"><span lang="fr">Membres</span><span lang="en">Members</span></a>
+</li>
+<li><a href="/docs/artisanat.html"><span lang="fr">Artisanat</span><span lang="en">Crafting orders</span></a>
+</li>
+<li><a href="/docs/evenements.html" aria-current="page"><span lang="fr">Événements</span><span lang="en">Events</span></a>
+<ul>
+<li><a href="#a-quoi-ca-sert"><span lang="fr">À quoi ça sert</span><span lang="en">What it's for</span></a></li>
+<li><a href="#creer-un-raid"><span lang="fr">Tutoriel : créer un raid et constituer le roster</span><span lang="en">Tutorial: create a raid and build the roster</span></a></li>
+<li><a href="#s-inscrire"><span lang="fr">Tutoriel : t'inscrire à un événement</span><span lang="en">Tutorial: sign up for an event</span></a></li>
+<li><a href="#inviter"><span lang="fr">Tutoriel : inviter les confirmés et partager le roster</span><span lang="en">Tutorial: invite confirmed players and share the roster</span></a></li>
+<li><a href="#rappels"><span lang="fr">Tutoriel : les rappels</span><span lang="en">Tutorial: reminders</span></a></li>
+<li><a href="#modifier"><span lang="fr">Tutoriel : modifier, annuler ou rétablir un événement</span><span lang="en">Tutorial: edit, cancel or restore an event</span></a></li>
+</ul>
+</li>
+<li><a href="/docs/soiree-raid.html"><span lang="fr">Soirée de raid</span><span lang="en">Raid night</span></a>
+</li>
+<li><a href="/docs/presence.html"><span lang="fr">Présence et butin</span><span lang="en">Attendance and loot</span></a>
+</li>
+<li><a href="/docs/quetes.html"><span lang="fr">Quêtes</span><span lang="en">Quests</span></a>
+</li>
+<li><a href="/docs/communication.html"><span lang="fr">Communication</span><span lang="en">Communication</span></a>
+</li>
+</ul>
+<p class="doc-nav-label"><span lang="fr">Référence</span><span lang="en">Reference</span></p><ul>
+<li><a href="/docs/commandes.html"><span lang="fr">Commandes Discord</span><span lang="en">Discord commands</span></a>
+</li>
+<li><a href="/docs/faq.html"><span lang="fr">FAQ et dépannage</span><span lang="en">FAQ and troubleshooting</span></a>
+</li>
+</ul>
+</div></details></aside>
+<main class="doc-main" id="contenu">
+<nav class="crumbs" aria-label="Fil d'Ariane / Breadcrumb"><ol class="crumbs-list"><li><a href="/"><span lang="fr">Accueil</span><span lang="en">Home</span></a></li><li><a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a></li><li aria-current="page"><span lang="fr">Événements</span><span lang="en">Events</span></li></ol></nav>
+<h1><span lang="fr">Événements</span><span lang="en">Events</span></h1>
+<p class="lead"><span lang="fr">Raids, donjons, JcJ ou sorties : on crée l'événement, chacun répond avec son rôle, l'organisateur bâtit le roster et invite les confirmés en un clic. Tout se fait en jeu ou sur Discord, au choix.</span><span lang="en">Raids, dungeons, PvP or outings: create the event, everyone answers with their role, the organizer builds the roster and invites confirmed players in one click. All in game or on Discord, as you like.</span></p>
+<div class="rule" aria-hidden="true"><i></i></div>
+<section>
+<h2 id="a-quoi-ca-sert"><a class="anchor" href="#a-quoi-ca-sert" aria-hidden="true" tabindex="-1">#</a><span lang="fr">À quoi ça sert</span><span lang="en">What it's for</span></h2>
+<p><span lang="fr">L'onglet <span lang="fr"><span class="ui tab">Événements</span></span><span lang="en"><span class="ui tab">Événements</span> <span class="gloss">(Events)</span></span> affiche les événements à venir en <span lang="fr"><span class="ui opt">Liste</span></span><span lang="en"><span class="ui opt">Liste</span> <span class="gloss">(List)</span></span> ou en <span lang="fr"><span class="ui opt">Calendrier</span></span><span lang="en"><span class="ui opt">Calendrier</span> <span class="gloss">(Calendar)</span></span> (un mois, les flèches pour changer). La case <span lang="fr"><span class="ui opt">Passés</span></span><span lang="en"><span class="ui opt">Passés</span> <span class="gloss">(Past)</span></span> montre aussi ceux des deux dernières semaines. Le chiffre de l'onglet compte les événements qui attendent ta réponse.</span><span lang="en">The <span lang="fr"><span class="ui tab">Événements</span></span><span lang="en"><span class="ui tab">Événements</span> <span class="gloss">(Events)</span></span> tab shows upcoming events as a <span lang="fr"><span class="ui opt">Liste</span></span><span lang="en"><span class="ui opt">Liste</span> <span class="gloss">(List)</span></span> or a <span lang="fr"><span class="ui opt">Calendrier</span></span><span lang="en"><span class="ui opt">Calendrier</span> <span class="gloss">(Calendar)</span></span> (one month, arrows to change). The <span lang="fr"><span class="ui opt">Passés</span></span><span lang="en"><span class="ui opt">Passés</span> <span class="gloss">(Past)</span></span> box also shows those from the last two weeks. The tab's number counts events awaiting your answer.</span></p>
+<p><span lang="fr">Cliquer un événement ouvre son détail : ta réponse, la composition par rôle face à l'objectif, puis le roster, rangé en <em>Confirmés</em>, <em>Remplaçants</em>, <em>Banc</em>, <em>Présents, à placer</em>, <em>Peut-être</em> et <em>Absents</em>.</span><span lang="en">Clicking an event opens its details: your answer, the composition by role against the target, then the roster, sorted into <em>Confirmés</em> (confirmed), <em>Remplaçants</em> (standby), <em>Banc</em> (bench), <em>Présents, à placer</em> (attending, to place), <em>Peut-être</em> (tentative) and <em>Absents</em> (not attending).</span></p>
+<figure class="mock" data-ui>
+	<div class="wow">
+		<div class="wow-title"><b>Cœur du Magma</b><small>Raid · vendredi 29 novembre 2026 à 20:45 · organisé par Bragg Ferrefond</small></div>
+		<div style="padding:10px 12px;background:rgba(255,255,255,0.03)"><div class="gold" style="font-size:13px">Ta réponse <span class="soft">· Ta place : Confirmé</span></div>
+			<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:6px"><span class="wow-button" style="background:#2a2318">Tank</span><span class="wow-button">Soigneur</span><span class="wow-button" style="background:#2a2318">DPS mêlée</span><span class="wow-button" style="background:#2a2318">DPS distance</span><span style="margin-left:auto;display:flex;gap:2px"><span class="wow-button">Présent</span><span class="wow-button" style="background:#2a2318">Peut-être</span><span class="wow-button" style="background:#2a2318">Absent</span></span></div></div>
+		<div style="padding:8px 12px" class="soft">Tank <span class="ok">2/2</span> (3 prés.) · Soigneur <span class="bad">6/8</span> (6 prés.) · Mêlée 9/10 · Distance 11/12</div>
+		<div class="wow-row"><span class="wow-ico">C</span><span><span style="color:#C69B6D">Bragg Ferrefond</span> <span class="soft">· Tank · Protection</span></span><span class="acts"><span class="wow-button">Remplaçant</span><span class="wow-button">Banc</span><span class="wow-button">Retirer</span></span></div>
+		<div class="wow-row"><span class="wow-ico">?</span><span><span style="color:#FFFFFF">Aurèle Vesper</span> <span class="soft">· Soigneur · « en retard de 15 min »</span></span><span class="acts"><span class="wow-button">Confirmer</span><span class="wow-button">Remplaçant</span><span class="wow-button">Banc</span></span></div>
+		<div style="padding:8px 12px;display:flex;gap:4px;flex-wrap:wrap;border-top:1px solid #3a2f1c"><span class="soft" style="margin-right:auto">☐ Me rappeler 30 min avant</span><span class="wow-button">Rappeler</span><span class="wow-button">Copier le roster</span><span class="wow-button">Inviter les confirmés</span></div>
+	</div>
+	<figcaption><span lang="fr">Maquette : le détail d'un raid vu par l'organisateur, avec des données d'exemple.</span><span lang="en">Mock-up: a raid's details as the organizer sees them, with sample data.</span></figcaption>
+</figure>
+
+<aside class="callout c-tip"><p class="callout-title"><span lang="fr">Astuce</span><span lang="en">Tip</span></p><p><span lang="fr"><strong>Tutoriel en jeu.</strong> À la première ouverture de l'onglet <span lang="fr"><span class="ui tab">Événements</span></span><span lang="en"><span class="ui tab">Événements</span> <span class="gloss">(Events)</span></span>, un tutoriel pas à pas encadre chaque bouton et explique à quoi il sert. Tu peux le passer à tout moment, et le revoir avec le bouton <span class="ui">?</span> en haut à droite de la fenêtre ou <code>/gkeep tuto</code>.</span><span lang="en"><strong>In-game tutorial.</strong> The first time you open the <span lang="fr"><span class="ui tab">Événements</span></span><span lang="en"><span class="ui tab">Événements</span> <span class="gloss">(Events)</span></span> tab, a step-by-step tutorial highlights every button and explains what it does. You can skip it at any time, and replay it with the <span class="ui">?</span> button at the top right of the window or <code>/gkeep tuto</code>.</span></p></aside>
+</section>
+
+<section>
+<h2 id="creer-un-raid"><a class="anchor" href="#creer-un-raid" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Tutoriel : créer un raid et constituer le roster</span><span lang="en">Tutorial: create a raid and build the roster</span></h2>
+<div class="rights"><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span> <span lang="fr">pour créer ;</span><span lang="en">to create;</span> <span class="badge b-org"><span lang="fr">Organisateur ou officier</span><span lang="en">Organizer or officer</span></span> <span lang="fr">pour le roster</span><span lang="en">for the roster</span></div>
+<p><span lang="fr">N'importe quel membre peut créer un événement : il en devient l'organisateur. Ensuite, lui et les officiers sont seuls à pouvoir le modifier et placer les joueurs.</span><span lang="en">Any member can create an event and becomes its organizer. After that, only they and officers can edit it and place players.</span></p>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu</span><span lang="en">In game</span></span><span lang="fr">Créer l'événement</span><span lang="en">Create the event</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Onglet <span lang="fr"><span class="ui tab">Événements</span></span><span lang="en"><span class="ui tab">Événements</span> <span class="gloss">(Events)</span></span>, clique <span lang="fr"><span class="ui">Nouveau</span></span><span lang="en"><span class="ui">Nouveau</span> <span class="gloss">(New)</span></span>. (En mode <span lang="fr"><span class="ui opt">Calendrier</span></span><span lang="en"><span class="ui opt">Calendrier</span> <span class="gloss">(Calendar)</span></span>, clique d'abord le jour voulu : la date sera pré-remplie.)</span><span lang="en"><span lang="fr"><span class="ui tab">Événements</span></span><span lang="en"><span class="ui tab">Événements</span> <span class="gloss">(Events)</span></span> tab, click <span lang="fr"><span class="ui">Nouveau</span></span><span lang="en"><span class="ui">Nouveau</span> <span class="gloss">(New)</span></span>. (In <span lang="fr"><span class="ui opt">Calendrier</span></span><span lang="en"><span class="ui opt">Calendrier</span> <span class="gloss">(Calendar)</span></span> mode, click the day first: the date is pre-filled.)</span></li>
+		<li><span lang="fr">Remplis le <span lang="fr"><span class="ui opt">Titre</span></span><span lang="en"><span class="ui opt">Titre</span> <span class="gloss">(Title)</span></span> (« Cœur du Magma »), choisis le <span class="ui opt">Type</span> : <span class="ui">Raid</span>, <span lang="fr"><span class="ui">Donjon</span></span><span lang="en"><span class="ui">Donjon</span> <span class="gloss">(Dungeon)</span></span>, <span lang="fr"><span class="ui">JcJ</span></span><span lang="en"><span class="ui">JcJ</span> <span class="gloss">(PvP)</span></span> ou <span lang="fr"><span class="ui">Autre</span></span><span lang="en"><span class="ui">Autre</span> <span class="gloss">(Other)</span></span>.</span><span lang="en">Fill in the <span lang="fr"><span class="ui opt">Titre</span></span><span lang="en"><span class="ui opt">Titre</span> <span class="gloss">(Title)</span></span> ("Molten Core"), pick the <span class="ui opt">Type</span>: <span class="ui">Raid</span>, <span lang="fr"><span class="ui">Donjon</span></span><span lang="en"><span class="ui">Donjon</span> <span class="gloss">(Dungeon)</span></span>, <span lang="fr"><span class="ui">JcJ</span></span><span lang="en"><span class="ui">JcJ</span> <span class="gloss">(PvP)</span></span> or <span lang="fr"><span class="ui">Autre</span></span><span lang="en"><span class="ui">Autre</span> <span class="gloss">(Other)</span></span>.</span></li>
+		<li><span lang="fr"><span class="ui opt">Date</span> : jour / mois / année, puis heure : minutes, <strong>dans ton heure locale</strong>.</span><span lang="en"><span class="ui opt">Date</span>: day / month / year, then hour : minutes, <strong>in your local time</strong>.</span></li>
+		<li><span lang="fr"><span class="ui opt">Composition</span> : le nombre visé de tanks, soigneurs, DPS mêlée et DPS distance (0 : pas d'objectif). Ajoute des <span lang="fr"><span class="ui opt">Détails</span></span><span lang="en"><span class="ui opt">Détails</span> <span class="gloss">(Details)</span></span> si besoin (consommables, point de rendez-vous).</span><span lang="en"><span class="ui opt">Composition</span>: the target number of tanks, healers, melee and ranged DPS (0: no target). Add <span lang="fr"><span class="ui opt">Détails</span></span><span lang="en"><span class="ui opt">Détails</span> <span class="gloss">(Details)</span></span> if needed (consumables, meeting point).</span></li>
+		<li><span lang="fr">Clique <span lang="fr"><span class="ui">Enregistrer</span></span><span lang="en"><span class="ui">Enregistrer</span> <span class="gloss">(Save)</span></span>. Les membres connectés le voient aussitôt ; les autres à la prochaine synchro.</span><span lang="en">Click <span lang="fr"><span class="ui">Enregistrer</span></span><span lang="en"><span class="ui">Enregistrer</span> <span class="gloss">(Save)</span></span>. Online members see it at once; others at the next sync.</span></li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu</span><span lang="en">In game</span></span><span lang="fr">Constituer le roster</span><span lang="en">Build the roster</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Ouvre l'événement. Les inscrits « Présent » arrivent dans <em>Présents, à placer</em>.</span><span lang="en">Open the event. Players who answered "Présent" land in <em>Présents, à placer</em> (to place).</span></li>
+		<li><span lang="fr">Sur chaque ligne, clique <span lang="fr"><span class="ui">Confirmer</span></span><span lang="en"><span class="ui">Confirmer</span> <span class="gloss">(Confirm)</span></span>, <span lang="fr"><span class="ui">Remplaçant</span></span><span lang="en"><span class="ui">Remplaçant</span> <span class="gloss">(Standby)</span></span> ou <span lang="fr"><span class="ui">Banc</span></span><span lang="en"><span class="ui">Banc</span> <span class="gloss">(Bench)</span></span> ; <span lang="fr"><span class="ui">Retirer</span></span><span lang="en"><span class="ui">Retirer</span> <span class="gloss">(Remove)</span></span> le remet en attente. Survole un joueur pour son rôle, sa spé et sa note.</span><span lang="en">On each row, click <span lang="fr"><span class="ui">Confirmer</span></span><span lang="en"><span class="ui">Confirmer</span> <span class="gloss">(Confirm)</span></span>, <span lang="fr"><span class="ui">Remplaçant</span></span><span lang="en"><span class="ui">Remplaçant</span> <span class="gloss">(Standby)</span></span> or <span lang="fr"><span class="ui">Banc</span></span><span lang="en"><span class="ui">Banc</span> <span class="gloss">(Bench)</span></span>; <span lang="fr"><span class="ui">Retirer</span></span><span lang="en"><span class="ui">Retirer</span> <span class="gloss">(Remove)</span></span> puts them back on hold. Hover a player for their role, spec and note.</span></li>
+		<li><span lang="fr">Surveille la ligne de composition : <em>confirmés / objectif</em> par rôle, et le nombre de présents inscrits entre parenthèses.</span><span lang="en">Watch the composition line: <em>confirmed / target</em> per role, and the number of attending sign-ups in brackets.</span></li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span><span lang="fr">Créer et placer</span><span lang="en">Create and place</span></h3>
+	<ol class="steps">
+		<li><span lang="fr"><code class="d"><span lang="fr">/gkeep evenement creer</span><span lang="en">/gkeep event create</span></code> : <code><span lang="fr">titre</span><span lang="en">title</span></code>, <code>date</code> (29/11, 29/11/2026 ou 2026-11-29), <code><span lang="fr">heure</span><span lang="en">time</span></code> (20:45 ou 20h45), <code>type</code>, puis <code>tanks</code>, <code><span lang="fr">soigneurs</span><span lang="en">healers</span></code>, <code>melee</code>, <code><span lang="fr">distance</span><span lang="en">ranged</span></code> et <code>details</code>.</span><span lang="en"><code class="d"><span lang="fr">/gkeep evenement creer</span><span lang="en">/gkeep event create</span></code>: <code>title</code>, <code>date</code> (29/11, 29/11/2026 or 2026-11-29), <code>time</code> (20:45 or 20h45), <code>kind</code>, then <code>tanks</code>, <code>healers</code>, <code>melee</code>, <code>ranged</code> and <code>details</code>.</span></li>
+		<li><span lang="fr">Facultatif : <code><span lang="fr">organisateur</span><span lang="en">organizer</span></code> (ton principal par défaut) et <code><span lang="fr">fuseau</span><span lang="en">timezone</span></code> (Paris / Bruxelles, Londres, New York…; par défaut celui de la guilde).</span><span lang="en">Optional: <code>organizer</code> (your main by default) and <code>timezone</code> (Paris / Brussels, London, New York…; the guild's by default).</span></li>
+		<li><span lang="fr"><code class="d"><span lang="fr">/gkeep evenement placer</span><span lang="en">/gkeep event place</span></code> : l'événement, le <code><span lang="fr">personnage</span><span lang="en">character</span></code> (la liste propose les inscrits) et la <code>place</code> : Confirmé, Remplaçant, Banc ou Retirer.</span><span lang="en"><code class="d"><span lang="fr">/gkeep evenement placer</span><span lang="en">/gkeep event place</span></code>: the event, the <code>character</code> (the list suggests sign-ups) and the <code>placement</code>: Confirmed, Standby, Bench or Remove.</span></li>
+		<li><span lang="fr"><code class="d"><span lang="fr">/gkeep evenement voir</span><span lang="en">/gkeep event show</span></code> affiche le détail, la composition et le roster.</span><span lang="en"><code class="d"><span lang="fr">/gkeep evenement voir</span><span lang="en">/gkeep event show</span></code> displays the details, composition and roster.</span></li>
+	</ol>
+</div>
+<aside class="callout c-tip"><p class="callout-title"><span lang="fr">Astuce</span><span lang="en">Tip</span></p><p><span lang="fr">Sur Discord, l'heure s'affiche dans le fuseau de chaque lecteur. En jeu, la date saisie est celle de ton ordinateur.</span><span lang="en">On Discord, the time shows in each reader's own time zone. In game, the date you type is your computer's.</span></p></aside>
+</section>
+
+<section>
+<h2 id="s-inscrire"><a class="anchor" href="#s-inscrire" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Tutoriel : t'inscrire à un événement</span><span lang="en">Tutorial: sign up for an event</span></h2>
+<div class="rights"><span class="badge b-self"><span lang="fr">Toi seul</span><span lang="en">Only you</span></span></div>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu</span><span lang="en">In game</span></span><span lang="fr">Le bloc « Ta réponse »</span><span lang="en">The "Ta réponse" (your answer) block</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Ouvre l'événement dans l'onglet <span lang="fr"><span class="ui tab">Événements</span></span><span lang="en"><span class="ui tab">Événements</span> <span class="gloss">(Events)</span></span>.</span><span lang="en">Open the event in the <span lang="fr"><span class="ui tab">Événements</span></span><span lang="en"><span class="ui tab">Événements</span> <span class="gloss">(Events)</span></span> tab.</span></li>
+		<li><span lang="fr">Choisis ton rôle : <span class="ui">Tank</span>, <span lang="fr"><span class="ui">Soigneur</span></span><span lang="en"><span class="ui">Soigneur</span> <span class="gloss">(Healer)</span></span>, <span lang="fr"><span class="ui">DPS mêlée</span></span><span lang="en"><span class="ui">DPS mêlée</span> <span class="gloss">(Melee)</span></span>, <span lang="fr"><span class="ui">DPS distance</span></span><span lang="en"><span class="ui">DPS distance</span> <span class="gloss">(Ranged)</span></span>.</span><span lang="en">Pick your role: <span class="ui">Tank</span>, <span lang="fr"><span class="ui">Soigneur</span></span><span lang="en"><span class="ui">Soigneur</span> <span class="gloss">(Healer)</span></span>, <span lang="fr"><span class="ui">DPS mêlée</span></span><span lang="en"><span class="ui">DPS mêlée</span> <span class="gloss">(Melee)</span></span>, <span lang="fr"><span class="ui">DPS distance</span></span><span lang="en"><span class="ui">DPS distance</span> <span class="gloss">(Ranged)</span></span>.</span></li>
+		<li><span lang="fr">Facultatif : ta <span lang="fr"><span class="ui opt">Spé.</span></span><span lang="en"><span class="ui opt">Spé.</span> <span class="gloss">(Spec)</span></span> (« Protection ») et une <span class="ui opt">Note</span> pour l'organisateur (« en retard de 15 min »).</span><span lang="en">Optional: your <span lang="fr"><span class="ui opt">Spé.</span></span><span lang="en"><span class="ui opt">Spé.</span> <span class="gloss">(Spec)</span></span> ("Protection") and a <span class="ui opt">Note</span> for the organizer ("15 min late").</span></li>
+		<li><span lang="fr">Clique <span lang="fr"><span class="ui">Présent</span></span><span lang="en"><span class="ui">Présent</span> <span class="gloss">(Attending)</span></span>, <span lang="fr"><span class="ui">Peut-être</span></span><span lang="en"><span class="ui">Peut-être</span> <span class="gloss">(Tentative)</span></span> ou <span lang="fr"><span class="ui">Absent</span></span><span lang="en"><span class="ui">Absent</span> <span class="gloss">(Not attending)</span></span>. « Ta place » affiche ensuite où l'organisateur t'a mis.</span><span lang="en">Click <span lang="fr"><span class="ui">Présent</span></span><span lang="en"><span class="ui">Présent</span> <span class="gloss">(Attending)</span></span>, <span lang="fr"><span class="ui">Peut-être</span></span><span lang="en"><span class="ui">Peut-être</span> <span class="gloss">(Tentative)</span></span> or <span lang="fr"><span class="ui">Absent</span></span><span lang="en"><span class="ui">Absent</span> <span class="gloss">(Not attending)</span></span>. "Ta place" (your place) then shows where the organizer put you.</span></li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span><span lang="fr">Avec /gkeep evenement inscription</span><span lang="en">With /gkeep event signup</span></h3>
+	<ol class="steps">
+		<li><span lang="fr"><code class="d"><span lang="fr">/gkeep evenement liste</span><span lang="en">/gkeep event list</span></code> pour voir les événements à venir.</span><span lang="en"><code class="d"><span lang="fr">/gkeep evenement liste</span><span lang="en">/gkeep event list</span></code> to see upcoming events.</span></li>
+		<li><span lang="fr"><code class="d"><span lang="fr">/gkeep evenement inscription</span><span lang="en">/gkeep event signup</span></code> : l'événement, ta <code><span lang="fr">reponse</span><span lang="en">response</span></code> (Présent, Peut-être, Absent), ton <code>role</code> (le précédent par défaut), et si tu veux <code><span lang="fr">personnage</span><span lang="en">character</span></code>, <code><span lang="fr">spe</span><span lang="en">spec</span></code> et <code>note</code>.</span><span lang="en"><code class="d"><span lang="fr">/gkeep evenement inscription</span><span lang="en">/gkeep event signup</span></code>: the event, your <code>response</code> (Attending, Tentative, Not attending), your <code>role</code> (the previous one by default), and optionally <code>character</code>, <code>spec</code> and <code>note</code>.</span></li>
+	</ol>
+</div>
+<aside class="callout c-note"><p class="callout-title"><span lang="fr">Bon à savoir</span><span lang="en">Good to know</span></p><p><span lang="fr">Ta place dans le roster (confirmé, remplaçant, banc) est décidée par l'organisateur : si tu changes d'avis, change ta réponse et préviens-le avec une note. S'inscrire ne vaut jamais présence : la présence réelle est relevée en raid (voir <a href="/docs/presence.html">Présence et butin</a>).</span><span lang="en">Your place in the roster (confirmed, standby, bench) is the organizer's call: if you change your mind, change your answer and tell them in a note. Signing up never counts as attending: real attendance is recorded in the raid (see <a href="/docs/presence.html">Attendance and loot</a>).</span></p></aside>
+</section>
+
+<section>
+<h2 id="inviter"><a class="anchor" href="#inviter" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Tutoriel : inviter les confirmés et partager le roster</span><span lang="en">Tutorial: invite confirmed players and share the roster</span></h2>
+<div class="rights"><span class="badge b-org"><span lang="fr">Organisateur ou officier</span><span lang="en">Organizer or officer</span></span> <span lang="fr">pour inviter ;</span><span lang="en">to invite;</span> <span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span> <span lang="fr">pour copier</span><span lang="en">to copy</span></div>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu</span><span lang="en">In game</span></span><span lang="fr">Le soir du raid</span><span lang="en">On raid night</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Ouvre l'événement et clique <span lang="fr"><span class="ui">Inviter les confirmés</span></span><span lang="en"><span class="ui">Inviter les confirmés</span> <span class="gloss">(Invite confirmed)</span></span>. Tous les confirmés en ligne sont invités ; le groupe passe en raid tout seul au-delà de 5.</span><span lang="en">Open the event and click <span lang="fr"><span class="ui">Inviter les confirmés</span></span><span lang="en"><span class="ui">Inviter les confirmés</span> <span class="gloss">(Invite confirmed)</span></span>. Every confirmed player online is invited; the group turns into a raid by itself beyond 5.</span></li>
+		<li><span lang="fr"><span lang="fr"><span class="ui">Copier le roster</span></span><span lang="en"><span class="ui">Copier le roster</span> <span class="gloss">(Copy roster)</span></span> ouvre une fenêtre avec le roster en texte : <kbd class="key">Ctrl</kbd>+<kbd class="key">C</kbd>, puis colle-le sur Discord. Avec le module Soirée de raid, le bouton devient <span lang="fr"><span class="ui">Copier la soirée</span></span><span lang="en"><span class="ui">Copier la soirée</span> <span class="gloss">(Copy the night)</span></span> et inclut les réservations et les rôles de soutien.</span><span lang="en"><span lang="fr"><span class="ui">Copier le roster</span></span><span lang="en"><span class="ui">Copier le roster</span> <span class="gloss">(Copy roster)</span></span> opens a window with the roster as text: <kbd class="key">Ctrl</kbd>+<kbd class="key">C</kbd>, then paste it on Discord. With the Raid night module, the button becomes <span lang="fr"><span class="ui">Copier la soirée</span></span><span lang="en"><span class="ui">Copier la soirée</span> <span class="gloss">(Copy the night)</span></span> and includes reserves and support duties.</span></li>
+	</ol>
+</div>
+<aside class="callout c-warn"><p class="callout-title"><span lang="fr">Attention</span><span lang="en">Watch out</span></p><p><span lang="fr">Pour inviter, il faut être chef ou assistant du groupe (ou sans groupe), hors combat, et pas dans un groupe de recherche. Les confirmés hors ligne sont signalés dans le chat.</span><span lang="en">To invite, you must be group leader or assistant (or not grouped), out of combat, and not in a looking-for-group party. Offline confirmed players are reported in chat.</span></p></aside>
+</section>
+
+<section>
+<h2 id="rappels"><a class="anchor" href="#rappels" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Tutoriel : les rappels</span><span lang="en">Tutorial: reminders</span></h2>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu</span><span lang="en">In game</span></span><span lang="fr">Ton rappel personnel</span><span lang="en">Your personal reminder</span></h3>
+	<div class="rights"><span class="badge b-self"><span lang="fr">Toi seul</span><span lang="en">Only you</span></span></div>
+	<ol class="steps">
+		<li><span lang="fr">En bas du détail d'un événement, coche <span lang="fr"><span class="ui opt">Me rappeler</span></span><span lang="en"><span class="ui opt">Me rappeler</span> <span class="gloss">(Remind me)</span></span> et règle le nombre de <span lang="fr"><span class="ui opt">min avant</span></span><span lang="en"><span class="ui opt">min avant</span> <span class="gloss">(min before)</span></span> (30 par défaut).</span><span lang="en">At the bottom of an event's details, tick <span lang="fr"><span class="ui opt">Me rappeler</span></span><span lang="en"><span class="ui opt">Me rappeler</span> <span class="gloss">(Remind me)</span></span> and set the <span lang="fr"><span class="ui opt">min avant</span></span><span lang="en"><span class="ui opt">min avant</span> <span class="gloss">(min before)</span></span> (30 by default).</span></li>
+		<li><span lang="fr">Avant chaque événement où tu as répondu « Présent » ou « Peut-être », Guildkeep te prévient : message dans le chat, alerte à l'écran et son. Une seule fois par événement.</span><span lang="en">Before every event you answered "Attending" or "Tentative", Guildkeep warns you: chat message, on-screen alert and sound. Once per event.</span></li>
+		<li><span lang="fr">Au clavier : <code>/gkeep rappel 15</code> pour 15 minutes, <code>/gkeep rappel off</code> pour couper, <code>/gkeep rappel</code> pour voir le réglage. Le réglage vaut pour tout ton compte.</span><span lang="en">By keyboard: <code>/gkeep rappel 15</code> for 15 minutes, <code>/gkeep rappel off</code> to stop, <code>/gkeep rappel</code> to see the setting. It applies to your whole account.</span></li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu + Discord</span><span lang="en">In game + Discord</span></span><span lang="fr">Rappeler les inscrits</span><span lang="en">Remind sign-ups</span></h3>
+	<div class="rights"><span class="badge b-org"><span lang="fr">Organisateur ou officier</span><span lang="en">Organizer or officer</span></span></div>
+	<ol class="steps">
+		<li><span lang="fr">En jeu, <span lang="fr"><span class="ui">Rappeler</span></span><span lang="en"><span class="ui">Rappeler</span> <span class="gloss">(Remind)</span></span> poste un message dans le canal de guilde avec l'événement et les inscrits. Il n'est jamais automatique : c'est toi qui cliques.</span><span lang="en">In game, <span lang="fr"><span class="ui">Rappeler</span></span><span lang="en"><span class="ui">Rappeler</span> <span class="gloss">(Remind)</span></span> posts a message in guild chat with the event and the sign-ups. It's never automatic: you click it.</span></li>
+		<li><span lang="fr">Sur Discord, <code class="d"><span lang="fr">/gkeep evenement rappel</span><span lang="en">/gkeep event remind</span></code> fait de même dans le salon où tu tapes la commande, avec un <code>message</code> facultatif.</span><span lang="en">On Discord, <code class="d"><span lang="fr">/gkeep evenement rappel</span><span lang="en">/gkeep event remind</span></code> does the same in the channel where you type it, with an optional <code>message</code>.</span></li>
+	</ol>
+</div>
+</section>
+
+<section>
+<h2 id="modifier"><a class="anchor" href="#modifier" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Tutoriel : modifier, annuler ou rétablir un événement</span><span lang="en">Tutorial: edit, cancel or restore an event</span></h2>
+<div class="rights"><span class="badge b-org"><span lang="fr">Organisateur ou officier</span><span lang="en">Organizer or officer</span></span></div>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu</span><span lang="en">In game</span></span><span lang="fr">Les boutons du détail</span><span lang="en">The details buttons</span></h3>
+	<ol class="steps">
+		<li><span lang="fr"><span lang="fr"><span class="ui">Modifier</span></span><span lang="en"><span class="ui">Modifier</span> <span class="gloss">(Edit)</span></span> rouvre la fenêtre de l'événement : change ce qu'il faut, puis <span lang="fr"><span class="ui">Enregistrer</span></span><span lang="en"><span class="ui">Enregistrer</span> <span class="gloss">(Save)</span></span>.</span><span lang="en"><span lang="fr"><span class="ui">Modifier</span></span><span lang="en"><span class="ui">Modifier</span> <span class="gloss">(Edit)</span></span> reopens the event window: change what you need, then <span lang="fr"><span class="ui">Enregistrer</span></span><span lang="en"><span class="ui">Enregistrer</span> <span class="gloss">(Save)</span></span>.</span></li>
+		<li><span lang="fr"><span lang="fr"><span class="ui">Annuler l'év.</span></span><span lang="en"><span class="ui">Annuler l'év.</span> <span class="gloss">(Cancel event)</span></span> le marque « ANNULÉ » (après confirmation) : plus personne ne peut répondre. <span lang="fr"><span class="ui">Rétablir</span></span><span lang="en"><span class="ui">Rétablir</span> <span class="gloss">(Restore)</span></span> le remet en place.</span><span lang="en"><span lang="fr"><span class="ui">Annuler l'év.</span></span><span lang="en"><span class="ui">Annuler l'év.</span> <span class="gloss">(Cancel event)</span></span> marks it "ANNULÉ" (after confirming): nobody can answer anymore. <span lang="fr"><span class="ui">Rétablir</span></span><span lang="en"><span class="ui">Rétablir</span> <span class="gloss">(Restore)</span></span> brings it back.</span></li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span><span lang="fr">Les commandes</span><span lang="en">The commands</span></h3>
+	<p><span lang="fr"><code class="d"><span lang="fr">/gkeep evenement modifier</span><span lang="en">/gkeep event edit</span></code> (seules les options remplies changent ; un tiret seul dans <code>details</code> efface les précisions), <code class="d"><span lang="fr">/gkeep evenement annuler</span><span lang="en">/gkeep event cancel</span></code>, <code class="d"><span lang="fr">/gkeep evenement retablir</span><span lang="en">/gkeep event restore</span></code>.</span><span lang="en"><code class="d"><span lang="fr">/gkeep evenement modifier</span><span lang="en">/gkeep event edit</span></code> (only the options you fill in change; a single dash in <code>details</code> clears them), <code class="d"><span lang="fr">/gkeep evenement annuler</span><span lang="en">/gkeep event cancel</span></code>, <code class="d"><span lang="fr">/gkeep evenement retablir</span><span lang="en">/gkeep event restore</span></code>.</span></p>
+</div>
+</section>
+<nav class="doc-pager" aria-label="Pages voisines / Adjacent pages">
+<a class="prev" href="/docs/artisanat.html" rel="prev"><small><span lang="fr">← Précédent</span><span lang="en">← Previous</span></small><b><span lang="fr">Artisanat</span><span lang="en">Crafting orders</span></b></a>
+<a class="next" href="/docs/soiree-raid.html" rel="next"><small><span lang="fr">Suivant →</span><span lang="en">Next →</span></small><b><span lang="fr">Soirée de raid</span><span lang="en">Raid night</span></b></a>
+</nav>
+</main>
+</div>
+
+<footer class="foot">
+	<span><span lang="fr">Outil de guilde pour WoW: Forever</span><span lang="en">Guild tool for WoW: Forever</span></span>
+	<nav aria-label="Pied de page / Footer">
+		<a href="/"><span lang="fr">Accueil</span><span lang="en">Home</span></a>
+		<a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a>
+		<a href="/confidentialite.html"><span lang="fr">Confidentialité</span><span lang="en">Privacy</span></a>
+		<a href="/conditions.html"><span lang="fr">Conditions</span><span lang="en">Terms</span></a>
+		<a href="https://github.com/AntoineRenoux/GuildProfessions" rel="noopener"><span lang="fr">Code source</span><span lang="en">Source code</span></a>
+	</nav>
+	<span class="end">2026</span>
+	<span class="credit"><span lang="fr">World of Warcraft est une marque de Blizzard Entertainment ; Guildkeep n'y est pas affilié.</span><span lang="en">World of Warcraft is a trademark of Blizzard Entertainment; Guildkeep is not affiliated.</span></span>
+</footer>
+
+<script src="/site.js?v=6" defer></script>
+</body>
+</html>

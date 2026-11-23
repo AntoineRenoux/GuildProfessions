@@ -1,0 +1,44 @@
+title: module Quêtes
+description: Le module Quêtes de Guildkeep : les quêtes élites, de donjon et de raid du journal des membres, pour trouver qui fait la même quête et grouper.
+lead: [[Les quêtes élites, de donjon et de raid que les membres ont dans leur journal, rangées par zone ou donjon. Pour trouver en un coup d'œil qui fait la même quête que toi, et l'inviter.||The elite, dungeon and raid quests members have in their quest log, grouped by zone or dungeon. To spot at a glance who's doing the same quest as you, and invite them.]]
+---
+<section>
+<h2 id="a-quoi-ca-sert">[[À quoi ça sert||What it's for]]</h2>
+<p>[[L'addon relève, à chaque changement de ton journal, les quêtes de groupe qu'il contient (élites, donjons, raids ; 25 au plus) et les partage aussitôt avec les membres connectés. Une quête rendue disparaît au relevé suivant. Les quêtes en solo ne sont pas partagées.||At every change to your quest log, the addon reads the group quests in it (elite, dungeon, raid; 25 at most) and shares them right away with online members. A quest turned in disappears at the next read. Solo quests aren't shared.]]</p>
+<figure class="mock" data-ui>
+	<div class="wow">
+		<div class="bar-line"><span class="chip is-on">Toutes</span><span class="chip">Élites</span><span class="chip">Donjons</span><span class="chip">Raids</span><span class="soft" style="margin-left:auto;font-size:12px">☐ Seulement mes quêtes</span></div>
+		<div style="padding:6px 12px" class="gold">Donjons · Rochenoire</div>
+		<div class="wow-row"><span class="wow-ico">!</span><span><span class="gold">• </span>L'armure du général <span class="soft">[58]</span></span><span>3 <span class="ok">· 2 en ligne</span></span></div>
+		<div class="wow-row"><span class="wow-ico">!</span><span><span style="color:#3FC7EB">Ysolde Brume</span> <span class="soft">· en cours</span></span><span class="acts"><span class="wow-button">Chuchoter</span><span class="wow-button">Inviter</span></span></div>
+	</div>
+	<figcaption>[[Maquette : une quête de donjon que trois membres ont dans leur journal (nom de quête inventé).||Mock-up: a dungeon quest three members have in their log (made-up quest name).]]</figcaption>
+</figure>
+
+{tip}<p>[[<strong>Tutoriel en jeu.</strong> À la première ouverture de l'onglet {t:Quêtes||Quests}, un tutoriel pas à pas encadre chaque bouton et explique à quoi il sert. Tu peux le passer à tout moment, et le revoir avec le bouton {b:?} en haut à droite de la fenêtre ou {g:/gkeep tuto}.||<strong>In-game tutorial.</strong> The first time you open the {t:Quêtes||Quests} tab, a step-by-step tutorial highlights every button and explains what it does. You can skip it at any time, and replay it with the {b:?} button at the top right of the window or {g:/gkeep tuto}.]]</p>{/tip}
+</section>
+
+<section>
+<h2 id="trouver-un-groupe">[[Tutoriel : trouver qui fait la même quête et grouper||Tutorial: find who's on the same quest and group up]]</h2>
+<div class="rights">{who:all}</div>
+<div class="howto">
+	<h3><span class="where">[[En jeu||In game]]</span>[[Onglet Quêtes||Quests tab]]</h3>
+	<ol class="steps">
+		<li>[[Ouvre l'onglet {t:Quêtes||Quests} (ou {g:/gkeep quetes}).||Open the {t:Quêtes||Quests} tab (or {g:/gkeep quetes}).]]</li>
+		<li>[[Coche {o:Seulement mes quêtes||Only my quests} pour ne garder que celles de ton journal (marquées d'un point doré), ou filtre par {o:Élites||Elite}, {o:Donjons||Dungeons}, {o:Raids}. Le champ {o:Chercher||Search} trouve un titre ou un lieu.||Tick {o:Seulement mes quêtes||Only my quests} to keep only those in your log (marked with a gold dot), or filter by {o:Élites||Elite}, {o:Donjons||Dungeons}, {o:Raids}. The {o:Chercher||Search} field finds a title or a place.]]</li>
+		<li>[[Chaque quête indique combien de membres l'ont, et combien sont en ligne. Clique-la pour voir qui, et où il en est : « en cours » ou « objectifs remplis ».||Each quest shows how many members have it, and how many are online. Click it to see who, and how far they are: "en cours" (in progress) or "objectifs remplis" (objectives done).]]</li>
+		<li>[[{b:Chuchoter||Whisper} ouvre un message privé, {b:Inviter||Invite} l'invite dans ton groupe.||{b:Chuchoter||Whisper} opens a private message, {b:Inviter||Invite} invites them to your group.]]</li>
+		<li>[[Une fois groupés, {b:Partager au groupe||Share with group} partage la quête par le partage de quête du jeu, à ceux qui ne l'ont pas encore.||Once grouped, {b:Partager au groupe||Share with group} shares the quest through the game's quest sharing, with those who don't have it yet.]]</li>
+	</ol>
+</div>
+{note}<p>[[Pour partager, il faut être en groupe, avoir la quête dans ton journal, et que le jeu la permette au partage.||To share, you must be in a group, have the quest in your log, and the game must allow it to be shared.]]</p>{/note}
+<div class="howto">
+	<h3><span class="where">Discord</span>[[Les commandes de quêtes||The quest commands]]</h3>
+	<ul>
+		<li>[[{d:/gkeep quete liste||/gkeep quest list} : les quêtes partagées par zone ou donjon, avec qui les a ; options <code>type</code> (Élite, Donjon, Raid) et <code>[[lieu||location]]</code>.||{d:/gkeep quete liste||/gkeep quest list}: shared quests by zone or dungeon, with who has them; options <code>kind</code> (Elite, Dungeon, Raid) and <code>location</code>.]]</li>
+		<li>[[{d:/gkeep quete qui||/gkeep quest who} : qui a cette quête (la liste propose les titres).||{d:/gkeep quete qui||/gkeep quest who}: who has this quest (the list suggests titles).]]</li>
+		<li>[[{d:/gkeep quete miennes||/gkeep quest mine} : tes quêtes partagées, et qui d'autre a chacune ; option <code>[[personnage||character]]</code>.||{d:/gkeep quete miennes||/gkeep quest mine}: your shared quests, and who else has each one; <code>character</code> option.]]</li>
+	</ul>
+</div>
+{tip}<p>[[Sur Discord, {d:/gkeep quete miennes||/gkeep quest mine} reconnaît tes personnages s'ils sont liés à ton compte : voir <a href="/docs/installation.html#lier">Relier ton compte Discord</a>.||On Discord, {d:/gkeep quete miennes||/gkeep quest mine} recognizes your characters if they're linked to your account: see <a href="/docs/installation.html#lier">Link your Discord account</a>.]]</p>{/tip}
+</section>

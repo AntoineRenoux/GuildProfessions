@@ -505,6 +505,36 @@ local function RefreshGuild()
 end
 
 GP.Modules.Define("communication", "ui", function(ctx)
+	local function Section(key)
+		return function()
+			view.section = key
+			GP.RefreshUI()
+		end
+	end
+	ctx:Tutorial("communication", {
+		tab = "tabGuild",
+		title = "Communication",
+		steps = {
+			{ prepare = Section("announcements"), target = function() return panel and panel.sectionButtons and panel.sectionButtons[1] end, title = "Annonces, Charte, Objectifs",
+				text = "Trois sections : les annonces des officiers, la charte de la guilde et les objectifs communs." },
+			{ prepare = Section("announcements"), target = function() return panel and panel.list end, title = "Les annonces",
+				text = "Les plus récentes en haut ; un point vert marque une annonce non lue. Clique pour la lire en entier (elle passe alors en lue)." },
+			{ prepare = Section("announcements"), target = function() return panel and panel.new end, title = "Nouveau",
+				text = "Les officiers rédigent une annonce (titre, texte), partent d'un modèle (« Appliquer », ou « Enregistrer comme modèle ») et peuvent la lier à un événement. {event}, {date} et {guild} sont remplacés.",
+				hint = "Réservé aux officiers." },
+			{ prepare = Section("announcements"), target = function() return panel and panel.edit end, title = "Modifier et Retirer",
+				text = "Les officiers corrigent ou retirent l'élément affiché ; sur un objectif, « Clore » ou « Rouvrir ».", hint = "Réservé aux officiers." },
+			{ prepare = Section("handbook"), target = function() return panel and panel.body end, title = "La charte",
+				text = "Le règlement, les règles de butin et les autres sections écrites par les officiers (une clé et un ordre par section).",
+				hint = "La charte est vide pour l'instant." },
+			{ prepare = Section("goals"), target = function() return panel and panel.bar end, title = "Les objectifs",
+				text = "Un objectif chiffré (200 flacons, de l'or pour les réparations…) et son avancement, avec les contributions de chacun.",
+				hint = "Aucun objectif en cours pour l'instant." },
+			{ prepare = Section("goals"), target = function() return panel and panel.contribute end, title = "Contribuer",
+				text = "Indique la quantité que tu apportes et une note, puis « Contribuer » : l'avancement se met à jour pour toute la guilde.",
+				hint = "Choisis d'abord un objectif ouvert." },
+		},
+	})
 	ctx:Slash({ "guilde", "guild", "annonces", "charte", "objectifs" }, function()
 		GP.ShowTab("tabGuild")
 	end)

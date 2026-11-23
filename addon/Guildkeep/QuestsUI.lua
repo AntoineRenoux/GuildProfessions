@@ -273,6 +273,23 @@ local function RefreshQuests()
 end
 
 GP.Modules.Define("quests", "ui", function(ctx)
+	ctx:Tutorial("quests", {
+		tab = "tabQuests",
+		title = "Quêtes",
+		steps = {
+			{ title = "Les quêtes de la guilde", text = "Les quêtes élites, de donjon et de raid du journal de chaque membre, relevées automatiquement, pour trouver qui les fait aussi." },
+			{ target = function() return panel and panel.kindButtons and panel.kindButtons[1] end, title = "Type de quête",
+				text = "Toutes, Élites, Donjons ou Raids. Les quêtes sont rangées par zone ou par donjon." },
+			{ target = function() return panel and panel.mineOnly end, title = "Seulement mes quêtes",
+				text = "Ne garde que les quêtes que tu as. Celles que tu as déjà rendues sont masquées d'office (le nombre s'affiche en bas)." },
+			{ target = function() return panel and panel.search end, title = "Chercher", text = "Une partie du titre ou du lieu." },
+			{ target = function() return panel and panel.holders end, title = "Qui l'a",
+				text = "Les membres qui ont la quête, en ligne d'abord, et s'ils ont rempli les objectifs. « Chuchoter » et « Inviter » pour former un groupe.",
+				hint = "Choisis d'abord une quête dans la liste." },
+			{ target = function() return panel and panel.share end, title = "Partager au groupe",
+				text = "Partage la quête aux membres de ton groupe, par le partage de quête du jeu.", hint = "Visible si tu as la quête et que tu es en groupe." },
+		},
+	})
 	ctx:Slash({ "quetes", "quests", "quete", "quest" }, function()
 		GP.ShowTab("tabQuests")
 	end)

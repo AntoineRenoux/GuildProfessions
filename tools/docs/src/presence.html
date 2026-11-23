@@ -1,0 +1,84 @@
+title: module Présence et butin
+description: Le module Présence et butin de Guildkeep : la présence réelle relevée en raid, le butin épique, les taux sur 30, 60 et 90 jours et les corrections des officiers.
+h1fr: Présence et butin
+h1en: Attendance and loot
+lead: [[Qui était vraiment là, raid après raid, et ce que chacun a reçu. Relevé par l'addon pendant le raid, sans rien à saisir : une inscription ne vaut jamais présence.||Who was really there, raid after raid, and what everyone received. Recorded by the addon during the raid, nothing to type: a sign-up never counts as attending.]]
+---
+<section>
+<h2 id="comment-c-est-releve">[[Comment c'est relevé||How it's recorded]]</h2>
+<ul>
+	<li>[[Dès que tu es dans une instance de raid avec <strong>au moins 5 membres de la guilde</strong>, l'addon note, minute par minute, qui de la guilde est dans le raid et connecté. En dessous de 5, rien n'est relevé : ce n'est pas un raid de guilde.||As soon as you're in a raid instance with <strong>at least 5 guild members</strong>, the addon notes, minute by minute, who from the guild is in the raid and online. Below 5, nothing is recorded: it isn't a guild raid.]]</li>
+	<li>[[Un joueur compte <strong>présent</strong> s'il est resté au moins <strong>15 minutes</strong>.||A player counts as <strong>present</strong> if they stayed at least <strong>15 minutes</strong>.]]</li>
+	<li>[[Les objets <strong>épiques ou mieux</strong> reçus par les membres de la guilde sont notés à partir des messages de butin du jeu.||<strong>Epic or better</strong> items received by guild members are noted from the game's loot messages.]]</li>
+	<li>[[Chaque membre présent qui a l'addon relève le même raid ; le serveur fusionne les relevés. Il suffit donc qu'un seul joueur ait le module actif, mais plusieurs, c'est plus sûr.||Every member present with the addon records the same raid; the server merges the records. So one player with the module on is enough, but several is safer.]]</li>
+</ul>
+<p>[[Le <strong>taux de présence</strong> d'un joueur, c'est le nombre de raids de guilde où il était présent, sur le nombre de raids de guilde de la période (30, 60 ou 90 jours). Un raid où il est marqué <em>excusé</em> ne compte ni pour ni contre lui.||A player's <strong>attendance rate</strong> is the number of guild raids they attended, out of the guild raids in the period (30, 60 or 90 days). A raid where they're marked <em>excused</em> counts neither for nor against them.]]</p>
+<figure class="mock" data-ui>
+	<div class="wow">
+		<div class="bar-line"><span class="chip is-on">Joueurs</span><span class="chip">Raids</span><span style="margin-left:12px" class="chip is-on">30 j</span><span class="chip">60 j</span><span class="chip">90 j</span></div>
+		<div class="wow-row"><span class="wow-ico ok">●</span><span><span style="color:#C69B6D">Bragg Ferrefond</span><br><span class="soft" style="font-size:12px">8/8 · 2 obj.</span></span><span class="ok">100%</span></div>
+		<div class="wow-row"><span class="wow-ico ok">●</span><span><span style="color:#3FC7EB">Ysolde Brume</span><br><span class="soft" style="font-size:12px">7/8 · 1 obj.</span></span><span>88%</span></div>
+		<div class="wow-row"><span class="wow-ico soft">●</span><span><span style="color:#AAD372">Sorcha Tanne</span><br><span class="soft" style="font-size:12px">4/8</span></span><span class="bad">50%</span></div>
+	</div>
+	<figcaption>[[Maquette : l'onglet Présence en mode Joueurs, sur 30 jours.||Mock-up: the Attendance tab in Players mode, over 30 days.]]</figcaption>
+</figure>
+
+{tip}<p>[[<strong>Tutoriel en jeu.</strong> À la première ouverture de l'onglet {t:Présence||Attendance}, un tutoriel pas à pas encadre chaque bouton et explique à quoi il sert. Tu peux le passer à tout moment, et le revoir avec le bouton {b:?} en haut à droite de la fenêtre ou {g:/gkeep tuto}.||<strong>In-game tutorial.</strong> The first time you open the {t:Présence||Attendance} tab, a step-by-step tutorial highlights every button and explains what it does. You can skip it at any time, and replay it with the {b:?} button at the top right of the window or {g:/gkeep tuto}.]]</p>{/tip}
+</section>
+
+<section>
+<h2 id="consulter">[[Tutoriel : consulter la présence d'un joueur||Tutorial: look up a player's attendance]]</h2>
+<div class="rights">{who:all}</div>
+<div class="howto">
+	<h3><span class="where">[[En jeu||In game]]</span>[[Onglet Présence||Attendance tab]]</h3>
+	<ol class="steps">
+		<li>[[Ouvre l'onglet {t:Présence||Attendance} (ou {g:/gkeep presence}).||Open the {t:Présence||Attendance} tab (or {g:/gkeep presence}).]]</li>
+		<li>[[Mode {o:Joueurs||Players} : choisis la période {o:30 j||30 d}, {o:60 j||60 d} ou {o:90 j||90 d}, et cherche un nom dans {o:Chercher un joueur||Search a player}.||{o:Joueurs||Players} mode: pick the period {o:30 j||30 d}, {o:60 j||60 d} or {o:90 j||90 d}, and look up a name in {o:Chercher un joueur||Search a player}.]]</li>
+		<li>[[Clique le joueur : en haut, ses taux sur 30, 60 et 90 jours et sur les 30 jours d'avant (pour voir la tendance) ; dessous, chacun de ses raids avec ses minutes de présence, puis son butin.||Click the player: at the top, their rates over 30, 60 and 90 days and over the 30 days before (to see the trend); below, each of their raids with minutes present, then their loot.]]</li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span>[[Les commandes de présence||The attendance commands]]</h3>
+	<ul>
+		<li>[[{d:/gkeep presence resume||/gkeep attendance summary} : le taux de chaque raideur, option <code>[[jours||days]]</code> (30, 60, 90).||{d:/gkeep presence resume||/gkeep attendance summary}: every raider's rate, <code>days</code> option (30, 60, 90).]]</li>
+		<li>[[{d:/gkeep presence joueur||/gkeep attendance player} : les tendances, derniers raids et butin d'un personnage.||{d:/gkeep presence joueur||/gkeep attendance player}: a character's trends, recent raids and loot.]]</li>
+		<li>[[{d:/gkeep presence raids||/gkeep attendance raids} : les raids relevés, du plus récent au plus ancien ; {d:/gkeep presence raid||/gkeep attendance raid} : qui était là et ce qui est tombé.||{d:/gkeep presence raids||/gkeep attendance raids}: recorded raids, most recent first; {d:/gkeep presence raid||/gkeep attendance raid}: who was there and what dropped.]]</li>
+		<li>[[{d:/gkeep butin liste||/gkeep loot list} : l'historique du butin, de tous ou d'un <code>[[personnage||character]]</code>.||{d:/gkeep butin liste||/gkeep loot list}: the loot history, for everyone or one <code>character</code>.]]</li>
+	</ul>
+</div>
+</section>
+
+<section>
+<h2 id="consulter-un-raid">[[Tutoriel : revoir un raid||Tutorial: review a raid]]</h2>
+<div class="rights">{who:all}</div>
+<div class="howto">
+	<h3><span class="where">[[En jeu||In game]]</span>[[Mode Raids||Raids mode]]</h3>
+	<ol class="steps">
+		<li>[[Onglet {t:Présence||Attendance}, mode {o:Raids}. Chaque ligne : la date, l'instance, le nombre de personnes et d'objets. « hors décompte » marque un raid à moins de 5 membres ; « local » un relevé pas encore envoyé.||{t:Présence||Attendance} tab, {o:Raids} mode. Each row: the date, instance, number of people and items. "hors décompte" (not counted) marks a raid with fewer than 5 members; "local" a record not sent yet.]]</li>
+		<li>[[Clique un raid : le chef de raid, l'heure de début et de fin, la liste « Présence » avec les minutes de chacun, et le « Butin ».||Click a raid: the raid leader, start and end time, the "Présence" list with everyone's minutes, and the "Butin" (loot).]]</li>
+	</ol>
+</div>
+</section>
+
+<section>
+<h2 id="corriger">[[Tutoriel : corriger la présence ou le butin||Tutorial: correct attendance or loot]]</h2>
+<div class="rights">{who:officer}</div>
+<p>[[Un joueur déconnecté par erreur, un remplaçant resté dehors, un objet désenchanté : les officiers corrigent. Les corrections restent à part de ce qui a été relevé, et sont marquées « (officier) ».||A player disconnected by mistake, a standby who stayed outside, a disenchanted item: officers correct. Corrections are kept apart from what was recorded, and marked "(officier)".]]</p>
+<div class="howto">
+	<h3><span class="where">[[En jeu||In game]]</span>[[Dans le détail d'un raid||In a raid's details]]</h3>
+	<ol class="steps">
+		<li>[[Mode {o:Raids}, ouvre le raid.||{o:Raids} mode, open the raid.]]</li>
+		<li>[[Sur la ligne d'un joueur, clique {b:Présent||Present}, {b:Absent} ou {b:Excusé||Excused} (excusé : hors calcul du taux).||On a player's row, click {b:Présent||Present}, {b:Absent} or {b:Excusé||Excused} (excused: left out of the rate).]]</li>
+		<li>[[Quelqu'un manque dans la liste ? Tape son nom dans le champ, puis {b:Marquer présent||Mark present}.||Someone missing from the list? Type their name in the field, then {b:Marquer présent||Mark present}.]]</li>
+		<li>[[Dans « Butin », {b:Annuler||Void} retire un objet du décompte (désenchanté, erreur) ; {b:Rétablir||Restore} le remet.||Under "Butin" (loot), {b:Annuler||Void} removes an item from the count (disenchanted, mistake); {b:Rétablir||Restore} puts it back.]]</li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span>[[Les commandes d'officier||Officer commands]]</h3>
+	<ul>
+		<li>[[{d:/gkeep presence corriger||/gkeep attendance correct} : le <code>raid</code>, le <code>[[personnage||character]]</code>, le <code>[[statut||status]]</code> (Présent, Absent, Excusé) et une <code>note</code> facultative.||{d:/gkeep presence corriger||/gkeep attendance correct}: the <code>raid</code>, the <code>character</code>, the <code>status</code> (Present, Absent, Excused) and an optional <code>note</code>.]]</li>
+		<li>[[{d:/gkeep butin annuler||/gkeep loot void} : l'<code>[[objet||item]]</code> relevé et une <code>note</code> ; {d:/gkeep butin retablir||/gkeep loot restore} pour revenir en arrière.||{d:/gkeep butin annuler||/gkeep loot void}: the recorded <code>item</code> and a <code>note</code>; {d:/gkeep butin retablir||/gkeep loot restore} to undo.]]</li>
+	</ul>
+</div>
+{warn}<p>[[Les corrections faites en jeu ne sont retenues par le serveur que si ton rang d'officier y est enregistré, c'est-à-dire si ton compagnon utilise ton <a href="/docs/compagnon.html#token">token personnel</a>. Sinon le compagnon affiche « Correction … ignorée : réservée aux officiers ».||Corrections made in game are only kept by the server if your officer rank is recorded there, that is if your companion uses your <a href="/docs/compagnon.html#token">personal token</a>. Otherwise the companion shows "Correction … ignorée : réservée aux officiers" (ignored: officers only).]]</p>{/warn}
+</section>

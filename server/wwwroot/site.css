@@ -485,3 +485,144 @@ html[lang="fr"] [lang="en"]:not(html), html[lang="en"] [lang="fr"]:not(html) { d
 	.page-art { grid-column: 1 / -1; grid-row: 2; position: static; max-width: 360px; }
 	.step-band { grid-template-columns: 1fr; gap: 8px; }
 }
+
+/* ---------- documentation (/docs/) : sommaire latéral, tutoriels, encadrés ---------- */
+.doc { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: clamp(2rem, 4vw, 4.5rem); max-width: 1280px; margin-inline: auto; padding: 112px var(--margin) 0; }
+.doc-nav { position: sticky; top: 20px; align-self: start; max-height: calc(100vh - 40px); overflow-y: auto; scrollbar-width: thin; }
+.doc-nav > details > summary { list-style: none; display: none; }
+.doc-nav > details > summary::-webkit-details-marker { display: none; }
+.doc-nav-label { margin: 22px 0 6px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-lo); }
+.doc-nav-label:first-child { margin-top: 0; }
+.doc-nav ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 1px; }
+.doc-nav a { display: block; padding: 6px 10px; border-left: 2px solid transparent; color: var(--muted); text-decoration: none; font-size: 0.98rem; line-height: 1.3; transition: color var(--t-hover) ease, border-color var(--t-hover) ease; }
+.doc-nav a:hover { color: var(--gold-hi); }
+.doc-nav a[aria-current="page"] { color: var(--ui-gold); border-left-color: var(--gold); background: linear-gradient(90deg, rgba(226, 182, 90, 0.12), transparent); font-weight: 700; }
+.doc-nav ul ul { margin: 2px 0 8px 12px; }
+.doc-nav ul ul a { font-size: 0.875rem; padding: 4px 10px; }
+.doc-nav ul ul a.is-here { color: var(--gold-hi); border-left-color: var(--gold-lo); }
+
+.doc-main { min-width: 0; max-width: 80ch; }
+.crumbs { font-size: var(--step-small); color: var(--muted); }
+.doc-main .crumbs ol { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 4px 8px; }
+.crumbs li + li::before { content: "›"; margin-right: 8px; color: var(--gold-lo); }
+.crumbs a { color: var(--gold); text-decoration: none; }
+.crumbs a:hover { text-decoration: underline; }
+.doc-main h1 { margin-top: 14px; font-size: clamp(2.2rem, 1.2rem + 3.2vw, 3.75rem); line-height: 1.05; }
+.doc-main .lead { margin-top: 18px; font-size: var(--step-lead); line-height: 1.35; max-width: 60ch; }
+.doc-main .rule { margin-top: 22px; }
+.doc-main h2 { position: relative; margin-top: 3.5rem; font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem); scroll-margin-top: 20px; }
+.doc-main h3 { margin-top: 2rem; font-size: 1.2rem; scroll-margin-top: 20px; }
+.doc-main h4 { margin-top: 1.25rem; font-family: var(--font-display); font-size: 1rem; color: var(--ink); }
+.doc-main h2 + *, .doc-main h3 + *, .doc-main h4 + * { margin-top: 0.75rem; }
+.doc-main p + p, .doc-main p + ul, .doc-main ul + p, .doc-main p + ol, .doc-main ol + p, .doc-main .table-wrap + p { margin-top: 0.9em; }
+.doc-main > section > p:first-of-type { margin-top: 0.75rem; }
+.doc-main ul:not([class]), .doc-main ol:not([class]) { padding-left: 1.3em; display: grid; gap: 6px; margin-top: 0.75rem; }
+.doc-main a:not(.button):not(.doc-card):not(.anchor) { color: var(--gold-hi); text-underline-offset: 0.18em; }
+.doc-main strong { color: #fff; }
+.anchor { position: absolute; left: -1.1em; top: 0.1em; padding-right: 0.3em; font-family: var(--font); font-size: 0.8em; color: var(--gold-lo); text-decoration: none; opacity: 0; transition: opacity var(--t-hover) ease; -webkit-text-fill-color: var(--gold-lo); }
+.doc-main h2:hover .anchor, .anchor:focus-visible { opacity: 1; }
+.doc-main code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 0.86em; background: #000; color: var(--gold-hi); padding: 1px 6px; border-radius: 2px; overflow-wrap: anywhere; }
+.doc-main code.d { background: rgba(88, 101, 242, 0.2); color: #d4d8ff; }
+/* Nom d'un bouton de l'addon : petit bouton rouge cerclé d'or, comme en jeu. */
+.ui { display: inline-block; padding: 0 0.45em; line-height: 1.45; border-radius: 3px; background: linear-gradient(180deg, #8a1d12, #5a0c07); border: 1px solid #b38a2d; color: var(--ui-gold); font-size: 0.9em; font-weight: 500; white-space: nowrap; text-shadow: 0 1px 0 #000; }
+.ui.tab { background: #2a2318; border-color: #3a2f1c; }
+.ui.opt { background: #000; border-color: var(--gold-lo); color: var(--ink); }
+.key { display: inline-block; padding: 0 0.4em; border: 1px solid var(--gold-lo); border-bottom-width: 2px; border-radius: 3px; background: var(--surface-2); font-size: 0.88em; white-space: nowrap; }
+
+.badge { display: inline-block; padding: 1px 9px; border-radius: 999px; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.02em; white-space: nowrap; vertical-align: 0.1em; border: 1px solid currentColor; }
+.b-all { color: #7fe36a; } .b-officer { color: #c993ff; } .b-org { color: #6fb6ff; } .b-admin { color: #ffa94d; } .b-self { color: var(--gold-hi); }
+.rights { margin-top: 0.75rem; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; font-size: 0.95rem; color: var(--muted); }
+
+/* Étapes numérotées d'un tutoriel. */
+.steps { counter-reset: step; list-style: none; padding: 0; margin: 1rem 0 0; display: grid; gap: 12px; }
+.steps > li { counter-increment: step; position: relative; padding-left: 2.6rem; min-height: 1.9rem; }
+.steps > li::before { content: counter(step); position: absolute; left: 0; top: 0; width: 1.8rem; height: 1.8rem; display: grid; place-items: center; border-radius: 50%; background: radial-gradient(circle at 50% 35%, #3b2c18, #120d07 75%); box-shadow: 0 0 0 1px #000, 0 0 0 2px var(--gold-lo); color: var(--ui-gold); font-family: var(--font-display); font-weight: 700; font-size: 0.9rem; }
+.steps > li > ul { margin-top: 6px; }
+.howto { margin-top: 1.25rem; padding: 18px 22px 22px; background: linear-gradient(180deg, var(--surface-2), var(--surface)); box-shadow: 0 0 0 1px #000, 0 0 0 2px #3a2e1a; border-radius: var(--radius); }
+.howto > h3:first-child, .howto > h4:first-child { margin-top: 0; }
+.howto + .howto { margin-top: 12px; }
+.howto h3 { display: flex; align-items: center; gap: 10px; font-size: 1.05rem; }
+.howto h3 .where { font-family: var(--font); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 8px; border-radius: 3px; background: #000; color: var(--muted); }
+
+/* Encadrés : astuce, attention, bon à savoir. */
+.callout { margin-top: 1.1rem; padding: 14px 18px; border-radius: 4px; background: linear-gradient(180deg, rgba(14, 16, 38, 0.95), rgba(5, 6, 18, 0.95)); box-shadow: 0 0 0 1px #000, inset 3px 0 0 var(--q-uncommon); font-size: 1rem; }
+.callout.c-warn { background: linear-gradient(180deg, rgba(48, 14, 8, 0.95), rgba(24, 7, 4, 0.95)); box-shadow: 0 0 0 1px #000, inset 3px 0 0 var(--ember); }
+.callout.c-note { background: linear-gradient(180deg, var(--surface-2), var(--surface)); box-shadow: 0 0 0 1px #000, inset 3px 0 0 var(--gold); }
+.callout-title { font-family: var(--font-display); font-weight: 700; font-size: 0.95rem; letter-spacing: 0.04em; color: #7fe36a; margin-bottom: 4px; }
+.callout.c-warn .callout-title { color: #ffb070; }
+.callout.c-note .callout-title { color: var(--ui-gold); }
+.callout p + p { margin-top: 0.5em; }
+
+/* Tableaux (référence des commandes). */
+.table-wrap { margin-top: 1rem; overflow-x: auto; box-shadow: var(--frame); border-radius: var(--radius); background: #0b0907; }
+.doc-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+.doc-table caption { text-align: left; padding: 12px 14px 4px; color: var(--muted); font-size: 0.875rem; }
+.doc-table th { text-align: left; padding: 10px 14px; font-family: var(--font-display); font-size: 0.85rem; letter-spacing: 0.04em; color: var(--ui-gold); border-bottom: 1px solid var(--gold-lo); white-space: nowrap; }
+.doc-table td { padding: 10px 14px; border-top: 1px solid #2a2216; vertical-align: top; }
+.doc-table tbody tr:nth-child(even) { background: rgba(255, 209, 0, 0.035); }
+.doc-table td:first-child, .doc-table td:nth-child(2) { white-space: nowrap; }
+.doc-table code { white-space: nowrap; }
+
+/* Cartes du sommaire. */
+.doc-cards { margin-top: 1.25rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
+.doc-card { display: grid; grid-template-columns: 44px 1fr; gap: 4px 14px; align-content: start; padding: 16px 18px; background: linear-gradient(180deg, var(--surface-2), var(--surface)); box-shadow: 0 0 0 1px #000, 0 0 0 2px #3a2e1a; border-radius: var(--radius); text-decoration: none; color: var(--ink); transition: box-shadow var(--t-hover) ease, filter var(--t-hover) ease; }
+.doc-card:hover { box-shadow: 0 0 0 1px #000, 0 0 0 2px var(--gold), 0 0 18px -4px rgba(255, 190, 90, 0.45); }
+.doc-card svg { grid-row: span 2; width: 44px; height: 44px; padding: 6px; border-radius: 4px; background: radial-gradient(circle at 50% 35%, #3b2c18, #120d07 75%); box-shadow: 0 0 0 1px #000, 0 0 0 2px #3d3020; }
+.doc-card b { font-family: var(--font-display); font-size: 1.05rem; color: var(--ui-gold); }
+.doc-card span { font-size: 0.95rem; color: var(--muted); }
+.quick { margin-top: 1.25rem; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.quick .howto { margin-top: 0; }
+
+/* Maquettes d'interface (données d'exemple). */
+.mock { margin: 1.25rem 0 0; max-width: 560px; }
+.mock .wow { font-size: 14px; }
+.mock figcaption { margin-top: 8px; font-size: 0.875rem; color: var(--muted); font-style: italic; }
+.mock .wow-row { grid-template-columns: 22px 1fr auto; }
+.mock .acts { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+.mock .bar-line { display: flex; gap: 4px; flex-wrap: wrap; padding: 8px 12px; border-bottom: 1px solid #2c2416; } /* taste-skill-ignore : fragment data-ui */
+.mock .chip { padding: 2px 10px; color: #a29a86; font-size: 12px; border-bottom: 2px solid transparent; }
+.mock .chip.is-on { color: #ffd100; border-bottom-color: #ffd100; }
+
+/* Précédent / suivant. */
+.doc-pager { margin-top: 4.5rem; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.doc-pager a { display: grid; gap: 2px; padding: 14px 18px; background: linear-gradient(180deg, var(--surface-2), var(--surface)); box-shadow: 0 0 0 1px #000, 0 0 0 2px #3a2e1a; border-radius: var(--radius); text-decoration: none; }
+.doc-pager a:hover { box-shadow: 0 0 0 1px #000, 0 0 0 2px var(--gold); }
+.doc-pager small { font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.doc-pager b { font-family: var(--font-display); color: var(--ui-gold); }
+.doc-pager .next { grid-column: 2; text-align: right; }
+
+/* Accueil : les huit modules. */
+.modules-head { display: flex; justify-content: space-between; align-items: end; gap: 2rem; flex-wrap: wrap; }
+.modules-head h2 { font-size: clamp(2rem, 3.6vw, 3.25rem); line-height: 1.05; }
+.modules-head p { color: var(--muted); max-width: 46ch; }
+.modules-grid { margin-top: 40px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.modules-grid .doc-card { min-height: 100%; }
+
+@media (max-width: 1100px) {
+	.modules-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 900px) {
+	.doc { grid-template-columns: minmax(0, 1fr); gap: 20px; padding-top: 88px; }
+	.doc-nav { position: static; max-height: none; overflow: visible; }
+	.doc-nav > details { background: linear-gradient(180deg, var(--surface-2), var(--surface)); box-shadow: 0 0 0 1px #000, 0 0 0 2px #3a2e1a; border-radius: var(--radius); }
+	.doc-nav > details > summary { display: flex; justify-content: space-between; align-items: center; min-height: 48px; padding: 0 16px; cursor: pointer; font-family: var(--font-display); font-weight: 700; color: var(--ui-gold); }
+	.doc-nav > details[open] > summary .plus::after { transform: rotate(0deg); }
+	.doc-nav > details > div { padding: 4px 12px 16px; }
+	.anchor { display: none; }
+}
+@media (max-width: 720px) {
+	.quick { grid-template-columns: 1fr; }
+	.modules-grid { grid-template-columns: 1fr; }
+	.doc-pager { grid-template-columns: 1fr; }
+	.doc-pager .next { grid-column: auto; }
+	.howto { padding: 16px; }
+	.tabs { grid-auto-flow: row; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+	.tabs button b { font-size: 0.66rem; overflow-wrap: anywhere; }
+}
+.gloss { color: var(--muted); font-size: 0.9em; }
+.mock .wow-tabs { flex-wrap: wrap; }
+@media (max-width: 400px) {
+	.topbar nav { gap: 0.6rem; letter-spacing: 0.02em; }
+	.wordmark { font-size: 1.1rem; }
+	.lang-switch button { min-width: 2.5rem; }
+}

@@ -261,6 +261,11 @@ local function NewContext(id)
 		self:Track(GP.UI.AddTab(def, id))
 	end
 
+	-- Tutoriel pas à pas de l'onglet du module (voir Tutorial.lua).
+	function ctx:Tutorial(tutorialId, def)
+		self:Track(GP.Tutorial.Register(tutorialId, def, id))
+	end
+
 	return ctx
 end
 
@@ -453,6 +458,10 @@ SlashCmdList.GUILDKEEP = function(msg)
 	end
 	if command == "debug" then
 		M.Fire("DEBUG")
+		return
+	end
+	if command == "tuto" or command == "tutoriel" or command == "tutorial" then
+		GP.Tutorial.Slash(rest)
 		return
 	end
 	local entry = slashCommands[command]

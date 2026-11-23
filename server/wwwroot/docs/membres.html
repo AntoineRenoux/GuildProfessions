@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guildkeep · module Membres</title>
+<meta name="description" content="Le module Membres de Guildkeep : le roster de la guilde, qui est en ligne, et la fiche de chaque membre avec son équipement et un aperçu 3D.">
+<link rel="preload" href="/fonts/cinzel-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/alegreya-sans-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/site.css?v=6">
+<script>document.documentElement.classList.add('js');try{var l=localStorage.getItem('gk-lang')||((navigator.language||'fr').toLowerCase().indexOf('fr')===0?'fr':'en');document.documentElement.lang=l}catch(e){}</script>
+</head>
+<body>
+<svg class="sprite" aria-hidden="true" focusable="false"><defs><linearGradient id="gk-gold" gradientUnits="userSpaceOnUse" x1="0" y1="4" x2="0" y2="44"><stop offset="0" stop-color="#fff1bf"/><stop offset=".45" stop-color="#f0c25e"/><stop offset="1" stop-color="#9a6a20"/></linearGradient>
+<symbol id="i-metiers" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M6 15h25c1 5 5 8 11 8v4H31l3 9H14l3-9h-3C9 27 6 22 6 15z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M36 6l4 4M33 9l4 4"/></symbol>
+<symbol id="i-membres" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M24 5c9 0 15 7 15 16v14l-6 6h-4V27h-10v14h-4l-6-6V21C9 12 15 5 24 5z"/><path fill="#1a1208" d="M15 20h18v4H15z"/></symbol>
+<symbol id="i-artisanat" viewBox="0 0 48 48"><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M10 38L36 12"/><ellipse fill="none" stroke="url(#gk-gold)" stroke-width="3.2" cx="37.5" cy="10.5" rx="3.2" ry="1.8" transform="rotate(-45 37.5 10.5)"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="1.8" d="M39 9c6 6-4 12-10 16s-14 10-8 17"/></symbol>
+<symbol id="i-evenements" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M7 11h34v30H7z"/><path fill="#1a1208" d="M10 19h28v19H10z"/><path fill="url(#gk-gold)" d="M13 22h6v5h-6zM21 22h6v5h-6zM29 22h6v5h-6zM13 30h6v5h-6zM21 30h6v5h-6z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M15 6v8M33 6v8"/></symbol>
+<symbol id="i-raid" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M24 4l17 6v12c0 11-7 18-17 22C14 40 7 33 7 22V10z"/><path fill="#1a1208" d="M24 11l11 4v8c0 7-4 12-11 15z"/></symbol>
+<symbol id="i-presence" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M10 6h22l7 7v29H10z"/><path fill="none" stroke="#1a1208" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.4" d="M16 26l5 5 10-11"/></symbol>
+<symbol id="i-quetes" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M20 5h8l-1.5 26h-5zM24 35a4 4 0 1 1 0 8 4 4 0 0 1 0-8z"/></symbol>
+<symbol id="i-communication" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M6 19h8l20-11v32L14 29H6z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M39 17c3 4 3 10 0 14M12 30l3 11h6l-3-11"/></symbol>
+<symbol id="i-install" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M17 12c0-5 3-8 7-8s7 3 7 8h-3c0-3-2-5-4-5s-4 2-4 5z"/><path fill="url(#gk-gold)" d="M10 14h28l4 26a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4z"/><path fill="#1a1208" d="M20 22h8v6h-8z"/></symbol>
+<symbol id="i-compagnon" viewBox="0 0 48 48"><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="4" d="M6 34c6-14 30-14 36 0M12 34V22M24 34V18M36 34V22"/><path fill="url(#gk-gold)" d="M4 34h40v5H4z"/></symbol>
+<symbol id="i-cmd" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M5 9h38v30H5z"/><path fill="#1a1208" d="M8 15h32v21H8z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M14 32l8-13M26 32h8"/></symbol>
+<symbol id="i-faq" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M8 6h26l6 6v30H8z"/><path fill="none" stroke="#1a1208" stroke-linecap="round" stroke-width="3.4" d="M19 19c0-4 3-6 5.5-6s5.5 2 5.5 5.5-5 4-5 8M24.5 32v.5"/></symbol>
+</defs></svg>
+<header class="topbar">
+	<a class="wordmark" href="/">Guildkeep</a>
+	<nav aria-label="Navigation">
+		<a href="/docs/" aria-current="page"><span lang="fr">Documentation</span><span lang="en">Docs</span></a>
+		<a class="hide-phone" href="/docs/faq.html"><span lang="fr">Aide</span><span lang="en">Help</span></a>
+		<div class="lang-switch" role="group" aria-label="Langue / Language">
+			<button type="button" data-set-lang="fr" aria-pressed="true">FR</button>
+			<button type="button" data-set-lang="en" aria-pressed="false">EN</button>
+		</div>
+		<a class="button invite-link hide-phone" href="/#mise-en-place"><span lang="fr">Ajouter à Discord</span><span lang="en">Add to Discord</span></a>
+	</nav>
+</header>
+
+<div class="doc">
+<aside class="doc-nav" aria-label="Sommaire / Contents"><details open><summary><span><span lang="fr">Sommaire</span><span lang="en">Contents</span></span><i class="plus" aria-hidden="true"></i></summary><div>
+<p class="doc-nav-label"><span lang="fr">Démarrer</span><span lang="en">Getting started</span></p><ul>
+<li><a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a>
+</li>
+<li><a href="/docs/installation.html"><span lang="fr">Installer Guildkeep</span><span lang="en">Installing Guildkeep</span></a>
+</li>
+<li><a href="/docs/compagnon.html"><span lang="fr">L'app compagnon</span><span lang="en">The companion app</span></a>
+</li>
+</ul>
+<p class="doc-nav-label"><span lang="fr">Modules</span><span lang="en">Modules</span></p><ul>
+<li><a href="/docs/metiers.html"><span lang="fr">Métiers</span><span lang="en">Professions</span></a>
+</li>
+<li><a href="/docs/membres.html" aria-current="page"><span lang="fr">Membres</span><span lang="en">Members</span></a>
+<ul>
+<li><a href="#a-quoi-ca-sert"><span lang="fr">À quoi ça sert</span><span lang="en">What it's for</span></a></li>
+<li><a href="#consulter-une-fiche"><span lang="fr">Tutoriel : consulter la fiche d'un membre</span><span lang="en">Tutorial: look at a member's sheet</span></a></li>
+<li><a href="#releve-equipement"><span lang="fr">Tutoriel : mettre ton équipement à jour</span><span lang="en">Tutorial: update your gear</span></a></li>
+<li><a href="#discord"><span lang="fr">Sur Discord</span><span lang="en">On Discord</span></a></li>
+</ul>
+</li>
+<li><a href="/docs/artisanat.html"><span lang="fr">Artisanat</span><span lang="en">Crafting orders</span></a>
+</li>
+<li><a href="/docs/evenements.html"><span lang="fr">Événements</span><span lang="en">Events</span></a>
+</li>
+<li><a href="/docs/soiree-raid.html"><span lang="fr">Soirée de raid</span><span lang="en">Raid night</span></a>
+</li>
+<li><a href="/docs/presence.html"><span lang="fr">Présence et butin</span><span lang="en">Attendance and loot</span></a>
+</li>
+<li><a href="/docs/quetes.html"><span lang="fr">Quêtes</span><span lang="en">Quests</span></a>
+</li>
+<li><a href="/docs/communication.html"><span lang="fr">Communication</span><span lang="en">Communication</span></a>
+</li>
+</ul>
+<p class="doc-nav-label"><span lang="fr">Référence</span><span lang="en">Reference</span></p><ul>
+<li><a href="/docs/commandes.html"><span lang="fr">Commandes Discord</span><span lang="en">Discord commands</span></a>
+</li>
+<li><a href="/docs/faq.html"><span lang="fr">FAQ et dépannage</span><span lang="en">FAQ and troubleshooting</span></a>
+</li>
+</ul>
+</div></details></aside>
+<main class="doc-main" id="contenu">
+<nav class="crumbs" aria-label="Fil d'Ariane / Breadcrumb"><ol class="crumbs-list"><li><a href="/"><span lang="fr">Accueil</span><span lang="en">Home</span></a></li><li><a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a></li><li aria-current="page"><span lang="fr">Membres</span><span lang="en">Members</span></li></ol></nav>
+<h1><span lang="fr">Membres</span><span lang="en">Members</span></h1>
+<p class="lead"><span lang="fr">Le roster de la guilde et la fiche de chaque membre : classe, niveau, métiers, équipement relevé et aperçu 3D. Pour préparer un raid ou conseiller un nouveau.</span><span lang="en">The guild roster and every member's sheet: class, level, professions, scanned gear and a 3D preview. To prepare a raid or advise a newcomer.</span></p>
+<div class="rule" aria-hidden="true"><i></i></div>
+<section>
+<h2 id="a-quoi-ca-sert"><a class="anchor" href="#a-quoi-ca-sert" aria-hidden="true" tabindex="-1">#</a><span lang="fr">À quoi ça sert</span><span lang="en">What it's for</span></h2>
+<p><span lang="fr">L'onglet <span lang="fr"><span class="ui tab">Membres</span></span><span lang="en"><span class="ui tab">Membres</span> <span class="gloss">(Members)</span></span> montre à gauche la liste des personnages de la guilde (icône de classe, point vert s'il est en ligne, niveau), et à droite la fiche du membre choisi : son niveau, sa classe, son niveau d'objet moyen, ses métiers et les 19 emplacements de son équipement autour d'un aperçu 3D.</span><span lang="en">The <span lang="fr"><span class="ui tab">Membres</span></span><span lang="en"><span class="ui tab">Membres</span> <span class="gloss">(Members)</span></span> tab shows the guild's characters on the left (class icon, a green dot when online, level), and on the right the chosen member's sheet: level, class, average item level, professions and the 19 gear slots around a 3D preview.</span></p>
+<figure class="mock" data-ui>
+	<div class="wow">
+		<div class="wow-title"><b>Maël Corvin</b><small>Niveau 60 · Mage · ilvl moyen 71 · en ligne</small></div>
+		<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:12px">
+			<span class="wow-ico" style="width:auto;height:40px;border:1px solid #a335ee">T</span><span class="wow-ico" style="width:auto;height:40px;border:1px solid #0070dd">C</span><span class="wow-ico" style="width:auto;height:40px;border:1px solid #a335ee">É</span><span class="wow-ico" style="width:auto;height:40px;border:1px solid #1eff00">D</span>
+		</div>
+		<div style="padding:0 12px 12px" class="soft">Alchimie 300 · Herboristerie 286 · modèle générique + équipement relevé · glisser pour tourner</div>
+	</div>
+	<figcaption><span lang="fr">Maquette : la fiche d'un membre (quelques emplacements d'équipement).</span><span lang="en">Mock-up: a member's sheet (a few gear slots).</span></figcaption>
+</figure>
+
+<aside class="callout c-tip"><p class="callout-title"><span lang="fr">Astuce</span><span lang="en">Tip</span></p><p><span lang="fr"><strong>Tutoriel en jeu.</strong> À la première ouverture de l'onglet <span lang="fr"><span class="ui tab">Membres</span></span><span lang="en"><span class="ui tab">Membres</span> <span class="gloss">(Members)</span></span>, un tutoriel pas à pas encadre chaque bouton et explique à quoi il sert. Tu peux le passer à tout moment, et le revoir avec le bouton <span class="ui">?</span> en haut à droite de la fenêtre ou <code>/gkeep tuto</code>.</span><span lang="en"><strong>In-game tutorial.</strong> The first time you open the <span lang="fr"><span class="ui tab">Membres</span></span><span lang="en"><span class="ui tab">Membres</span> <span class="gloss">(Members)</span></span> tab, a step-by-step tutorial highlights every button and explains what it does. You can skip it at any time, and replay it with the <span class="ui">?</span> button at the top right of the window or <code>/gkeep tuto</code>.</span></p></aside>
+</section>
+
+<section>
+<h2 id="consulter-une-fiche"><a class="anchor" href="#consulter-une-fiche" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Tutoriel : consulter la fiche d'un membre</span><span lang="en">Tutorial: look at a member's sheet</span></h2>
+<div class="rights"><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></div>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu</span><span lang="en">In game</span></span><span lang="fr">Dans l'onglet Membres</span><span lang="en">In the Members tab</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Ouvre <code>/gkeep</code>, onglet <span lang="fr"><span class="ui tab">Membres</span></span><span lang="en"><span class="ui tab">Membres</span> <span class="gloss">(Members)</span></span>.</span><span lang="en">Open <code>/gkeep</code>, <span lang="fr"><span class="ui tab">Membres</span></span><span lang="en"><span class="ui tab">Membres</span> <span class="gloss">(Members)</span></span> tab.</span></li>
+		<li><span lang="fr">Tape un bout de nom dans <span lang="fr"><span class="ui opt">Chercher un membre</span></span><span lang="en"><span class="ui opt">Chercher un membre</span> <span class="gloss">(Search a member)</span></span>, puis clique sur le personnage.</span><span lang="en">Type part of a name in <span lang="fr"><span class="ui opt">Chercher un membre</span></span><span lang="en"><span class="ui opt">Chercher un membre</span> <span class="gloss">(Search a member)</span></span>, then click the character.</span></li>
+		<li><span lang="fr">Survole un emplacement d'équipement pour l'infobulle de l'objet. <kbd class="key">Maj</kbd>+clic met son lien dans le chat, <kbd class="key">Ctrl</kbd>+clic l'essaie dans la cabine d'essayage.</span><span lang="en">Hover a gear slot for the item's tooltip. <kbd class="key">Shift</kbd>+click links it in chat, <kbd class="key">Ctrl</kbd>+click tries it on in the dressing room.</span></li>
+		<li><span lang="fr">Clique sur un métier de la fiche pour ouvrir la liste de ses recettes.</span><span lang="en">Click a profession on the sheet to open its recipe list.</span></li>
+		<li><span lang="fr">Fais glisser l'aperçu 3D pour le tourner.</span><span lang="en">Drag the 3D preview to rotate it.</span></li>
+	</ol>
+</div>
+<aside class="callout c-tip"><p class="callout-title"><span lang="fr">Astuce</span><span lang="en">Tip</span></p><p><span lang="fr">Pour un rendu fidèle (race, visage, coiffure), cible le joueur en jeu avant d'ouvrir sa fiche : la mention devient « rendu fidèle (cible) ». Sinon l'aperçu montre un modèle générique habillé de l'équipement relevé.</span><span lang="en">For a faithful render (race, face, hair), target the player in game before opening their sheet: the note becomes "rendu fidèle (cible)" (faithful render). Otherwise the preview shows a generic model wearing the scanned gear.</span></p></aside>
+</section>
+
+<section>
+<h2 id="releve-equipement"><a class="anchor" href="#releve-equipement" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Tutoriel : mettre ton équipement à jour</span><span lang="en">Tutorial: update your gear</span></h2>
+<div class="rights"><span class="badge b-self"><span lang="fr">Toi seul</span><span lang="en">Only you</span></span></div>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu</span><span lang="en">In game</span></span><span lang="fr">Automatique</span><span lang="en">Automatic</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Rien à faire : l'addon relève ce que tu portes à la connexion et à chaque changement d'équipement.</span><span lang="en">Nothing to do: the addon reads what you wear at login and at every gear change.</span></li>
+		<li><span lang="fr">Le relevé part vers la guilde à ta déconnexion ou à un <code>/reload</code> (par le compagnon ou le canal manuel).</span><span lang="en">The scan goes to the guild at logout or on a <code>/reload</code> (through the companion or the manual channel).</span></li>
+	</ol>
+</div>
+<aside class="callout c-note"><p class="callout-title"><span lang="fr">Bon à savoir</span><span lang="en">Good to know</span></p><p><span lang="fr">Les autres membres voient donc ton équipement tel qu'il était à ta dernière déconnexion. « Vide ou pas encore relevé » sur un emplacement veut dire que rien n'y était, ou que ce membre n'a pas encore l'addon.</span><span lang="en">Other members therefore see your gear as it was at your last logout. "Vide ou pas encore relevé" (empty or not scanned yet) on a slot means nothing was there, or that member doesn't have the addon yet.</span></p></aside>
+</section>
+
+<section>
+<h2 id="discord"><a class="anchor" href="#discord" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Sur Discord</span><span lang="en">On Discord</span></h2>
+<p><span lang="fr">Le roster n'a pas de commande propre ; on retrouve les personnages par leurs métiers (<code class="d"><span lang="fr">/gkeep metier liste</span><span lang="en">/gkeep profession list</span></code>), leur présence (<code class="d"><span lang="fr">/gkeep presence joueur</span><span lang="en">/gkeep attendance player</span></code>) ou leurs quêtes. Ce qui relie un membre Discord à ses personnages, c'est <code class="d"><span lang="fr">/gkeep lier</span><span lang="en">/gkeep link</span></code> et <code class="d"><span lang="fr">/gkeep principal</span><span lang="en">/gkeep main</span></code> : voir <a href="/docs/installation.html#lier">Relier ton compte Discord</a>.</span><span lang="en">The roster has no command of its own; you find characters through their professions (<code class="d"><span lang="fr">/gkeep metier liste</span><span lang="en">/gkeep profession list</span></code>), attendance (<code class="d"><span lang="fr">/gkeep presence joueur</span><span lang="en">/gkeep attendance player</span></code>) or quests. What ties a Discord member to their characters is <code class="d"><span lang="fr">/gkeep lier</span><span lang="en">/gkeep link</span></code> and <code class="d"><span lang="fr">/gkeep principal</span><span lang="en">/gkeep main</span></code>: see <a href="/docs/installation.html#lier">Link your Discord account</a>.</span></p>
+</section>
+<nav class="doc-pager" aria-label="Pages voisines / Adjacent pages">
+<a class="prev" href="/docs/metiers.html" rel="prev"><small><span lang="fr">← Précédent</span><span lang="en">← Previous</span></small><b><span lang="fr">Métiers</span><span lang="en">Professions</span></b></a>
+<a class="next" href="/docs/artisanat.html" rel="next"><small><span lang="fr">Suivant →</span><span lang="en">Next →</span></small><b><span lang="fr">Artisanat</span><span lang="en">Crafting orders</span></b></a>
+</nav>
+</main>
+</div>
+
+<footer class="foot">
+	<span><span lang="fr">Outil de guilde pour WoW: Forever</span><span lang="en">Guild tool for WoW: Forever</span></span>
+	<nav aria-label="Pied de page / Footer">
+		<a href="/"><span lang="fr">Accueil</span><span lang="en">Home</span></a>
+		<a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a>
+		<a href="/confidentialite.html"><span lang="fr">Confidentialité</span><span lang="en">Privacy</span></a>
+		<a href="/conditions.html"><span lang="fr">Conditions</span><span lang="en">Terms</span></a>
+		<a href="https://github.com/AntoineRenoux/GuildProfessions" rel="noopener"><span lang="fr">Code source</span><span lang="en">Source code</span></a>
+	</nav>
+	<span class="end">2026</span>
+	<span class="credit"><span lang="fr">World of Warcraft est une marque de Blizzard Entertainment ; Guildkeep n'y est pas affilié.</span><span lang="en">World of Warcraft is a trademark of Blizzard Entertainment; Guildkeep is not affiliated.</span></span>
+</footer>
+
+<script src="/site.js?v=6" defer></script>
+</body>
+</html>

@@ -61,6 +61,27 @@ local function RemoveExtension(extension)
 	end
 end
 
+-- Affiche une section du détail (roster, ou celle d'une extension) ; sert aux tutoriels.
+function GP.EventsUI.ShowSection(key)
+	view.section = key
+	GP.RefreshUI()
+end
+
+-- Bouton d'une section du détail (nil si absente).
+function GP.EventsUI.SectionButton(key)
+	local detail = panel and panel.detail
+	for _, button in ipairs(detail and detail.sectionButtons or {}) do
+		if button.section == key then
+			return button
+		end
+	end
+end
+
+-- Détail de l'événement affiché (boutons partagés avec les extensions, ex. « Copier la soirée »).
+function GP.EventsUI.Detail()
+	return panel and panel.detail
+end
+
 function GP.EventsUI.Extend(extension, owner)
 	extension.owner = owner
 	extensions[#extensions + 1] = extension
@@ -782,6 +803,7 @@ local function BuildLeft(parent)
 	end
 
 	local newButton = Button(left, "Nouveau", 86, function() OpenEditor(nil) end)
+	panel.newButton = newButton
 	newButton:SetPoint("TOPRIGHT", 0, 0)
 
 	panel.showPast = CreateFrame("CheckButton", nil, left, "UICheckButtonTemplate")
@@ -1152,6 +1174,44 @@ GP.Modules.Define("events", "ui", function(ctx)
 	ctx:Slash({ "events", "event", "evenements" }, function()
 		GP.ShowTab("tabEvents")
 	end)
+	local function Detail(name, index)
+		return function()
+			local detail = panel and panel.detail
+			local element = detail and detail[name]
+			return index and element and element[index] or element
+		end
+	end
+	ctx:Tutorial("events", {
+		tab = "tabEvents",
+		order = 10,
+		title = "Événements",
+		steps = {
+			{ target = function() return panel and panel.modeButtons and panel.modeButtons[1] end, title = "Liste ou calendrier",
+				text = "Les événements à venir en liste, ou sur un calendrier du mois : un point marque les jours avec un événement, clique sur un jour pour voir les siens." },
+			{ target = function() return panel and panel.showPast end, title = "Passés", text = "Coche pour revoir aussi les événements terminés." },
+			{ target = function() return panel and panel.newButton end, title = "Nouveau",
+				text = "Crée un événement : titre, type (raid, donjon, JcJ, autre), date et heure (ta propre heure), composition visée par rôle et détails. Tu en deviens l'organisateur." },
+			{ target = Detail("roleButtons", 1), title = "Ton rôle",
+				text = "Tank, soigneur, DPS mêlée ou distance : choisis le rôle que tu joueras. Ta spécialisation et une note sont facultatives.",
+				hint = "Visible quand un événement est sélectionné." },
+			{ target = Detail("responseButtons", 1), title = "Ta réponse",
+				text = "Présent, Peut-être ou Absent : un clic enregistre ta réponse avec ton rôle. Répondre Absent te retire du roster." },
+			{ target = Detail("compCells", 1), title = "Composition",
+				text = "Pour chaque rôle : confirmés / objectif, et le nombre de présents inscrits. Vert quand l'objectif est atteint." },
+			{ target = Detail("roster"), title = "Le roster",
+				text = "Les inscrits rangés par place. L'organisateur et les officiers les placent avec Confirmer, Remplaçant, Banc ou Retirer." },
+			{ target = Detail("invite"), title = "Inviter les confirmés",
+				text = "Invite d'un clic les confirmés en ligne et passe le groupe en raid au besoin (chef ou assistant du groupe, hors combat).",
+				hint = "Réservé à l'organisateur et aux officiers." },
+			{ target = Detail("copy"), title = "Copier", text = "Le roster (et la soirée de raid) en texte, à coller sur Discord." },
+			{ target = Detail("remind"), title = "Rappeler",
+				text = "Poste un rappel avec l'heure et les inscrits dans le canal de guilde.", hint = "Réservé à l'organisateur et aux officiers, avant l'événement." },
+			{ target = Detail("reminder"), title = "Me rappeler",
+				text = "Une alerte quelques minutes avant chaque événement où tu as répondu Présent ou Peut-être. Règle le nombre de minutes à côté, ou /gkeep rappel 30 (off pour couper)." },
+			{ target = Detail("edit"), title = "Modifier et annuler",
+				text = "L'organisateur et les officiers modifient l'événement ou l'annulent (Rétablir le remet).", hint = "Réservé à l'organisateur et aux officiers." },
+		},
+	})
 	ctx:AddTab({
 		label = "Événements",
 		key = "tabEvents",

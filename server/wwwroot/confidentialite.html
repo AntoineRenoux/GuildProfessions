@@ -7,7 +7,7 @@
 <meta name="description" content="Ce que Guildkeep enregistre, qui le voit, et comment tout effacer.">
 <link rel="preload" href="/fonts/cinzel-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/alegreya-sans-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/site.css?v=5">
+<link rel="stylesheet" href="/site.css?v=6">
 <script>document.documentElement.classList.add('js');try{var l=localStorage.getItem('gk-lang')||((navigator.language||'fr').toLowerCase().indexOf('fr')===0?'fr':'en');document.documentElement.lang=l}catch(e){}</script>
 </head>
 <body>
@@ -15,7 +15,7 @@
 <header class="topbar">
 	<a class="wordmark" href="/">Guildkeep</a>
 	<nav aria-label="Navigation">
-		<a href="/#questions"><span lang="fr">Aide</span><span lang="en">Help</span></a>
+		<a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Docs</span></a>
 		<div class="lang-switch" role="group" aria-label="Langue / Language">
 			<button type="button" data-set-lang="fr" aria-pressed="true">FR</button>
 			<button type="button" data-set-lang="en" aria-pressed="false">EN</button>
@@ -27,23 +27,29 @@
 	<div class="page-grid">
 		<aside class="page-art item-card" data-rise style="--i:2" aria-label="Objet / Item">
 			<div class="item-head"><svg class="item-icon" viewBox="0 0 48 48" aria-hidden="true"><path fill="#e2b65a" d="M6 20c0-8 8-12 18-12s18 4 18 12z"/><path fill="#e2b65a" d="M6 22h36v18H6z"/><path fill="#5a1a0c" d="M21 20h6v9h-6z"/><path fill="#0d0b09" d="M6 21h36v2H6z"/></svg><p class="item-name"><span lang="fr">Coffre de la guilde</span><span lang="en">Guild chest</span></p></div>
-			<p class="item-bind"><span lang="fr">Ouvert aux seuls membres</span><span lang="en">Members only</span></p><p class="item-line"><span lang="fr">Contient : personnages, métiers, recettes, commandes, comptes Discord liés</span><span lang="en">Contains: characters, professions, recipes, orders, linked Discord accounts</span></p><p class="item-use"><span lang="fr">Utiliser : /gkeep-setup, « Supprimer la guilde », vide le coffre pour de bon.</span><span lang="en">Use: /gkeep-setup, "Delete the guild", empties the chest for good.</span></p><p class="item-flavor"><span lang="fr">« Jamais de mot de passe ni d'e-mail à l'intérieur. »</span><span lang="en">"Never a password or an email inside."</span></p>
+			<p class="item-bind"><span lang="fr">Ouvert aux seuls membres</span><span lang="en">Members only</span></p><p class="item-line"><span lang="fr">Contient : personnages, métiers, recettes, commandes, événements, présence en raid, quêtes, annonces, comptes Discord liés</span><span lang="en">Contains: characters, professions, recipes, orders, events, raid attendance, quests, announcements, linked Discord accounts</span></p><p class="item-use"><span lang="fr">Utiliser : /gkeep-setup, « Supprimer la guilde », vide le coffre pour de bon.</span><span lang="en">Use: /gkeep-setup, "Delete the guild", empties the chest for good.</span></p><p class="item-flavor"><span lang="fr">« Jamais de mot de passe ni d'e-mail à l'intérieur. »</span><span lang="en">"Never a password or an email inside."</span></p>
 		</aside>
 		<div class="page-main">
 		<h1 class="lines">
 			<span class="line"><span data-line style="--i:0"><span lang="fr">Ce que Guildkeep</span><span lang="en">What Guildkeep</span></span></span>
 			<span class="line"><span data-line style="--i:1"><span lang="fr">garde</span><span lang="en">keeps</span></span></span>
 		</h1>
-		<p class="lead" data-rise style="--i:0"><span lang="fr">Le strict nécessaire pour dire qui sait fabriquer quoi dans ta guilde. Rien n'est vendu, rien n'est partagé avec une autre guilde.</span><span lang="en">Only what it takes to tell who can craft what in your guild. Nothing is sold, nothing is shared with another guild.</span></p>
+		<p class="lead" data-rise style="--i:0"><span lang="fr">Le nécessaire pour faire vivre ta guilde : qui sait fabriquer quoi, qui vient au raid, qui fait quelle quête. Rien n'est vendu, rien n'est partagé avec une autre guilde.</span><span lang="en">What it takes to run your guild: who can craft what, who comes to the raid, who is on which quest. Nothing is sold, nothing is shared with another guild.</span></p>
 
 		<div class="prose">
 			<section data-reveal>
 				<h2><span lang="fr">Ce qui est enregistré</span><span lang="en">What is stored</span></h2>
 				<ul>
 					<li><span lang="fr">Pour chaque personnage relevé par l'addon : nom, classe, race, niveau, métiers et leur niveau, recettes connues, équipement porté.</span><span lang="en">For each character the addon scans: name, class, race, level, professions and their level, known recipes, gear worn.</span></li>
-					<li><span lang="fr">Les commandes de craft : qui commande quoi à qui, la quantité, la note, le statut.</span><span lang="en">Craft orders: who orders what from whom, the quantity, the note, the status.</span></li>
+					<li><span lang="fr">Le rang d'officier relevé en jeu, quand un membre l'envoie avec son token personnel : il donne les droits d'officier sur Discord.</span><span lang="en">The officer rank read in game, when a member sends it with their personal token: it grants officer rights on Discord.</span></li>
+					<li><span lang="fr">Les commandes de craft : qui commande quoi à qui, la quantité, la note, le statut, et les offres des artisans. Le catalogue des recettes de la guilde (nom et métier des recettes vues dans les fenêtres de métier).</span><span lang="en">Craft orders: who orders what from whom, the quantity, the note, the status, and the crafters' offers. The guild's recipe catalog (name and profession of the recipes seen in profession windows).</span></li>
+					<li><span lang="fr">Les événements de la guilde et les réponses de chacun : rôle, spécialisation, note, place dans le roster ; les réservations de butin et les rôles de soutien d'une soirée de raid.</span><span lang="en">The guild's events and everyone's answers: role, specialization, note, roster spot; loot reserves and support duties of a raid night.</span></li>
+					<li><span lang="fr">La présence en raid : pour chaque raid joué avec au moins 5 membres de la guilde, le temps de présence de chaque membre de la guilde, les objets épiques ou mieux qu'ils ont reçus, et les corrections des officiers. Les autres joueurs du raid ne sont pas relevés.</span><span lang="en">Raid attendance: for each raid played with at least 5 guild members, each guild member's time in the raid, the epic or better items they received, and the officers' corrections. Other players in the raid are not recorded.</span></li>
+					<li><span lang="fr">Les quêtes élites, de donjon et de raid du journal de chaque personnage (les quêtes en solo ne le sont pas).</span><span lang="en">The elite, dungeon and raid quests in each character's quest log (solo quests are not).</span></li>
+					<li><span lang="fr">Les annonces, modèles d'annonce, sections de la charte et objectifs de la guilde, avec le nom de leur auteur, et les contributions de chacun aux objectifs.</span><span lang="en">The guild's announcements, announcement templates, handbook sections and goals, with their author's name, and everyone's contributions to the goals.</span></li>
 					<li><span lang="fr">Pour les membres qui utilisent le bot : leur identifiant et leur pseudo Discord, et les personnages qu'ils ont liés.</span><span lang="en">For members who use the bot: their Discord ID and username, and the characters they linked.</span></li>
-					<li><span lang="fr">Pour la guilde : son nom en jeu, l'identifiant de son serveur Discord et les options choisies par l'administrateur.</span><span lang="en">For the guild: its in-game name, its Discord server ID and the options its admin chose.</span></li>
+					<li><span lang="fr">Pour la guilde : son nom en jeu, l'identifiant de son serveur Discord et les options choisies par l'administrateur (dont les salons où publier les commandes et les annonces).</span><span lang="en">For the guild: its in-game name, its Discord server ID and the options its admin chose (including the channels where orders and announcements are posted).</span></li>
+					<li><span lang="fr">Dans ton jeu seulement, jamais envoyés : les modules activés, tes réglages de rappel et l'avancement des tutoriels.</span><span lang="en">In your game only, never sent: the modules you turned on, your reminder settings and your tutorial progress.</span></li>
 				</ul>
 			</section>
 			<section data-reveal>
@@ -61,7 +67,7 @@
 			</section>
 			<section data-reveal>
 				<h2><span lang="fr">Tout effacer</span><span lang="en">Erasing everything</span></h2>
-				<p><span lang="fr">L'administrateur lance <code>/gkeep-setup</code>, puis « Supprimer la guilde » : tout est effacé aussitôt. Si le bot est simplement retiré du serveur, les données de la guilde sont effacées au bout de 30 jours. Un membre peut retirer un métier avec <code>/gkeep metier retirer</code> ; un personnage relevé dans une autre guilde quitte l'annuaire de la tienne.</span><span lang="en">The admin runs <code>/gkeep-setup</code>, then "Delete the guild": everything is erased at once. If the bot is simply removed from the server, the guild's data is erased after 30 days. A member can remove a profession with <code>/gkeep profession remove</code>; a character scanned in another guild leaves yours.</span></p>
+				<p><span lang="fr">L'administrateur lance <code>/gkeep-setup</code>, puis « Supprimer la guilde » : tout est effacé aussitôt. Si le bot est simplement retiré du serveur, les données de la guilde sont effacées au bout de 30 jours. Un membre peut retirer un métier avec <code>/gkeep metier retirer</code> ; un personnage relevé dans une autre guilde quitte l'annuaire de la tienne. Les officiers retirent une annonce, une section de la charte ou un objet de l'historique de butin depuis l'addon ou Discord.</span><span lang="en">The admin runs <code>/gkeep-setup</code>, then "Delete the guild": everything is erased at once. If the bot is simply removed from the server, the guild's data is erased after 30 days. A member can remove a profession with <code>/gkeep profession remove</code>; a character scanned in another guild leaves yours. Officers remove an announcement, a handbook section or an item from the loot history from the addon or Discord.</span></p>
 			</section>
 			<section data-reveal>
 				<h2><span lang="fr">Vérifiable</span><span lang="en">Verifiable</span></h2>
@@ -77,12 +83,12 @@
 	<nav aria-label="Pied de page / Footer">
 		<a href="/"><span lang="fr">Accueil</span><span lang="en">Home</span></a>
 		<a href="/conditions.html"><span lang="fr">Conditions</span><span lang="en">Terms</span></a>
-		<a href="/#questions"><span lang="fr">Aide</span><span lang="en">Help</span></a>
+		<a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Docs</span></a>
 	</nav>
 	<span class="end">2026</span>
 	<span class="credit"><span lang="fr">World of Warcraft est une marque de Blizzard Entertainment ; Guildkeep n'y est pas affilié.</span><span lang="en">World of Warcraft is a trademark of Blizzard Entertainment; Guildkeep is not affiliated.</span></span>
 </footer>
 
-<script src="/site.js?v=5" defer></script>
+<script src="/site.js?v=6" defer></script>
 </body>
 </html>

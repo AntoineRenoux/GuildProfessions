@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guildkeep · documentation</title>
+<meta name="description" content="La documentation de Guildkeep : installation, app compagnon, tutoriels pas à pas pour chaque module, toutes les commandes Discord et le dépannage.">
+<link rel="preload" href="/fonts/cinzel-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/alegreya-sans-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/site.css?v=6">
+<script>document.documentElement.classList.add('js');try{var l=localStorage.getItem('gk-lang')||((navigator.language||'fr').toLowerCase().indexOf('fr')===0?'fr':'en');document.documentElement.lang=l}catch(e){}</script>
+</head>
+<body>
+<svg class="sprite" aria-hidden="true" focusable="false"><defs><linearGradient id="gk-gold" gradientUnits="userSpaceOnUse" x1="0" y1="4" x2="0" y2="44"><stop offset="0" stop-color="#fff1bf"/><stop offset=".45" stop-color="#f0c25e"/><stop offset="1" stop-color="#9a6a20"/></linearGradient>
+<symbol id="i-metiers" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M6 15h25c1 5 5 8 11 8v4H31l3 9H14l3-9h-3C9 27 6 22 6 15z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M36 6l4 4M33 9l4 4"/></symbol>
+<symbol id="i-membres" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M24 5c9 0 15 7 15 16v14l-6 6h-4V27h-10v14h-4l-6-6V21C9 12 15 5 24 5z"/><path fill="#1a1208" d="M15 20h18v4H15z"/></symbol>
+<symbol id="i-artisanat" viewBox="0 0 48 48"><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M10 38L36 12"/><ellipse fill="none" stroke="url(#gk-gold)" stroke-width="3.2" cx="37.5" cy="10.5" rx="3.2" ry="1.8" transform="rotate(-45 37.5 10.5)"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="1.8" d="M39 9c6 6-4 12-10 16s-14 10-8 17"/></symbol>
+<symbol id="i-evenements" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M7 11h34v30H7z"/><path fill="#1a1208" d="M10 19h28v19H10z"/><path fill="url(#gk-gold)" d="M13 22h6v5h-6zM21 22h6v5h-6zM29 22h6v5h-6zM13 30h6v5h-6zM21 30h6v5h-6z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M15 6v8M33 6v8"/></symbol>
+<symbol id="i-raid" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M24 4l17 6v12c0 11-7 18-17 22C14 40 7 33 7 22V10z"/><path fill="#1a1208" d="M24 11l11 4v8c0 7-4 12-11 15z"/></symbol>
+<symbol id="i-presence" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M10 6h22l7 7v29H10z"/><path fill="none" stroke="#1a1208" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.4" d="M16 26l5 5 10-11"/></symbol>
+<symbol id="i-quetes" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M20 5h8l-1.5 26h-5zM24 35a4 4 0 1 1 0 8 4 4 0 0 1 0-8z"/></symbol>
+<symbol id="i-communication" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M6 19h8l20-11v32L14 29H6z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M39 17c3 4 3 10 0 14M12 30l3 11h6l-3-11"/></symbol>
+<symbol id="i-install" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M17 12c0-5 3-8 7-8s7 3 7 8h-3c0-3-2-5-4-5s-4 2-4 5z"/><path fill="url(#gk-gold)" d="M10 14h28l4 26a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4z"/><path fill="#1a1208" d="M20 22h8v6h-8z"/></symbol>
+<symbol id="i-compagnon" viewBox="0 0 48 48"><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="4" d="M6 34c6-14 30-14 36 0M12 34V22M24 34V18M36 34V22"/><path fill="url(#gk-gold)" d="M4 34h40v5H4z"/></symbol>
+<symbol id="i-cmd" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M5 9h38v30H5z"/><path fill="#1a1208" d="M8 15h32v21H8z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M14 32l8-13M26 32h8"/></symbol>
+<symbol id="i-faq" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M8 6h26l6 6v30H8z"/><path fill="none" stroke="#1a1208" stroke-linecap="round" stroke-width="3.4" d="M19 19c0-4 3-6 5.5-6s5.5 2 5.5 5.5-5 4-5 8M24.5 32v.5"/></symbol>
+</defs></svg>
+<header class="topbar">
+	<a class="wordmark" href="/">Guildkeep</a>
+	<nav aria-label="Navigation">
+		<a href="/docs/" aria-current="page"><span lang="fr">Documentation</span><span lang="en">Docs</span></a>
+		<a class="hide-phone" href="/docs/faq.html"><span lang="fr">Aide</span><span lang="en">Help</span></a>
+		<div class="lang-switch" role="group" aria-label="Langue / Language">
+			<button type="button" data-set-lang="fr" aria-pressed="true">FR</button>
+			<button type="button" data-set-lang="en" aria-pressed="false">EN</button>
+		</div>
+		<a class="button invite-link hide-phone" href="/#mise-en-place"><span lang="fr">Ajouter à Discord</span><span lang="en">Add to Discord</span></a>
+	</nav>
+</header>
+
+<div class="doc">
+<aside class="doc-nav" aria-label="Sommaire / Contents"><details open><summary><span><span lang="fr">Sommaire</span><span lang="en">Contents</span></span><i class="plus" aria-hidden="true"></i></summary><div>
+<p class="doc-nav-label"><span lang="fr">Démarrer</span><span lang="en">Getting started</span></p><ul>
+<li><a href="/docs/" aria-current="page"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a>
+<ul>
+<li><a href="#demarrage-rapide"><span lang="fr">Démarrage rapide</span><span lang="en">Quick start</span></a></li>
+<li><a href="#modules"><span lang="fr">Les huit modules</span><span lang="en">The eight modules</span></a></li>
+<li><a href="#references"><span lang="fr">Références</span><span lang="en">Reference</span></a></li>
+<li><a href="#comment-ca-marche"><span lang="fr">Comment les données circulent</span><span lang="en">How data travels</span></a></li>
+</ul>
+</li>
+<li><a href="/docs/installation.html"><span lang="fr">Installer Guildkeep</span><span lang="en">Installing Guildkeep</span></a>
+</li>
+<li><a href="/docs/compagnon.html"><span lang="fr">L'app compagnon</span><span lang="en">The companion app</span></a>
+</li>
+</ul>
+<p class="doc-nav-label"><span lang="fr">Modules</span><span lang="en">Modules</span></p><ul>
+<li><a href="/docs/metiers.html"><span lang="fr">Métiers</span><span lang="en">Professions</span></a>
+</li>
+<li><a href="/docs/membres.html"><span lang="fr">Membres</span><span lang="en">Members</span></a>
+</li>
+<li><a href="/docs/artisanat.html"><span lang="fr">Artisanat</span><span lang="en">Crafting orders</span></a>
+</li>
+<li><a href="/docs/evenements.html"><span lang="fr">Événements</span><span lang="en">Events</span></a>
+</li>
+<li><a href="/docs/soiree-raid.html"><span lang="fr">Soirée de raid</span><span lang="en">Raid night</span></a>
+</li>
+<li><a href="/docs/presence.html"><span lang="fr">Présence et butin</span><span lang="en">Attendance and loot</span></a>
+</li>
+<li><a href="/docs/quetes.html"><span lang="fr">Quêtes</span><span lang="en">Quests</span></a>
+</li>
+<li><a href="/docs/communication.html"><span lang="fr">Communication</span><span lang="en">Communication</span></a>
+</li>
+</ul>
+<p class="doc-nav-label"><span lang="fr">Référence</span><span lang="en">Reference</span></p><ul>
+<li><a href="/docs/commandes.html"><span lang="fr">Commandes Discord</span><span lang="en">Discord commands</span></a>
+</li>
+<li><a href="/docs/faq.html"><span lang="fr">FAQ et dépannage</span><span lang="en">FAQ and troubleshooting</span></a>
+</li>
+</ul>
+</div></details></aside>
+<main class="doc-main" id="contenu">
+<nav class="crumbs" aria-label="Fil d'Ariane / Breadcrumb"><ol class="crumbs-list"><li><a href="/"><span lang="fr">Accueil</span><span lang="en">Home</span></a></li><li aria-current="page"><span lang="fr">Documentation</span><span lang="en">Documentation</span></li></ol></nav>
+<h1><span lang="fr">Documentation</span><span lang="en">Documentation</span></h1>
+<p class="lead"><span lang="fr">Tout ce qu'il faut pour se servir de Guildkeep, en jeu et sur Discord : l'installation, puis un tutoriel pas à pas pour chaque module. Écrit pour les joueurs comme pour les officiers.</span><span lang="en">Everything you need to use Guildkeep, in game and on Discord: the install, then a step-by-step tutorial for every module. Written for players and officers alike.</span></p>
+<div class="rule" aria-hidden="true"><i></i></div>
+<section>
+<h2 id="demarrage-rapide"><a class="anchor" href="#demarrage-rapide" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Démarrage rapide</span><span lang="en">Quick start</span></h2>
+<p><span lang="fr">Deux chemins selon ton rôle. Chacun prend quelques minutes.</span><span lang="en">Two paths depending on your role. Each takes a few minutes.</span></p>
+<div class="quick">
+	<div class="howto">
+		<h3><span class="where"><span lang="fr">Joueur</span><span lang="en">Player</span></span><span lang="fr">Je rejoins ma guilde</span><span lang="en">I'm joining my guild</span></h3>
+		<ol class="steps">
+			<li><span lang="fr">Ouvre le lien d'installation que ton officier a partagé sur Discord (il ressemble à <code>guildkeep.warpvault.com/rejoindre/k7m2qpxa4h</code>).</span><span lang="en">Open the install link your officer shared on Discord (it looks like <code>guildkeep.warpvault.com/rejoindre/k7m2qpxa4h</code>).</span></li>
+			<li><span lang="fr">Télécharge le pack de ta guilde, dézippe-le et lance <strong>GuildkeepCompanion</strong> : il installe l'addon et synchronise tout seul.</span><span lang="en">Download your guild's pack, unzip it and run <strong>GuildkeepCompanion</strong>: it installs the addon and syncs by itself.</span></li>
+			<li><span lang="fr">En jeu, tape <code>/gkeep</code> ou ouvre l'onglet Guildkeep de la fenêtre de guilde. Un tutoriel te fait faire le tour.</span><span lang="en">In game, type <code>/gkeep</code> or open the Guildkeep tab in the guild window. A tutorial walks you around.</span></li>
+			<li><span lang="fr">Sur Discord, relie ton personnage : <code class="d"><span lang="fr">/gkeep lier</span><span lang="en">/gkeep link</span></code>.</span><span lang="en">On Discord, link your character: <code class="d"><span lang="fr">/gkeep lier</span><span lang="en">/gkeep link</span></code>.</span></li>
+		</ol>
+		<p style="margin-top:14px"><a href="/docs/installation.html#joueur"><span lang="fr">Le détail, avec Mac et Linux</span><span lang="en">The details, with Mac and Linux</span></a></p>
+	</div>
+	<div class="howto">
+		<h3><span class="where"><span lang="fr">Admin</span><span lang="en">Admin</span></span><span lang="fr">J'installe Guildkeep pour ma guilde</span><span lang="en">I'm setting Guildkeep up for my guild</span></h3>
+		<ol class="steps">
+			<li><span lang="fr">Invite le bot Guildkeep sur ton serveur Discord (bouton « Ajouter à Discord » de l'accueil).</span><span lang="en">Invite the Guildkeep bot to your Discord server (the "Add to Discord" button on the home page).</span></li>
+			<li><span lang="fr">Lance <code class="d"><span lang="fr">/gkeep-setup</span><span lang="en">/gkeep-setup</span></code> : nom exact de la guilde en jeu, deux options, puis <span class="ui"><span lang="fr">Créer ma guilde</span><span lang="en">Create my guild</span></span>.</span><span lang="en">Run <code class="d"><span lang="fr">/gkeep-setup</span><span lang="en">/gkeep-setup</span></code>: the exact in-game guild name, two options, then <span class="ui"><span lang="fr">Créer ma guilde</span><span lang="en">Create my guild</span></span>.</span></li>
+			<li><span lang="fr">Partage le lien d'installation (bouton <span class="ui"><span lang="fr">Annoncer dans ce salon</span><span lang="en">Announce in this channel</span></span>).</span><span lang="en">Share the install link (the <span class="ui"><span lang="fr">Annoncer dans ce salon</span><span lang="en">Announce in this channel</span></span> button).</span></li>
+			<li><span lang="fr">Les officiers récupèrent leur token personnel (<code class="d"><span lang="fr">/gkeep token</span><span lang="en">/gkeep token</span></code>) pour que leur rang soit reconnu.</span><span lang="en">Officers grab their personal token (<code class="d"><span lang="fr">/gkeep token</span><span lang="en">/gkeep token</span></code>) so their rank is recognized.</span></li>
+		</ol>
+		<p style="margin-top:14px"><a href="/docs/installation.html#admin"><span lang="fr">L'assistant pas à pas</span><span lang="en">The wizard step by step</span></a></p>
+	</div>
+</div>
+<aside class="callout c-note"><p class="callout-title"><span lang="fr">Bon à savoir</span><span lang="en">Good to know</span></p><p><span lang="fr">L'interface de l'addon est en français pour l'instant ; les noms de boutons de cette documentation sont donc ceux du jeu, en français, avec leur traduction entre parenthèses dans la version anglaise. Le bot Discord parle français et anglais selon la langue de chacun.</span><span lang="en">The addon's interface is in French for now, so button names in this documentation are the game's French ones, with an English translation in brackets. The Discord bot speaks English and French, following each user's Discord language.</span></p></aside>
+</section>
+
+<section>
+<h2 id="modules"><a class="anchor" href="#modules" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Les huit modules</span><span lang="en">The eight modules</span></h2>
+<p><span lang="fr">Chaque module est indépendant : ta guilde peut s'en servir de tous, ou seulement de certains, et chaque joueur peut couper ceux qu'il n'utilise pas (Options &gt; Extensions &gt; Guildkeep).</span><span lang="en">Each module stands alone: your guild can use all of them or just a few, and every player can turn off the ones they don't use (Options &gt; AddOns &gt; Guildkeep).</span></p>
+<div class="doc-cards">
+	<a class="doc-card" href="/docs/metiers.html"><svg aria-hidden="true"><use href="#i-metiers"/></svg><b><span lang="fr">Métiers</span><span lang="en">Professions</span></b><span><span lang="fr">Qui sait fabriquer quoi, recherche de recette, niveaux.</span><span lang="en">Who can craft what, recipe search, skill levels.</span></span></a>
+	<a class="doc-card" href="/docs/membres.html"><svg aria-hidden="true"><use href="#i-membres"/></svg><b><span lang="fr">Membres</span><span lang="en">Members</span></b><span><span lang="fr">Le roster, qui est en ligne, l'équipement en aperçu 3D.</span><span lang="en">The roster, who's online, gear with a 3D preview.</span></span></a>
+	<a class="doc-card" href="/docs/artisanat.html"><svg aria-hidden="true"><use href="#i-artisanat"/></svg><b><span lang="fr">Artisanat</span><span lang="en">Crafting orders</span></b><span><span lang="fr">Commandes de craft, demandes ouvertes à tous, offres.</span><span lang="en">Craft orders, requests open to everyone, offers.</span></span></a>
+	<a class="doc-card" href="/docs/evenements.html"><svg aria-hidden="true"><use href="#i-evenements"/></svg><b><span lang="fr">Événements</span><span lang="en">Events</span></b><span><span lang="fr">Raids et sorties, inscriptions, composition, roster.</span><span lang="en">Raids and outings, sign-ups, composition, roster.</span></span></a>
+	<a class="doc-card" href="/docs/soiree-raid.html"><svg aria-hidden="true"><use href="#i-raid"/></svg><b><span lang="fr">Soirée de raid</span><span lang="en">Raid night</span></b><span><span lang="fr">Réservations de butin, rôles de soutien, checklist.</span><span lang="en">Loot reserves, support duties, checklist.</span></span></a>
+	<a class="doc-card" href="/docs/presence.html"><svg aria-hidden="true"><use href="#i-presence"/></svg><b><span lang="fr">Présence et butin</span><span lang="en">Attendance and loot</span></b><span><span lang="fr">Présence réelle en raid, butin épique, taux.</span><span lang="en">Real raid attendance, epic loot, rates.</span></span></a>
+	<a class="doc-card" href="/docs/quetes.html"><svg aria-hidden="true"><use href="#i-quetes"/></svg><b><span lang="fr">Quêtes</span><span lang="en">Quests</span></b><span><span lang="fr">Qui a la même quête élite, de donjon ou de raid.</span><span lang="en">Who has the same elite, dungeon or raid quest.</span></span></a>
+	<a class="doc-card" href="/docs/communication.html"><svg aria-hidden="true"><use href="#i-communication"/></svg><b><span lang="fr">Communication</span><span lang="en">Communication</span></b><span><span lang="fr">Annonces, charte de la guilde, objectifs communs.</span><span lang="en">Announcements, guild handbook, shared goals.</span></span></a>
+</div>
+</section>
+
+<section>
+<h2 id="references"><a class="anchor" href="#references" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Références</span><span lang="en">Reference</span></h2>
+<div class="doc-cards">
+	<a class="doc-card" href="/docs/installation.html"><svg aria-hidden="true"><use href="#i-install"/></svg><b><span lang="fr">Installation</span><span lang="en">Install</span></b><span><span lang="fr">Assistant Discord, pack de la guilde, premiers pas en jeu, droits.</span><span lang="en">Discord wizard, guild pack, first steps in game, permissions.</span></span></a>
+	<a class="doc-card" href="/docs/compagnon.html"><svg aria-hidden="true"><use href="#i-compagnon"/></svg><b><span lang="fr">App compagnon</span><span lang="en">Companion app</span></b><span><span lang="fr">La synchro automatique, le token personnel, le canal manuel.</span><span lang="en">Automatic sync, the personal token, the manual channel.</span></span></a>
+	<a class="doc-card" href="/docs/commandes.html"><svg aria-hidden="true"><use href="#i-cmd"/></svg><b><span lang="fr">Commandes Discord</span><span lang="en">Discord commands</span></b><span><span lang="fr">Toutes les commandes /gkeep, en français et en anglais.</span><span lang="en">Every /gkeep command, in English and French.</span></span></a>
+	<a class="doc-card" href="/docs/faq.html"><svg aria-hidden="true"><use href="#i-faq"/></svg><b><span lang="fr">FAQ et dépannage</span><span lang="en">FAQ and troubleshooting</span></b><span><span lang="fr">Module désactivé, données qui n'arrivent pas, sécurité.</span><span lang="en">Disabled module, data not arriving, security.</span></span></a>
+</div>
+</section>
+
+<section>
+<h2 id="comment-ca-marche"><a class="anchor" href="#comment-ca-marche" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Comment les données circulent</span><span lang="en">How data travels</span></h2>
+<p><span lang="fr">Un addon WoW n'a pas accès à Internet. Guildkeep a donc trois morceaux :</span><span lang="en">A WoW addon can't reach the internet. So Guildkeep has three parts:</span></p>
+<ul>
+	<li><span lang="fr"><strong>l'addon</strong>, en jeu : il relève tes métiers, ton équipement, tes quêtes et la présence en raid, et affiche ce que la guilde partage ;</span><span lang="en"><strong>the addon</strong>, in game: it reads your professions, gear, quests and raid attendance, and shows what the guild shares;</span></li>
+	<li><span lang="fr"><strong>le bot Discord</strong> : les mêmes données, consultables et modifiables par <code class="d"><span lang="fr">/gkeep</span><span lang="en">/gkeep</span></code> ;</span><span lang="en"><strong>the Discord bot</strong>: the same data, readable and editable with <code class="d"><span lang="fr">/gkeep</span><span lang="en">/gkeep</span></code>;</span></li>
+	<li><span lang="fr"><strong>l'app compagnon</strong>, sur ton PC : elle fait le pont entre les deux, à chaque déconnexion ou <code>/reload</code>.</span><span lang="en"><strong>the companion app</strong>, on your PC: it bridges the two at every logout or <code>/reload</code>.</span></li>
+</ul>
+<p><span lang="fr">Entre joueurs connectés en même temps, l'addon partage aussi les changements tout de suite (inscriptions, commandes, réservations…), sans attendre le serveur. Sans l'app compagnon, une chaîne de texte à copier-coller fait le même travail à la main : voir <a href="/docs/compagnon.html#canal-manuel">le canal manuel</a>.</span><span lang="en">Between players online at the same time, the addon also shares changes right away (sign-ups, orders, reserves…), without waiting for the server. Without the companion app, a copy-and-paste text string does the same job by hand: see <a href="/docs/compagnon.html#canal-manuel">the manual channel</a>.</span></p>
+</section>
+<nav class="doc-pager" aria-label="Pages voisines / Adjacent pages">
+<a class="next" href="/docs/installation.html" rel="next"><small><span lang="fr">Suivant →</span><span lang="en">Next →</span></small><b><span lang="fr">Installer Guildkeep</span><span lang="en">Installing Guildkeep</span></b></a>
+</nav>
+</main>
+</div>
+
+<footer class="foot">
+	<span><span lang="fr">Outil de guilde pour WoW: Forever</span><span lang="en">Guild tool for WoW: Forever</span></span>
+	<nav aria-label="Pied de page / Footer">
+		<a href="/"><span lang="fr">Accueil</span><span lang="en">Home</span></a>
+		<a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a>
+		<a href="/confidentialite.html"><span lang="fr">Confidentialité</span><span lang="en">Privacy</span></a>
+		<a href="/conditions.html"><span lang="fr">Conditions</span><span lang="en">Terms</span></a>
+		<a href="https://github.com/AntoineRenoux/GuildProfessions" rel="noopener"><span lang="fr">Code source</span><span lang="en">Source code</span></a>
+	</nav>
+	<span class="end">2026</span>
+	<span class="credit"><span lang="fr">World of Warcraft est une marque de Blizzard Entertainment ; Guildkeep n'y est pas affilié.</span><span lang="en">World of Warcraft is a trademark of Blizzard Entertainment; Guildkeep is not affiliated.</span></span>
+</footer>
+
+<script src="/site.js?v=6" defer></script>
+</body>
+</html>

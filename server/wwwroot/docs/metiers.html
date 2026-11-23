@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guildkeep · module Métiers</title>
+<meta name="description" content="Le module Métiers de Guildkeep : l&#x27;annuaire des artisans de la guilde, la recherche de recette, les filtres et le relevé des métiers, en jeu et sur Discord.">
+<link rel="preload" href="/fonts/cinzel-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/alegreya-sans-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/site.css?v=6">
+<script>document.documentElement.classList.add('js');try{var l=localStorage.getItem('gk-lang')||((navigator.language||'fr').toLowerCase().indexOf('fr')===0?'fr':'en');document.documentElement.lang=l}catch(e){}</script>
+</head>
+<body>
+<svg class="sprite" aria-hidden="true" focusable="false"><defs><linearGradient id="gk-gold" gradientUnits="userSpaceOnUse" x1="0" y1="4" x2="0" y2="44"><stop offset="0" stop-color="#fff1bf"/><stop offset=".45" stop-color="#f0c25e"/><stop offset="1" stop-color="#9a6a20"/></linearGradient>
+<symbol id="i-metiers" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M6 15h25c1 5 5 8 11 8v4H31l3 9H14l3-9h-3C9 27 6 22 6 15z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M36 6l4 4M33 9l4 4"/></symbol>
+<symbol id="i-membres" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M24 5c9 0 15 7 15 16v14l-6 6h-4V27h-10v14h-4l-6-6V21C9 12 15 5 24 5z"/><path fill="#1a1208" d="M15 20h18v4H15z"/></symbol>
+<symbol id="i-artisanat" viewBox="0 0 48 48"><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M10 38L36 12"/><ellipse fill="none" stroke="url(#gk-gold)" stroke-width="3.2" cx="37.5" cy="10.5" rx="3.2" ry="1.8" transform="rotate(-45 37.5 10.5)"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="1.8" d="M39 9c6 6-4 12-10 16s-14 10-8 17"/></symbol>
+<symbol id="i-evenements" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M7 11h34v30H7z"/><path fill="#1a1208" d="M10 19h28v19H10z"/><path fill="url(#gk-gold)" d="M13 22h6v5h-6zM21 22h6v5h-6zM29 22h6v5h-6zM13 30h6v5h-6zM21 30h6v5h-6z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M15 6v8M33 6v8"/></symbol>
+<symbol id="i-raid" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M24 4l17 6v12c0 11-7 18-17 22C14 40 7 33 7 22V10z"/><path fill="#1a1208" d="M24 11l11 4v8c0 7-4 12-11 15z"/></symbol>
+<symbol id="i-presence" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M10 6h22l7 7v29H10z"/><path fill="none" stroke="#1a1208" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.4" d="M16 26l5 5 10-11"/></symbol>
+<symbol id="i-quetes" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M20 5h8l-1.5 26h-5zM24 35a4 4 0 1 1 0 8 4 4 0 0 1 0-8z"/></symbol>
+<symbol id="i-communication" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M6 19h8l20-11v32L14 29H6z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M39 17c3 4 3 10 0 14M12 30l3 11h6l-3-11"/></symbol>
+<symbol id="i-install" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M17 12c0-5 3-8 7-8s7 3 7 8h-3c0-3-2-5-4-5s-4 2-4 5z"/><path fill="url(#gk-gold)" d="M10 14h28l4 26a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4z"/><path fill="#1a1208" d="M20 22h8v6h-8z"/></symbol>
+<symbol id="i-compagnon" viewBox="0 0 48 48"><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="4" d="M6 34c6-14 30-14 36 0M12 34V22M24 34V18M36 34V22"/><path fill="url(#gk-gold)" d="M4 34h40v5H4z"/></symbol>
+<symbol id="i-cmd" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M5 9h38v30H5z"/><path fill="#1a1208" d="M8 15h32v21H8z"/><path fill="none" stroke="url(#gk-gold)" stroke-linecap="round" stroke-width="3.2" d="M14 32l8-13M26 32h8"/></symbol>
+<symbol id="i-faq" viewBox="0 0 48 48"><path fill="url(#gk-gold)" d="M8 6h26l6 6v30H8z"/><path fill="none" stroke="#1a1208" stroke-linecap="round" stroke-width="3.4" d="M19 19c0-4 3-6 5.5-6s5.5 2 5.5 5.5-5 4-5 8M24.5 32v.5"/></symbol>
+</defs></svg>
+<header class="topbar">
+	<a class="wordmark" href="/">Guildkeep</a>
+	<nav aria-label="Navigation">
+		<a href="/docs/" aria-current="page"><span lang="fr">Documentation</span><span lang="en">Docs</span></a>
+		<a class="hide-phone" href="/docs/faq.html"><span lang="fr">Aide</span><span lang="en">Help</span></a>
+		<div class="lang-switch" role="group" aria-label="Langue / Language">
+			<button type="button" data-set-lang="fr" aria-pressed="true">FR</button>
+			<button type="button" data-set-lang="en" aria-pressed="false">EN</button>
+		</div>
+		<a class="button invite-link hide-phone" href="/#mise-en-place"><span lang="fr">Ajouter à Discord</span><span lang="en">Add to Discord</span></a>
+	</nav>
+</header>
+
+<div class="doc">
+<aside class="doc-nav" aria-label="Sommaire / Contents"><details open><summary><span><span lang="fr">Sommaire</span><span lang="en">Contents</span></span><i class="plus" aria-hidden="true"></i></summary><div>
+<p class="doc-nav-label"><span lang="fr">Démarrer</span><span lang="en">Getting started</span></p><ul>
+<li><a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a>
+</li>
+<li><a href="/docs/installation.html"><span lang="fr">Installer Guildkeep</span><span lang="en">Installing Guildkeep</span></a>
+</li>
+<li><a href="/docs/compagnon.html"><span lang="fr">L'app compagnon</span><span lang="en">The companion app</span></a>
+</li>
+</ul>
+<p class="doc-nav-label"><span lang="fr">Modules</span><span lang="en">Modules</span></p><ul>
+<li><a href="/docs/metiers.html" aria-current="page"><span lang="fr">Métiers</span><span lang="en">Professions</span></a>
+<ul>
+<li><a href="#a-quoi-ca-sert"><span lang="fr">À quoi ça sert</span><span lang="en">What it's for</span></a></li>
+<li><a href="#trouver-un-artisan"><span lang="fr">Tutoriel : trouver qui sait fabriquer une recette</span><span lang="en">Tutorial: find who can craft a recipe</span></a></li>
+<li><a href="#voir-les-recettes"><span lang="fr">Tutoriel : voir les recettes d'un artisan et commander</span><span lang="en">Tutorial: see a crafter's recipes and order</span></a></li>
+<li><a href="#releve"><span lang="fr">Tutoriel : faire relever tes métiers et tes recettes</span><span lang="en">Tutorial: get your professions and recipes scanned</span></a></li>
+<li><a href="#declarer"><span lang="fr">Tutoriel : déclarer un métier sans l'addon</span><span lang="en">Tutorial: declare a profession without the addon</span></a></li>
+</ul>
+</li>
+<li><a href="/docs/membres.html"><span lang="fr">Membres</span><span lang="en">Members</span></a>
+</li>
+<li><a href="/docs/artisanat.html"><span lang="fr">Artisanat</span><span lang="en">Crafting orders</span></a>
+</li>
+<li><a href="/docs/evenements.html"><span lang="fr">Événements</span><span lang="en">Events</span></a>
+</li>
+<li><a href="/docs/soiree-raid.html"><span lang="fr">Soirée de raid</span><span lang="en">Raid night</span></a>
+</li>
+<li><a href="/docs/presence.html"><span lang="fr">Présence et butin</span><span lang="en">Attendance and loot</span></a>
+</li>
+<li><a href="/docs/quetes.html"><span lang="fr">Quêtes</span><span lang="en">Quests</span></a>
+</li>
+<li><a href="/docs/communication.html"><span lang="fr">Communication</span><span lang="en">Communication</span></a>
+</li>
+</ul>
+<p class="doc-nav-label"><span lang="fr">Référence</span><span lang="en">Reference</span></p><ul>
+<li><a href="/docs/commandes.html"><span lang="fr">Commandes Discord</span><span lang="en">Discord commands</span></a>
+</li>
+<li><a href="/docs/faq.html"><span lang="fr">FAQ et dépannage</span><span lang="en">FAQ and troubleshooting</span></a>
+</li>
+</ul>
+</div></details></aside>
+<main class="doc-main" id="contenu">
+<nav class="crumbs" aria-label="Fil d'Ariane / Breadcrumb"><ol class="crumbs-list"><li><a href="/"><span lang="fr">Accueil</span><span lang="en">Home</span></a></li><li><a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a></li><li aria-current="page"><span lang="fr">Métiers</span><span lang="en">Professions</span></li></ol></nav>
+<h1><span lang="fr">Métiers</span><span lang="en">Professions</span></h1>
+<p class="lead"><span lang="fr">L'annuaire des artisans de la guilde : qui a quel métier, à quel niveau, et quelles recettes il connaît. Pour trouver en dix secondes qui peut te fabriquer une pièce.</span><span lang="en">The guild's crafter directory: who has which profession, at what level, and which recipes they know. To find in ten seconds who can craft you an item.</span></p>
+<div class="rule" aria-hidden="true"><i></i></div>
+<section>
+<h2 id="a-quoi-ca-sert"><a class="anchor" href="#a-quoi-ca-sert" aria-hidden="true" tabindex="-1">#</a><span lang="fr">À quoi ça sert</span><span lang="en">What it's for</span></h2>
+<p><span lang="fr">L'onglet <span lang="fr"><span class="ui tab">Métiers</span></span><span lang="en"><span class="ui tab">Métiers</span> <span class="gloss">(Professions)</span></span> liste chaque métier de chaque membre, avec sa barre de progression, son nombre de recettes et la date du relevé. Tu filtres par recette, par métier et par niveau minimum ; les colonnes <span lang="fr"><span class="ui opt">Personnage</span></span><span lang="en"><span class="ui opt">Personnage</span> <span class="gloss">(Character)</span></span>, <span lang="fr"><span class="ui opt">Métier</span></span><span lang="en"><span class="ui opt">Métier</span> <span class="gloss">(Profession)</span></span>, <span lang="fr"><span class="ui opt">Niveau</span></span><span lang="en"><span class="ui opt">Niveau</span> <span class="gloss">(Level)</span></span> et <span lang="fr"><span class="ui opt">Recettes</span></span><span lang="en"><span class="ui opt">Recettes</span> <span class="gloss">(Recipes)</span></span> se trient d'un clic sur leur titre.</span><span lang="en">The <span lang="fr"><span class="ui tab">Métiers</span></span><span lang="en"><span class="ui tab">Métiers</span> <span class="gloss">(Professions)</span></span> tab lists every profession of every member, with its progress bar, number of recipes and scan date. Filter by recipe, profession and minimum level; the <span lang="fr"><span class="ui opt">Personnage</span></span><span lang="en"><span class="ui opt">Personnage</span> <span class="gloss">(Character)</span></span>, <span lang="fr"><span class="ui opt">Métier</span></span><span lang="en"><span class="ui opt">Métier</span> <span class="gloss">(Profession)</span></span>, <span lang="fr"><span class="ui opt">Niveau</span></span><span lang="en"><span class="ui opt">Niveau</span> <span class="gloss">(Level)</span></span> and <span lang="fr"><span class="ui opt">Recettes</span></span><span lang="en"><span class="ui opt">Recettes</span> <span class="gloss">(Recipes)</span></span> columns sort with a click on their header.</span></p>
+<figure class="mock" data-ui>
+	<div class="wow">
+		<div class="wow-title"><b>Guildkeep</b><small>&lt;La Garde d'Ambre&gt;</small></div>
+		<div style="padding:12px;display:grid;gap:10px;background:rgba(0,0,0,0.25)">
+			<div><div class="soft" style="font-size:12px;margin-bottom:4px">Recherche de patron</div><div class="wow-search">⌕ flacon</div></div>
+			<div><div class="soft" style="font-size:12px;margin-bottom:4px">Niveau minimum</div><div class="wow-search" style="width:64px;justify-content:center">250</div></div>
+			<div style="display:grid;gap:2px"><div class="wow-row" style="padding:4px 8px"><span class="wow-ico">G</span><span>Tous les métiers</span><span class="soft">31</span></div><div class="wow-row is-on" style="padding:4px 8px"><span class="wow-ico">A</span><span class="gold">Alchimie</span><span class="soft">7</span></div></div>
+		</div>
+		<div class="wow-row"><span class="wow-ico ok">●</span><span>Maël Corvin<br><span class="soft" style="font-size:12px">Alchimie · scan 2026-11-22 21:04</span></span><span class="wow-button">Voir (38)</span></div>
+		<div class="wow-row"><span class="wow-ico soft">●</span><span>Elwin Sauge<br><span class="soft" style="font-size:12px">Alchimie · Discord</span></span><span class="wow-button">Voir (21)</span></div>
+		<div class="wow-tabs"><span class="is-on">Métiers</span><span>Membres</span><span>Commandes</span></div>
+	</div>
+	<figcaption><span lang="fr">Maquette : l'onglet Métiers filtré sur « flacon », Alchimie, niveau 250 et plus.</span><span lang="en">Mock-up: the Professions tab filtered on "flacon" (flask), Alchemy, level 250 and up.</span></figcaption>
+</figure>
+
+<aside class="callout c-tip"><p class="callout-title"><span lang="fr">Astuce</span><span lang="en">Tip</span></p><p><span lang="fr"><strong>Tutoriel en jeu.</strong> À la première ouverture de l'onglet <span lang="fr"><span class="ui tab">Métiers</span></span><span lang="en"><span class="ui tab">Métiers</span> <span class="gloss">(Professions)</span></span>, un tutoriel pas à pas encadre chaque bouton et explique à quoi il sert. Tu peux le passer à tout moment, et le revoir avec le bouton <span class="ui">?</span> en haut à droite de la fenêtre ou <code>/gkeep tuto</code>.</span><span lang="en"><strong>In-game tutorial.</strong> The first time you open the <span lang="fr"><span class="ui tab">Métiers</span></span><span lang="en"><span class="ui tab">Métiers</span> <span class="gloss">(Professions)</span></span> tab, a step-by-step tutorial highlights every button and explains what it does. You can skip it at any time, and replay it with the <span class="ui">?</span> button at the top right of the window or <code>/gkeep tuto</code>.</span></p></aside>
+</section>
+
+<section>
+<h2 id="trouver-un-artisan"><a class="anchor" href="#trouver-un-artisan" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Tutoriel : trouver qui sait fabriquer une recette</span><span lang="en">Tutorial: find who can craft a recipe</span></h2>
+<div class="rights"><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></div>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu</span><span lang="en">In game</span></span><span lang="fr">Dans l'onglet Métiers</span><span lang="en">In the Professions tab</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Ouvre <code>/gkeep</code> et l'onglet <span lang="fr"><span class="ui tab">Métiers</span></span><span lang="en"><span class="ui tab">Métiers</span> <span class="gloss">(Professions)</span></span>.</span><span lang="en">Open <code>/gkeep</code> and the <span lang="fr"><span class="ui tab">Métiers</span></span><span lang="en"><span class="ui tab">Métiers</span> <span class="gloss">(Professions)</span></span> tab.</span></li>
+		<li><span lang="fr">Dans <span lang="fr"><span class="ui opt">Recherche de patron</span></span><span lang="en"><span class="ui opt">Recherche de patron</span> <span class="gloss">(Recipe search)</span></span>, tape un bout du nom de la recette (« flacon », « bottes »…) : seuls les artisans qui la connaissent restent.</span><span lang="en">In <span lang="fr"><span class="ui opt">Recherche de patron</span></span><span lang="en"><span class="ui opt">Recherche de patron</span> <span class="gloss">(Recipe search)</span></span>, type part of the recipe's name ("flacon", "bottes"…): only crafters who know it remain.</span></li>
+		<li><span lang="fr">Au besoin, fixe un <span lang="fr"><span class="ui opt">Niveau minimum</span></span><span lang="en"><span class="ui opt">Niveau minimum</span> <span class="gloss">(Minimum level)</span></span> et choisis un métier dans la liste (le chiffre à côté donne le nombre d'artisans) ; <span lang="fr"><span class="ui opt">Tous les métiers</span></span><span lang="en"><span class="ui opt">Tous les métiers</span> <span class="gloss">(All professions)</span></span> enlève le filtre.</span><span lang="en">If needed, set a <span lang="fr"><span class="ui opt">Niveau minimum</span></span><span lang="en"><span class="ui opt">Niveau minimum</span> <span class="gloss">(Minimum level)</span></span> and pick a profession in the list (the number next to it is the number of crafters); <span lang="fr"><span class="ui opt">Tous les métiers</span></span><span lang="en"><span class="ui opt">Tous les métiers</span> <span class="gloss">(All professions)</span></span> clears the filter.</span></li>
+		<li><span lang="fr">Survole une ligne : l'infobulle dit si le métier a été relevé en jeu (avec la date) ou déclaré sur Discord.</span><span lang="en">Hover a row: the tooltip says whether the profession was scanned in game (with the date) or declared on Discord.</span></li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span><span lang="fr">Avec /gkeep metier qui</span><span lang="en">With /gkeep profession who</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Tape <code class="d"><span lang="fr">/gkeep metier qui</span><span lang="en">/gkeep profession who</span></code>.</span><span lang="en">Type <code class="d"><span lang="fr">/gkeep metier qui</span><span lang="en">/gkeep profession who</span></code>.</span></li>
+		<li><span lang="fr">Remplis au moins une option : <code><span lang="fr">recette</span><span lang="en">recipe</span></code> (un bout de nom), <code><span lang="fr">metier</span><span lang="en">profession</span></code> (proposé dans une liste) ou <code><span lang="fr">niveau_min</span><span lang="en">min_level</span></code> (1 à 300).</span><span lang="en">Fill in at least one option: <code><span lang="fr">recette</span><span lang="en">recipe</span></code> (part of a name), <code><span lang="fr">metier</span><span lang="en">profession</span></code> (suggested in a list) or <code><span lang="fr">niveau_min</span><span lang="en">min_level</span></code> (1 to 300).</span></li>
+		<li><span lang="fr">Le bot répond avec les artisans trouvés et leur niveau.</span><span lang="en">The bot replies with the crafters found and their level.</span></li>
+	</ol>
+</div>
+<aside class="callout c-tip"><p class="callout-title"><span lang="fr">Astuce</span><span lang="en">Tip</span></p><p><span lang="fr"><code class="d"><span lang="fr">/gkeep metier liste</span><span lang="en">/gkeep profession list</span></code> montre tout l'annuaire d'un coup, ou un seul métier avec l'option <code><span lang="fr">metier</span><span lang="en">profession</span></code>.</span><span lang="en"><code class="d"><span lang="fr">/gkeep metier liste</span><span lang="en">/gkeep profession list</span></code> shows the whole directory at once, or one profession with the <code><span lang="fr">metier</span><span lang="en">profession</span></code> option.</span></p></aside>
+</section>
+
+<section>
+<h2 id="voir-les-recettes"><a class="anchor" href="#voir-les-recettes" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Tutoriel : voir les recettes d'un artisan et commander</span><span lang="en">Tutorial: see a crafter's recipes and order</span></h2>
+<div class="rights"><span class="badge b-all"><span lang="fr">Tout membre</span><span lang="en">Any member</span></span></div>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu</span><span lang="en">In game</span></span><span lang="fr">Le bouton « Voir »</span><span lang="en">The "Voir" (View) button</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Sur la ligne d'un artisan, clique <span lang="fr"><span class="ui">Voir (38)</span></span><span lang="en"><span class="ui">Voir (38)</span> <span class="gloss">(View)</span></span> (ou n'importe où sur la ligne). « à relever » signifie que ses recettes n'ont pas encore été relevées.</span><span lang="en">On a crafter's row, click <span lang="fr"><span class="ui">Voir (38)</span></span><span lang="en"><span class="ui">Voir (38)</span> <span class="gloss">(View)</span></span> (or anywhere on the row). "à relever" (to scan) means their recipes haven't been read yet.</span></li>
+		<li><span lang="fr">La fenêtre des recettes s'ouvre : tape dans <span lang="fr"><span class="ui opt">Chercher une recette</span></span><span lang="en"><span class="ui opt">Chercher une recette</span> <span class="gloss">(Search a recipe)</span></span> pour filtrer. Survole une recette pour son détail ; <kbd class="key">Maj</kbd>+clic met son lien dans le chat.</span><span lang="en">The recipes window opens: type in <span lang="fr"><span class="ui opt">Chercher une recette</span></span><span lang="en"><span class="ui opt">Chercher une recette</span> <span class="gloss">(Search a recipe)</span></span> to filter. Hover a recipe for its details; <kbd class="key">Shift</kbd>+click puts its link in chat.</span></li>
+		<li><span lang="fr">Clique <span lang="fr"><span class="ui">Commander</span></span><span lang="en"><span class="ui">Commander</span> <span class="gloss">(Order)</span></span> à côté de la recette voulue : la fenêtre de commande s'ouvre (voir <a href="/docs/artisanat.html#commander-a-un-artisan">Artisanat</a>). Ce bouton n'apparaît que si le module Artisanat est actif.</span><span lang="en">Click <span lang="fr"><span class="ui">Commander</span></span><span lang="en"><span class="ui">Commander</span> <span class="gloss">(Order)</span></span> next to the recipe you want: the order window opens (see <a href="/docs/artisanat.html#commander-a-un-artisan">Crafting orders</a>). This button only shows when the Crafting module is on.</span></li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span><span lang="fr">Avec /gkeep metier recettes</span><span lang="en">With /gkeep profession recipes</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Tape <code class="d"><span lang="fr">/gkeep metier recettes</span><span lang="en">/gkeep profession recipes</span></code> et choisis le <code><span lang="fr">personnage</span><span lang="en">character</span></code> dans la liste.</span><span lang="en">Type <code class="d"><span lang="fr">/gkeep metier recettes</span><span lang="en">/gkeep profession recipes</span></code> and pick the <code><span lang="fr">personnage</span><span lang="en">character</span></code> from the list.</span></li>
+		<li><span lang="fr">Facultatif : <code><span lang="fr">metier</span><span lang="en">profession</span></code> pour un seul métier, <code><span lang="fr">recherche</span><span lang="en">search</span></code> pour filtrer par texte.</span><span lang="en">Optional: <code><span lang="fr">metier</span><span lang="en">profession</span></code> for one profession, <code><span lang="fr">recherche</span><span lang="en">search</span></code> to filter by text.</span></li>
+	</ol>
+</div>
+</section>
+
+<section>
+<h2 id="releve"><a class="anchor" href="#releve" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Tutoriel : faire relever tes métiers et tes recettes</span><span lang="en">Tutorial: get your professions and recipes scanned</span></h2>
+<div class="rights"><span class="badge b-self"><span lang="fr">Toi seul</span><span lang="en">Only you</span></span></div>
+<p><span lang="fr">L'addon relève tout seul tes métiers et leur niveau à la connexion. Les recettes, elles, ne sont lisibles que quand la fenêtre du métier est ouverte :</span><span lang="en">The addon reads your professions and their level by itself at login. Recipes, though, can only be read while the profession window is open:</span></p>
+<div class="howto">
+	<h3><span class="where"><span lang="fr">En jeu</span><span lang="en">In game</span></span><span lang="fr">Une fois par métier</span><span lang="en">Once per profession</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Ouvre la fenêtre de chacun de tes métiers (ton livre des sorts, ou la touche du métier), Cuisine et Secourisme compris.</span><span lang="en">Open the window of each of your professions (from your spellbook, or the profession's key), Cooking and First Aid included.</span></li>
+		<li><span lang="fr">Le chat confirme : « 41 recettes de Forge relevées. Elles partent vers ta guilde à ta prochaine déconnexion ou /reload. »</span><span lang="en">Chat confirms: "41 recettes de Forge relevées…" (41 Blacksmithing recipes read; they go to your guild at your next logout or /reload).</span></li>
+		<li><span lang="fr">Fais un <code>/reload</code> (ou déconnecte-toi) : le compagnon envoie le relevé à la guilde.</span><span lang="en">Do a <code>/reload</code> (or log out): the companion sends the scan to the guild.</span></li>
+	</ol>
+</div>
+<aside class="callout c-note"><p class="callout-title"><span lang="fr">Bon à savoir</span><span lang="en">Good to know</span></p><p><span lang="fr">Recommence après avoir appris de nouvelles recettes. En ouvrant ta fenêtre de métier, tu alimentes aussi le <a href="/docs/artisanat.html#catalogue">catalogue de la guilde</a> (toutes les recettes affichées, apprises ou non). Les fenêtres de métier d'un autre joueur ou d'un PNJ sont ignorées, et un personnage hors guilde n'est jamais relevé.</span><span lang="en">Do it again after learning new recipes. Opening your profession window also feeds the <a href="/docs/artisanat.html#catalogue">guild catalog</a> (every recipe shown, learned or not). Profession windows of another player or an NPC are ignored, and a character outside the guild is never scanned.</span></p></aside>
+</section>
+
+<section>
+<h2 id="declarer"><a class="anchor" href="#declarer" aria-hidden="true" tabindex="-1">#</a><span lang="fr">Tutoriel : déclarer un métier sans l'addon</span><span lang="en">Tutorial: declare a profession without the addon</span></h2>
+<div class="rights"><span class="badge b-self"><span lang="fr">Toi seul</span><span lang="en">Only you</span></span></div>
+<div class="howto">
+	<h3><span class="where">Discord</span><span lang="fr">Avec /gkeep metier definir</span><span lang="en">With /gkeep profession set</span></h3>
+	<ol class="steps">
+		<li><span lang="fr">Tape <code class="d"><span lang="fr">/gkeep metier definir</span><span lang="en">/gkeep profession set</span></code>.</span><span lang="en">Type <code class="d"><span lang="fr">/gkeep metier definir</span><span lang="en">/gkeep profession set</span></code>.</span></li>
+		<li><span lang="fr">Remplis <code><span lang="fr">personnage</span><span lang="en">character</span></code> (nom complet en jeu), <code><span lang="fr">metier</span><span lang="en">profession</span></code>, <code><span lang="fr">niveau</span><span lang="en">level</span></code>, et si tu veux une <code>note</code> (« dispo le soir, fournir les barres »).</span><span lang="en">Fill in <code><span lang="fr">personnage</span><span lang="en">character</span></code> (full in-game name), <code><span lang="fr">metier</span><span lang="en">profession</span></code>, <code><span lang="fr">niveau</span><span lang="en">level</span></code>, and optionally a <code>note</code> ("evenings, bring the bars").</span></li>
+		<li><span lang="fr">Pour l'enlever : <code class="d"><span lang="fr">/gkeep metier retirer</span><span lang="en">/gkeep profession remove</span></code>.</span><span lang="en">To remove it: <code class="d"><span lang="fr">/gkeep metier retirer</span><span lang="en">/gkeep profession remove</span></code>.</span></li>
+	</ol>
+</div>
+<aside class="callout c-warn"><p class="callout-title"><span lang="fr">Attention</span><span lang="en">Watch out</span></p><p><span lang="fr">Le relevé en jeu prime : dès que l'addon relève ce personnage, ses métiers déclarés sur Discord sont remplacés par ceux du jeu (ta note est gardée).</span><span lang="en">The in-game scan wins: as soon as the addon scans that character, professions declared on Discord are replaced by the game's (your note is kept).</span></p></aside>
+</section>
+<nav class="doc-pager" aria-label="Pages voisines / Adjacent pages">
+<a class="prev" href="/docs/compagnon.html" rel="prev"><small><span lang="fr">← Précédent</span><span lang="en">← Previous</span></small><b><span lang="fr">L'app compagnon</span><span lang="en">The companion app</span></b></a>
+<a class="next" href="/docs/membres.html" rel="next"><small><span lang="fr">Suivant →</span><span lang="en">Next →</span></small><b><span lang="fr">Membres</span><span lang="en">Members</span></b></a>
+</nav>
+</main>
+</div>
+
+<footer class="foot">
+	<span><span lang="fr">Outil de guilde pour WoW: Forever</span><span lang="en">Guild tool for WoW: Forever</span></span>
+	<nav aria-label="Pied de page / Footer">
+		<a href="/"><span lang="fr">Accueil</span><span lang="en">Home</span></a>
+		<a href="/docs/"><span lang="fr">Documentation</span><span lang="en">Documentation</span></a>
+		<a href="/confidentialite.html"><span lang="fr">Confidentialité</span><span lang="en">Privacy</span></a>
+		<a href="/conditions.html"><span lang="fr">Conditions</span><span lang="en">Terms</span></a>
+		<a href="https://github.com/AntoineRenoux/GuildProfessions" rel="noopener"><span lang="fr">Code source</span><span lang="en">Source code</span></a>
+	</nav>
+	<span class="end">2026</span>
+	<span class="credit"><span lang="fr">World of Warcraft est une marque de Blizzard Entertainment ; Guildkeep n'y est pas affilié.</span><span lang="en">World of Warcraft is a trademark of Blizzard Entertainment; Guildkeep is not affiliated.</span></span>
+</footer>
+
+<script src="/site.js?v=6" defer></script>
+</body>
+</html>

@@ -444,13 +444,54 @@ local function Track(refresh)
 	end
 end
 
+local reservesPanel, nightPanel
+
 GP.Modules.Define("raid", "ui", function(ctx)
 	DefinePopups()
+	local function Section(key)
+		return function() GP.EventsUI.ShowSection(key) end
+	end
+	local function Mine(field)
+		return function()
+			local line = reservesPanel and reservesPanel.mine and reservesPanel.mine[1]
+			return line and line[field]
+		end
+	end
+	ctx:Tutorial("raid", {
+		tab = "tabEvents",
+		order = 20,
+		title = "Soirée de raid",
+		steps = {
+			{ prepare = Section("reserves"), target = function() return GP.EventsUI.SectionButton("reserves") end, title = "Réserves",
+				text = "Dans le détail d'un événement, l'onglet Réserves gère les réservations de butin : un objet par priorité (haute, normale, basse).",
+				hint = "Sélectionne d'abord un événement." },
+			{ prepare = Section("reserves"), target = Mine("box"), title = "Choisir l'objet",
+				text = "Clique dans le champ puis shift-clic sur l'objet (sacs, chat, butin), ou tape son numéro. Un « ! » signale un objet que ta classe ne peut pas porter." },
+			{ prepare = Section("reserves"), target = Mine("set"), title = "Réserver et Retirer",
+				text = "« Réserver » enregistre l'objet à cette priorité, « Retirer » libère la place. Un même objet ne peut pas être réservé à deux priorités." },
+			{ prepare = Section("reserves"), target = function() return reservesPanel and reservesPanel.list end, title = "Toutes les réservations",
+				text = "Objet par objet, qui l'a réservé ; le nombre en rouge signale un conflit. Les officiers peuvent réserver un objet d'office (« D'office ») : il sort des réservations des joueurs." },
+			{ prepare = Section("reserves"), target = function() return reservesPanel and reservesPanel.lock end, title = "Verrouiller",
+				text = "Avant le raid, l'organisateur ou un officier verrouille : seuls comptent alors les confirmés, et le chef du raid peut passer en maître du butin. Le champ « Pour » réserve à la place d'un joueur sans addon.",
+				hint = "Réservé à l'organisateur et aux officiers." },
+			{ prepare = Section("night"), target = function() local line = nightPanel and nightPanel.duties and nightPanel.duties[1]; return line end, title = "Rôles de soutien",
+				text = "Chef de raid, invocateur, consommables, robot de réparation : tape un nom puis « Confier » (ou « Libérer »).",
+				hint = "Réservé à l'organisateur et aux officiers." },
+			{ prepare = Section("night"), target = function() return nightPanel and nightPanel.checklist end, title = "Avant le raid",
+				text = "La liste de ce qui manque : rôles sous l'objectif, présents à placer, réponses « peut-être », conflits de réservation, rôles de soutien vides. « Copier la soirée » met tout en texte pour Discord." },
+		},
+	})
 	hooksecurefunc("ChatEdit_InsertLink", OnInsertLink)
 	ctx:Track(GP.EventsUI.Extend({
 		sections = {
-			{ key = "reserves", label = "Réserves", title = ReservesTitle, build = BuildReserves, refresh = Track(RefreshReserves) },
-			{ key = "night", label = "Soirée", build = BuildNight, refresh = Track(RefreshNight) },
+			{ key = "reserves", label = "Réserves", title = ReservesTitle, build = function(...)
+				reservesPanel = BuildReserves(...)
+				return reservesPanel
+			end, refresh = Track(RefreshReserves) },
+			{ key = "night", label = "Soirée", build = function(...)
+				nightPanel = BuildNight(...)
+				return nightPanel
+			end, refresh = Track(RefreshNight) },
 		},
 		exportLines = R.NightExportLines,
 	}, ctx.id))
