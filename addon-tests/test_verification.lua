@@ -162,7 +162,7 @@ local function CheckOthersWork(game, broken, payload, sent)
 	if not down.attendance then
 		T.check(#GP.Attendance.GetRaids() >= 1, "Présence : raids lus")
 		T.check(payload.raids ~= nil, "Présence : export présent")
-		T.check(#game.tickers >= 1 and not game.tickers[1]._cancelled, "Présence : minuterie active")
+		T.check(#T.Tickers(game, 60) == 1, "Présence : minuterie active")
 	end
 	if not down.quests then
 		T.check(next(GP.Quests.GetAll()) ~= nil, "Quêtes : quêtes lues")

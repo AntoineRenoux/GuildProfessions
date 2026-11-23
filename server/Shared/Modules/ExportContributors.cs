@@ -23,6 +23,8 @@ public sealed class ExportDraft
 
 	public List<ExportCatalogRecipeDto>? Catalog { get; set; }
 
+	public ExportCommunicationDto? Communication { get; set; }
+
 	/// <summary>Copie des sections avant l'appel d'un module, pour annuler sa part s'il échoue en cours de route.</summary>
 	internal ExportDraft Snapshot() => (ExportDraft)MemberwiseClone();
 
@@ -34,6 +36,7 @@ public sealed class ExportDraft
 		Events = snapshot.Events;
 		Raids = snapshot.Raids;
 		Catalog = snapshot.Catalog;
+		Communication = snapshot.Communication;
 	}
 }
 

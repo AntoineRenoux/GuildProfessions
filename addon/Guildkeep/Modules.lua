@@ -27,14 +27,16 @@ M.LIST = {
 		description = "Membres de la guilde et leur équipement ; relève ton équipement." },
 	{ id = "craft", label = "Artisanat", parts = { "data", "ui" },
 		description = "Commandes de craft, offres des artisans et catalogue des recettes." },
-	{ id = "events", label = "Événements", parts = { "data", "ui" },
-		description = "Événements de guilde, inscriptions et roster." },
+	{ id = "events", label = "Événements", parts = { "data", "reminders", "ui" },
+		description = "Événements de guilde, inscriptions, roster et rappels." },
 	{ id = "raid", label = "Soirée de raid", parts = { "data", "ui" }, depends = { "events" },
 		description = "Réservations de butin, rôles de soutien et liste de contrôle. Nécessite le module Événements." },
 	{ id = "attendance", label = "Présence et butin", parts = { "data", "ui" },
 		description = "Relevé de la présence en raid et du butin reçu, corrections des officiers." },
 	{ id = "quests", label = "Quêtes", parts = { "data", "ui" },
 		description = "Quêtes élites, de donjon et de raid partagées dans la guilde." },
+	{ id = "communication", label = "Communication", parts = { "data", "ui" },
+		description = "Annonces des officiers, charte de la guilde et objectifs communs." },
 }
 
 local BY_ID = {}

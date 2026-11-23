@@ -14,7 +14,8 @@ public sealed record ExportDto(
 	string? GuildName = null,
 	List<ExportEventDto>? Events = null,
 	List<ExportRaidDto>? Raids = null,
-	List<ExportCatalogRecipeDto>? Catalog = null);
+	List<ExportCatalogRecipeDto>? Catalog = null,
+	ExportCommunicationDto? Communication = null);
 
 public sealed record ExportOrderDto(
 	int Id,
@@ -111,7 +112,8 @@ public sealed record UploadPayload(
 	List<UploadRaidLoot>? Loot = null,
 	List<UploadAttendanceCorrection>? AttendanceCorrections = null,
 	List<UploadLootCorrection>? LootCorrections = null,
-	List<UploadOffer>? Offers = null);
+	List<UploadOffer>? Offers = null,
+	UploadCommunication? Communication = null);
 
 /// <summary>Commande de craft créée en jeu (id client = clé de déduplication).</summary>
 public sealed record UploadOrder(
@@ -308,3 +310,50 @@ public sealed record UploadLootCorrection(
 	string? Note,
 	string By,
 	long At);
+
+// ---- Communication (lot 6) ----
+
+public sealed record ExportCommunicationDto(
+	List<ExportAnnouncementDto> Announcements,
+	List<ExportTemplateDto> Templates,
+	List<ExportHandbookSectionDto> Handbook,
+	List<ExportGoalDto> Goals);
+
+public sealed record ExportAnnouncementDto(
+	int Id, string? ClientId, string Title, string Body, string Author, int? EventId, long CreatedAt, long UpdatedAt);
+
+public sealed record ExportTemplateDto(string Key, string Title, string Body, long UpdatedAt);
+
+public sealed record ExportHandbookSectionDto(string Key, string Title, string Body, int Order, string? UpdatedBy, long UpdatedAt);
+
+public sealed record ExportGoalDto(
+	int Id, string? ClientId, string Title, string? Description, int Target, string? Unit, long? Deadline, bool Closed,
+	string CreatedBy, long UpdatedAt, int Progress, List<ExportContributionDto> Contributions);
+
+public sealed record ExportContributionDto(string ClientId, string Character, int Amount, string? Note, long At);
+
+/// <summary>
+/// Communication décidée en jeu : annonces, modèles, charte et objectifs
+/// (officiers), contributions aux objectifs (chacun pour ses personnages).
+/// Chaque changement est horodaté : le plus récent gagne.
+/// </summary>
+public sealed record UploadCommunication(
+	List<UploadAnnouncement>? Announcements = null,
+	List<UploadTemplate>? Templates = null,
+	List<UploadHandbookSection>? Handbook = null,
+	List<UploadGoal>? Goals = null,
+	List<UploadContribution>? Contributions = null);
+
+public sealed record UploadAnnouncement(
+	string ClientId, int? ServerId, string Title, string Body, int? EventId, string By, bool Deleted, long At);
+
+public sealed record UploadTemplate(string Key, string Title, string Body, string By, bool Deleted, long At);
+
+public sealed record UploadHandbookSection(string Key, string Title, string Body, int Order, string By, bool Deleted, long At);
+
+public sealed record UploadGoal(
+	string ClientId, int? ServerId, string Title, string? Description, int Target, string? Unit, long? Deadline, bool Closed,
+	string By, long At);
+
+public sealed record UploadContribution(
+	string ClientId, int? GoalId, string? GoalClientId, string Character, int Amount, string? Note, long At);

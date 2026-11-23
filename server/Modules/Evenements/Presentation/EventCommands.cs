@@ -1,3 +1,4 @@
+using GuildProfessions.Server.Modules.Annuaire.Contracts;
 using Discord;
 using Discord.Interactions;
 using GuildProfessions.Server.Data;
@@ -17,7 +18,7 @@ public sealed partial class GkeepModule
 
 	[Group("event", "Guild events: raids, dungeons and sign-ups")]
 	[RequireRegisteredGuild]
-	public sealed class EventGroup(EventService events, GuildContext guildContext, BotLocalizer l)
+	public sealed class EventGroup(EventService events, GuildContext guildContext, IAnnuaire annuaire, BotLocalizer l)
 		: GuildkeepGroup
 	{
 		[SlashCommand("list", "Upcoming guild events and who signed up")]
@@ -218,6 +219,34 @@ public sealed partial class GkeepModule
 					? l.T("✅ Tout est prêt.", "✅ Everything is ready.")
 					: string.Join("\n", items.Select(i => (i.Blocking ? "⛔ " : "⚠️ ") + i.Text)));
 			await FollowupAsync(embed: embed.Build(), ephemeral: true);
+		}
+
+		[SlashCommand("remind", "Remind signed-up players in this channel (organizer or officer)")]
+		public async Task RemindAsync(
+			[Summary("event", "The event"), Autocomplete(typeof(EventAutocompleteHandler))] int @event,
+			[Summary("message", "A word to add (optional)")] string? message = null)
+		{
+			await DeferAsync(ephemeral: true);
+			var (result, targets) = await events.ReminderTargetsAsync(DiscordId, IsServerAdmin, @event);
+			if (targets is null)
+			{
+				await FollowupAsync(result.Message, ephemeral: true);
+				return;
+			}
+			// Les inscrits liés à Discord sont mentionnés, les autres cités par leur nom.
+			var names = new List<string>();
+			foreach (var character in targets.Characters)
+			{
+				var discordId = await annuaire.DiscordIdOfCharacterAsync(character);
+				names.Add(discordId is null ? character : $"<@{discordId}>");
+			}
+			var e = targets.Event;
+			var text = l.T(
+				$"⏰ **{e.Title}** — <t:{e.StartsAt}:F> (<t:{e.StartsAt}:R>)\nInscrits : {string.Join(", ", names.Distinct())}",
+				$"⏰ **{e.Title}** — <t:{e.StartsAt}:F> (<t:{e.StartsAt}:R>)\nSigned up: {string.Join(", ", names.Distinct())}") +
+				(string.IsNullOrWhiteSpace(message) ? "" : $"\n> {message.Trim()}");
+			await Context.Channel.SendMessageAsync(Text.Ellipsize(text, 2000), allowedMentions: AllowedMentions.All);
+			await FollowupAsync(l.T($"Rappel envoyé à {targets.Characters.Count} inscrit(s).", $"Reminder sent to {targets.Characters.Count} player(s)."), ephemeral: true);
 		}
 
 		private string BadDate(string date, string time) => l.T(

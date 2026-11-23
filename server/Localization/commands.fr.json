@@ -308,6 +308,18 @@
 					"name": "evenement",
 					"description": "L'événement"
 				}
+			},
+			"remind": {
+				"name": "rappel",
+				"description": "Rappeler les inscrits dans ce salon (organisateur ou officier)",
+				"event": {
+					"name": "evenement",
+					"description": "L'événement"
+				},
+				"message": {
+					"name": "message",
+					"description": "Un mot à ajouter (facultatif)"
+				}
 			}
 		},
 		"reserve": {
@@ -519,6 +531,198 @@
 				"character": {
 					"name": "personnage",
 					"description": "Un de tes personnages (par défaut : tous)"
+				}
+			}
+		},
+		"announce": {
+			"name": "annonce",
+			"description": "Annonces de la guilde et leurs modèles",
+			"post": {
+				"name": "publier",
+				"description": "Publier une annonce pour la guilde (officier)",
+				"title": {
+					"name": "titre",
+					"description": "Titre (ou vide avec un modèle)"
+				},
+				"text": {
+					"name": "texte",
+					"description": "Texte ; {event}, {date} et {guild} sont remplacés"
+				},
+				"template": {
+					"name": "modele",
+					"description": "Partir d'un modèle enregistré"
+				},
+				"event": {
+					"name": "evenement",
+					"description": "Événement concerné par l'annonce"
+				}
+			},
+			"list": {
+				"name": "liste",
+				"description": "Les annonces récentes"
+			},
+			"delete": {
+				"name": "retirer",
+				"description": "Retirer une annonce (officier)",
+				"announcement": {
+					"name": "annonce",
+					"description": "L'annonce"
+				}
+			},
+			"channel": {
+				"name": "salon",
+				"description": "Salon où publier les annonces (gestionnaires du serveur)",
+				"channel": {
+					"name": "salon",
+					"description": "Le salon (vide pour ne plus publier)"
+				}
+			},
+			"template-save": {
+				"name": "modele-enregistrer",
+				"description": "Enregistrer un modèle d'annonce (officier)",
+				"template": {
+					"name": "modele",
+					"description": "Nom du modèle"
+				},
+				"title": {
+					"name": "titre",
+					"description": "Titre"
+				},
+				"text": {
+					"name": "texte",
+					"description": "Texte ; {event}, {date} et {guild} sont remplacés"
+				}
+			},
+			"template-list": {
+				"name": "modele-liste",
+				"description": "Les modèles d'annonce enregistrés"
+			},
+			"template-delete": {
+				"name": "modele-supprimer",
+				"description": "Supprimer un modèle d'annonce (officier)",
+				"template": {
+					"name": "modele",
+					"description": "Nom du modèle"
+				}
+			}
+		},
+		"handbook": {
+			"name": "charte",
+			"description": "La charte de la guilde : règlement, règles de butin...",
+			"show": {
+				"name": "lire",
+				"description": "Lire la charte, ou une de ses sections",
+				"section": {
+					"name": "section",
+					"description": "Seulement cette section"
+				}
+			},
+			"edit": {
+				"name": "ecrire",
+				"description": "Écrire ou mettre à jour une section de la charte (officier)",
+				"section": {
+					"name": "section",
+					"description": "Clé de la section, ex. reglement ou butin"
+				},
+				"text": {
+					"name": "texte",
+					"description": "Texte de la section"
+				},
+				"title": {
+					"name": "titre",
+					"description": "Titre de la section (par défaut : inchangé)"
+				},
+				"order": {
+					"name": "ordre",
+					"description": "Position dans la charte (0 en premier)"
+				}
+			},
+			"remove": {
+				"name": "retirer",
+				"description": "Retirer une section de la charte (officier)",
+				"section": {
+					"name": "section",
+					"description": "La section"
+				}
+			}
+		},
+		"goal": {
+			"name": "objectif",
+			"description": "Objectifs de la guilde et contributions des membres",
+			"list": {
+				"name": "liste",
+				"description": "Les objectifs de la guilde et leur avancement",
+				"closed": {
+					"name": "clos",
+					"description": "Inclure les objectifs clos"
+				}
+			},
+			"show": {
+				"name": "voir",
+				"description": "Un objectif et qui y a contribué",
+				"goal": {
+					"name": "objectif",
+					"description": "L'objectif"
+				}
+			},
+			"create": {
+				"name": "creer",
+				"description": "Créer un objectif de guilde (officier)",
+				"title": {
+					"name": "titre",
+					"description": "Ce qu'il faut atteindre"
+				},
+				"target": {
+					"name": "cible",
+					"description": "Quantité visée"
+				},
+				"unit": {
+					"name": "unite",
+					"description": "Unité (flacons, po...)"
+				},
+				"deadline": {
+					"name": "echeance",
+					"description": "Jour limite : 29/11, 29/11/2026 ou 2026-11-29"
+				},
+				"details": {
+					"name": "details",
+					"description": "Précisions"
+				}
+			},
+			"contribute": {
+				"name": "contribuer",
+				"description": "Ajouter ta contribution à un objectif",
+				"goal": {
+					"name": "objectif",
+					"description": "L'objectif"
+				},
+				"amount": {
+					"name": "quantite",
+					"description": "Ce que tu apportes"
+				},
+				"note": {
+					"name": "note",
+					"description": "Un mot (facultatif)"
+				},
+				"character": {
+					"name": "personnage",
+					"description": "Un de tes personnages (par défaut : ton principal)"
+				}
+			},
+			"close": {
+				"name": "clore",
+				"description": "Clore un objectif (officier)",
+				"goal": {
+					"name": "objectif",
+					"description": "L'objectif"
+				}
+			},
+			"reopen": {
+				"name": "rouvrir",
+				"description": "Rouvrir un objectif clos (officier)",
+				"goal": {
+					"name": "objectif",
+					"description": "L'objectif"
 				}
 			}
 		},

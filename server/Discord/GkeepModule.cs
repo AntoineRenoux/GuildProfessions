@@ -57,10 +57,12 @@ public sealed partial class GkeepModule(RosterService roster, NicknameSync nickn
 				"`/gkeep commande nouvelle` demande à tous les artisans ou à l'un d'eux · `liste` avec filtres (que je peux faire, mes offres…) · `proposer` pour un artisan · `accepter`, `prete`, `envoyee`, `recu`, `annuler` pour avancer · `catalogue` cherche une recette",
 				"`/gkeep order new` asks every crafter or one of them · `list` with filters (I can make, my offers…) · `offer` for crafters · `accept`, `ready`, `mailed`, `received`, `cancel` move it along · `catalog` finds a recipe"))
 			.AddField(l.T("Événements", "Events"), l.T(
+				"`/gkeep annonce liste`, `/gkeep charte lire` et `/gkeep objectif liste` pour suivre la vie de la guilde · `objectif contribuer` pour participer · publier, écrire et créer pour les officiers · `/gkeep evenement rappel` prévient les inscrits\n" +
 				"`/gkeep quete liste` les quêtes élites, de donjon et de raid des membres · `qui` a une quête · `miennes` tes quêtes et qui les a aussi\n" +
 				"`/gkeep presence resume`, `joueur`, `raids`, `raid` la présence réelle en raid (30, 60, 90 jours) · `/gkeep butin liste` l'historique du butin · `corriger`, `annuler` pour les officiers\n" +
 				"`/gkeep reserve poser`, `retirer`, `liste` tes réservations de butin (haute, normale, basse) · `ferme`, `verrouiller` pour les officiers · `/gkeep evenement soutien` et `checklist` pour préparer la soirée\n" +
 				"`/gkeep evenement liste` les raids et sorties à venir · `voir` le détail et le roster · `inscription` pour répondre (rôle, spé, personnage) · `creer`, `modifier`, `annuler`, `retablir` et `placer` (confirmé, remplaçant, banc) pour l'organisateur et les officiers",
+				"`/gkeep announce list`, `/gkeep handbook show` and `/gkeep goal list` keep up with guild life · `goal contribute` to take part · post, edit and create for officers · `/gkeep event remind` pings signed-up players\n" +
 				"`/gkeep quest list` members' elite, dungeon and raid quests · `who` has a quest · `mine` your quests and who else has them\n" +
 				"`/gkeep attendance summary`, `player`, `raids`, `raid` real raid attendance (30, 60, 90 days) · `/gkeep loot list` the loot history · `correct`, `void` for officers\n" +
 				"`/gkeep reserve set`, `clear`, `list` your loot reserves (high, normal, low) · `hard`, `lock` for officers · `/gkeep event duty` and `checklist` to prepare the night\n" +

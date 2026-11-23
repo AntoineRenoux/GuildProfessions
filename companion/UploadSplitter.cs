@@ -45,12 +45,13 @@ public static class UploadSplitter
 			var attendanceCorrections = payload.AttendanceCorrections?.Where(c => Mine(c.By)).ToList();
 			var lootCorrections = payload.LootCorrections?.Where(c => Mine(c.By)).ToList();
 			var offers = payload.Offers?.Where(o => Mine(o.Crafter)).ToList();
+			var communication = CommunicationLua.ForGuild(payload.Communication, Mine);
 
 			if (characters.Count == 0 && orders is not { Count: > 0 } && actions is not { Count: > 0 } && departed.Count == 0 &&
 				events is not { Count: > 0 } && signups is not { Count: > 0 } && placements is not { Count: > 0 } &&
 				reserves is not { Count: > 0 } && hardReserves is not { Count: > 0 } && duties is not { Count: > 0 } &&
 				raids is not { Count: > 0 } && loot is not { Count: > 0 } && attendanceCorrections is not { Count: > 0 } && lootCorrections is not { Count: > 0 } &&
-				offers is not { Count: > 0 })
+				offers is not { Count: > 0 } && communication is null)
 			{
 				continue;
 			}
@@ -69,7 +70,8 @@ public static class UploadSplitter
 				loot is { Count: > 0 } ? loot : null,
 				attendanceCorrections is { Count: > 0 } ? attendanceCorrections : null,
 				lootCorrections is { Count: > 0 } ? lootCorrections : null,
-				offers is { Count: > 0 } ? offers : null)));
+				offers is { Count: > 0 } ? offers : null,
+				communication)));
 		}
 		return uploads;
 	}

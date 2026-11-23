@@ -167,7 +167,7 @@ end)
 test("module Présence et butin désactivé seul", function()
 	local game = Start({ "attendance" })
 	local db = game.env.GuildkeepDB
-	T.equal(#game.tickers, 0, "aucune minuterie de présence")
+	T.equal(#T.Tickers(game, 60), 0, "aucune minuterie de présence")
 	game.raid = { instance = "Onyxia", members = {
 		{ "Thorgal", 2, "WARRIOR", true }, { "Nayra-Solen", 0, "PRIEST", true }, { "Elaria-Brume", 0, "MAGE", true },
 		{ "Kael-Fourbe", 0, "ROGUE", true }, { "Mira-Vent", 0, "DRUID", true } } }

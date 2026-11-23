@@ -34,6 +34,7 @@ internal sealed class TestModules : IDisposable
 		services.AddSingleton(db);
 		services.AddSingleton(guild);
 		services.AddSingleton(notifier ?? new NullCraftOrderNotifier());
+		services.AddSingleton<IAnnouncementPublisher>(new NullAnnouncementPublisher());
 		configure?.Invoke(services);
 		return new TestModules(services.BuildServiceProvider());
 	}
@@ -46,6 +47,7 @@ internal sealed class TestModules : IDisposable
 	public CraftOrderService Orders => Get<CraftOrderService>();
 	public CatalogService Catalog => Get<CatalogService>();
 	public QuestService Quests => Get<QuestService>();
+	public CommunicationService Communication => Get<CommunicationService>();
 	public UploadIngestion Ingestion => Get<UploadIngestion>();
 	public ExportBuilder Export => Get<ExportBuilder>();
 	public IDataVersion DataVersion => Get<IDataVersion>();
@@ -104,6 +106,19 @@ internal static class ModuleUploadShortcuts
 		var member = await roster.GetOrCreateMemberAsync(discordId, discordId);
 		await roster.ApplyUploadAsync(member, new UploadPayload(
 			[new UploadCharacter(character, "MAGE", null, null, null, 60, [], Officer: true)]));
+	}
+
+	/// <summary>Communication d'un envoi ; les publications Discord partent aussitôt.</summary>
+	public static async Task<List<string>> ApplyUploadAsync(this CommunicationService communication, Member? member, UploadPayload payload,
+		CancellationToken ct = default)
+	{
+		var afterCommit = new List<Func<Task>>();
+		var warnings = await communication.ApplyUploadAsync(Context(member, payload), afterCommit, ct);
+		foreach (var send in afterCommit)
+		{
+			await send();
+		}
+		return warnings;
 	}
 
 	public static Task<List<string>> ApplyUploadAsync(this AttendanceService attendance, Member? member, UploadPayload payload,

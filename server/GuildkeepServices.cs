@@ -1,6 +1,7 @@
 using GuildProfessions.Server.Data;
 using GuildProfessions.Server.Modules.Annuaire;
 using GuildProfessions.Server.Modules.Artisanat;
+using GuildProfessions.Server.Modules.Communication;
 using GuildProfessions.Server.Modules.Evenements;
 using GuildProfessions.Server.Modules.Presence;
 using GuildProfessions.Server.Modules.Quetes;
@@ -35,6 +36,7 @@ public static class GuildkeepServices
 		services.AddEvenementsModule();
 		services.AddPresenceModule();
 		services.AddQuetesModule();
+		services.AddCommunicationModule();
 		return services;
 	}
 }

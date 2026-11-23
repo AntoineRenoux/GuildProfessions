@@ -739,6 +739,12 @@ local function RefreshDetail(event)
 	detail.rosterEmpty:SetShown(onRoster and #items == 0)
 	detail.invite:SetShown(canManage and not event.cancelled)
 	detail.copy:SetShown(#items > 0)
+	detail.remind:SetShown(canManage and not event.cancelled and E.IsUpcoming(event))
+	local remindOn, remindMinutes = E.Reminders.Get()
+	detail.reminder:SetChecked(remindOn)
+	if not detail.reminderMinutes:HasFocus() then
+		detail.reminderMinutes:SetText(tostring(remindMinutes))
+	end
 	for _, button in ipairs(detail.sectionButtons) do
 		button:GPSetSelected(button.section == view.section)
 		button:SetShown(live > 0 and alive[button.section] == true)
@@ -995,6 +1001,33 @@ local function BuildDetail(parent, left)
 		end
 	end)
 	detail.copy:SetPoint("RIGHT", detail.invite, "LEFT", -4, 0)
+
+	-- Rappel aux inscrits dans le canal de guilde (organisateur ou officier).
+	detail.remind = Button(detail, "Rappeler", 90, function()
+		local event = E.Find(view.selected)
+		if event then
+			local ok, err = E.Reminders.RemindGuild(event)
+			if not ok then
+				GP.Chat(err)
+			end
+		end
+	end)
+	detail.remind:SetPoint("RIGHT", detail.copy, "LEFT", -4, 0)
+
+	-- Rappel personnel : case et nombre de minutes, réglage par compte.
+	detail.reminder = CreateFrame("CheckButton", nil, detail, "UICheckButtonTemplate")
+	detail.reminder:SetSize(22, 22)
+	detail.reminder:SetPoint("BOTTOMLEFT", 0, 0)
+	UI.SetCheckLabel(detail.reminder, "Me rappeler")
+	detail.reminderMinutes = UI.InputBox(detail, 30, 4, true)
+	detail.reminderMinutes:SetPoint("LEFT", detail.reminder, "RIGHT", 82, 0)
+	detail.reminderUnit = Label(detail, "min avant", "GameFontHighlightSmall", COLOR.muted)
+	detail.reminderUnit:SetPoint("LEFT", detail.reminderMinutes, "RIGHT", 6, 0)
+	local function SaveReminder()
+		E.Reminders.Set(detail.reminder:GetChecked(), tonumber(detail.reminderMinutes:GetText()))
+	end
+	detail.reminder:SetScript("OnClick", SaveReminder)
+	detail.reminderMinutes:SetScript("OnEditFocusLost", SaveReminder)
 
 	-- Bas du détail : le roster, puis les sections des extensions (réservations de
 	-- butin, préparation de la soirée…). Sans extension, pas de barre de sections.
