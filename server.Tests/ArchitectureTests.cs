@@ -19,7 +19,7 @@ public sealed class ArchitectureTests
 	private static readonly Assembly Server = typeof(GkeepModule).Assembly;
 	private static readonly string[] Internals = ["Application", "Domain", "Infrastructure", "Presentation"];
 
-	private static readonly string[] ModuleNames = ["Annuaire", "Artisanat", "Evenements", "Presence", "Quetes", "Communication"];
+	private static readonly string[] ModuleNames = ["Annuaire", "Artisanat", "Evenements", "Presence", "Quetes", "Communication", "Profils"];
 
 	public static TheoryData<string> Modules => new(ModuleNames);
 
@@ -88,6 +88,7 @@ public sealed class ArchitectureTests
 		["Quetes"] = [typeof(CharacterQuestLog)],
 		["Communication"] = [typeof(Announcement), typeof(AnnouncementTemplate), typeof(HandbookSection), typeof(GuildGoal),
 			typeof(GoalContribution), typeof(CommunicationSettings)],
+		["Profils"] = [typeof(PlayerProfile), typeof(CharacterTalents), typeof(AddonVersionReport), typeof(RosterChange), typeof(OnboardingStep)],
 	};
 
 	/// <summary>Entités et internes (Application, Domain, Infrastructure, Presentation) des modules donnés.</summary>
@@ -161,6 +162,8 @@ public sealed class ArchitectureTests
 		[nameof(GkeepModule.AnnounceGroup)] = "Communication",
 		[nameof(GkeepModule.HandbookGroup)] = "Communication",
 		[nameof(GkeepModule.GoalGroup)] = "Communication",
+		[nameof(GkeepModule.ProfileGroup)] = "Profils",
+		[nameof(GkeepModule.WelcomeGroup)] = "Profils",
 	};
 
 	public static TheoryData<string, string> DiscordGroups

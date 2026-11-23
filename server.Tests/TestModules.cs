@@ -48,6 +48,7 @@ internal sealed class TestModules : IDisposable
 	public CatalogService Catalog => Get<CatalogService>();
 	public QuestService Quests => Get<QuestService>();
 	public CommunicationService Communication => Get<CommunicationService>();
+	public ProfileService Profiles => Get<ProfileService>();
 	public UploadIngestion Ingestion => Get<UploadIngestion>();
 	public ExportBuilder Export => Get<ExportBuilder>();
 	public IDataVersion DataVersion => Get<IDataVersion>();
@@ -120,6 +121,10 @@ internal static class ModuleUploadShortcuts
 		}
 		return warnings;
 	}
+
+	public static Task<List<string>> ApplyUploadAsync(this ProfileService profiles, Member? member, UploadPayload payload,
+		CancellationToken ct = default) =>
+		profiles.ApplyUploadAsync(Context(member, payload), ct);
 
 	public static Task<List<string>> ApplyUploadAsync(this AttendanceService attendance, Member? member, UploadPayload payload,
 		CancellationToken ct = default) =>

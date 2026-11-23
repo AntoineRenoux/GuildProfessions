@@ -849,6 +849,98 @@
 					"description": "Seulement ce métier"
 				}
 			}
+		},
+		"profile": {
+			"name": "profil",
+			"description": "Profils des joueurs : principal, rerolls, rôles, disponibilités",
+			"show": {
+				"name": "voir",
+				"description": "Voir le profil d'un joueur (le vôtre par défaut)",
+				"character": {
+					"name": "personnage",
+					"description": "N'importe quel personnage du joueur"
+				}
+			},
+			"edit": {
+				"name": "modifier",
+				"description": "Remplir votre profil ; vos autres personnages liés deviennent vos rerolls",
+				"role": {
+					"name": "role",
+					"description": "Votre rôle principal"
+				},
+				"second-role": {
+					"name": "second-role",
+					"description": "Un autre rôle que vous savez jouer"
+				},
+				"availability": {
+					"name": "disponibilites",
+					"description": "Quand vous jouez d'habitude, ex. soirs de semaine"
+				},
+				"note": {
+					"name": "note",
+					"description": "Un mot pour les officiers"
+				},
+				"main": {
+					"name": "principal",
+					"description": "Votre personnage principal (par défaut : celui de Discord)"
+				}
+			},
+			"arrivals": {
+				"name": "arrivees",
+				"description": "Arrivées et départs récents dans la guilde",
+				"days": {
+					"name": "jours",
+					"description": "Combien de jours en arrière (14 par défaut)"
+				}
+			},
+			"versions": {
+				"name": "versions",
+				"description": "Version de l'addon de chaque membre (officier)"
+			}
+		},
+		"welcome": {
+			"name": "accueil",
+			"description": "Liste d'accueil des nouveaux",
+			"status": {
+				"name": "etat",
+				"description": "Liste d'accueil d'un joueur (la vôtre par défaut)",
+				"character": {
+					"name": "personnage",
+					"description": "Le personnage du joueur"
+				}
+			},
+			"done": {
+				"name": "fait",
+				"description": "Cocher une étape d'accueil (la vôtre, ou celle d'un joueur pour les officiers)",
+				"step": {
+					"name": "etape",
+					"description": "L'étape"
+				},
+				"character": {
+					"name": "personnage",
+					"description": "Un autre joueur (officier)"
+				}
+			},
+			"undo": {
+				"name": "annuler",
+				"description": "Décocher une étape d'accueil",
+				"step": {
+					"name": "etape",
+					"description": "L'étape"
+				},
+				"character": {
+					"name": "personnage",
+					"description": "Un autre joueur (officier)"
+				}
+			},
+			"list": {
+				"name": "liste",
+				"description": "Nouveaux dont l'accueil n'est pas fini (officier)"
+			},
+			"remind": {
+				"name": "relancer",
+				"description": "Publier un rappel qui mentionne les nouveaux en retard (officier)"
+			}
 		}
 	}
 }

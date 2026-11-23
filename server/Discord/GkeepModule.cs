@@ -67,6 +67,11 @@ public sealed partial class GkeepModule(RosterService roster, NicknameSync nickn
 				"`/gkeep attendance summary`, `player`, `raids`, `raid` real raid attendance (30, 60, 90 days) · `/gkeep loot list` the loot history · `correct`, `void` for officers\n" +
 				"`/gkeep reserve set`, `clear`, `list` your loot reserves (high, normal, low) · `hard`, `lock` for officers · `/gkeep event duty` and `checklist` to prepare the night\n" +
 				"`/gkeep event list` shows upcoming raids and outings · `show` the details and roster · `signup` to answer (role, spec, character) · `create`, `edit`, `cancel`, `restore` and `place` (confirmed, standby, bench) for the organizer and officers"))
+			.AddField(l.T("Profils et accueil", "Profiles and onboarding"), l.T(
+				"`/gkeep profil voir` le profil d'un joueur · `modifier` rôles, disponibilités, note · `arrivees` arrivées et départs · `versions` versions de l'addon (officier)\n" +
+				"`/gkeep accueil etat` ta liste d'accueil · `fait` / `annuler` une étape · `liste` et `relancer` les nouveaux (officier)",
+				"`/gkeep profile show` a player's profile · `edit` roles, availability, note · `arrivals` arrivals and departures · `versions` addon versions (officer)\n" +
+				"`/gkeep welcome status` your onboarding checklist · `done` / `undo` a step · `list` and `remind` newcomers (officer)"))
 			.AddField(l.T("En jeu", "In game"), l.T(
 				"Installe le pack de la guilde depuis le lien donné par un administrateur : l'addon s'ouvre avec `/gkeep` ou par l'onglet dans la fenêtre de guilde.",
 				"Install your guild's pack from the link an admin shares: open the addon with `/gkeep` or from the tab in the guild window."));

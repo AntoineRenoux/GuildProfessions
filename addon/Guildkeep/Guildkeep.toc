@@ -40,3 +40,5 @@ Quests.lua
 QuestsUI.lua
 Communication.lua
 CommunicationUI.lua
+Profiles.lua
+ProfilesUI.lua

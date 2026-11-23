@@ -17,7 +17,8 @@ public sealed record ExportDto(
 	List<ExportEventDto>? Events = null,
 	List<ExportRaidDto>? Raids = null,
 	List<ExportCatalogRecipeDto>? Catalog = null,
-	ExportCommunicationDto? Communication = null)
+	ExportCommunicationDto? Communication = null,
+	ExportProfilesDto? Profiles = null)
 {
 	/// <summary>Modules absents de cet export (lu dans l'en-tête de la réponse, pas dans le JSON).</summary>
 	[System.Text.Json.Serialization.JsonIgnore]
@@ -119,7 +120,8 @@ public sealed record UploadPayload(
 	List<UploadAttendanceCorrection>? AttendanceCorrections = null,
 	List<UploadLootCorrection>? LootCorrections = null,
 	List<UploadOffer>? Offers = null,
-	UploadCommunication? Communication = null);
+	UploadCommunication? Communication = null,
+	UploadProfiles? Profiles = null);
 
 public sealed record UploadOrder(
 	string ClientId,
@@ -358,3 +360,42 @@ public sealed record UploadGoal(
 
 public sealed record UploadContribution(
 	string ClientId, int? GoalId, string? GoalClientId, string Character, int Amount, string? Note, long At);
+
+// ---- Profils et accueil (lot 7) ----
+
+public sealed record ExportProfilesDto(
+	List<ExportProfileDto> Profiles,
+	List<ExportTalentsDto> Talents,
+	List<ExportRosterChangeDto> RosterChanges,
+	List<ExportOnboardingDto> Onboarding,
+	List<ExportVersionDto> Versions);
+
+public sealed record ExportProfileDto(string Main, List<string> Alts, List<string> Roles, string? Availability, string? Note, long UpdatedAt);
+
+public sealed record ExportTalentsDto(string Character, string? Spec, string Summary, long At);
+
+public sealed record ExportRosterChangeDto(string Character, string Kind, long At);
+
+/// <summary>Étapes d'accueil faites par un joueur (y compris celles déduites : compte Discord lié, profil rempli).</summary>
+public sealed record ExportOnboardingDto(string Character, List<string> Done, long UpdatedAt);
+
+public sealed record ExportVersionDto(string Character, string Version, long At);
+
+/// <summary>Profils relevés ou modifiés en jeu ; chaque changement est horodaté, le plus récent gagne.</summary>
+public sealed record UploadProfiles(
+	List<UploadProfile>? Profiles = null,
+	List<UploadTalents>? Talents = null,
+	List<UploadVersion>? Versions = null,
+	List<UploadRosterChange>? RosterChanges = null,
+	List<UploadOnboardingStep>? Onboarding = null);
+
+/// <summary>Profil d'un joueur : principal et rerolls doivent tous être des personnages de l'envoi (même compte).</summary>
+public sealed record UploadProfile(string Main, List<string>? Alts, List<string>? Roles, string? Availability, string? Note, long At);
+
+public sealed record UploadTalents(string Character, string? Spec, string Summary, long At);
+
+public sealed record UploadVersion(string Character, string Version);
+
+public sealed record UploadRosterChange(string Character, string Kind, long At, string? By = null);
+
+public sealed record UploadOnboardingStep(string Character, string Step, bool Done, string By, long At);

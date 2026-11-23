@@ -71,7 +71,7 @@ public sealed class ExportBuilder(
 				guildContext.Required.Name, string.Join(", ", failed));
 		}
 		var export = new ExportDto(version, DateTime.UtcNow, draft.RecipeNames, draft.Characters, draft.Orders,
-			guildContext.Required.Name, draft.Events, draft.Raids, draft.Catalog, draft.Communication);
+			guildContext.Required.Name, draft.Events, draft.Raids, draft.Catalog, draft.Communication, draft.Profiles);
 		return new ExportBuild(export, failed);
 	}
 }

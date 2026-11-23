@@ -17,6 +17,34 @@ namespace GuildProfessions.Server.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.15");
 
+            modelBuilder.Entity("GuildProfessions.Server.Data.AddonVersionReport", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("At")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Character")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("GuildId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Version")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GuildId", "Character")
+                        .IsUnique();
+
+                    b.ToTable("AddonVersionReports");
+                });
+
             modelBuilder.Entity("GuildProfessions.Server.Data.Announcement", b =>
                 {
                     b.Property<int>("Id")
@@ -245,6 +273,37 @@ namespace GuildProfessions.Server.Migrations
                         .IsUnique();
 
                     b.ToTable("CharacterQuestLogs");
+                });
+
+            modelBuilder.Entity("GuildProfessions.Server.Data.CharacterTalents", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("At")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Character")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("GuildId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Spec")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Summary")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GuildId", "Character")
+                        .IsUnique();
+
+                    b.ToTable("CharacterTalents");
                 });
 
             modelBuilder.Entity("GuildProfessions.Server.Data.CommunicationSettings", b =>
@@ -793,6 +852,78 @@ namespace GuildProfessions.Server.Migrations
                     b.ToTable("Members");
                 });
 
+            modelBuilder.Entity("GuildProfessions.Server.Data.OnboardingStep", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("At")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("By")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Character")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Done")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("GuildId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Step")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GuildId", "Character", "Step")
+                        .IsUnique();
+
+                    b.ToTable("OnboardingSteps");
+                });
+
+            modelBuilder.Entity("GuildProfessions.Server.Data.PlayerProfile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("AltsJson")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Availability")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("GuildId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Main")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Roles")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("UpdatedAt")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GuildId", "Main")
+                        .IsUnique();
+
+                    b.ToTable("PlayerProfiles");
+                });
+
             modelBuilder.Entity("GuildProfessions.Server.Data.Profession", b =>
                 {
                     b.Property<int>("Id")
@@ -975,6 +1106,45 @@ namespace GuildProfessions.Server.Migrations
                     b.ToTable("Recipes");
                 });
 
+            modelBuilder.Entity("GuildProfessions.Server.Data.RosterChange", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("At")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Character")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("GuildId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ReportedBy")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GuildId", "At");
+
+                    b.ToTable("RosterChanges");
+                });
+
+            modelBuilder.Entity("GuildProfessions.Server.Data.AddonVersionReport", b =>
+                {
+                    b.HasOne("GuildProfessions.Server.Data.Guild", null)
+                        .WithMany()
+                        .HasForeignKey("GuildId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("GuildProfessions.Server.Data.Announcement", b =>
                 {
                     b.HasOne("GuildProfessions.Server.Data.Guild", null)
@@ -1030,6 +1200,15 @@ namespace GuildProfessions.Server.Migrations
                 });
 
             modelBuilder.Entity("GuildProfessions.Server.Data.CharacterQuestLog", b =>
+                {
+                    b.HasOne("GuildProfessions.Server.Data.Guild", null)
+                        .WithMany()
+                        .HasForeignKey("GuildId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("GuildProfessions.Server.Data.CharacterTalents", b =>
                 {
                     b.HasOne("GuildProfessions.Server.Data.Guild", null)
                         .WithMany()
@@ -1165,6 +1344,24 @@ namespace GuildProfessions.Server.Migrations
                     b.Navigation("MainCharacter");
                 });
 
+            modelBuilder.Entity("GuildProfessions.Server.Data.OnboardingStep", b =>
+                {
+                    b.HasOne("GuildProfessions.Server.Data.Guild", null)
+                        .WithMany()
+                        .HasForeignKey("GuildId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("GuildProfessions.Server.Data.PlayerProfile", b =>
+                {
+                    b.HasOne("GuildProfessions.Server.Data.Guild", null)
+                        .WithMany()
+                        .HasForeignKey("GuildId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("GuildProfessions.Server.Data.Profession", b =>
                 {
                     b.HasOne("GuildProfessions.Server.Data.Character", "Character")
@@ -1221,6 +1418,15 @@ namespace GuildProfessions.Server.Migrations
                         .IsRequired();
 
                     b.Navigation("Profession");
+                });
+
+            modelBuilder.Entity("GuildProfessions.Server.Data.RosterChange", b =>
+                {
+                    b.HasOne("GuildProfessions.Server.Data.Guild", null)
+                        .WithMany()
+                        .HasForeignKey("GuildId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("GuildProfessions.Server.Data.Character", b =>

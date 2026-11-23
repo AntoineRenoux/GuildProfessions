@@ -1,0 +1,107 @@
+title: module Profils et accueil
+description: Le module Profils et accueil de Guildkeep : profil de chaque joueur (principal, rerolls, rôles, disponibilités, talents), arrivées et départs de la guilde, liste d'accueil des nouveaux, en jeu et sur Discord.
+lead: [[L'onglet Profils : qui joue quel personnage et quel rôle, quand chacun est disponible, qui vient d'arriver ou de partir, et une liste d'accueil pour que chaque nouveau trouve vite sa place.||The Profiles tab: who plays which character and role, when everyone is available, who just joined or left, and an onboarding checklist so every newcomer quickly finds their place.]]
+---
+<section>
+<h2 id="a-quoi-ca-sert">[[À quoi ça sert||What it's for]]</h2>
+<p>[[L'onglet {t:Profils||Profiles} a trois sections : {o:Profils||Profiles}, {o:Accueil||Onboarding} et {o:Journal||Log}.||The {t:Profils||Profiles} tab has three sections: {o:Profils||Profiles}, {o:Accueil||Onboarding} and {o:Journal||Log}.]]</p>
+<ul>
+	<li>[[<strong>Profils</strong> : un profil par joueur, avec son personnage principal, ses rerolls, ses rôles (tank, soigneur, DPS mêlée, DPS distance), ses disponibilités et une note. Les talents de chaque personnage sont relevés tout seuls.||<strong>Profiles</strong>: one profile per player, with their main character, their alts, their roles (tank, healer, melee DPS, ranged DPS), their availability and a note. Each character's talents are recorded automatically.]]</li>
+	<li>[[<strong>Accueil</strong> : cinq étapes pour bien démarrer dans la guilde. Chacun coche les siennes ; les officiers suivent tous les nouveaux.||<strong>Onboarding</strong>: five steps to get started in the guild. Everyone ticks their own; officers follow every newcomer.]]</li>
+	<li>[[<strong>Journal</strong> : les arrivées et départs de la guilde, relevés par les membres qui ont l'addon. Les officiers y voient aussi la version de l'addon de chacun.||<strong>Log</strong>: guild arrivals and departures, recorded by members who have the addon. Officers also see everyone's addon version there.]]</li>
+</ul>
+<p>[[{g:/gkeep profils} (ou {g:/gkeep accueil}) ouvre l'onglet ; {g:/gkeep profil moi} ouvre directement ton profil.||{g:/gkeep profils} (or {g:/gkeep accueil}) opens the tab; {g:/gkeep profil moi} opens your profile directly.]]</p>
+<figure class="mock" data-ui>
+	<div class="wow">
+		<div class="bar-line"><span class="chip is-on">Profils</span><span class="chip">Accueil</span><span class="chip">Journal</span><span style="margin-left:auto" class="wow-button">Mon profil</span></div>
+		<div style="padding:10px 12px"><div class="gold">Maël Corvin</div><div class="soft" style="font-size:12px">Soigneur, DPS distance · mis à jour le 21/11/2026</div>
+		<div style="margin-top:8px;font-size:13px"><span class="gold">Rerolls :</span> Maël Ferrant, Maëlis Corvin<br><span class="gold">Disponibilités :</span> soirs de semaine, après 21 h<br><span class="gold">Talents :</span> Maël Corvin : Sacré (31/20/0)</div></div>
+	</div>
+	<figcaption>[[Maquette : le profil d'un joueur.||Mock-up: a player's profile.]]</figcaption>
+</figure>
+
+{tip}<p>[[<strong>Tutoriel en jeu.</strong> À la première ouverture de l'onglet {t:Profils||Profiles}, un tutoriel pas à pas encadre chaque bouton et explique à quoi il sert. Tu peux le passer à tout moment, et le revoir avec le bouton {b:?} en haut à droite de la fenêtre ou {g:/gkeep tuto}.||<strong>In-game tutorial.</strong> The first time you open the {t:Profils||Profiles} tab, a step-by-step tutorial highlights every button and explains what it does. You can skip it at any time, and replay it with the {b:?} button at the top right of the window or {g:/gkeep tuto}.]]</p>{/tip}
+</section>
+
+<section>
+<h2 id="mon-profil">[[Tutoriel : remplir son profil||Tutorial: fill in your profile]]</h2>
+<div class="rights">{who:all}</div>
+<div class="howto">
+	<h3><span class="where">[[En jeu||In game]]</span>[[Bouton Mon profil||My profile button]]</h3>
+	<ol class="steps">
+		<li>[[Onglet {t:Profils||Profiles}, clique {b:Mon profil||My profile}.||{t:Profils||Profiles} tab, click {b:Mon profil||My profile}.]]</li>
+		<li>[[Ligne {o:Principal||Main} : choisis ton personnage principal. Ligne {o:Rerolls||Alts} : coche tes autres personnages. Seuls les personnages de ce compte, dans cette guilde, qui ont lancé l'addon au moins une fois, sont proposés.||{o:Principal||Main} row: pick your main character. {o:Rerolls||Alts} row: tick your other characters. Only characters of this account, in this guild, that ran the addon at least once, are offered.]]</li>
+		<li>[[Ligne {o:Rôles||Roles} : coche ce que tu sais jouer ({o:Tank}, {o:Soigneur||Healer}, {o:DPS mêlée||Melee DPS}, {o:DPS distance||Ranged DPS}).||{o:Rôles||Roles} row: tick what you can play ({o:Tank}, {o:Soigneur||Healer}, {o:DPS mêlée||Melee DPS}, {o:DPS distance||Ranged DPS}).]]</li>
+		<li>[[{o:Disponibilités||Availability} : quand tu joues d'habitude (« soirs de semaine, après 21 h »). {o:Note} : un mot pour les officiers, facultatif.||{o:Disponibilités||Availability}: when you usually play ("weekday evenings, after 9 pm"). {o:Note}: a word for the officers, optional.]]</li>
+		<li>[[Clique {b:Enregistrer||Save}. Les membres connectés voient ton profil aussitôt ; il part sur le serveur à la prochaine synchro du compagnon.||Click {b:Enregistrer||Save}. Online members see your profile right away; it reaches the server on the companion's next sync.]]</li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span>[[Avec /gkeep profil modifier||With /gkeep profile edit]]</h3>
+	<ol class="steps">
+		<li>[[{d:/gkeep profil modifier||/gkeep profile edit} : <code>role</code> et <code>second-role</code>, <code>[[disponibilites||availability]]</code>, <code>note</code>. Ce que tu n'indiques pas reste inchangé.||{d:/gkeep profil modifier||/gkeep profile edit}: <code>role</code> and <code>second-role</code>, <code>availability</code>, <code>note</code>. Whatever you leave out stays unchanged.]]</li>
+		<li>[[Ton principal est ton personnage principal sur Discord (ou celui choisi dans <code>[[principal||main]]</code>) ; tes autres personnages liés deviennent tes rerolls.||Your main is your main character on Discord (or the one picked in <code>main</code>); your other linked characters become your alts.]]</li>
+		<li>[[{d:/gkeep profil voir||/gkeep profile show} affiche ton profil, ou celui d'un autre joueur avec <code>[[personnage||character]]</code> (n'importe lequel de ses personnages).||{d:/gkeep profil voir||/gkeep profile show} shows your profile, or another player's with <code>character</code> (any of their characters).]]</li>
+	</ol>
+</div>
+{note}<p>[[Un personnage n'appartient qu'à un profil. Si tu changes de principal, l'ancien devient un reroll du nouveau.||A character belongs to only one profile. If you change your main, the old one becomes an alt of the new one.]]</p>{/note}
+</section>
+
+<section>
+<h2 id="talents">[[Talents et version de l'addon||Talents and addon version]]</h2>
+<p>[[Rien à faire : à chaque connexion, et à chaque point de talent dépensé, l'addon relève la répartition de tes points par arbre (« 31/20/0 ») et ton arbre principal. Ils s'affichent dans ton profil, pour chacun de tes personnages.||Nothing to do: at each login, and each time you spend a talent point, the addon records how your points are split across trees ("31/20/0") and your main tree. They show in your profile, for each of your characters.]]</p>
+<p>[[L'addon note aussi sa version. Les officiers la voient dans le détail d'un profil et dans la section {o:Journal||Log} ; sur Discord, {d:/gkeep profil versions||/gkeep profile versions} regroupe les membres par version, pour savoir qui doit mettre à jour.||The addon also records its version. Officers see it in a profile's details and in the {o:Journal||Log} section; on Discord, {d:/gkeep profil versions||/gkeep profile versions} groups members by version, to know who needs to update.]]</p>
+</section>
+
+<section>
+<h2 id="accueil">[[Tutoriel : l'accueil d'un nouveau||Tutorial: welcoming a newcomer]]</h2>
+<p>[[Cinq étapes : {o:Rejoindre le Discord et lier son personnage||Join the Discord and link your character}, {o:Choisir son personnage principal||Pick your main character}, {o:Remplir son profil||Fill in your profile}, {o:Lire la charte et les règles de butin||Read the handbook and loot rules} et {o:Se présenter à la guilde||Introduce yourself to the guild}. Les trois premières se cochent d'elles-mêmes : compte lié sur Discord, profil enregistré avec des rôles ou des disponibilités.||Five steps: {o:Rejoindre le Discord et lier son personnage||Join the Discord and link your character}, {o:Choisir son personnage principal||Pick your main character}, {o:Remplir son profil||Fill in your profile}, {o:Lire la charte et les règles de butin||Read the handbook and loot rules} and {o:Se présenter à la guilde||Introduce yourself to the guild}. The first three tick themselves: account linked on Discord, profile saved with roles or availability.]]</p>
+<div class="howto">
+	<h3><span class="where">[[En jeu||In game]]</span>[[Pour le nouveau||For the newcomer]]</h3>
+	<div class="rights">{who:all}</div>
+	<ol class="steps">
+		<li>[[Onglet {t:Profils||Profiles}, section {o:Accueil||Onboarding} : ta liste est en haut.||{t:Profils||Profiles} tab, {o:Accueil||Onboarding} section: your checklist is at the top.]]</li>
+		<li>[[Clique une étape pour la cocher quand tu l'as faite (et de nouveau pour la décocher). La charte se lit dans l'onglet {t:Guilde||Guild} (module <a href="/docs/communication.html#charte">Communication</a>).||Click a step to tick it once done (and again to untick it). The handbook is in the {t:Guilde||Guild} tab (<a href="/docs/communication.html#charte">Communication</a> module).]]</li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">[[En jeu||In game]]</span>[[Pour les officiers||For officers]]</h3>
+	<div class="rights">{who:officer}</div>
+	<ol class="steps">
+		<li>[[Section {o:Accueil||Onboarding} : sous ta propre liste, chaque nouveau dont l'accueil n'est pas fini, les moins avancés d'abord. L'onglet affiche leur nombre.||{o:Accueil||Onboarding} section: under your own checklist, every newcomer whose onboarding isn't finished, least advanced first. The tab shows how many.]]</li>
+		<li>[[Clique un nouveau, puis une étape pour la cocher pour lui (par exemple après sa présentation en vocal).||Click a newcomer, then a step to tick it for them (for instance after their introduction on voice chat).]]</li>
+		<li>[[{b:Copier un rappel||Copy a reminder} prépare un message qui liste, pour chaque nouveau, les étapes qui restent : copie-le (Ctrl+C) et colle-le dans le canal de guilde ou sur Discord.||{b:Copier un rappel||Copy a reminder} prepares a message listing, for each newcomer, the steps left: copy it (Ctrl+C) and paste it in guild chat or on Discord.]]</li>
+	</ol>
+</div>
+<div class="howto">
+	<h3><span class="where">Discord</span>[[Les commandes d'accueil||Onboarding commands]]</h3>
+	<ul>
+		<li>[[{d:/gkeep accueil etat||/gkeep welcome status} : ta liste d'accueil, ou celle d'un joueur avec <code>[[personnage||character]]</code>.||{d:/gkeep accueil etat||/gkeep welcome status}: your checklist, or a player's with <code>character</code>.]]</li>
+		<li>[[{d:/gkeep accueil fait||/gkeep welcome done} et {d:/gkeep accueil annuler||/gkeep welcome undo} : cocher ou décocher une <code>[[etape||step]]</code> (la tienne ; celle d'un autre avec <code>[[personnage||character]]</code>, pour les officiers).||{d:/gkeep accueil fait||/gkeep welcome done} and {d:/gkeep accueil annuler||/gkeep welcome undo}: tick or untick a <code>step</code> (yours; someone else's with <code>character</code>, for officers).]]</li>
+		<li>[[Officiers : {d:/gkeep accueil liste||/gkeep welcome list} montre les nouveaux en retard ; {d:/gkeep accueil relancer||/gkeep welcome remind} publie dans le salon un rappel qui les mentionne (jusqu'à 20 joueurs ayant lié leur compte).||Officers: {d:/gkeep accueil liste||/gkeep welcome list} shows newcomers who are behind; {d:/gkeep accueil relancer||/gkeep welcome remind} posts a reminder in the channel that mentions them (up to 20 players who linked their account).]]</li>
+	</ul>
+</div>
+</section>
+
+<section>
+<h2 id="journal">[[Arrivées et départs||Arrivals and departures]]</h2>
+<div class="rights">{who:all}</div>
+<p>[[Quand le roster de la guilde change, l'addon de chaque membre connecté compare la liste à celle qu'il avait vue : un nom nouveau est une arrivée, un nom disparu un départ. Le chat annonce les arrivées (« Bleu Neuf a rejoint la guilde »), et la section {o:Journal||Log} les garde 90 jours. Le serveur ne note qu'une fois un même mouvement relevé par plusieurs membres.||When the guild roster changes, every online member's addon compares the list with the one it saw before: a new name is an arrival, a missing name a departure. Chat announces arrivals ("Bleu Neuf a rejoint la guilde"), and the {o:Journal||Log} section keeps them for 90 days. The server records a move only once, even when several members saw it.]]</p>
+<p>[[Chaque arrivée est suivie dans {o:Accueil||Onboarding} pendant 60 jours. Sur Discord : {d:/gkeep profil arrivees||/gkeep profile arrivals}, avec <code>[[jours||days]]</code> (14 par défaut, jusqu'à 90).||Each arrival is followed in {o:Accueil||Onboarding} for 60 days. On Discord: {d:/gkeep profil arrivees||/gkeep profile arrivals}, with <code>days</code> (14 by default, up to 90).]]</p>
+{note}<p>[[Le relevé a besoin d'un membre avec l'addon en ligne pendant le changement, ou qui se connecte ensuite : la première fois, l'addon pose seulement sa référence. Un roster chargé à moitié (écart énorme d'un coup) est ignoré pour ne pas noter de faux départs.||Recording needs a member with the addon online during the change, or logging in afterwards: the first time, the addon only sets its reference. A half-loaded roster (a huge gap all at once) is ignored so as not to record false departures.]]</p>{/note}
+</section>
+
+<section>
+<h2 id="droits">[[Qui peut faire quoi||Who can do what]]</h2>
+<div class="table-wrap"><table class="doc-table">
+	<thead><tr><th scope="col">[[Action||Action]]</th><th scope="col">[[Qui peut||Who can]]</th></tr></thead>
+	<tbody>
+		<tr><td>[[Voir les profils, le journal, sa liste d'accueil||See profiles, the log, your onboarding checklist]]</td><td>{who:all}</td></tr>
+		<tr><td>[[Remplir son profil (ses propres personnages seulement)||Fill in your profile (your own characters only)]]</td><td>{who:all}</td></tr>
+		<tr><td>[[Cocher ses propres étapes d'accueil||Tick your own onboarding steps]]</td><td>{who:all}</td></tr>
+		<tr><td>[[Cocher les étapes d'un autre, suivre les nouveaux, copier ou publier un rappel||Tick someone else's steps, follow newcomers, copy or post a reminder]]</td><td>{who:officer}</td></tr>
+		<tr><td>[[Voir la version de l'addon de chacun||See everyone's addon version]]</td><td>{who:officer}</td></tr>
+	</tbody>
+</table></div>
+{warn}<p>[[Ce qu'un officier coche en jeu pour un autre n'est retenu par le serveur que si son rang y est enregistré (compagnon avec <a href="/docs/compagnon.html#token">token personnel</a>). Sur Discord, il suffit d'être reconnu officier ou d'avoir « Gérer le serveur ».||What an officer ticks in game for someone else is only kept by the server if their rank is recorded there (companion with a <a href="/docs/compagnon.html#token">personal token</a>). On Discord, being recognized as an officer or having "Manage Server" is enough.]]</p>{/warn}
+</section>

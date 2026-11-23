@@ -266,6 +266,7 @@ function Wow.New(options)
 		professions = options.professions, equipment = options.equipment or {}, quests = options.quests or {},
 		raid = nil, -- { instance, members = { { nom, rang, classe, en ligne } } }
 		spells = options.spells or {},
+		talents = options.talents or { { "Armes", 31 }, { "Fureur", 20 }, { "Protection", 0 } },
 		fileErrors = {},
 	}, Game)
 	game.env = game:BuildEnv()
@@ -446,6 +447,13 @@ function Game:BuildEnv()
 		IsGuildOfficer = function() return game.officer end,
 		GuildRoster = function() end,
 	}
+	api.GetNumTalentTabs = function() return #game.talents end
+	api.GetTalentTabInfo = function(i)
+		local tab = game.talents[i]
+		if tab then
+			return tab[1], "Interface\\Icons\\Tab" .. i, tab[2], "Tab" .. i
+		end
+	end
 	api.GetNumGuildMembers = function() return #game.roster end
 	api.GetGuildRosterInfo = function(i)
 		local m = game.roster[i]
