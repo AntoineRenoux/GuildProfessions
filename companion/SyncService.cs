@@ -73,7 +73,7 @@ public sealed class SyncService : IDisposable
 				using var response = await _http.SendAsync(request, ct);
 				if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
 				{
-					Log($"Guilde « {Display(guild)} » : lien révoqué ou guilde supprimée. Retélécharge son pack depuis le nouveau lien.");
+					Revoked(guild);
 					continue;
 				}
 				response.EnsureSuccessStatusCode();
@@ -126,6 +126,19 @@ public sealed class SyncService : IDisposable
 			: [];
 
 	private static string Display(GuildEntry guild) => guild.Name.Length > 0 ? guild.Name : "guilde sans nom";
+
+	/// <summary>Le serveur ne reconnaît plus le lien de la guilde : seul le joueur peut le régler.</summary>
+	private void Revoked(GuildEntry guild)
+	{
+		_revoked = true;
+		Log($"Guilde « {Display(guild)} » : lien révoqué ou guilde supprimée. Retélécharge son pack depuis le nouveau lien.");
+		CompanionStatus.Shared.Fail($"lien de « {Display(guild)} » révoqué, retélécharge le pack de la guilde");
+	}
+
+	private bool _revoked;
+
+	// WoW tourne (synchro active) : sert à revenir au bon état après un problème réglé.
+	private volatile bool _awake;
 
 	// ---- Up-sync : SavedVariables -> serveur, guilde par guilde -------------------
 
@@ -193,6 +206,11 @@ public sealed class SyncService : IDisposable
 			}
 			request.Content = new StringContent(json, Encoding.UTF8, "application/json");
 			using var response = await _http.SendAsync(request, ct);
+			if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+			{
+				Revoked(guild);
+				return false;
+			}
 			response.EnsureSuccessStatusCode();
 			var result = await response.Content.ReadFromJsonAsync<UploadResultDto>(JsonOptions, ct);
 
@@ -230,17 +248,65 @@ public sealed class SyncService : IDisposable
 
 	// ---- Boucle principale -------------------------------------------------------
 
-	public async Task RunAsync(CancellationToken ct)
+	/// <summary>
+	/// Veille : le compagnon ne synchronise que pendant que WoW tourne. Au
+	/// lancement du jeu, il s'éveille (mise à jour éventuelle, première synchro
+	/// pour que Data.lua soit frais avant l'entrée en jeu) ; pendant la partie, il
+	/// envoie à chaque écriture des SavedVariables et rapatrie toutes les
+	/// pollMinutes ; à la fermeture, il fait un dernier envoi (WoW écrit les
+	/// SavedVariables en quittant) puis se rendort, sans réseau ni surveillance.
+	/// </summary>
+	public async Task RunAsync(Func<bool> isWowRunning, Func<CancellationToken, Task>? onWake, CancellationToken ct)
 	{
-		StartWatchers(ct);
-		await SyncAsync("démarrage", alwaysDown: true, ct);
-
-		using var timer = new PeriodicTimer(TimeSpan.FromMinutes(Math.Max(1, _config.PollMinutes)));
-		while (await timer.WaitForNextTickAsync(ct))
+		Log("En veille : la synchronisation démarre quand tu lances WoW.");
+		// Un problème déjà signalé (aucune guilde…) reste affiché jusqu'à une synchro réussie.
+		if (CompanionStatus.Shared.State != CompanionState.Problem)
 		{
-			await SyncAsync("poll périodique", alwaysDown: true, ct);
+			CompanionStatus.Shared.Set(CompanionState.Sleeping);
+		}
+		var watch = new WowWatch(isWowRunning, WowWatch.DefaultCheck, TimeSpan.FromMinutes(Math.Max(1, _config.PollMinutes)));
+		try
+		{
+			await watch.RunAsync(
+				onStarted: async token =>
+				{
+					Log("WoW lancé : synchronisation active.");
+					_awake = true;
+					if (CompanionStatus.Shared.State != CompanionState.Problem)
+					{
+						CompanionStatus.Shared.Set(CompanionState.Syncing);
+					}
+					if (onWake is not null)
+					{
+						await onWake(token);
+					}
+					StartWatchers(token);
+					await SyncAsync("lancement de WoW", alwaysDown: true, token);
+				},
+				onStopped: async token =>
+				{
+					_awake = false;
+					StopWatchers();
+					// WoW écrit les SavedVariables en quittant : on laisse finir l'écriture.
+					await Task.Delay(TimeSpan.FromSeconds(5), token);
+					await SyncAsync("fermeture de WoW", alwaysDown: true, token);
+					Log("WoW fermé : relevés envoyés, compagnon en veille jusqu'au prochain lancement.");
+					if (CompanionStatus.Shared.State != CompanionState.Problem)
+					{
+						CompanionStatus.Shared.Set(CompanionState.Sleeping);
+					}
+				},
+				onPoll: token => SyncAsync("poll périodique", alwaysDown: true, token),
+				ct);
+		}
+		finally
+		{
+			StopWatchers();
 		}
 	}
+
+	/// <summary>Synchro demandée depuis le menu de l'icône, que WoW tourne ou non.</summary>
+	public Task SyncNowAsync(CancellationToken ct) => SyncAsync("demande manuelle", alwaysDown: true, ct);
 
 	/// <summary>
 	/// Envoie d'abord ce que l'addon a relevé, puis rapatrie les données de la guilde :
@@ -252,10 +318,15 @@ public sealed class SyncService : IDisposable
 		await _syncGate.WaitAsync(ct);
 		try
 		{
+			_revoked = false;
 			var sent = await UpSyncAsync(reason, ct);
 			if (sent || alwaysDown)
 			{
 				await DownSyncAsync(ct);
+			}
+			if (!_revoked && _guilds.Load().Count > 0)
+			{
+				CompanionStatus.Shared.Synced(DateTime.Now, _awake ? CompanionState.Syncing : CompanionState.Sleeping);
 			}
 		}
 		finally
@@ -293,6 +364,15 @@ public sealed class SyncService : IDisposable
 		Log($"{_watchers.Count} dossier(s) SavedVariables surveillé(s).");
 	}
 
+	private void StopWatchers()
+	{
+		foreach (var watcher in _watchers)
+		{
+			watcher.Dispose();
+		}
+		_watchers.Clear();
+	}
+
 	private void OnSavedVariablesChanged(CancellationToken ct)
 	{
 		// Débounce : WoW déclenche plusieurs événements par écriture.
@@ -314,17 +394,11 @@ public sealed class SyncService : IDisposable
 		File.WriteAllText(_statePath, JsonSerializer.Serialize(_state, JsonOptions));
 	}
 
-	public static void Log(string message)
-	{
-		Console.WriteLine($"[{DateTime.Now:HH:mm:ss}] {message}");
-	}
+	public static void Log(string message) => CompanionLog.Write(message);
 
 	public void Dispose()
 	{
-		foreach (var watcher in _watchers)
-		{
-			watcher.Dispose();
-		}
+		StopWatchers();
 		_http.Dispose();
 	}
 
