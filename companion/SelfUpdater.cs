@@ -166,22 +166,6 @@ public sealed class SelfUpdater(CompanionConfig config, string baseDirectory)
 		}
 	}
 
-	public async Task RunPeriodicAsync(string[] args, AddonInstaller? addonInstaller, CancellationToken ct)
-	{
-		using var timer = new PeriodicTimer(TimeSpan.FromHours(6));
-		while (await timer.WaitForNextTickAsync(ct))
-		{
-			if (addonInstaller is not null)
-			{
-				await addonInstaller.EnsureLatestAsync(ct);
-			}
-			if (await TryUpdateAsync(ct))
-			{
-				Restart(args);
-			}
-		}
-	}
-
 	public void Restart(string[] args)
 	{
 		// Sous systemd, on rend la main avec un code d'échec : le service relance le binaire neuf.

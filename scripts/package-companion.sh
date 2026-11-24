@@ -86,9 +86,47 @@ for RID in win-x64 linux-x64 osx-x64 osx-arm64; do
 	echo "  → $OUT/$ZIP"
 
 	# Pack modèle : exécutable + config.json sans guilde (remplacé par le serveur).
+	# macOS : une vraie app (Guildkeep.app), ouverte d'un double-clic sans Terminal
+	# ni icône dans le Dock (LSUIElement) ; config.json reste à côté de l'app.
 	BUNDLE_DIR="$OUT/bundle-$RID/Guildkeep"
 	mkdir -p "$BUNDLE_DIR"
-	cp "$OUT/$RID"/GuildkeepCompanion* "$BUNDLE_DIR/"
+	case "$RID" in
+		osx-*)
+			APP="$BUNDLE_DIR/Guildkeep.app/Contents"
+			mkdir -p "$APP/MacOS" "$APP/Resources"
+			cp "$OUT/$RID/GuildkeepCompanion" "$APP/MacOS/"
+			if command -v iconutil >/dev/null && command -v sips >/dev/null; then
+				ICONSET=$(mktemp -d)/Guildkeep.iconset
+				mkdir -p "$ICONSET"
+				for SIZE in 16 32 128 256 512; do
+					sips -z $SIZE $SIZE branding/guildkeep-icon-512.png --out "$ICONSET/icon_${SIZE}x${SIZE}.png" >/dev/null
+					sips -z $((SIZE * 2)) $((SIZE * 2)) branding/guildkeep-icon-512.png --out "$ICONSET/icon_${SIZE}x${SIZE}@2x.png" >/dev/null
+				done
+				iconutil -c icns "$ICONSET" -o "$APP/Resources/Guildkeep.icns"
+			fi
+			cat > "$APP/Info.plist" <<PLIST
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleName</key><string>Guildkeep</string>
+	<key>CFBundleDisplayName</key><string>Guildkeep</string>
+	<key>CFBundleIdentifier</key><string>com.guildkeep.companion</string>
+	<key>CFBundleExecutable</key><string>GuildkeepCompanion</string>
+	<key>CFBundleIconFile</key><string>Guildkeep</string>
+	<key>CFBundlePackageType</key><string>APPL</string>
+	<key>CFBundleShortVersionString</key><string>$VERSION</string>
+	<key>CFBundleVersion</key><string>$VERSION</string>
+	<key>LSMinimumSystemVersion</key><string>12.0</string>
+	<key>LSUIElement</key><true/>
+	<key>NSHighResolutionCapable</key><true/>
+</dict>
+</plist>
+PLIST
+			;;
+		*)
+			cp "$OUT/$RID"/GuildkeepCompanion* "$BUNDLE_DIR/" ;;
+	esac
 	cat > "$BUNDLE_DIR/config.json" <<EOF
 {
 	"apiBaseUrl": "$SITE_URL",
@@ -104,15 +142,23 @@ for RID in win-x64 linux-x64 osx-x64 osx-arm64; do
 EOF
 	case "$RID" in
 		win-x64)
-			START_FR="Ensuite, GuildkeepCompanion (pas le jeu) se relance tout seul, en
-   arrière-plan, à chaque démarrage de Windows. Il ne lance jamais WoW."
-			START_EN="After that, GuildkeepCompanion (not the game) restarts by itself, in
-   the background, every time Windows starts. It never launches WoW."
+			START_FR="Il s'installe dans la zone de notification (près de l'horloge), sans
+   fenêtre : il dort tant que WoW n'est pas lancé et se relance tout seul, en
+   veille, à chaque démarrage de Windows. Clic droit sur l'icône : état, journal,
+   synchroniser, quitter. Il ne lance jamais WoW."
+			START_EN="It sits in the notification area (near the clock), with no window: it
+   sleeps until WoW starts and restarts by itself, asleep, every time Windows
+   starts. Right-click the icon: status, log, sync, quit. It never launches WoW."
 			MAC_FR=""
 			MAC_EN="" ;;
 		osx-*)
-			START_FR="Laisse-le tourner pendant que tu joues."
-			START_EN="Leave it running while you play."
+			START_FR="Son icône apparaît dans la barre des menus, sans fenêtre ni Terminal :
+   il dort tant que WoW n'est pas lancé et se relance tout seul, en veille, à
+   chaque ouverture de session. Clic sur l'icône : état, journal, synchroniser,
+   quitter. Il ne lance jamais WoW."
+			START_EN="Its icon appears in the menu bar, with no window and no Terminal: it
+   sleeps until WoW starts and restarts by itself, asleep, at every login.
+   Click the icon: status, log, sync, quit. It never launches WoW."
 			MAC_FR="
 Mac : la première fois, macOS refuse de l'ouvrir (app non notarisée par Apple).
 Autorise-le une seule fois, au choix :
@@ -120,7 +166,7 @@ Autorise-le une seule fois, au choix :
     tout en bas : « Ouvrir quand même » ;
   - ou dans le Terminal : xattr -dr com.apple.quarantine ~/Downloads/Guildkeep
     (adapte le chemin si tu as dézippé ailleurs).
-Lancement : cd ~/Downloads/Guildkeep && ./GuildkeepCompanion
+Lancement : double-clic sur Guildkeep (Guildkeep.app).
 "
 			MAC_EN="
 Mac: the first time, macOS refuses to open it (app not notarized by Apple).
@@ -129,18 +175,22 @@ Allow it once, either way:
     at the bottom: \"Open Anyway\";
   - or in Terminal: xattr -dr com.apple.quarantine ~/Downloads/Guildkeep
     (adjust the path if you unzipped elsewhere).
-Run: cd ~/Downloads/Guildkeep && ./GuildkeepCompanion
+Run: double-click Guildkeep (Guildkeep.app).
 " ;;
 		*)
-			START_FR="Laisse-le tourner pendant que tu joues (chmod +x GuildkeepCompanion && ./GuildkeepCompanion)."
-			START_EN="Leave it running while you play (chmod +x GuildkeepCompanion && ./GuildkeepCompanion)."
+			START_FR="Lance-le une fois (chmod +x GuildkeepCompanion && ./GuildkeepCompanion) : son icône
+   apparaît dans la barre système, il dort tant que WoW n'est pas lancé et se relance
+   en veille à chaque ouverture de session. Sans bureau : ./GuildkeepCompanion --console."
+			START_EN="Run it once (chmod +x GuildkeepCompanion && ./GuildkeepCompanion): its icon shows
+   in the system tray, it sleeps until WoW starts and restarts asleep at every login.
+   Without a desktop: ./GuildkeepCompanion --console."
 			MAC_FR=""
 			MAC_EN="" ;;
 	esac
 	cat > "$BUNDLE_DIR/LISEZMOI-README.txt" <<EOF
 Guildkeep — pack de ta guilde / your guild's pack
 $MAC_FR
-1. Lance GuildkeepCompanion.
+1. Lance Guildkeep (GuildkeepCompanion).
 2. C'est tout : il trouve World of Warcraft, installe l'addon Guildkeep,
    synchronise tes métiers avec ta guilde, et tient l'addon et lui-même à jour.
    $START_FR
@@ -152,7 +202,7 @@ Sur Discord : /gkeep aide. Il ne te demandera jamais de mot de passe ni d'e-mail
 
 ---
 $MAC_EN
-1. Run GuildkeepCompanion.
+1. Run Guildkeep (GuildkeepCompanion).
 2. That's it: it finds World of Warcraft, installs the Guildkeep addon, syncs
    your professions with your guild, and keeps the addon and itself up to date.
    $START_EN

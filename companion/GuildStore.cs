@@ -25,8 +25,11 @@ public sealed class GuildStore(string path)
 
 	public string FilePath { get; } = path;
 
+	/// <summary>Dossier des données du compagnon ; GUILDKEEP_DATA_DIR le déplace (essais, diagnostic).</summary>
 	public static string DefaultDirectory =>
-		Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Guildkeep");
+		Environment.GetEnvironmentVariable("GUILDKEEP_DATA_DIR") is { Length: > 0 } custom
+			? custom
+			: Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Guildkeep");
 
 	public static GuildStore Default() => new(Path.Combine(DefaultDirectory, "guildes.json"));
 

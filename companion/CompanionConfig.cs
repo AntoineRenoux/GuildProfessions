@@ -12,9 +12,9 @@ public sealed class CompanionConfig
 	public string UploadToken { get; set; } = "";
 	public string WowPath { get; set; } = "";
 	public int PollMinutes { get; set; } = 10;
-	/// <summary>Windows : inscription automatique au démarrage de la session (HKCU Run).</summary>
+	/// <summary>Lancement en veille à l'ouverture de session (Windows, macOS, Linux) ; réglable depuis le menu de l'icône.</summary>
 	public bool AutoStart { get; set; } = true;
-	/// <summary>Vérifie au démarrage puis toutes les 6 h qu'une version plus récente n'est pas publiée.</summary>
+	/// <summary>Vérifie à chaque lancement de WoW (et au lancement manuel) qu'une version plus récente n'est pas publiée.</summary>
 	public bool AutoUpdate { get; set; } = true;
 	/// <summary>Pack tout-en-un : le compagnon installe l'addon dans WoW et le tient à jour.</summary>
 	public bool InstallAddon { get; set; }
@@ -24,6 +24,8 @@ public sealed class CompanionConfig
 	// Zéro configuration côté joueur : sans config.json on continue avec les
 	// valeurs par défaut (le zip distribué par l'officier en contient un
 	// pré-rempli avec le token de guilde).
+	public void Save(string path) => File.WriteAllText(path, JsonSerializer.Serialize(this, JsonOptions));
+
 	public static CompanionConfig LoadOrCreate(string path)
 	{
 		if (!File.Exists(path))
